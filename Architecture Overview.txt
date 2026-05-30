@@ -1,0 +1,17 @@
+core/
+├── network/
+│   ├── api_client.dart          ← Dio singleton + interceptors
+│   ├── api_constants.dart       ← Base URL + endpoint paths
+│   └── api_result.dart          ← AsyncResult<T> sealed class
+├── models/
+│   ├── surah_model.dart         ← Surah.fromJson / toJson
+│   ├── ayah_model.dart          ← Ayah.fromJson / toJson
+│   └── app_settings_model.dart  ← AppSettings.fromJson / toJson
+├── cache/
+│   └── cache_manager.dart       ← SharedPrefs JSON cache w/ TTL
+└── repositories/
+    ├── surah_repository.dart    ← cache-first fetch /surahs & /surahs/{id}/ayahs
+    └── settings_repository.dart ← cache-first fetch /settings
+features/
+└── quran/
+    └── quran_providers.dart     ← Riverpod AsyncNotifier for surah list
