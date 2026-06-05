@@ -45,7 +45,7 @@ final surahListProvider = AsyncNotifierProvider<SurahListNotifier, List<SurahMod
 
 final ayahsProvider = FutureProvider.family<List<AyahModel>, int>((ref, surahId) async {
   final repo = ref.watch(surahRepositoryProvider);
-  final result = await repo.getAyahs(surahId);
+  final result = await repo.getAyahs(surahId, forceRefresh: true);
   
   return result.when(
     success: (data) => data,
@@ -99,7 +99,7 @@ final surahAudioProvider = FutureProvider.family<SurahAudioResponse, SurahAudioF
 
 final pageAyahsProvider = FutureProvider.family<List<AyahModel>, int>((ref, pageNumber) async {
   final repo = ref.watch(surahRepositoryProvider);
-  final result = await repo.getPageAyahs(pageNumber);
+  final result = await repo.getPageAyahs(pageNumber, forceRefresh: true);
   
   return result.when(
     success: (data) => data,

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/models/ayah_model.dart';
+import '../../core/models/tajweed_segment_model.dart';
 import '../../core/models/surah_model.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/providers/bookmarks_provider.dart';
@@ -74,7 +75,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     });
 
     final readerSettings = ref.read(readerSettingsProvider);
-    if (!readerSettings.distractionFree) return;
+    if (readerSettings.distractionFree != true) return;
 
     final currentOffset = _scrollController.offset;
     final maxScroll = _scrollController.position.maxScrollExtent;
@@ -301,7 +302,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                           ],
                         ),
                         Switch(
-                          value: readerSettings.showKurdish,
+                          value: readerSettings.showKurdish == true,
                           activeThumbColor: cs.primary,
                           onChanged: (v) {
                             ref.read(readerSettingsProvider.notifier).toggleKurdish(v);
@@ -330,10 +331,38 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                           ],
                         ),
                         Switch(
-                          value: readerSettings.showEnglish,
+                          value: readerSettings.showEnglish == true,
                           activeThumbColor: cs.primary,
                           onChanged: (v) {
                             ref.read(readerSettingsProvider.notifier).toggleEnglish(v);
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.palette_rounded, size: 20, color: cs.primary),
+                            const SizedBox(width: 12),
+                            Text(
+                              'ڕەنگەکانی تەجوید',
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: cs.textPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Switch(
+                          value: readerSettings.showTajweed == true,
+                          activeThumbColor: cs.primary,
+                          onChanged: (v) {
+                            ref.read(readerSettingsProvider.notifier).toggleTajweed(v);
                           },
                         ),
                       ],
@@ -379,7 +408,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                         ),
                         const SizedBox(width: 8),
                         Switch(
-                          value: readerSettings.distractionFree,
+                          value: readerSettings.distractionFree == true,
                           activeThumbColor: cs.primary,
                           onChanged: (v) {
                             ref.read(readerSettingsProvider.notifier).toggleDistractionFree(v);
@@ -696,8 +725,9 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                       ayah: ayah,
                       surah: widget.surah,
                       fontSize: readerSettings.fontSize,
-                      showKurdish: readerSettings.showKurdish,
-                      showEnglish: readerSettings.showEnglish,
+                      showKurdish: readerSettings.showKurdish == true,
+                      showEnglish: readerSettings.showEnglish == true,
+                      showTajweed: readerSettings.showTajweed == true,
                       isBookmarked: isBookmarked,
                       isFavorited: isFavorited,
                       isHighlighted: isHighlighted || (playerState.currentAyahNumber == ayah.ayahNumber),
@@ -821,6 +851,7 @@ class _AyahRow extends StatelessWidget {
   final double fontSize;
   final bool showKurdish;
   final bool showEnglish;
+  final bool showTajweed;
   final bool isBookmarked;
   final bool isFavorited;
   final bool isHighlighted;
@@ -836,6 +867,7 @@ class _AyahRow extends StatelessWidget {
     required this.fontSize,
     required this.showKurdish,
     required this.showEnglish,
+    required this.showTajweed,
     required this.isBookmarked,
     required this.isFavorited,
     required this.isHighlighted,
@@ -930,19 +962,36 @@ class _AyahRow extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Text(
-            ayah.textUthmani,
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              fontFamily: 'UthmanicHafs',
-              fontSize: fontSize + 4,
-              height: 2.0,
-              color: cs.textPrimary,
-            ),
-          ),
+          showTajweed == true && ayah.tajweedSegments.isNotEmpty
+              ? Text.rich(
+                  TextSpan(
+                    children: _buildTajweedSpans(
+                      ayah.textUthmani,
+                      ayah.tajweedSegments,
+                      cs.textPrimary,
+                    ),
+                  ),
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontFamily: 'UthmanicHafs',
+                    fontSize: fontSize + 4,
+                    height: 2.0,
+                  ),
+                )
+              : Text(
+                  ayah.textUthmani,
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    fontFamily: 'UthmanicHafs',
+                    fontSize: fontSize + 4,
+                    height: 2.0,
+                    color: cs.textPrimary,
+                  ),
+                ),
           const SizedBox(height: 12),
-          if (showKurdish && ayah.textKu != null && ayah.textKu!.isNotEmpty) ...[
+          if (showKurdish == true && ayah.textKu != null && ayah.textKu!.isNotEmpty) ...[
             Text(
               ayah.textKu!,
               textDirection: TextDirection.rtl,
@@ -956,7 +1005,7 @@ class _AyahRow extends StatelessWidget {
             ),
             const SizedBox(height: 8),
           ],
-          if (showEnglish && ayah.textEn != null && ayah.textEn!.isNotEmpty) ...[
+          if (showEnglish == true && ayah.textEn != null && ayah.textEn!.isNotEmpty) ...[
             Text(
               ayah.textEn!,
               textDirection: TextDirection.ltr,
@@ -971,6 +1020,70 @@ class _AyahRow extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  List<TextSpan> _buildTajweedSpans(
+    String text,
+    List<TajweedSegmentModel> segments,
+    Color defaultColor,
+  ) {
+    if (segments.isEmpty) {
+      return [TextSpan(text: text, style: TextStyle(color: defaultColor))];
+    }
+
+    final sorted = List<TajweedSegmentModel>.from(segments)
+      ..sort((a, b) => (a.startIndex ?? 0).compareTo(b.startIndex ?? 0));
+
+    final List<TextSpan> spans = [];
+    int currentIndex = 0;
+
+    for (final segment in sorted) {
+      final start = segment.startIndex;
+      final end = segment.endIndex;
+
+      if (start == null || end == null || start < currentIndex || start > text.length || end > text.length || start > end) {
+        continue;
+      }
+
+      if (start > currentIndex) {
+        spans.add(TextSpan(
+          text: text.substring(currentIndex, start),
+          style: TextStyle(color: defaultColor),
+        ));
+      }
+
+      final segmentColor = _parseColor(segment.colorCode);
+      spans.add(TextSpan(
+        text: text.substring(start, end),
+        style: TextStyle(
+          color: segmentColor,
+          fontWeight: FontWeight.bold,
+        ),
+      ));
+
+      currentIndex = end;
+    }
+
+    if (currentIndex < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(currentIndex),
+        style: TextStyle(color: defaultColor),
+      ));
+    }
+
+    return spans;
+  }
+
+  Color _parseColor(String? hexString) {
+    if (hexString == null || hexString.isEmpty) return const Color(0xFF1B7340);
+    try {
+      final buffer = StringBuffer();
+      if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+      buffer.write(hexString.replaceFirst('#', ''));
+      return Color(int.parse(buffer.toString(), radix: 16));
+    } catch (_) {
+      return const Color(0xFF1B7340);
+    }
   }
 }
 

@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -23,6 +25,9 @@ import '../tasbih/tasbih_page.dart';
 import '../memorization/memorization_quiz_page.dart';
 import '../../core/providers/prayer_times_provider.dart';
 import '../prayer/prayer_times_page.dart';
+import '../hadith/hadith_page.dart';
+import '../tajweed/tajweed_page.dart';
+import '../memorization/memorization_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Ad Slide Data
@@ -105,12 +110,48 @@ List<_CatData> _buildCats(BuildContext context) => [
             ),
       ),
       _CatData(
+        icon: Icons.auto_stories_rounded,
+        iconColor: const Color(0xFFE53935),
+        label: (l) => 'فەرموودە',
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const HadithPage()),
+            ),
+      ),
+      _CatData(
+        icon: Icons.school_rounded,
+        iconColor: const Color(0xFF9C27B0),
+        label: (l) => 'فێربوونی تەجوید',
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const TajweedPage()),
+            ),
+      ),
+      _CatData(
         icon: Icons.fingerprint_rounded,
         iconColor: const Color(0xFF009688),
         label: (l) => l.tasbihTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
               MaterialPageRoute(builder: (_) => const TasbihPage(showBackButton: true)),
+            ),
+      ),
+      _CatData(
+        icon: Icons.mosque_rounded,
+        iconColor: const Color(0xFF0F8F4C),
+        label: (l) => l.prayerTimesTitle,
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const PrayerTimesPage(showBackButton: true)),
+            ),
+      ),
+      _CatData(
+        icon: Icons.bar_chart_rounded,
+        iconColor: const Color(0xFFFF5722),
+        label: (l) => 'ئاماری خوێندن',
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const ReadingTrackerPage(showBackButton: true)),
             ),
       ),
       _CatData(
@@ -249,43 +290,62 @@ class HomePage extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  // ── Daily Goals (authenticated) ──────────────────
+                  // 1. Prayer Times Countdown Widget
                   Padding(
-                    padding: EdgeInsets.fromLTRB(p, 20, p, 0),
-                    child: const _StreakBanner(),
-                  ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
-
-                  // ── Continue Reading Widget ──────────────────────
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: const _ContinueReadingCard(),
-                  ).animate().fadeIn(duration: 400.ms, delay: 120.ms),
-
-                  // ── Khatm Progress Widget ────────────────────────
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: const _KhatmProgressCard(),
-                  ).animate().fadeIn(duration: 400.ms, delay: 140.ms),
-
-                  // ── Prayer Times Countdown Widget ────────────────
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    padding: EdgeInsets.fromLTRB(p, 35, p, 0),
                     child: const _PrayerCountdownBanner(),
-                  ).animate().fadeIn(duration: 400.ms, delay: 145.ms),
+                  ).animate().fadeIn(duration: 400.ms, delay: 155.ms),
 
                   // ── Section: تایبەتمەندییەکان ────────────────────
                   Padding(
-                    padding: EdgeInsets.fromLTRB(p, 24, p, 12),
+                    padding: EdgeInsets.fromLTRB(p, 20, p, 12),
                     child: _SectionDivider(
-                      title: context.l10n.homeFeatures,
+                      title: context.l10n.homeFeaturesOne,
                     ),
-                  ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
+                  ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
 
                   // ── Categories grid (scrollable with single scroll) ──
                   Padding(
-                    padding: EdgeInsets.fromLTRB(p, 0, p, 0),
+                    padding: EdgeInsets.fromLTRB(p, 0, p, 16),
                     child: const _CategoriesGrid(),
                   ),
+
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 20, p, 12),
+                    child: _SectionDivider(
+                      title: context.l10n.homeFeaturesTwo,
+                    ),
+                  ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
+
+                  // 2. Reading Streak Card
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    child: const _StreakBanner(),
+                  ).animate().fadeIn(duration: 400.ms, delay: 120.ms),
+
+                  // 3. Continue Reading Card
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    child: const _ContinueReadingCard(),
+                  ).animate().fadeIn(duration: 400.ms, delay: 130.ms),
+
+                  // 4. Today's Memorization Goal Card
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    child: const _TodayMemorizationCard(),
+                  ).animate().fadeIn(duration: 400.ms, delay: 140.ms),
+
+                  // 5. Khatm Progress Card
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    child: const _KhatmProgressCard(),
+                  ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
+
+                  // 6. Daily Goals Checklist Card
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    child: const _DailyGoalsCard(),
+                  ).animate().fadeIn(duration: 400.ms, delay: 160.ms),
                 ],
               ),
             ),
@@ -984,7 +1044,7 @@ class _CategoriesGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isTablet = Responsive.isTablet(context);
-    final cols = isTablet ? 5 : 3;
+    final cols = isTablet ? 6 : 4;
     final cats = _buildCats(context);
 
     return GridView.builder(
@@ -995,7 +1055,7 @@ class _CategoriesGrid extends ConsumerWidget {
         crossAxisCount: cols,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
-        childAspectRatio: isTablet ? 0.88 : 0.85,
+        childAspectRatio: isTablet ? 0.90 : 0.82,
       ),
       itemBuilder: (context, i) {
         final cat = cats[i];
@@ -1046,8 +1106,8 @@ class _CatTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 34, color: iconColor),
-            const SizedBox(height: 8),
+            Icon(icon, size: 28, color: iconColor),
+            const SizedBox(height: 6),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: Text(
@@ -1058,10 +1118,10 @@ class _CatTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Cairo',
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: FontWeight.w600,
                   color: cs.textPrimary,
-                  height: 1.35,
+                  height: 1.3,
                 ),
               ),
             ),
@@ -1297,44 +1357,339 @@ class _ContinueReadingCard extends ConsumerWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Daily Goals Card
+// Today's Memorization Plan Card
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _DailyGoalsCard extends StatefulWidget {
-  const _DailyGoalsCard();
+class _TodayMemorizationCard extends ConsumerWidget {
+  const _TodayMemorizationCard();
 
   @override
-  State<_DailyGoalsCard> createState() => _DailyGoalsCardState();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final cs = AppColorScheme.of(context);
+    final todayPlansAsync = ref.watch(memorizationTodayProvider);
+
+    return todayPlansAsync.when(
+      data: (plans) {
+        if (plans.isEmpty) return const SizedBox.shrink();
+
+        // Get the first pending/active plan item for today
+        final activeItem = plans.firstWhere(
+          (item) => item.status == 'pending',
+          orElse: () => plans.first,
+        );
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const MemorizationQuizPage(showBackButton: true),
+                ),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: cs.card,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: cs.cardBorder, width: 1),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFCD9D27).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.psychology_rounded,
+                        color: Color(0xFFCD9D27),
+                        size: 22,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'ئامانجی لەبەرکردنی ئەمڕۆ',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            color: cs.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'سوورەتی ${activeItem.surah?.nameKu ?? activeItem.surah?.nameAr ?? ''} • ئایەتی ${activeItem.fromAyahId} تا ${activeItem.toAyahId}',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: cs.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.arrow_forward_rounded, color: Color(0xFFCD9D27)),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const MemorizationQuizPage(showBackButton: true),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
 }
 
-class _DailyGoalsCardState extends State<_DailyGoalsCard> {
-  final List<Map<String, dynamic>> _goals = [
-    {'key': 'goal1', 'done': true},
-    {'key': 'goal2', 'done': true},
-    {'key': 'goal3', 'done': false},
-    {'key': 'goal4', 'done': false},
-  ];
+// ─────────────────────────────────────────────────────────────────────────────
+// User Custom Goals Models & Providers
+// ─────────────────────────────────────────────────────────────────────────────
 
-  String _label(AppLocalizations l, String key) {
-    switch (key) {
-      case 'goal1':
-        return l.homeGoal1;
-      case 'goal2':
-        return l.homeGoal2;
-      case 'goal3':
-        return l.homeGoal3;
-      case 'goal4':
-        return l.homeGoal4;
-      default:
-        return '';
+class UserGoal {
+  final String id;
+  final String title;
+  final bool isDone;
+
+  const UserGoal({
+    required this.id,
+    required this.title,
+    required this.isDone,
+  });
+
+  UserGoal copyWith({String? title, bool? isDone}) {
+    return UserGoal(
+      id: id,
+      title: title ?? this.title,
+      isDone: isDone ?? this.isDone,
+    );
+  }
+}
+
+class UserGoalsNotifier extends StateNotifier<List<UserGoal>> {
+  final SharedPreferences _prefs;
+  static const _key = 'custom_user_goals_v2';
+
+  UserGoalsNotifier(this._prefs) : super([]) {
+    _load();
+  }
+
+  void _load() {
+    final rawList = _prefs.getStringList(_key);
+    if (rawList != null) {
+      try {
+        state = rawList.map((e) {
+          final map = jsonDecode(e) as Map<String, dynamic>;
+          return UserGoal(
+            id: map['id'] as String? ?? '',
+            title: map['title'] as String? ?? '',
+            isDone: map['isDone'] as bool? ?? false,
+          );
+        }).toList();
+      } catch (_) {
+        _setDefaults();
+      }
+    } else {
+      _setDefaults();
     }
   }
 
+  void _setDefaults() {
+    state = [
+      const UserGoal(id: '1', title: 'خوێندنەوەی قورئان', isDone: false),
+      const UserGoal(id: '2', title: 'خوێندنەوەی ئەزکارەکانی بەیانی', isDone: false),
+      const UserGoal(id: '3', title: 'زیکر و تەسبیحات', isDone: false),
+      const UserGoal(id: '4', title: 'نوێژە سوننەتەکان', isDone: false),
+    ];
+    _save();
+  }
+
+  void addGoal(String title) {
+    state = [
+      ...state,
+      UserGoal(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        title: title,
+        isDone: false,
+      ),
+    ];
+    _save();
+  }
+
+  void toggleGoal(String id) {
+    state = state.map((g) => g.id == id ? g.copyWith(isDone: !g.isDone) : g).toList();
+    _save();
+  }
+
+  void editGoal(String id, String newTitle) {
+    state = state.map((g) => g.id == id ? g.copyWith(title: newTitle) : g).toList();
+    _save();
+  }
+
+  void deleteGoal(String id) {
+    state = state.where((g) => g.id != id).toList();
+    _save();
+  }
+
+  void resetGoals() {
+    state = state.map((g) => g.copyWith(isDone: false)).toList();
+    _save();
+  }
+
+  void _save() {
+    final list = state
+        .map((g) => jsonEncode({
+              'id': g.id,
+              'title': g.title,
+              'isDone': g.isDone,
+            }))
+        .toList();
+    _prefs.setStringList(_key, list);
+  }
+}
+
+final userGoalsProvider = StateNotifierProvider<UserGoalsNotifier, List<UserGoal>>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return UserGoalsNotifier(prefs);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Daily Goals Card
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _DailyGoalsCard extends ConsumerWidget {
+  const _DailyGoalsCard();
+
+  void _showAddGoalDialog(BuildContext context, WidgetRef ref) {
+    final controller = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final cs = AppColorScheme.of(ctx);
+        return AlertDialog(
+          backgroundColor: cs.card,
+          title: const Text(
+            'زیادکردنی ئامانجی نوێ',
+            textDirection: TextDirection.rtl,
+            style: TextStyle(fontFamily: 'Cairo', fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          content: TextField(
+            controller: controller,
+            textDirection: TextDirection.rtl,
+            autofocus: true,
+            style: TextStyle(color: cs.textPrimary, fontFamily: 'Cairo', fontSize: 14),
+            decoration: InputDecoration(
+              hintText: 'ناوی ئامانج بنووسە...',
+              hintTextDirection: TextDirection.rtl,
+              hintStyle: TextStyle(color: cs.textSecondary, fontSize: 12),
+              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: cs.primary)),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('پەشیمانبوونەوە', style: TextStyle(color: cs.textSecondary, fontFamily: 'Cairo', fontSize: 13)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final val = controller.text.trim();
+                if (val.isNotEmpty) {
+                  ref.read(userGoalsProvider.notifier).addGoal(val);
+                }
+                Navigator.pop(ctx);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: cs.primary),
+              child: const Text('پاشکەوتکردن', style: TextStyle(color: Colors.white, fontFamily: 'Cairo', fontSize: 13)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showEditGoalDialog(BuildContext context, WidgetRef ref, UserGoal goal) {
+    final controller = TextEditingController(text: goal.title);
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final cs = AppColorScheme.of(ctx);
+        return AlertDialog(
+          backgroundColor: cs.card,
+          title: const Text(
+            'دەستکاریکردنی ئامانج',
+            textDirection: TextDirection.rtl,
+            style: TextStyle(fontFamily: 'Cairo', fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          content: TextField(
+            controller: controller,
+            textDirection: TextDirection.rtl,
+            autofocus: true,
+            style: TextStyle(color: cs.textPrimary, fontFamily: 'Cairo', fontSize: 14),
+            decoration: InputDecoration(
+              hintText: 'ناوی ئامانج بنووسە...',
+              hintTextDirection: TextDirection.rtl,
+              hintStyle: TextStyle(color: cs.textSecondary, fontSize: 12),
+              focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: cs.primary)),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text('پەشیمانبوونەوە', style: TextStyle(color: cs.textSecondary, fontFamily: 'Cairo', fontSize: 13)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final val = controller.text.trim();
+                if (val.isNotEmpty) {
+                  ref.read(userGoalsProvider.notifier).editGoal(goal.id, val);
+                }
+                Navigator.pop(ctx);
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: cs.primary),
+              child: const Text('پاشکەوتکردن', style: TextStyle(color: Colors.white, fontFamily: 'Cairo', fontSize: 13)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = AppColorScheme.of(context);
     final l = context.l10n;
-    final doneCount = _goals.where((g) => g['done'] == true).length;
+    final goals = ref.watch(userGoalsProvider);
+    final doneCount = goals.where((g) => g.isDone).length;
+    final totalCount = goals.length;
+    final progress = totalCount > 0 ? doneCount / totalCount : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -1372,22 +1727,33 @@ class _DailyGoalsCardState extends State<_DailyGoalsCard> {
                   ),
                 ],
               ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                decoration: BoxDecoration(
-                  color: cs.primary.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '$doneCount/${_goals.length}',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: cs.primary,
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.add_circle_outline_rounded, color: cs.primary, size: 22),
+                    onPressed: () => _showAddGoalDialog(context, ref),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    tooltip: 'ئامانجی نوێ',
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: cs.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '$doneCount/$totalCount',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: cs.primary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1395,62 +1761,98 @@ class _DailyGoalsCardState extends State<_DailyGoalsCard> {
           const SizedBox(height: 14),
 
           // Progress bar
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: doneCount / _goals.length,
-              minHeight: 5,
-              backgroundColor: cs.cardBorder,
-              valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
+          if (totalCount > 0) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 5,
+                backgroundColor: cs.cardBorder,
+                valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
+              ),
             ),
-          ),
-
-          const SizedBox(height: 14),
+            const SizedBox(height: 14),
+          ],
 
           // Goal items
-          ..._goals.map((goal) {
-            return GestureDetector(
-              onTap: () => setState(() => goal['done'] = !goal['done']),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 12),
+          if (totalCount == 0)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Center(
+                child: Text(
+                  'هیچ ئامانجێک زیادنەکراوە. یەکەم ئامانجت زیادبکە! ✨',
+                  style: TextStyle(fontFamily: 'Cairo', fontSize: 11, color: cs.textSecondary),
+                ),
+              ),
+            )
+          else
+            ...goals.map((goal) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Row(
                   children: [
-                    AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 22,
-                      height: 22,
-                      decoration: BoxDecoration(
-                        color: goal['done'] ? cs.primary : Colors.transparent,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: goal['done'] ? cs.primary : cs.cardBorder,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: goal['done']
-                          ? const Icon(Icons.check_rounded,
-                              color: Colors.white, size: 14)
-                          : null,
-                    ),
-                    const SizedBox(width: 12),
+                    // Checkbox & Title GestureDetector
                     Expanded(
-                      child: Text(
-                        _label(l, goal['key'] as String),
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 13,
-                          color:
-                              goal['done'] ? cs.textSecondary : cs.textPrimary,
-                          decoration:
-                              goal['done'] ? TextDecoration.lineThrough : null,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => ref.read(userGoalsProvider.notifier).toggleGoal(goal.id),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          child: Row(
+                            children: [
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                width: 22,
+                                height: 22,
+                                decoration: BoxDecoration(
+                                  color: goal.isDone ? cs.primary : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: goal.isDone ? cs.primary : cs.cardBorder,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: goal.isDone
+                                    ? const Icon(Icons.check_rounded, color: Colors.white, size: 14)
+                                    : null,
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  goal.title,
+                                  style: TextStyle(
+                                    fontFamily: 'Cairo',
+                                    fontSize: 13,
+                                    color: goal.isDone ? cs.textSecondary : cs.textPrimary,
+                                    decoration: goal.isDone ? TextDecoration.lineThrough : null,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+                    ),
+                    
+                    // Edit action
+                    IconButton(
+                      icon: Icon(Icons.edit_outlined, size: 16, color: cs.textSecondary),
+                      onPressed: () => _showEditGoalDialog(context, ref, goal),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                    const SizedBox(width: 10),
+                    // Delete action
+                    IconButton(
+                      icon: const Icon(Icons.delete_outline_rounded, size: 16, color: Colors.redAccent),
+                      onPressed: () => ref.read(userGoalsProvider.notifier).deleteGoal(goal.id),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
-              ),
-            );
-          }),
+              );
+            }),
         ],
       ),
     );

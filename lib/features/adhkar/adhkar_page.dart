@@ -6,15 +6,30 @@ import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
 import 'adhkar_category_page.dart';
 
-class AdhkarPage extends ConsumerWidget {
+class AdhkarPage extends ConsumerStatefulWidget {
   const AdhkarPage({super.key});
+
+  @override
+  ConsumerState<AdhkarPage> createState() => _AdhkarPageState();
+}
+
+class _AdhkarPageState extends ConsumerState<AdhkarPage> {
+  final TextEditingController _searchCtrl = TextEditingController();
+  bool _isSearching = false;
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
 
   IconData _getIconData(String? iconName) {
     switch (iconName) {
       case 'wb_sunny_rounded':
         return Icons.wb_sunny_rounded;
       case 'dark_mode_outlined':
-        return Icons.nights_stay_rounded; // Better dark/evening representation
+        return Icons.nights_stay_rounded;
       case 'mosque_rounded':
         return Icons.mosque_rounded;
       case 'bed_rounded':
@@ -70,12 +85,11 @@ class AdhkarPage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final cs = AppColorScheme.of(context);
     final l = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // We watch the adhkarProvider to automatically redraw when any category is completed
     ref.watch(adhkarProvider);
     final notifier = ref.read(adhkarProvider.notifier);
     final categoriesAsync = ref.watch(adhkarCategoriesFutureProvider);
@@ -90,20 +104,53 @@ class AdhkarPage extends ConsumerWidget {
           icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          l.adhkarTitle,
-          style: const TextStyle(
-            fontFamily: 'Cairo',
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
+        title: _isSearching
+            ? TextField(
+                controller: _searchCtrl,
+                textDirection: TextDirection.rtl,
+                autofocus: true,
+                style: const TextStyle(color: Colors.white, fontFamily: 'Cairo', fontSize: 16),
+                decoration: const InputDecoration(
+                  hintText: 'بگەڕێ لە ئەزکارەکان...',
+                  hintStyle: TextStyle(color: Colors.white70, fontSize: 13),
+                  hintTextDirection: TextDirection.rtl,
+                  border: InputBorder.none,
+                ),
+                onChanged: (val) {
+                  setState(() {
+                    _query = val.trim();
+                  });
+                },
+              )
+            : Text(
+                l.adhkarTitle,
+                style: const TextStyle(
+                  fontFamily: 'Cairo',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Colors.white),
-            onPressed: () => ref.refresh(adhkarCategoriesFutureProvider),
-            tooltip: 'نوێکردنەوە',
+            icon: Icon(_isSearching ? Icons.close_rounded : Icons.search_rounded, color: Colors.white),
+            onPressed: () {
+              setState(() {
+                if (_isSearching) {
+                  _isSearching = false;
+                  _searchCtrl.clear();
+                  _query = '';
+                } else {
+                  _isSearching = true;
+                }
+              });
+            },
           ),
+          if (!_isSearching)
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded, color: Colors.white),
+              onPressed: () => ref.refresh(adhkarCategoriesFutureProvider),
+              tooltip: 'نوێکردنەوە',
+            ),
         ],
       ),
       body: RefreshIndicator(
@@ -116,79 +163,80 @@ class AdhkarPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Premium Header Banner
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: isDark
-                        ? [
-                            AppColorScheme.darken(cs.primary, 0.35),
-                            AppColorScheme.darken(cs.primary, 0.45)
-                          ]
-                        : [cs.primary, cs.primaryDeep],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
-                  borderRadius: const BorderRadius.only(
-                    bottomLeft: Radius.circular(24),
-                    bottomRight: Radius.circular(24),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+              // Premium Header Banner (only show when not searching)
+              if (!_isSearching)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isDark
+                          ? [
+                              AppColorScheme.darken(cs.primary, 0.35),
+                              AppColorScheme.darken(cs.primary, 0.45)
+                            ]
+                          : [cs.primary, cs.primaryDeep],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
                     ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.25),
-                          width: 1.5,
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                      bottomRight: Radius.circular(24),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 70,
+                        height: 70,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.25),
+                            width: 1.5,
+                          ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            '🌅',
+                            style: TextStyle(fontSize: 34),
+                          ),
                         ),
                       ),
-                      child: const Center(
-                        child: Text(
-                          '🌅',
-                          style: TextStyle(fontSize: 34),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
+                        style: TextStyle(
+                          fontFamily: 'UthmanicHafs',
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
-                      style: TextStyle(
-                        fontFamily: 'UthmanicHafs',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                      const SizedBox(height: 6),
+                      Text(
+                        'بەرنامەی زیکر و وەردەکانت بۆ هێورکردنەوەی دڵت',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 11,
+                          color: Colors.white.withValues(alpha: 0.8),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'بەرنامەی زیکر و وەردەکانت بۆ هێورکردنەوەی دڵت',
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 11,
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
 
               const SizedBox(height: 20),
 
-              // Checklist List
+              // Categories or Search Results
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: categoriesAsync.when(
@@ -257,6 +305,55 @@ class AdhkarPage extends ConsumerWidget {
                       );
                     }
 
+                    // Search Results View
+                    if (_query.isNotEmpty) {
+                      final lowercaseQuery = _query.toLowerCase();
+                      final results = categories.expand((cat) => cat.adhkars).where((item) {
+                        final inText = item.text.toLowerCase().contains(lowercaseQuery);
+                        final inTrans = item.translation.toLowerCase().contains(lowercaseQuery);
+                        final inSource = item.source?.toLowerCase().contains(lowercaseQuery) ?? false;
+                        final inBenefit = item.benefit.toLowerCase().contains(lowercaseQuery);
+                        return inText || inTrans || inSource || inBenefit;
+                      }).toList();
+
+                      if (results.isEmpty) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 80),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.search_off_rounded, size: 48, color: Colors.orangeAccent),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'هیچ ئەنجامێک نەدۆزرایەوە بۆ "$_query"',
+                                  style: TextStyle(
+                                    fontFamily: 'Cairo',
+                                    fontSize: 14,
+                                    color: cs.textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: results.length,
+                        itemBuilder: (context, index) {
+                          final item = results[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: _AdhkarSearchResultCard(item: item, cs: cs),
+                          );
+                        },
+                      );
+                    }
+
+                    // Default Category Tiles List View
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -422,6 +519,173 @@ class AdhkarPage extends ConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Adhkar Search Result Card
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _AdhkarSearchResultCard extends StatefulWidget {
+  final AdhkarItem item;
+  final AppColorScheme cs;
+
+  const _AdhkarSearchResultCard({required this.item, required this.cs});
+
+  @override
+  State<_AdhkarSearchResultCard> createState() => _AdhkarSearchResultCardState();
+}
+
+class _AdhkarSearchResultCardState extends State<_AdhkarSearchResultCard> {
+  int _count = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCompleted = _count >= widget.item.targetCount;
+    final l = context.l10n;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: widget.cs.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isCompleted
+              ? const Color(0xFF0F8F4C).withValues(alpha: 0.3)
+              : widget.cs.cardBorder,
+          width: isCompleted ? 1.5 : 1.0,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Arabic supplication text
+          Text(
+            widget.item.text,
+            textDirection: TextDirection.rtl,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'UthmanicHafs',
+              fontSize: 16,
+              height: 1.8,
+              color: widget.cs.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Divider(height: 1),
+          const SizedBox(height: 12),
+
+          // Kurdish translation
+          Text(
+            widget.item.translation,
+            textDirection: TextDirection.rtl,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 12,
+              color: widget.cs.textSecondary,
+              height: 1.5,
+            ),
+          ),
+
+          if (widget.item.benefit.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            // Benefit container
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: widget.cs.primary.withValues(alpha: 0.05),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  color: widget.cs.primary.withValues(alpha: 0.1),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline_rounded, size: 14, color: widget.cs.primary),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '${l.adhkarBenefit}: ${widget.item.benefit}',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 10,
+                        color: widget.cs.textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
+          const SizedBox(height: 16),
+
+          // Counter Pill / Tap Area
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${l.adhkarTarget}: ${widget.item.targetCount}',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: widget.cs.textSecondary,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  if (_count < widget.item.targetCount) {
+                    setState(() {
+                      _count++;
+                    });
+                  }
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isCompleted
+                        ? const Color(0xFF0F8F4C)
+                        : widget.cs.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (isCompleted)
+                        const Icon(Icons.check_rounded, color: Colors.white, size: 14)
+                      else
+                        Icon(Icons.add_rounded, color: widget.cs.primary, size: 14),
+                      const SizedBox(width: 6),
+                      Text(
+                        '$_count / ${widget.item.targetCount}',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: isCompleted ? Colors.white : widget.cs.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

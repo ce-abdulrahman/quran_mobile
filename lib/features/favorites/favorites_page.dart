@@ -386,7 +386,7 @@ class _FavoriteCard extends ConsumerWidget {
             const SizedBox(height: 10),
 
             // Kurdish translation
-            if (readerSettings.showKurdish && favorite.textKu != null && favorite.textKu!.isNotEmpty) ...[
+            if (readerSettings.showKurdish == true && favorite.textKu != null && favorite.textKu!.isNotEmpty) ...[
               Text(
                 favorite.textKu!,
                 textDirection: TextDirection.rtl,
@@ -402,7 +402,7 @@ class _FavoriteCard extends ConsumerWidget {
             ],
 
             // English translation
-            if (readerSettings.showEnglish && favorite.textEn != null && favorite.textEn!.isNotEmpty) ...[
+            if (readerSettings.showEnglish == true && favorite.textEn != null && favorite.textEn!.isNotEmpty) ...[
               Text(
                 favorite.textEn!,
                 textDirection: TextDirection.ltr,

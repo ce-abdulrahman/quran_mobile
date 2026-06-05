@@ -8,19 +8,24 @@ import '../repositories/settings_repository.dart';
 import '../repositories/audio_repository.dart';
 import '../repositories/adhkar_repository.dart';
 import '../repositories/tasbih_repository.dart';
+import '../repositories/hadith_repository.dart';
+import '../repositories/tajweed_repository.dart';
 import '../models/ayah_model.dart';
 import '../models/banner_model.dart';
+import '../models/tajweed_rule_model.dart';
 
 import '../models/app_settings_model.dart';
 
 import 'adhkar_provider.dart';
 import 'tasbih_provider.dart';
+import 'hadith_provider.dart';
 
 export 'favorites_provider.dart';
 export 'reading_tracker_provider.dart';
 export 'khatm_provider.dart';
 export 'adhkar_provider.dart';
 export 'tasbih_provider.dart';
+export 'hadith_provider.dart';
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('Initialize SharedPreferences in main.dart first');
@@ -92,12 +97,14 @@ class ReaderSettings {
   final bool showKurdish;
   final bool showEnglish;
   final bool distractionFree;
+  final bool showTajweed;
 
   const ReaderSettings({
     required this.fontSize,
     required this.showKurdish,
     required this.showEnglish,
     required this.distractionFree,
+    required this.showTajweed,
   });
 
   ReaderSettings copyWith({
@@ -105,12 +112,14 @@ class ReaderSettings {
     bool? showKurdish,
     bool? showEnglish,
     bool? distractionFree,
+    bool? showTajweed,
   }) {
     return ReaderSettings(
       fontSize: fontSize ?? this.fontSize,
       showKurdish: showKurdish ?? this.showKurdish,
       showEnglish: showEnglish ?? this.showEnglish,
       distractionFree: distractionFree ?? this.distractionFree,
+      showTajweed: showTajweed ?? this.showTajweed,
     );
   }
 }
@@ -121,6 +130,7 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
   static const _showKuKey = 'reader_show_kurdish';
   static const _showEnKey = 'reader_show_english';
   static const _distractionFreeKey = 'reader_distraction_free';
+  static const _showTajweedKey = 'reader_show_tajweed';
 
   ReaderSettingsNotifier(this._prefs)
       : super(ReaderSettings(
@@ -128,6 +138,7 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
           showKurdish: _prefs.getBool(_showKuKey) ?? true,
           showEnglish: _prefs.getBool(_showEnKey) ?? true,
           distractionFree: _prefs.getBool(_distractionFreeKey) ?? true,
+          showTajweed: _prefs.getBool(_showTajweedKey) ?? true,
         ));
 
   Future<void> setFontSize(double size) async {
@@ -148,6 +159,11 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
   Future<void> toggleDistractionFree(bool val) async {
     state = state.copyWith(distractionFree: val);
     await _prefs.setBool(_distractionFreeKey, val);
+  }
+
+  Future<void> toggleTajweed(bool val) async {
+    state = state.copyWith(showTajweed: val);
+    await _prefs.setBool(_showTajweedKey, val);
   }
 }
 
@@ -230,5 +246,41 @@ final tasbihRepositoryProvider = Provider<TasbihRepository>((ref) {
 final tasbihProvider = StateNotifierProvider<TasbihNotifier, TasbihState>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return TasbihNotifier(prefs, ref);
+});
+
+final hadithRepositoryProvider = Provider<HadithRepository>((ref) {
+  final client = ref.watch(apiClientProvider);
+  final cache = ref.watch(cacheManagerProvider);
+  return HadithRepository(client, cache);
+});
+
+final hadithCategoriesFutureProvider = FutureProvider<List<HadithCategory>>((ref) async {
+  final repo = ref.watch(hadithRepositoryProvider);
+  final result = await repo.getHadiths();
+  return result.when(
+    success: (categories) => categories,
+    error: (msg, code, cached) {
+      if (cached != null) return cached;
+      throw Exception(msg);
+    },
+  );
+});
+
+final tajweedRepositoryProvider = Provider<TajweedRepository>((ref) {
+  final client = ref.watch(apiClientProvider);
+  final cache = ref.watch(cacheManagerProvider);
+  return TajweedRepository(client, cache);
+});
+
+final tajweedRulesFutureProvider = FutureProvider<List<TajweedRuleModel>>((ref) async {
+  final repo = ref.watch(tajweedRepositoryProvider);
+  final result = await repo.getTajweedRules();
+  return result.when(
+    success: (rules) => rules,
+    error: (msg, code, cached) {
+      if (cached != null) return cached;
+      throw Exception(msg);
+    },
+  );
 });
 

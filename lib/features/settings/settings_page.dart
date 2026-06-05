@@ -44,9 +44,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     NotificationService.loadSettings().then((s) {
       if (mounted) {
         setState(() {
-          _notifEnabled = s['enabled'] as bool;
-          _notifHour = s['hour'] as int;
-          _notifMinute = s['minute'] as int;
+          _notifEnabled = (s['enabled'] as bool?) ?? false;
+          _notifHour = (s['hour'] as int?) ?? 8;
+          _notifMinute = (s['minute'] as int?) ?? 0;
         });
       }
     });
@@ -321,7 +321,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       label: 'پیشاندانی وەرگێڕانی کوردی',
                       cs: cs,
                       trailing: Switch(
-                        value: readerSettings.showKurdish,
+                        value: readerSettings.showKurdish == true,
                       activeThumbColor: cs.primary,
                         onChanged: (v) => ref.read(readerSettingsProvider.notifier).toggleKurdish(v),
                       ),
@@ -332,7 +332,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       label: 'پیشاندانی وەرگێڕانی ئینگلیزی',
                       cs: cs,
                       trailing: Switch(
-                        value: readerSettings.showEnglish,
+                        value: readerSettings.showEnglish == true,
                       activeThumbColor: cs.primary,
                         onChanged: (v) => ref.read(readerSettingsProvider.notifier).toggleEnglish(v),
                       ),

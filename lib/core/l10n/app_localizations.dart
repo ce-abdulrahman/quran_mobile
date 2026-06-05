@@ -33,7 +33,8 @@ class AppLocalizations {
 
   // ── Home ─────────────────────────────────────────────────────────
   String get homeVerseSearch => 'گەڕانی ئایەت';
-  String get homeFeatures => 'تایبەتمەندییەکان';
+  String get homeFeaturesOne => 'تایبەتمەندییەکان';
+  String get homeFeaturesTwo => 'ئامانجی ڕۆژانە';
   String get homeDailyVerse => 'ئایەتی ڕۆژ';
   String get homeReadingStreak => 'بەردەوامی خوێندن';
   String homeStreakDaysCount(int days) => '$days ڕۆژ';

@@ -1,4 +1,5 @@
 import 'surah_model.dart';
+import 'tajweed_segment_model.dart';
 
 class AyahModel {
   final int id;
@@ -9,6 +10,7 @@ class AyahModel {
   final SurahModel? surah;
   final int? pageNumber;
   final int? juzNumber;
+  final List<TajweedSegmentModel> tajweedSegments;
 
   const AyahModel({
     required this.id,
@@ -19,6 +21,7 @@ class AyahModel {
     this.surah,
     this.pageNumber,
     this.juzNumber,
+    this.tajweedSegments = const [],
   });
 
   factory AyahModel.fromJson(Map<String, dynamic> json) {
@@ -52,6 +55,11 @@ class AyahModel {
       textKu = textKu.replaceAll(RegExp(r'<[^>]*>'), '');
     }
 
+    final rawSegments = json['tajweed_segments'] as List? ?? [];
+    final segments = rawSegments
+        .map((x) => TajweedSegmentModel.fromJson(x as Map<String, dynamic>))
+        .toList();
+
     return AyahModel(
       id: json['id'] as int? ?? 0,
       ayahNumber: json['ayah_number'] as int? ?? 0,
@@ -61,6 +69,7 @@ class AyahModel {
       surah: surah,
       pageNumber: json['page_number'] as int?,
       juzNumber: json['juz_number'] as int?,
+      tajweedSegments: segments,
     );
   }
 
@@ -74,6 +83,7 @@ class AyahModel {
       'surah': surah?.toJson(),
       'page_number': pageNumber,
       'juz_number': juzNumber,
+      'tajweed_segments': tajweedSegments.map((x) => x.toJson()).toList(),
     };
   }
 }
