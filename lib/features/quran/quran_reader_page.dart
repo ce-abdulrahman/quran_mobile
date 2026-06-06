@@ -14,6 +14,8 @@ import 'quran_providers.dart';
 import 'widgets/audio_player_panel.dart';
 import 'providers/audio_player_provider.dart';
 import 'widgets/share_card_sheet.dart';
+import '../tajweed/tajweed_page.dart';
+import 'mushaf_reader_page.dart';
 
 class QuranReaderPage extends ConsumerStatefulWidget {
   final SurahModel surah;
@@ -367,6 +369,84 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                         ),
                       ],
                     ),
+                    // ── Tajweed Rules Manager Button ──────────────────────────
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      child: readerSettings.showTajweed
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 8, bottom: 4),
+                              child: Consumer(
+                                builder: (context, ref, _) {
+                                  final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
+                                  final activeCount = inactiveRules.isEmpty ? null : inactiveRules.length;
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const TajweedPage(),
+                                        ),
+                                      );
+                                    },
+                                    borderRadius: BorderRadius.circular(14),
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: cs.primary.withValues(alpha: 0.08),
+                                        borderRadius: BorderRadius.circular(14),
+                                        border: Border.all(color: cs.primary.withValues(alpha: 0.2), width: 1),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.tune_rounded, color: cs.primary, size: 20),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  'بەڕێوەبردنی یاساکانی تەجوید',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Cairo',
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: cs.textPrimary,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  activeCount == null
+                                                      ? 'هەموو یاساکان چالاکن'
+                                                      : '$activeCount یاسا ناچالاکە',
+                                                  style: TextStyle(
+                                                    fontFamily: 'Cairo',
+                                                    fontSize: 10,
+                                                    color: activeCount == null
+                                                        ? cs.textSecondary
+                                                        : Colors.orange,
+                                                    fontWeight: activeCount == null
+                                                        ? FontWeight.normal
+                                                        : FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Icon(
+                                            Icons.arrow_forward_ios_rounded,
+                                            color: cs.primary.withValues(alpha: 0.7),
+                                            size: 16,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                     const SizedBox(height: 12),
                     Divider(color: cs.cardBorder),
                     const SizedBox(height: 12),
@@ -438,6 +518,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     final favorites = ref.watch(favoritesProvider);
     final readerSettings = ref.watch(readerSettingsProvider);
     final playerState = ref.watch(audioPlayerProvider);
+    final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
 
     ref.listen(audioPlayerProvider, (previous, next) {
       if (next.currentAyahNumber != null &&
@@ -492,9 +573,36 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                                   color: Colors.white,
                                 ),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.tune_rounded, color: Colors.white),
-                                onPressed: () => _showSettingsBottomSheet(context),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // ── Mushaf Mode Button ────────────────────────
+                                  Tooltip(
+                                    message: 'مۆدی موسحەف',
+                                    child: IconButton(
+                                      icon: const Icon(Icons.menu_book_rounded, color: Colors.white),
+                                      onPressed: () {
+                                        // Get the page number of the first ayah of this surah
+                                        final int? surahStartPage = ayahsAsync.valueOrNull
+                                            ?.firstOrNull
+                                            ?.pageNumber;
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => MushafReaderPage(
+                                              initialPage: surahStartPage,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  // ── Settings Button ───────────────────────────
+                                  IconButton(
+                                    icon: const Icon(Icons.tune_rounded, color: Colors.white),
+                                    onPressed: () => _showSettingsBottomSheet(context),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -728,6 +836,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                       showKurdish: readerSettings.showKurdish == true,
                       showEnglish: readerSettings.showEnglish == true,
                       showTajweed: readerSettings.showTajweed == true,
+                      inactiveRules: inactiveRules,
                       isBookmarked: isBookmarked,
                       isFavorited: isFavorited,
                       isHighlighted: isHighlighted || (playerState.currentAyahNumber == ayah.ayahNumber),
@@ -852,6 +961,7 @@ class _AyahRow extends StatelessWidget {
   final bool showKurdish;
   final bool showEnglish;
   final bool showTajweed;
+  final Set<String> inactiveRules;
   final bool isBookmarked;
   final bool isFavorited;
   final bool isHighlighted;
@@ -868,6 +978,7 @@ class _AyahRow extends StatelessWidget {
     required this.showKurdish,
     required this.showEnglish,
     required this.showTajweed,
+    required this.inactiveRules,
     required this.isBookmarked,
     required this.isFavorited,
     required this.isHighlighted,
@@ -1052,14 +1163,22 @@ class _AyahRow extends StatelessWidget {
         ));
       }
 
-      final segmentColor = _parseColor(segment.colorCode);
-      spans.add(TextSpan(
-        text: text.substring(start, end),
-        style: TextStyle(
-          color: segmentColor,
-          fontWeight: FontWeight.bold,
-        ),
-      ));
+      final isRuleActive = segment.ruleSlug == null || !inactiveRules.contains(segment.ruleSlug);
+      if (isRuleActive) {
+        final segmentColor = _parseColor(segment.colorCode);
+        spans.add(TextSpan(
+          text: text.substring(start, end),
+          style: TextStyle(
+            color: segmentColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ));
+      } else {
+        spans.add(TextSpan(
+          text: text.substring(start, end),
+          style: TextStyle(color: defaultColor),
+        ));
+      }
 
       currentIndex = end;
     }

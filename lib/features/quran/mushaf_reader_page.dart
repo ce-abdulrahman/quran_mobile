@@ -19,7 +19,9 @@ import 'widgets/share_card_sheet.dart';
 // ─────────────────────────────────────────────────────────────────────────────
 
 class MushafReaderPage extends ConsumerStatefulWidget {
-  const MushafReaderPage({super.key});
+  /// Optional page to open at (1-604). If null, resumes from last saved page.
+  final int? initialPage;
+  const MushafReaderPage({super.key, this.initialPage});
 
   @override
   ConsumerState<MushafReaderPage> createState() => _MushafReaderPageState();
@@ -54,7 +56,8 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
 
   Future<void> _loadLastPage() async {
     final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getInt(_lastPageKey) ?? 1;
+    // If initialPage is provided, go there (don't override last saved page)
+    final saved = widget.initialPage ?? prefs.getInt(_lastPageKey) ?? 1;
     if (mounted) {
       setState(() {
         _currentPage = saved.clamp(1, 604);

@@ -9,19 +9,19 @@ class ApiConstants {
   /// Examples:
   ///   LAN dev:    'http://192.168.1.100/api'
   ///   Production: 'https://api.yourqurandomain.com/api'
-  static const String baseUrl = 'http://192.168.1.3:8000/api/v1';
+  static const String baseUrl = 'http://192.168.1.2:8000/api/v1';
 
   // ── Endpoints ──────────────────────────────────────────────────────────────
-  static const String surahs   = '/surahs';
-  static String ayahs(int id)  => '/surahs/$id/ayahs';
-  static const String settings = '/settings';
-  static const String dailyVerse = '/ayahs/daily';
-  static const String banners = '/banners';
-  static const String adhkars = '/adhkars';
-  static const String tasbihs = '/tasbihs';
-  static const String hadiths = '/hadiths';
-  static const String tajweedRules = '/tajweed-rules';
-  static String pageAyahs(int page) => '/search/by-page/$page';
+  static const String surahs          = '/surahs';
+  static String ayahs(int id)         => '/surahs/$id/ayahs';
+  static const String settings        = '/settings';
+  static const String dailyVerse      = '/ayahs/daily';
+  static const String banners         = '/banners';
+  static const String adhkars         = '/adhkars';
+  static const String tasbihs         = '/tasbihs';
+  static const String hadiths         = '/hadiths';
+  static const String tajweedRules    = '/tajweed-rules';
+  static String pageAyahs(int page)   => '/search/by-page/$page';
   static const String memorizationPlansToday = '/memorization-plans/today';
   static const String memorizationReviews = '/memorization-reviews';
 

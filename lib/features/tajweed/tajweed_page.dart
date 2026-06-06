@@ -321,18 +321,22 @@ class _TajweedPageState extends ConsumerState<TajweedPage> with SingleTickerProv
                                     ),
                                   ),
                                   const SizedBox(width: 8),
-                                  // Right Arrow
-                                  IconButton(
-                                    icon: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-                                    color: cs.textSecondary.withValues(alpha: 0.5),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => TajweedRuleDetailPage(rule: rule),
-                                        ),
-                                      );
-                                    },
+                                  GestureDetector(
+                                    onTap: () {}, // Prevent navigating to detail page on switch tap
+                                    child: Consumer(
+                                      builder: (context, ref, child) {
+                                        final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
+                                        final isActive = !inactiveRules.contains(rule.slug);
+                                        return Switch(
+                                          value: isActive,
+                                          activeTrackColor: parsedColor.withValues(alpha: 0.4),
+                                          activeThumbColor: parsedColor,
+                                          onChanged: (val) {
+                                            ref.read(inactiveTajweedRulesProvider.notifier).toggleRule(rule.slug, val);
+                                          },
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ],
                               ),

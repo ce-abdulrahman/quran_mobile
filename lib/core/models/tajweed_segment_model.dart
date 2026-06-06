@@ -7,6 +7,7 @@ class TajweedSegmentModel {
   final String? ruleNameKu;
   final String? ruleNameAr;
   final String? colorCode;
+  final String? ruleSlug;
 
   const TajweedSegmentModel({
     required this.textSegment,
@@ -17,10 +18,12 @@ class TajweedSegmentModel {
     this.ruleNameKu,
     this.ruleNameAr,
     this.colorCode,
+    this.ruleSlug,
   });
 
   factory TajweedSegmentModel.fromJson(Map<String, dynamic> json) {
-    final rule = json['rule'] as Map<String, dynamic>? ?? {};
+    // Laravel eager loads as 'tajweed_rule', but allow 'rule' as fallback
+    final rule = (json['tajweed_rule'] ?? json['rule']) as Map<String, dynamic>? ?? {};
     return TajweedSegmentModel(
       textSegment: json['text_segment'] as String? ?? '',
       startIndex: json['start_index'] as int?,
@@ -29,7 +32,8 @@ class TajweedSegmentModel {
       ruleName: rule['name'] as String?,
       ruleNameKu: rule['name_ku'] as String?,
       ruleNameAr: rule['name_ar'] as String?,
-      colorCode: rule['color_code'] as String?,
+      colorCode: rule['color_code'] as String? ?? json['color_code'] as String?,
+      ruleSlug: rule['slug'] as String? ?? json['rule_slug'] as String?,
     );
   }
 
@@ -40,6 +44,7 @@ class TajweedSegmentModel {
       'end_index': endIndex,
       'note': note,
       'rule': {
+        'slug': ruleSlug,
         'name': ruleName,
         'name_ku': ruleNameKu,
         'name_ar': ruleNameAr,

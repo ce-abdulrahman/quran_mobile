@@ -72,15 +72,18 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
   void _init() {
     _posSub = _audioPlayer.onPositionChanged.listen((pos) {
+      if (!mounted) return;
       state = state.copyWith(position: pos);
       _updateCurrentAyah(pos);
     });
 
     _durSub = _audioPlayer.onDurationChanged.listen((dur) {
+      if (!mounted) return;
       state = state.copyWith(duration: dur);
     });
 
     _stateSub = _audioPlayer.onPlayerStateChanged.listen((s) {
+      if (!mounted) return;
       state = state.copyWith(
         isPlaying: s == PlayerState.playing,
         isLoading: false,
@@ -108,7 +111,8 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
   Future<void> loadSurah(int surahId, {bool force = false}) async {
     if (_loadedSurahId == surahId && !force && state.streamUrl != null) return;
-    
+    if (!mounted) return;
+
     state = state.copyWith(isLoading: true, errorMessage: null, currentAyahNumber: null);
     try {
       final audioData = await ref.read(surahAudioProvider(SurahAudioFamilyParam(
@@ -116,6 +120,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
         reciterId: state.selectedReciterId,
       )).future);
 
+      if (!mounted) return;
       _timings = audioData.timings;
       _loadedSurahId = surahId;
       state = state.copyWith(
@@ -127,21 +132,26 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
       await _audioPlayer.setSourceUrl(audioData.streamUrl);
     } catch (e) {
+      if (!mounted) return;
       state = state.copyWith(isLoading: false, errorMessage: 'فایلی دەنگی بەردەست نییە');
     }
   }
 
   Future<void> playAyah(int surahId, int ayahNumber) async {
+    if (!mounted) return;
     state = state.copyWith(isLoading: true);
     try {
       await loadSurah(surahId);
+      if (!mounted) return;
       final timing = _timings[ayahNumber];
       if (timing != null) {
         await _audioPlayer.seek(Duration(milliseconds: (timing.startTime * 1000).toInt()));
       }
+      if (!mounted) return;
       state = state.copyWith(currentAyahNumber: ayahNumber, isLoading: false);
       await play();
     } catch (_) {
+      if (!mounted) return;
       state = state.copyWith(isLoading: false);
     }
   }

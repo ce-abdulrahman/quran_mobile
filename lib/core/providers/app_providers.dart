@@ -284,3 +284,37 @@ final tajweedRulesFutureProvider = FutureProvider<List<TajweedRuleModel>>((ref) 
   );
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Active/Inactive Tajweed Rules Provider
+// ─────────────────────────────────────────────────────────────────────────────
+
+class InactiveTajweedRulesNotifier extends StateNotifier<Set<String>> {
+  final SharedPreferences _prefs;
+  static const _key = 'inactive_tajweed_rules';
+
+  InactiveTajweedRulesNotifier(this._prefs) : super(_loadInactiveRules(_prefs));
+
+  static Set<String> _loadInactiveRules(SharedPreferences prefs) {
+    final list = prefs.getStringList(_key);
+    if (list == null) return {};
+    return list.toSet();
+  }
+
+  Future<void> toggleRule(String slug, bool active) async {
+    final newState = Set<String>.from(state);
+    if (active) {
+      newState.remove(slug); // Remove from inactive -> active
+    } else {
+      newState.add(slug); // Add to inactive -> inactive
+    }
+    state = newState;
+    await _prefs.setStringList(_key, newState.toList());
+  }
+}
+
+final inactiveTajweedRulesProvider =
+    StateNotifierProvider<InactiveTajweedRulesNotifier, Set<String>>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return InactiveTajweedRulesNotifier(prefs);
+});
+
