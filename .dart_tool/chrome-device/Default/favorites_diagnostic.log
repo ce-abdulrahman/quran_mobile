@@ -152,3 +152,15 @@
 2026-06-06 00:21:43.409: [INFO] Primary account changed.
 2026-06-06 00:21:43.409: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
 2026-06-06 00:21:57.385: [INFO] Sync initialization duration: 14748ms
+2026-06-09 19:01:57.567: [INFO] OnDoneLoading sync enabled: 1
+2026-06-09 19:03:00.977: [INFO] Sync initialization duration: 55563ms
+2026-06-09 19:07:47.094: [INFO] OnDoneLoading sync enabled: 0
+2026-06-09 19:07:54.007: [INFO] Primary account changed.
+2026-06-09 19:07:54.007: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-06-09 19:10:50.107: [INFO] Sync initialization duration: 183008ms
+2026-06-09 19:43:26.679: [INFO] VisibilityChanged: 0
+2026-06-09 21:11:22.893: [INFO] OnDoneLoading sync enabled: 1
+2026-06-09 21:13:28.175: [INFO] Sync initialization duration: 117715ms
+2026-06-09 21:32:01.296: [INFO] OnDoneLoading sync enabled: 0
+2026-06-09 21:32:42.768: [INFO] Primary account changed.
+2026-06-09 21:32:42.768: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet

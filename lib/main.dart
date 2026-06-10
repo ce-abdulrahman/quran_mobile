@@ -14,7 +14,7 @@ void main() async {
   final sharedPrefs = await SharedPreferences.getInstance(); 
 
   // Initialize local notifications
-  await NotificationService.initialize();
+  await NotificationService.initialize(); 
 
   // Reschedule daily notifications if they were previously enabled
   final notifSettings = await NotificationService.loadSettings();

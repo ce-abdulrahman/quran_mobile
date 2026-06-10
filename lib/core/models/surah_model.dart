@@ -6,6 +6,8 @@ class SurahModel {
   final String nameKu;
   final int totalAyahs;
   final String revelationType;
+  final int? pageStart;
+  final int? pageEnd;
 
   const SurahModel({
     required this.id,
@@ -15,6 +17,8 @@ class SurahModel {
     required this.nameKu,
     required this.totalAyahs,
     required this.revelationType,
+    this.pageStart,
+    this.pageEnd,
   });
 
   bool get isMeccan => revelationType.toLowerCase() == 'meccan';
@@ -28,6 +32,8 @@ class SurahModel {
       nameKu: json['name_ku'] as String? ?? '',
       totalAyahs: json['total_ayahs'] as int? ?? json['ayah_count'] as int? ?? 0,
       revelationType: json['revelation_type'] as String? ?? 'Meccan',
+      pageStart: json['page_start'] as int?,
+      pageEnd: json['page_end'] as int?,
     );
   }
 
@@ -40,6 +46,9 @@ class SurahModel {
       'name_ku': nameKu,
       'total_ayahs': totalAyahs,
       'revelation_type': revelationType,
+      'page_start': pageStart,
+      'page_end': pageEnd,
     };
   }
 }
+

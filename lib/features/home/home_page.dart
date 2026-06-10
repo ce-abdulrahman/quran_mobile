@@ -261,7 +261,7 @@ class HomePage extends ConsumerWidget {
     });
 
     // Check if daily verse is already loaded and update the widget on build
-    final dailyVerse = ref.watch(dailyVerseProvider).value;
+    final dailyVerse = ref.watch(dailyVerseProvider).valueOrNull;
     if (dailyVerse != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _updateWidgetWithData(

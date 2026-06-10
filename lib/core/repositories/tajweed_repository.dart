@@ -3,6 +3,7 @@ import '../network/api_client.dart';
 import '../network/api_constants.dart';
 import '../network/api_result.dart';
 import '../models/tajweed_rule_model.dart';
+import '../models/tajweed_category_model.dart';
 
 class TajweedRepository {
   final ApiClient _apiClient;
@@ -57,6 +58,60 @@ class TajweedRepository {
         } catch (_) {}
       }
       return ApiError(e.toString(), cachedData: cachedList);
+    }
+  }
+
+  /// Fetch all active Tajweed categories (with nested rules). Cache-First.
+  Future<ApiResult<List<TajweedCategoryModel>>> getTajweedCategories({bool forceRefresh = false}) async {
+    const cacheKey = 'cache_tajweed_categories';
+
+    if (!forceRefresh) {
+      final cachedJson = _cacheManager.get(cacheKey);
+      if (cachedJson != null && cachedJson is List) {
+        try {
+          final list = cachedJson
+              .map((e) => TajweedCategoryModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+          return ApiSuccess(list);
+        } catch (_) {}
+      }
+    }
+
+    try {
+      final response = await _apiClient.get(ApiConstants.tajweedCategories);
+      final responseData = response.data;
+      if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
+        final rawList = responseData['data'] as List;
+        final cats = rawList
+            .map((e) => TajweedCategoryModel.fromJson(e as Map<String, dynamic>))
+            .toList();
+        await _cacheManager.set(cacheKey, rawList, const Duration(hours: 12));
+        return ApiSuccess(cats);
+      } else {
+        return const ApiError('هەڵەیەک لە بارکردنی جۆرەکانی تەجویددا هەیە');
+      }
+    } on ApiException catch (e) {
+      final cachedJson = _cacheManager.get(cacheKey);
+      List<TajweedCategoryModel>? cached;
+      if (cachedJson != null && cachedJson is List) {
+        try {
+          cached = cachedJson
+              .map((e) => TajweedCategoryModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+        } catch (_) {}
+      }
+      return ApiError(e.message, statusCode: e.statusCode, cachedData: cached);
+    } catch (e) {
+      final cachedJson = _cacheManager.get(cacheKey);
+      List<TajweedCategoryModel>? cached;
+      if (cachedJson != null && cachedJson is List) {
+        try {
+          cached = cachedJson
+              .map((e) => TajweedCategoryModel.fromJson(e as Map<String, dynamic>))
+              .toList();
+        } catch (_) {}
+      }
+      return ApiError(e.toString(), cachedData: cached);
     }
   }
 }

@@ -13,6 +13,7 @@ import '../repositories/tajweed_repository.dart';
 import '../models/ayah_model.dart';
 import '../models/banner_model.dart';
 import '../models/tajweed_rule_model.dart';
+import '../models/tajweed_category_model.dart';
 
 import '../models/app_settings_model.dart';
 
@@ -277,6 +278,18 @@ final tajweedRulesFutureProvider = FutureProvider<List<TajweedRuleModel>>((ref) 
   final result = await repo.getTajweedRules();
   return result.when(
     success: (rules) => rules,
+    error: (msg, code, cached) {
+      if (cached != null) return cached;
+      throw Exception(msg);
+    },
+  );
+});
+
+final tajweedCategoriesProvider = FutureProvider<List<TajweedCategoryModel>>((ref) async {
+  final repo = ref.watch(tajweedRepositoryProvider);
+  final result = await repo.getTajweedCategories();
+  return result.when(
+    success: (cats) => cats,
     error: (msg, code, cached) {
       if (cached != null) return cached;
       throw Exception(msg);

@@ -585,7 +585,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                                         // Get the page number of the first ayah of this surah
                                         final int? surahStartPage = ayahsAsync.valueOrNull
                                             ?.firstOrNull
-                                            ?.pageNumber;
+                                            ?.pageNumber ?? widget.surah.pageStart;
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -1165,7 +1165,7 @@ class _AyahRow extends StatelessWidget {
 
       final isRuleActive = segment.ruleSlug == null || !inactiveRules.contains(segment.ruleSlug);
       if (isRuleActive) {
-        final segmentColor = _parseColor(segment.colorCode);
+        final segmentColor = _parseColor(segment.colorCode, defaultColor);
         spans.add(TextSpan(
           text: text.substring(start, end),
           style: TextStyle(
@@ -1193,13 +1193,23 @@ class _AyahRow extends StatelessWidget {
     return spans;
   }
 
-  Color _parseColor(String? hexString) {
+  Color _parseColor(String? hexString, Color defaultColor) {
     if (hexString == null || hexString.isEmpty) return const Color(0xFF1B7340);
+    // If the color code indicates pure black (#000000) or pure white (#FFFFFF),
+    // use defaultColor so that it's readable in the user's current theme (light or dark mode)
+    final cleaned = hexString.replaceFirst('#', '').toLowerCase();
+    if (cleaned == '000000' || cleaned == 'ffffff') {
+      return defaultColor;
+    }
     try {
       final buffer = StringBuffer();
-      if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
-      buffer.write(hexString.replaceFirst('#', ''));
-      return Color(int.parse(buffer.toString(), radix: 16));
+      if (cleaned.length == 6) buffer.write('ff');
+      buffer.write(cleaned);
+      final parsed = Color(int.parse(buffer.toString(), radix: 16));
+      if (parsed == const Color(0xFF000000) || parsed == const Color(0xFFFFFFFF)) {
+        return defaultColor;
+      }
+      return parsed;
     } catch (_) {
       return const Color(0xFF1B7340);
     }
