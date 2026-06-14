@@ -28,6 +28,17 @@ import '../prayer/prayer_times_page.dart';
 import '../hadith/hadith_page.dart';
 import '../tajweed/tajweed_page.dart';
 import '../memorization/memorization_providers.dart';
+import '../auth/welcome_page.dart';
+import '../auth/profile_page.dart';
+import '../../core/providers/auth_provider.dart';
+import '../../core/providers/tasbih_theme_provider.dart';
+import '../tasbih/themes/theme_selector_page.dart';
+import '../../core/providers/tasbih_session_provider.dart';
+import '../tasbih/active_session_page.dart';
+import '../achievements/achievements_page.dart';
+import '../tasbih/fingerprint/fingerprint_counter_page.dart';
+import '../leaderboard/leaderboard_page.dart';
+import '../statistics/statistics_page.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Ad Slide Data
@@ -152,6 +163,15 @@ List<_CatData> _buildCats(BuildContext context) => [
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
               MaterialPageRoute(builder: (_) => const ReadingTrackerPage(showBackButton: true)),
+            ),
+      ),
+      _CatData(
+        icon: Icons.insights_rounded,
+        iconColor: const Color(0xFF6F42C1),
+        label: (l) => l.statsAndInsightsTitle,
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const StatisticsPage()),
             ),
       ),
       _CatData(
@@ -290,9 +310,15 @@ class HomePage extends ConsumerWidget {
               ),
               child: Column(
                 children: [
+                  // 0. Profile / Guest Welcome Card
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 25, p, 0),
+                    child: const _HomeProfileCard(),
+                  ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
+
                   // 1. Prayer Times Countdown Widget
                   Padding(
-                    padding: EdgeInsets.fromLTRB(p, 35, p, 0),
+                    padding: EdgeInsets.fromLTRB(p, 15, p, 0),
                     child: const _PrayerCountdownBanner(),
                   ).animate().fadeIn(duration: 400.ms, delay: 155.ms),
 
@@ -1992,4 +2018,603 @@ class _KhatmProgressCard extends ConsumerWidget {
       ),
     );
   }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Home Profile Card (Authenticated / Guest State)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _HomeProfileCard extends ConsumerWidget {
+  const _HomeProfileCard();
+
+  Widget _buildStatItem(BuildContext context, String emoji, String value, String label) {
+    final cs = AppColorScheme.of(context);
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: cs.divider.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: cs.cardBorder.withValues(alpha: 0.6)),
+      ),
+      child: Row(
+        children: [
+          Text(emoji, style: const TextStyle(fontSize: 18)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: cs.textPrimary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 9,
+                    color: cs.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAction(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap) {
+    final cs = AppColorScheme.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 20, color: color),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 9,
+              fontWeight: FontWeight.w700,
+              color: cs.textPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final cs = AppColorScheme.of(context);
+    final accentColor = ref.watch(accentColorProvider);
+    final locale = Localizations.localeOf(context).languageCode;
+    final activeTheme = ref.watch(tasbihThemeProvider).activeTheme;
+
+    final isAuthenticated = authState.status == AuthStatus.authenticated && authState.user != null;
+
+    if (isAuthenticated) {
+      final user = authState.user!;
+      final stats = authState.stats ?? {};
+
+      final streak = stats['current_streak'] ?? 0;
+      final achievements = stats['achievements_count'] ?? 0;
+      final goalProgress = stats['goal_completion_rate'] ?? 0;
+      final fingerprintCounts = stats['fingerprint_total_counts'] ?? 0;
+      final themeName = activeTheme?.name ?? 
+          (locale == 'ku' ? 'کەعبە' : (locale == 'ar' ? 'الكعبة' : 'Kaaba Theme'));
+
+      return Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: cs.card,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: cs.cardBorder),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // User info row
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 24,
+                  backgroundColor: accentColor.withValues(alpha: 0.1),
+                  child: Text(
+                    user.name.isNotEmpty ? user.name.substring(0, 1).toUpperCase() : 'U',
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: accentColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        user.name,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: cs.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '@${user.username}',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 12,
+                          color: cs.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.play_circle_outline_rounded, color: accentColor, size: 22),
+                  onPressed: () {
+                    final tasbihState = ref.read(tasbihProvider);
+                    _showStartSessionDialogFromHome(context, ref, tasbihState);
+                  },
+                  tooltip: locale == 'ku' ? 'دەستپێکردنی زیکر' : 'Start Dhikr',
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Stats items row 1
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatItem(
+                    context,
+                    '🔥',
+                    locale == 'ku' ? '$streak ڕۆژ' : (locale == 'ar' ? '$streak يوم' : '$streak Days'),
+                    locale == 'ku' ? 'ستریک' : 'Streak',
+                  ),
+                ),
+                Expanded(
+                  child: _buildStatItem(
+                    context,
+                    '🏆',
+                    '$achievements',
+                    locale == 'ku' ? 'دەستکەوت' : 'Badges',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // Stats items row 2
+            Row(
+              children: [
+                Expanded(
+                  child: _buildStatItem(
+                    context,
+                    '🎨',
+                    themeName,
+                    locale == 'ku' ? 'ڕووکاری چالاک' : 'Active Theme',
+                  ),
+                ),
+                Expanded(
+                  child: _buildStatItem(
+                    context,
+                    '👆',
+                    '$fingerprintCounts',
+                    locale == 'ku' ? 'لێدانی پەنجەمۆر' : 'Fingerprint Taps',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+
+            // Goal progress
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      locale == 'ku'
+                          ? 'پێشکەوتنی ئامانجی ڕۆژانە'
+                          : (locale == 'ar' ? 'نسبة الأهداف اليومية' : 'Daily Goal Progress'),
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: cs.textSecondary,
+                      ),
+                    ),
+                    Text(
+                      '$goalProgress%',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: accentColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: goalProgress / 100,
+                    minHeight: 8,
+                    backgroundColor: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : accentColor.withValues(alpha: 0.1),
+                    valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Divider(color: cs.cardBorder, height: 1),
+            const SizedBox(height: 14),
+
+            // Quick Actions row
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                children: [
+                  _buildQuickAction(
+                    context,
+                    Icons.person_outline_rounded,
+                    locale == 'ku' ? 'پرۆفایل' : 'Profile',
+                    accentColor,
+                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfilePage())),
+                  ),
+                  const SizedBox(width: 16),
+                  _buildQuickAction(
+                    context,
+                    Icons.insights_rounded,
+                    locale == 'ku' ? 'ئامارەکان' : 'Insights',
+                    accentColor,
+                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatisticsPage())),
+                  ),
+                  const SizedBox(width: 16),
+                  _buildQuickAction(
+                    context,
+                    Icons.emoji_events_outlined,
+                    locale == 'ku' ? 'دەستکەوت' : 'Badges',
+                    accentColor,
+                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AchievementsPage())),
+                  ),
+                  const SizedBox(width: 16),
+                  _buildQuickAction(
+                    context,
+                    Icons.palette_outlined,
+                    locale == 'ku' ? 'ڕووکار' : 'Themes',
+                    accentColor,
+                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ThemeSelectorPage())),
+                  ),
+                  const SizedBox(width: 16),
+                  _buildQuickAction(
+                    context,
+                    Icons.leaderboard_outlined,
+                    locale == 'ku' ? 'ڕیزبەندی' : 'Ranks',
+                    accentColor,
+                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LeaderboardPage())),
+                  ),
+                  const SizedBox(width: 16),
+                  _buildQuickAction(
+                    context,
+                    Icons.fingerprint_rounded,
+                    locale == 'ku' ? 'پەنجەمۆر' : 'Fingerprint',
+                    accentColor,
+                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FingerprintCounterPage())),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Guest state profile card
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const WelcomePage()),
+          );
+        },
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [
+                      Colors.grey.shade900,
+                      Colors.grey.shade800,
+                    ]
+                  : [
+                      Colors.grey.shade100,
+                      Colors.white,
+                    ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.grey.shade300,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.person_add_alt_1_outlined,
+                  color: accentColor,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      locale == 'ku'
+                          ? 'بە شێوازی مێوان بەردەوامی'
+                          : (locale == 'ar' ? 'أنت تتصفح كضيف' : 'Browsing as Guest'),
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: cs.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      locale == 'ku'
+                          ? 'تۆماربکە بۆ پاراستنی سەرجەم داتاکانت'
+                          : (locale == 'ar' ? 'سجل لحفظ جميع بياناتك ومزامنتها' : 'Sign up to save & sync your progress'),
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 11,
+                        color: cs.textSecondary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 14,
+                color: cs.textSecondary,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+}
+
+void _showStartSessionDialogFromHome(BuildContext context, WidgetRef ref, TasbihState tasbihState) {
+  final cs = AppColorScheme.of(context);
+  final nameCtrl = TextEditingController();
+  int? selectedPredefinedIndex;
+  final locale = Localizations.localeOf(context).languageCode;
+
+  showDialog(
+    context: context,
+    builder: (ctx) {
+      return StatefulBuilder(
+        builder: (context, setDialogState) {
+          return AlertDialog(
+            backgroundColor: cs.card,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            title: Text(
+              locale == 'ku' ? 'دەستپێکردنی خولی زیکر' : (locale == 'ar' ? 'بدء جلسة ذكر' : 'Start Dhikr Session'),
+              textDirection: TextDirection.rtl,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  Text(
+                    locale == 'ku'
+                        ? 'زیکرێک هەڵبژێرە بۆ دەستپێکردن:'
+                        : (locale == 'ar' ? 'اختر ذكراً للبدء:' : 'Select a dhikr to begin:'),
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary),
+                  ),
+                  const SizedBox(height: 10),
+                  Container(
+                    height: 160,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: cs.cardBorder),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListView.builder(
+                      itemCount: tasbihState.dhikrs.length,
+                      itemBuilder: (c, idx) {
+                        final dhikr = tasbihState.dhikrs[idx];
+                        final isSel = selectedPredefinedIndex == idx;
+                        return ListTile(
+                          dense: true,
+                          selected: isSel,
+                          selectedTileColor: cs.primary.withValues(alpha: 0.1),
+                          title: Text(
+                            dhikr.name,
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontSize: 14,
+                              fontWeight: isSel ? FontWeight.bold : FontWeight.normal,
+                              color: isSel ? cs.primary : cs.textPrimary,
+                            ),
+                          ),
+                          onTap: () {
+                            setDialogState(() {
+                              selectedPredefinedIndex = idx;
+                              nameCtrl.clear();
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    locale == 'ku'
+                        ? 'یان زیکرێکی تایبەت بنووسە:'
+                        : (locale == 'ar' ? 'أو اكتب ذكراً مخصصاً:' : 'Or type custom dhikr:'),
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary),
+                  ),
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: nameCtrl,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(fontFamily: 'Cairo', fontSize: 14, color: cs.textPrimary),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: cs.primary),
+                      ),
+                    ),
+                    onChanged: (val) {
+                      if (val.trim().isNotEmpty && selectedPredefinedIndex != null) {
+                        setDialogState(() {
+                          selectedPredefinedIndex = null;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(
+                  locale == 'ku' ? 'پاشگەزبوونەوە' : (locale == 'ar' ? 'إلغاء' : 'Cancel'),
+                  style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  int? dhikrId;
+                  String? customName;
+                  if (selectedPredefinedIndex != null) {
+                    final dhikr = tasbihState.dhikrs[selectedPredefinedIndex!];
+                    if (dhikr.isCustom) {
+                      customName = dhikr.name;
+                    } else {
+                      dhikrId = int.tryParse(dhikr.id);
+                    }
+                  } else {
+                    customName = nameCtrl.text.trim();
+                    if (customName.isEmpty) return;
+                  }
+
+                  Navigator.pop(ctx); // Close dialog
+
+                  // Show loader
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (_) => const Center(child: CircularProgressIndicator()),
+                  );
+
+                  final success = await ref.read(tasbihSessionProvider.notifier).startSession(
+                        dhikrId: dhikrId,
+                        customDhikrName: customName,
+                      );
+
+                  if (context.mounted) {
+                    Navigator.pop(context); // Close loader
+                  }
+
+                  if (success && context.mounted) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ActiveSessionPage()),
+                    );
+                  } else if (context.mounted) {
+                    final errorMsg = ref.read(tasbihSessionProvider).errorMessage ?? 'Error starting session';
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(errorMsg, style: const TextStyle(fontFamily: 'Cairo')),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: cs.primary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: Text(
+                  locale == 'ku' ? 'دەستپێکردن' : (locale == 'ar' ? 'بدء' : 'Start'),
+                  style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
 } 

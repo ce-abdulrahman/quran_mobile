@@ -57,10 +57,15 @@ class AudioPlayerPanel extends ConsumerWidget {
               ),
             ),
           ),
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          child: SafeArea(
+            top: false,
+            bottom: true,
+            child: SingleChildScrollView(
+              physics: const NeverScrollableScrollPhysics(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
               // Pull indicator handle
               Container(
                 width: 36,
@@ -282,7 +287,9 @@ class AudioPlayerPanel extends ConsumerWidget {
           ),
         ),
       ),
-    );
+    ),
+  ),
+);
   }
 
   void _showReciterSelector(

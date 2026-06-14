@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/providers/app_providers.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/reminder_engine.dart';
+import 'core/repositories/reminder_repository.dart';
+import 'core/network/api_client.dart';
 import 'features/splash/splash_page.dart';
 import 'shell/app_shell.dart';
 
@@ -15,6 +18,10 @@ void main() async {
 
   // Initialize local notifications
   await NotificationService.initialize(); 
+
+  // Setup smart reminder click response handlers for tracking analytics
+  final reminderRepo = ReminderRepository(ApiClient());
+  await ReminderEngine.setupNotificationResponseHandler(reminderRepo);
 
   // Reschedule daily notifications if they were previously enabled
   final notifSettings = await NotificationService.loadSettings();

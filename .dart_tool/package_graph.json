@@ -9,14 +9,22 @@
       "dependencies": [
         "adhan",
         "audioplayers",
+        "confetti",
+        "crypto",
         "cupertino_icons",
         "dio",
+        "encrypt",
+        "file_picker",
+        "fl_chart",
         "flutter",
         "flutter_animate",
         "flutter_local_notifications",
         "flutter_localizations",
         "flutter_riverpod",
+        "hive",
+        "hive_flutter",
         "home_widget",
+        "intl",
         "path_provider",
         "share_plus",
         "shared_preferences",
@@ -49,6 +57,85 @@
         "stack_trace",
         "stream_channel",
         "test_api",
+        "vector_math"
+      ]
+    },
+    {
+      "name": "intl",
+      "version": "0.20.2",
+      "dependencies": [
+        "clock",
+        "meta",
+        "path"
+      ]
+    },
+    {
+      "name": "hive_flutter",
+      "version": "1.1.0",
+      "dependencies": [
+        "flutter",
+        "hive",
+        "path",
+        "path_provider"
+      ]
+    },
+    {
+      "name": "hive",
+      "version": "2.2.3",
+      "dependencies": [
+        "crypto",
+        "meta"
+      ]
+    },
+    {
+      "name": "fl_chart",
+      "version": "0.70.2",
+      "dependencies": [
+        "equatable",
+        "flutter",
+        "vector_math"
+      ]
+    },
+    {
+      "name": "crypto",
+      "version": "3.0.7",
+      "dependencies": [
+        "typed_data"
+      ]
+    },
+    {
+      "name": "file_picker",
+      "version": "11.0.2",
+      "dependencies": [
+        "cross_file",
+        "dbus",
+        "ffi",
+        "flutter",
+        "flutter_plugin_android_lifecycle",
+        "flutter_web_plugins",
+        "path",
+        "plugin_platform_interface",
+        "web",
+        "win32"
+      ]
+    },
+    {
+      "name": "encrypt",
+      "version": "5.0.3",
+      "dependencies": [
+        "args",
+        "asn1lib",
+        "clock",
+        "collection",
+        "crypto",
+        "pointycastle"
+      ]
+    },
+    {
+      "name": "confetti",
+      "version": "0.8.0",
+      "dependencies": [
+        "flutter",
         "vector_math"
       ]
     },
@@ -296,6 +383,96 @@
       ]
     },
     {
+      "name": "equatable",
+      "version": "2.0.8",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
+    },
+    {
+      "name": "typed_data",
+      "version": "1.4.0",
+      "dependencies": [
+        "collection"
+      ]
+    },
+    {
+      "name": "dbus",
+      "version": "0.7.12",
+      "dependencies": [
+        "args",
+        "ffi",
+        "meta",
+        "xml"
+      ]
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
+      "dependencies": []
+    },
+    {
+      "name": "cross_file",
+      "version": "0.3.5+2",
+      "dependencies": [
+        "meta",
+        "web"
+      ]
+    },
+    {
+      "name": "win32",
+      "version": "5.15.0",
+      "dependencies": [
+        "ffi"
+      ]
+    },
+    {
+      "name": "ffi",
+      "version": "2.2.0",
+      "dependencies": []
+    },
+    {
+      "name": "plugin_platform_interface",
+      "version": "2.1.8",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "flutter_plugin_android_lifecycle",
+      "version": "2.0.35",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "flutter_web_plugins",
+      "version": "0.0.0",
+      "dependencies": [
+        "flutter"
+      ]
+    },
+    {
+      "name": "pointycastle",
+      "version": "3.9.1",
+      "dependencies": [
+        "collection",
+        "convert",
+        "js"
+      ]
+    },
+    {
+      "name": "asn1lib",
+      "version": "1.6.5",
+      "dependencies": []
+    },
+    {
+      "name": "args",
+      "version": "2.7.0",
+      "dependencies": []
+    },
+    {
       "name": "path_provider_windows",
       "version": "2.3.0",
       "dependencies": [
@@ -344,23 +521,6 @@
         "jni_flutter",
         "path_provider_platform_interface"
       ]
-    },
-    {
-      "name": "win32",
-      "version": "5.15.0",
-      "dependencies": [
-        "ffi"
-      ]
-    },
-    {
-      "name": "web",
-      "version": "1.1.1",
-      "dependencies": []
-    },
-    {
-      "name": "ffi",
-      "version": "2.2.0",
-      "dependencies": []
     },
     {
       "name": "url_launcher_platform_interface",
@@ -418,24 +578,9 @@
       ]
     },
     {
-      "name": "flutter_web_plugins",
-      "version": "0.0.0",
-      "dependencies": [
-        "flutter"
-      ]
-    },
-    {
       "name": "mime",
       "version": "2.0.0",
       "dependencies": []
-    },
-    {
-      "name": "cross_file",
-      "version": "0.3.5+2",
-      "dependencies": [
-        "meta",
-        "web"
-      ]
     },
     {
       "name": "flutter_local_notifications_platform_interface",
@@ -619,15 +764,6 @@
       ]
     },
     {
-      "name": "intl",
-      "version": "0.20.2",
-      "dependencies": [
-        "clock",
-        "meta",
-        "path"
-      ]
-    },
-    {
       "name": "flutter_shaders",
       "version": "0.1.3",
       "dependencies": [
@@ -719,10 +855,24 @@
       ]
     },
     {
-      "name": "plugin_platform_interface",
-      "version": "2.1.8",
+      "name": "xml",
+      "version": "6.6.1",
       "dependencies": [
-        "meta"
+        "collection",
+        "meta",
+        "petitparser"
+      ]
+    },
+    {
+      "name": "js",
+      "version": "0.7.2",
+      "dependencies": []
+    },
+    {
+      "name": "convert",
+      "version": "3.1.2",
+      "dependencies": [
+        "typed_data"
       ]
     },
     {
@@ -773,38 +923,22 @@
       ]
     },
     {
-      "name": "dbus",
-      "version": "0.7.12",
-      "dependencies": [
-        "args",
-        "ffi",
-        "meta",
-        "xml"
-      ]
-    },
-    {
       "name": "fixnum",
       "version": "1.1.1",
       "dependencies": []
     },
     {
-      "name": "crypto",
-      "version": "3.0.7",
-      "dependencies": [
-        "typed_data"
-      ]
-    },
-    {
-      "name": "typed_data",
-      "version": "1.4.0",
-      "dependencies": [
-        "collection"
-      ]
-    },
-    {
       "name": "vm_service",
       "version": "15.2.0",
       "dependencies": []
+    },
+    {
+      "name": "petitparser",
+      "version": "7.0.2",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
     },
     {
       "name": "pub_semver",
@@ -847,20 +981,6 @@
       ]
     },
     {
-      "name": "args",
-      "version": "2.7.0",
-      "dependencies": []
-    },
-    {
-      "name": "xml",
-      "version": "6.6.1",
-      "dependencies": [
-        "collection",
-        "meta",
-        "petitparser"
-      ]
-    },
-    {
       "name": "yaml",
       "version": "3.1.3",
       "dependencies": [
@@ -876,14 +996,6 @@
         "collection",
         "meta",
         "pub_semver"
-      ]
-    },
-    {
-      "name": "petitparser",
-      "version": "7.0.2",
-      "dependencies": [
-        "collection",
-        "meta"
       ]
     }
   ],

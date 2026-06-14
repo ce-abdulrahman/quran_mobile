@@ -10,12 +10,15 @@ import '../repositories/adhkar_repository.dart';
 import '../repositories/tasbih_repository.dart';
 import '../repositories/hadith_repository.dart';
 import '../repositories/tajweed_repository.dart';
+import '../repositories/backup_repository.dart';
+import '../repositories/auth_repository.dart';
 import '../models/ayah_model.dart';
 import '../models/banner_model.dart';
 import '../models/tajweed_rule_model.dart';
 import '../models/tajweed_category_model.dart';
 
 import '../models/app_settings_model.dart';
+import '../constants/app_colors.dart';
 
 import 'adhkar_provider.dart';
 import 'tasbih_provider.dart';
@@ -27,6 +30,7 @@ export 'khatm_provider.dart';
 export 'adhkar_provider.dart';
 export 'tasbih_provider.dart';
 export 'hadith_provider.dart';
+export 'reminder_provider.dart';
 
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('Initialize SharedPreferences in main.dart first');
@@ -38,7 +42,15 @@ final cacheManagerProvider = Provider<CacheManager>((ref) {
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient();
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return ApiClient(
+    tokenProvider: () => prefs.getString('auth_token') ?? '',
+  );
+});
+
+final authRepositoryProvider = Provider<AuthRepository>((ref) {
+  final client = ref.watch(apiClientProvider);
+  return AuthRepository(client);
 });
 
 final surahRepositoryProvider = Provider<SurahRepository>((ref) {
@@ -188,6 +200,13 @@ class AccentColorNotifier extends StateNotifier<Color> {
     state = color;
     await _prefs.setInt(_key, color.toARGB32());
   }
+
+  Future<void> cycle() async {
+    final colors = AppColors.accentColorOptions.map((entry) => entry.$1).toList();
+    final currentIndex = colors.indexWhere((c) => c.toARGB32() == state.toARGB32());
+    final nextIndex = (currentIndex + 1) % colors.length;
+    await setColor(colors[nextIndex]);
+  }
 }
 
 final accentColorProvider =
@@ -330,4 +349,10 @@ final inactiveTajweedRulesProvider =
   final prefs = ref.watch(sharedPreferencesProvider);
   return InactiveTajweedRulesNotifier(prefs);
 });
+
+final backupRepositoryProvider = Provider<BackupRepository>((ref) {
+  final client = ref.watch(apiClientProvider);
+  return BackupRepository(client);
+});
+
 

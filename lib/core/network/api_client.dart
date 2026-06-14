@@ -5,9 +5,9 @@ import 'api_constants.dart';
 class ApiClient {
   final Dio _dio;
 
-  ApiClient({Dio? dio}) : _dio = dio ?? _createDio();
+  ApiClient({Dio? dio, String Function()? tokenProvider}) : _dio = dio ?? _createDio(tokenProvider);
 
-  static Dio _createDio() {
+  static Dio _createDio([String Function()? tokenProvider]) {
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
@@ -19,6 +19,20 @@ class ApiClient {
         },
       ),
     );
+
+    if (tokenProvider != null) {
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            final token = tokenProvider();
+            if (token.isNotEmpty) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
+            return handler.next(options);
+          },
+        ),
+      );
+    }
 
     if (kDebugMode) {
       dio.interceptors.add(
@@ -86,6 +100,44 @@ class ApiClient {
         data: data,
         queryParameters: queryParameters,
         options: options,
+        cancelToken: cancelToken,
+      );
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
+  Future<Response<T>> delete<T>(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      return await _dio.delete<T>(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+      );
+    } on DioException catch (e) {
+      throw _handleDioError(e);
+    }
+  }
+
+  Future<void> download(
+    String urlPath,
+    String savePath, {
+    ProgressCallback? onReceiveProgress,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      await _dio.download(
+        urlPath,
+        savePath,
+        onReceiveProgress: onReceiveProgress,
         cancelToken: cancelToken,
       );
     } on DioException catch (e) {

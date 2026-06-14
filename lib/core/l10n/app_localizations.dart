@@ -76,6 +76,17 @@ class AppLocalizations {
   String get tasbihTotal => 'کۆی گشتی';
   String get tasbihDhikrBreakdown => 'جیاکردنەوەی ذکرەکان';
   String get tasbihHistoryLogs => 'تۆمارەکان';
+  String get tasbihDailyGoal => 'ئامانجی ڕۆژانە';
+  String get tasbihChangeGoal => 'گۆڕینی ئامانج';
+  String get tasbihPredefinedGoals => 'ئامانجە دیاریکراوەکان';
+  String get tasbihCustomGoal => 'ئامانجی تایبەت';
+  String get tasbihGoalCompleted => 'پیرۆزە! ئامانجی ڕۆژانەت تەواو کرد 🎉';
+  String get tasbihGoalSelect => 'دیاریکردنی ئامانج';
+  String get tasbihGoalMinError => 'تکایە ژمارەیەک بنووسە لە ١ یان زیاتر بێت';
+
+  // ── Statistics ───────────────────────────────────────────────────
+  String get statsAndInsightsTitle => 'ئامار و زانیارییەکان';
+  String get statsQuickActionInsights => 'ئامارەکان';
 
   // ── Search ───────────────────────────────────────────────────────
   String get searchHint => 'گەڕان بەدوای ئایەت، سورەتدا...';

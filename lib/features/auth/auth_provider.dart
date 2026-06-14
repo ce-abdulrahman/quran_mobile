@@ -1,13 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class AuthState {
-  final bool isAuthenticated;
-  const AuthState({required this.isAuthenticated});
-}
-
-final authProvider = Provider<AuthState>((ref) {
-  return const AuthState(isAuthenticated: false);
-});
+export '../../core/providers/auth_provider.dart';
 
 final readingStreaksProvider = FutureProvider<Map<String, dynamic>?>((ref) async {
   return {

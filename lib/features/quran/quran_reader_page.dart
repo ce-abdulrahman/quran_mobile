@@ -221,10 +221,11 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
               ),
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
               child: SafeArea(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
                     Center(
                       child: Container(
                         width: 48,
@@ -499,6 +500,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                   ],
                 ),
               ),
+            ),
             );
           },
         );

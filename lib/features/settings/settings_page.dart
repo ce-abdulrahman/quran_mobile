@@ -5,6 +5,8 @@ import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/services/notification_service.dart';
+import 'reminders_page.dart';
+import 'backup_restore_page.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Settings Page
@@ -444,8 +446,50 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       ),
                       secondChild: const SizedBox.shrink(),
                     ),
+                    const Divider(height: 1),
+                    _SettingRow(
+                      icon: Icons.alarm_on_rounded,
+                      label: 'ئاگادارکردنەوەی زیرەک',
+                      subLabel: 'کات و دووبارەبوونەوەی ئاگادارکردنەوەکان ڕێکبخە',
+                      cs: cs,
+                      trailing: IconButton(
+                        icon: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: cs.primary),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const RemindersPage()),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ).animate().fadeIn(duration: 300.ms, delay: 175.ms),
+
+                const SizedBox(height: 16),
+
+                // ── Backup & Restore card ─────────────────────────
+                _SectionLabel(label: 'پاراستنی زانیارییەکان', cs: cs),
+                const SizedBox(height: 10),
+                _SettingsCard(
+                  cs: cs,
+                  children: [
+                    _SettingRow(
+                      icon: Icons.backup_rounded,
+                      label: 'پاشەکەوت و گەڕاندنەوە',
+                      subLabel: 'زانیارییەکانت بپارێزە یان بگەڕێنەوە',
+                      cs: cs,
+                      trailing: IconButton(
+                        icon: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: cs.primary),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const BackupRestorePage()),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ).animate().fadeIn(duration: 300.ms, delay: 190.ms),
 
                 const SizedBox(height: 16),
 
