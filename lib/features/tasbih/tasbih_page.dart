@@ -9,18 +9,14 @@ import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/models/tasbih_model.dart';
-import '../leaderboard/leaderboard_page.dart';
 import '../../core/providers/tasbih_session_provider.dart';
 import 'active_session_page.dart';
-import 'sessions_analytics_page.dart';
-import 'themes/theme_selector_page.dart';
 import '../../core/providers/tasbih_theme_provider.dart';
 import '../../core/models/tasbih_theme_model.dart';
 import '../../core/models/user_theme_preference_model.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
-import 'fingerprint/fingerprint_counter_page.dart';
-import '../statistics/statistics_page.dart';
+import 'feature_menu_registry.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tasbih Page
@@ -138,9 +134,6 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
   late final AnimationController _ringCtrl;
   late final Animation<double> _ringAnim;
 
-  // Tab controller
-  late final TabController _tabController;
-
   @override
   void initState() {
     super.initState();
@@ -150,14 +143,13 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
     )..repeat();
     _ringAnim = CurvedAnimation(parent: _ringCtrl, curve: Curves.linear);
 
-    _tabController = TabController(length: 2, vsync: this);
     _loadHistory();
+    _checkFirstLaunchHint();
   }
 
   @override
   void dispose() {
     _ringCtrl.dispose();
-    _tabController.dispose();
     _rippleTimer?.cancel();
     _audioPlayer.dispose();
     super.dispose();
@@ -886,272 +878,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
     }
   }
 
-  // ── Tab Widgets ─────────────────────────────────────────────────────
-
-  Widget _buildCounterTab(AppColorScheme cs, AppLocalizations l, bool isDark, TasbihState tasbihState) {
-    if (tasbihState.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    if (tasbihState.dhikrs.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'هیچ زیکرێک بەردەست نییە',
-              style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              onPressed: _showAddDhikrDialog,
-              style: ElevatedButton.styleFrom(backgroundColor: cs.primary),
-              icon: const Icon(Icons.add_rounded, color: Colors.white),
-              label: const Text('زیادکردنی یەکەم زیکر', style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // Safety bounds check
-    if (_selectedDhikrIndex >= tasbihState.dhikrs.length) {
-      _selectedDhikrIndex = 0;
-    }
-
-    final activeDhikr = tasbihState.dhikrs[_selectedDhikrIndex];
-    final count = tasbihState.counts[activeDhikr.id] ?? 0;
-
-    final themeState = ref.watch(tasbihThemeProvider);
-    final activeTheme = themeState.activeTheme;
-    final activePreferences = themeState.activePreferences;
-
-    return Stack(
-      children: [
-        if (activeTheme != null)
-          _buildThemeBackground(context, activeTheme, isDark),
-        Column(
-          children: [
-            // ── Header Banner ────────────────────────────────────────
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: isDark
-                      ? [AppColorScheme.darken(cs.primary, 0.35), AppColorScheme.darken(cs.primary, 0.42)]
-                      : [cs.primary, cs.primaryDeep],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(24),
-                  bottomRight: Radius.circular(24),
-                ),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.radio_button_checked_rounded, color: Colors.white, size: 14),
-                            SizedBox(width: 6),
-                            Text(
-                              'تەسبیحی داینامیکی',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            '🔥',
-                            style: TextStyle(fontSize: 18),
-                          ).animate(onPlay: (c) => c.repeat(reverse: true))
-                           .scale(begin: const Offset(0.9, 0.9), end: const Offset(1.15, 1.15), duration: 1200.ms),
-                          const SizedBox(width: 6),
-                          Text(
-                            '${tasbihState.currentStreak} رۆژ',
-                            style: const TextStyle(
-                              fontFamily: 'Cairo',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        'درێژترین بەردەوامی: ${tasbihState.longestStreak} ڕۆژ',
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 11,
-                          color: Colors.white.withValues(alpha: 0.75),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            _buildDailyGoalCard(cs, l, tasbihState),
-            _buildSessionBanner(context, cs, ref, tasbihState),
-
-            // ── Warning State Banner ──────────────────────────────────
-            if (tasbihState.isWarningState)
-              Container(
-                width: double.infinity,
-                margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF3CD),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0xFFFFEBAA)),
-                ),
-                child: Row(
-                  children: [
-                    const Text(
-                      '⚠️',
-                      style: TextStyle(fontSize: 20),
-                    ).animate(onPlay: (c) => c.repeat(reverse: true))
-                     .shake(hz: 3, curve: Curves.easeInOut),
-                    const SizedBox(width: 12),
-                    const Expanded(
-                      child: Text(
-                        'زنجیرەکەت لە مەترسیدایە! زیکرێک بکە بۆ پاراستنی زنجیرەکەت.',
-                        textDirection: TextDirection.rtl,
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 12.5,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF856404),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ).animate().fadeIn(duration: 450.ms).slideY(begin: -0.1, end: 0.0),
-
-            // ── Dhikr selector scroll row ──────────────────────────────
-            _DhikrChips(
-              cs: cs,
-              dhikrs: tasbihState.dhikrs,
-              selectedIndex: _selectedDhikrIndex,
-              onSelected: (i) {
-                setState(() {
-                  _selectedDhikrIndex = i;
-                });
-              },
-              onAddPressed: _showAddDhikrDialog,
-              onDeletePressed: (id) {
-                final name = tasbihState.dhikrs.firstWhere((d) => d.id == id).name;
-                _onDeleteDhikr(id, name);
-              },
-            ),
-
-            Expanded(
-              child: GestureDetector(
-                onTapDown: (details) => _onTap(details, activeDhikr),
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  color: Colors.transparent,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Animated ring
-                      _AnimatedRing(
-                        animation: _ringAnim,
-                        isDark: isDark,
-                        color: cs.primary,
-                        theme: activeTheme,
-                        preferences: activePreferences,
-                      ),
-
-                      // Counter
-                      _CounterDisplay(
-                        count: count,
-                        cs: cs,
-                        target: activeDhikr.target,
-                        theme: activeTheme,
-                        preferences: activePreferences,
-                      )
-                        .animate(key: ValueKey('count-${activeDhikr.id}-$count'))
-                        .scale(
-                          begin: const Offset(1.1, 1.1),
-                          end: const Offset(1.0, 1.0),
-                          duration: 200.ms,
-                          curve: Curves.easeOut,
-                        ),
-
-                      // Ripple
-                      if (_rippleVisible && _ripplePos != null)
-                        Positioned(
-                          left: _ripplePos!.dx - 40,
-                          top: _ripplePos!.dy - 40,
-                          child: _RippleEffect(),
-                        ),
-
-                      // Tap hint at bottom
-                      Positioned(
-                        bottom: 20,
-                        child: Text(
-                          l.tasbihTapAnywhere,
-                          textDirection: TextDirection.rtl,
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 13,
-                            color: cs.textSecondary,
-                          ),
-                        ).animate(onPlay: (c) => c.repeat(reverse: true))
-                            .fadeIn(duration: 1200.ms)
-                            .then()
-                            .fadeOut(duration: 1200.ms),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // ── Reset button ──────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
-              child: _ResetButton(onReset: () => _reset(activeDhikr), l: l),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
+  // ── Counter UI & Dialogs ──────────────────────────────────────────────
 
   Widget _buildThemeBackground(BuildContext context, TasbihThemeModel theme, bool isDark) {
     final metadata = theme.themeMetadata;
@@ -1217,535 +944,318 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
     return const SizedBox.shrink();
   }
 
-  Widget _buildMetricCard(String title, String value, Color color, AppColorScheme cs) {
-    return Expanded(
+  bool _hintShown = true;
+
+  void _checkFirstLaunchHint() async {
+    final prefs = await SharedPreferences.getInstance();
+    final shown = prefs.getBool('tasbih_first_launch_hint_shown') ?? false;
+    setState(() {
+      _hintShown = shown;
+    });
+  }
+
+  void _dismissHint() async {
+    if (!_hintShown) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('tasbih_first_launch_hint_shown', true);
+      setState(() {
+        _hintShown = true;
+      });
+    }
+  }
+
+  Widget _buildFloatingHintOverlay(AppColorScheme cs, AppLocalizations l) {
+    return Positioned(
+      top: 16,
+      left: 16,
+      right: 16,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: cs.card,
+          color: cs.primary.withValues(alpha: 0.95),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: cs.cardBorder),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
-            )
-          ],
-        ),
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: cs.textSecondary,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              value,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildWeeklyChart(AppColorScheme cs, AppLocalizations l) {
-    final now = DateTime.now();
-    final List<DateTime> dates = List.generate(7, (i) => now.subtract(Duration(days: 6 - i)));
-
-    final List<int> dailyTotals = dates.map((date) {
-      final dateStr = date.toIso8601String().substring(0, 10);
-      return _history
-          .where((entry) => entry['date'] == dateStr)
-          .fold(0, (sum, entry) => sum + ((entry['count'] as num?)?.toInt() ?? 0));
-    }).toList();
-
-    final maxVal = dailyTotals.fold(0, (m, val) => val > m ? val : m);
-    const double maxBarHeight = 100.0;
-
-    String getWeekdayKurdish(int weekday) {
-      switch (weekday) {
-        case DateTime.monday: return 'د';
-        case DateTime.tuesday: return 'س';
-        case DateTime.wednesday: return 'چ';
-        case DateTime.thursday: return 'پ';
-        case DateTime.friday: return 'هـ';
-        case DateTime.saturday: return 'ش';
-        case DateTime.sunday: return 'ی';
-        default: return '';
-      }
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cs.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cs.cardBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                l.tasbihWeek,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: cs.textPrimary,
-                ),
-              ),
-              Text(
-                '${l.tasbihTotal}: $_weekTotal',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: cs.textSecondary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: List.generate(7, (i) {
-              final total = dailyTotals[i];
-              final date = dates[i];
-              final isToday = date.day == now.day && date.month == now.month && date.year == now.year;
-              final double heightFraction = maxVal > 0 ? (total / maxVal) : 0.0;
-              final double barHeight = heightFraction * maxBarHeight;
-
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    total > 0 ? '$total' : '',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: isToday ? cs.primary : cs.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 16,
-                    height: barHeight > 0 ? barHeight : 6.0,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: total > 0
-                            ? (isToday
-                                ? [cs.primary, AppColorScheme.darken(cs.primary, 0.15)]
-                                : [cs.textSecondary.withValues(alpha: 0.6), cs.textSecondary.withValues(alpha: 0.4)])
-                            : [cs.divider, cs.divider],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    getWeekdayKurdish(date.weekday),
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 12,
-                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                      color: isToday ? cs.primary : cs.textSecondary,
-                    ),
-                  ),
-                ],
-              );
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDhikrBreakdown(AppColorScheme cs, AppLocalizations l, List<TasbihModel> activeDhikrs) {
-    final Map<String, String> dhikrNames = {};
-    final Map<String, int> totals = {};
-    
-    // Seed with active ones
-    for (final d in activeDhikrs) {
-      dhikrNames[d.id] = d.name;
-    }
-    
-    for (final entry in _history) {
-      final id = (entry['dhikrId'] ?? '').toString();
-      if (id.isEmpty) continue;
-      final count = ((entry['count'] as num?)?.toInt() ?? 0);
-      if (count <= 0) continue;
-      
-      final name = entry['name'] as String? ?? dhikrNames[id] ?? id;
-      dhikrNames[id] = name;
-      totals[id] = (totals[id] ?? 0) + count;
-    }
-    
-    final grandTotal = _allTimeTotal;
-    
-    // Sort by count descending
-    final sortedIds = totals.keys.toList()..sort((a, b) => (totals[b] ?? 0).compareTo(totals[a] ?? 0));
-    
-    final colors = [
-      const Color(0xFF009688), // Teal
-      const Color(0xFF4CAF50), // Green
-      const Color(0xFFFFC107), // Gold/Amber
-      const Color(0xFF2196F3), // Blue
-      const Color(0xFF7B1FA2), // Purple
-      const Color(0xFFE53935), // Red
-    ];
-
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cs.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cs.cardBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            l.tasbihDhikrBreakdown,
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: cs.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          if (sortedIds.isEmpty)
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  'هیچ داتایەک بەردەست نییە',
-                  style: TextStyle(fontFamily: 'Cairo', fontSize: 13, color: cs.textSecondary),
-                ),
-              ),
-            )
-          else
-            ...List.generate(sortedIds.length, (i) {
-              final id = sortedIds[i];
-              final count = totals[id] ?? 0;
-              final name = dhikrNames[id] ?? id;
-              final double percent = grandTotal > 0 ? (count / grandTotal) : 0.0;
-              final color = colors[i % colors.length];
-
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          name,
-                          textDirection: TextDirection.rtl,
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: cs.textPrimary,
-                          ),
-                        ),
-                        Text(
-                          '$count (${(percent * 100).toStringAsFixed(0)}%)',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 13,
-                            fontWeight: FontWeight.bold,
-                            color: color,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Stack(
-                      children: [
-                        Container(
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: cs.divider.withValues(alpha: 0.5),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        FractionallySizedBox(
-                          widthFactor: percent > 0 ? percent : 0.001,
-                          child: Container(
-                            height: 8,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [color, color.withValues(alpha: 0.7)],
-                              ),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHistoryItem(String dateStr, AppColorScheme cs, AppLocalizations l, List<TasbihModel> activeDhikrs) {
-    final entries = _history.where((e) => e['date'] == dateStr && ((e['count'] as num?)?.toInt() ?? 0) > 0).toList();
-    final total = entries.fold(0, (sum, e) => sum + ((e['count'] as num?)?.toInt() ?? 0));
-
-    final Map<String, String> dhikrNames = {};
-    for (final d in activeDhikrs) {
-      dhikrNames[d.id] = d.name;
-    }
-
-    final colors = [
-      const Color(0xFF009688),
-      const Color(0xFF4CAF50),
-      const Color(0xFFFFC107),
-      const Color(0xFF2196F3),
-      const Color(0xFF7B1FA2),
-      const Color(0xFFE53935),
-    ];
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cs.card,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cs.cardBorder),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                _formatDate(dateStr),
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: cs.textPrimary,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: cs.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${l.tasbihTotal}: $total',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: cs.primary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            alignment: WrapAlignment.end,
-            children: List.generate(entries.length, (index) {
-              final e = entries[index];
-              final id = (e['dhikrId'] ?? '').toString();
-              final name = e['name'] as String? ?? dhikrNames[id] ?? id;
-              final count = ((e['count'] as num?)?.toInt() ?? 0);
-              
-              int colorIndex = 0;
-              try {
-                final parsedId = int.tryParse(id);
-                if (parsedId != null) {
-                  colorIndex = (parsedId - 1) % colors.length;
-                } else {
-                  colorIndex = id.hashCode % colors.length;
-                }
-              } catch (_) {}
-              final color = colors[colorIndex.abs() % colors.length];
-
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: color.withValues(alpha: 0.15)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      '$count',
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      name,
-                      textDirection: TextDirection.rtl,
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAdvancedStatsBanner(AppColorScheme cs) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [cs.primary.withValues(alpha: 0.15), cs.primary.withValues(alpha: 0.05)],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: cs.primary.withValues(alpha: 0.3)),
-      ),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const StatisticsPage()),
-          );
-        },
-        borderRadius: BorderRadius.circular(16),
         child: Row(
           children: [
-            const Text('📊', style: TextStyle(fontSize: 24)),
+            const Icon(Icons.info_outline_rounded, color: Colors.white, size: 20),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'ئامار و زانیارییە پێشکەوتووەکان',
-                    style: TextStyle(
+                    l.firstTimeHintTap,
+                    style: const TextStyle(
                       fontFamily: 'Cairo',
-                      fontSize: 13,
+                      fontSize: 12.5,
                       fontWeight: FontWeight.bold,
-                      color: cs.textPrimary,
+                      color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'ستریک، مێژوو، خولەکان و نمرەی بەرهەمداری',
-                    style: TextStyle(
+                    l.firstTimeHintSettings,
+                    style: const TextStyle(
                       fontFamily: 'Cairo',
-                      fontSize: 11,
-                      color: cs.textSecondary,
+                      fontSize: 11.5,
+                      color: Colors.white70,
                     ),
                   ),
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded, color: cs.primary, size: 16),
+            IconButton(
+              icon: const Icon(Icons.close_rounded, color: Colors.white, size: 18),
+              onPressed: _dismissHint,
+              padding: EdgeInsets.zero,
+              constraints: const BoxConstraints(),
+            ),
           ],
         ),
-      ),
+      ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1, end: 0.0),
     );
   }
 
-  Widget _buildStatsTab(AppColorScheme cs, AppLocalizations l, bool isDark, TasbihState tasbihState) {
-    final activeDates = _activeHistoryDates;
+  void _showSettingsBottomSheet(BuildContext context) {
+    _dismissHint();
+    final cs = AppColorScheme.of(context);
+    final l = context.l10n;
+    final activeDhikr = ref.read(tasbihProvider).dhikrs.isNotEmpty && _selectedDhikrIndex < ref.read(tasbihProvider).dhikrs.length
+        ? ref.read(tasbihProvider).dhikrs[_selectedDhikrIndex]
+        : null;
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _buildAdvancedStatsBanner(cs),
-        const SizedBox(height: 16),
-        Row(
-          children: [
-            _buildMetricCard(l.tasbihMonth, '$_monthTotal', cs.primaryDeep, cs),
-            const SizedBox(width: 12),
-            _buildMetricCard(l.tasbihWeek, '$_weekTotal', cs.primary, cs),
-            const SizedBox(width: 12),
-            _buildMetricCard(l.tasbihToday, '$_todayTotal', const Color(0xFF009688), cs),
-          ],
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: cs.card,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(28),
+          topRight: Radius.circular(28),
         ),
-        const SizedBox(height: 16),
-        _buildWeeklyChart(cs, l),
-        const SizedBox(height: 16),
-        _buildDhikrBreakdown(cs, l, tasbihState.dhikrs),
-        const SizedBox(height: 24),
-        if (activeDates.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              l.tasbihHistoryLogs,
-              textDirection: TextDirection.rtl,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: cs.textPrimary,
+      ),
+      builder: (ctx) {
+        return Consumer(
+          builder: (context, ref, _) {
+            final categorized = FeatureMenuRegistry.getCategorizedItems(
+              context,
+              ref,
+              onDailyGoalsTap: () {
+                Navigator.pop(ctx);
+                _showChangeGoalDialog();
+              },
+              onSessionsTap: () {
+                Navigator.pop(ctx);
+                final tasbihState = ref.read(tasbihProvider);
+                _showStartSessionDialog(context, cs, tasbihState);
+              },
+              onCounterSettingsTap: () {
+                Navigator.pop(ctx);
+                _showCounterSettingsDialog();
+              },
+              activeDhikr: activeDhikr,
+            );
+
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 5,
+                      decoration: BoxDecoration(
+                        color: cs.divider,
+                        borderRadius: BorderRadius.circular(2.5),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          children: FeatureMenuGroup.values.map((group) {
+                            final items = categorized[group] ?? [];
+                            if (items.isEmpty) return const SizedBox.shrink();
+
+                            String groupTitle = '';
+                            switch (group) {
+                              case FeatureMenuGroup.personalization:
+                                groupTitle = l.personalizationGroup;
+                                break;
+                              case FeatureMenuGroup.progress:
+                                groupTitle = l.progressGroup;
+                                break;
+                              case FeatureMenuGroup.productivity:
+                                groupTitle = l.productivityGroup;
+                                break;
+                              case FeatureMenuGroup.data:
+                                groupTitle = l.dataGroup;
+                                break;
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                                  child: Text(
+                                    groupTitle,
+                                    style: TextStyle(
+                                      fontFamily: 'Cairo',
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      color: cs.primary,
+                                    ),
+                                  ),
+                                ),
+                                ...items.where((i) => i.isVisible(ref)).map((item) {
+                                  return ListTile(
+                                    leading: Icon(item.icon, color: cs.textPrimary),
+                                    title: Text(
+                                      item.title(l),
+                                      style: TextStyle(
+                                        fontFamily: 'Cairo',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: cs.textPrimary,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      Navigator.pop(ctx);
+                                      item.onTap(context, ref);
+                                    },
+                                  );
+                                }),
+                                const Divider(height: 16),
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-          ...activeDates.map((dateStr) => _buildHistoryItem(dateStr, cs, l, tasbihState.dhikrs)),
-        ] else
-          Padding(
-            padding: const EdgeInsets.all(32),
-            child: Center(
-              child: Column(
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showCounterSettingsDialog() {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final cs = AppColorScheme.of(context);
+        return Consumer(
+          builder: (context, ref, _) {
+            final themeState = ref.watch(tasbihThemeProvider);
+            final prefs = themeState.activePreferences;
+
+            return AlertDialog(
+              backgroundColor: cs.card,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              title: const Text(
+                'ڕێکخستنی ژمارەکەر',
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+              content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.history_rounded, size: 48, color: cs.textSecondary.withValues(alpha: 0.3)),
-                  const SizedBox(height: 12),
-                  Text(
-                    'هیچ تۆمارێک نییە',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 14,
-                      color: cs.textSecondary,
+                  SwitchListTile(
+                    title: const Text(
+                      'دەنگ',
+                      style: TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text(
+                      'چالاککردنی دەنگ لە کاتی زیکرکردندا',
+                      style: TextStyle(fontFamily: 'Cairo', fontSize: 11),
+                    ),
+                    value: prefs.soundEnabled,
+                    activeColor: cs.primary,
+                    onChanged: (val) {
+                      ref.read(tasbihThemeProvider.notifier).savePreferences(
+                        prefs.copyWith(soundEnabled: val),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  SwitchListTile(
+                    title: const Text(
+                      'لەرینەوە (Haptics)',
+                      style: TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: const Text(
+                      'چالاککردنی لەرینەوە لەگەڵ هەر کلیکێک',
+                      style: TextStyle(fontFamily: 'Cairo', fontSize: 11),
+                    ),
+                    value: prefs.hapticEnabled,
+                    activeColor: cs.primary,
+                    onChanged: (val) {
+                      ref.read(tasbihThemeProvider.notifier).savePreferences(
+                        prefs.copyWith(hapticEnabled: val),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'قەبارەی فۆنت',
+                              style: TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
+                            ),
+                            Text(
+                              '${(prefs.customFontScale * 100).toStringAsFixed(0)}%',
+                              style: TextStyle(fontFamily: 'Cairo', fontSize: 12, fontWeight: FontWeight.bold, color: cs.primary),
+                            ),
+                          ],
+                        ),
+                        Slider(
+                          min: 0.8,
+                          max: 1.5,
+                          divisions: 7,
+                          value: prefs.customFontScale,
+                          activeColor: cs.primary,
+                          inactiveColor: cs.divider,
+                          onChanged: (val) {
+                            ref.read(tasbihThemeProvider.notifier).savePreferences(
+                              prefs.copyWith(customFontScale: val),
+                            );
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-            ),
-          ),
-      ],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('داخستن', style: TextStyle(fontFamily: 'Cairo')),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 
@@ -1756,6 +1266,58 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final tasbihState = ref.watch(tasbihProvider);
+
+    if (tasbihState.isLoading) {
+      return Scaffold(
+        backgroundColor: cs.bg,
+        appBar: AppBar(
+          backgroundColor: isDark ? AppColorScheme.darken(cs.primary, 0.35) : cs.primary,
+          elevation: 0,
+          title: Text(l.tasbihTitle, style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (tasbihState.dhikrs.isEmpty) {
+      return Scaffold(
+        backgroundColor: cs.bg,
+        appBar: AppBar(
+          backgroundColor: isDark ? AppColorScheme.darken(cs.primary, 0.35) : cs.primary,
+          elevation: 0,
+          title: Text(l.tasbihTitle, style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'هیچ زیکرێک بەردەست نییە',
+                style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
+              ),
+              const SizedBox(height: 12),
+              ElevatedButton.icon(
+                onPressed: _showAddDhikrDialog,
+                style: ElevatedButton.styleFrom(backgroundColor: cs.primary),
+                icon: const Icon(Icons.add_rounded, color: Colors.white),
+                label: const Text('زیادکردنی زیکر', style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_selectedDhikrIndex >= tasbihState.dhikrs.length) {
+      _selectedDhikrIndex = 0;
+    }
+
+    final activeDhikr = tasbihState.dhikrs[_selectedDhikrIndex];
+    final count = tasbihState.counts[activeDhikr.id] ?? 0;
+
+    final themeState = ref.watch(tasbihThemeProvider);
+    final activeTheme = themeState.activeTheme;
+    final activePreferences = themeState.activePreferences;
 
     return Scaffold(
       backgroundColor: cs.bg,
@@ -1779,83 +1341,106 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.fingerprint_rounded, color: Colors.white),
-            tooltip: 'مۆدی پەنجەمۆر',
-            onPressed: () {
-              final activeDhikr = tasbihState.dhikrs.isNotEmpty && _selectedDhikrIndex < tasbihState.dhikrs.length
-                  ? tasbihState.dhikrs[_selectedDhikrIndex]
-                  : null;
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => FingerprintCounterPage(selectedDhikr: activeDhikr),
-                ),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.palette_rounded, color: Colors.white),
-            tooltip: 'ڕووکارەکان',
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const ThemeSelectorPage()),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.bar_chart_rounded, color: Colors.white),
-            tooltip: 'ئامارەکان',
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const SessionsAnalyticsPage()),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.timer_outlined, color: Colors.white),
-            tooltip: 'خولی زیکر',
-            onPressed: () {
-              final sessionState = ref.read(tasbihSessionProvider);
-              if (sessionState.activeSession != null) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ActiveSessionPage()),
-                );
-              } else {
-                _showStartSessionDialog(context, cs, tasbihState);
-              }
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.emoji_events_rounded, color: Colors.white),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const LeaderboardPage()),
-            ),
+            icon: const Icon(Icons.settings_rounded, color: Colors.white),
+            tooltip: 'ڕێکخستنەکان',
+            onPressed: () => _showSettingsBottomSheet(context),
           ),
           const SizedBox(width: 8),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: Colors.white,
-          indicatorWeight: 3,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white.withValues(alpha: 0.7),
-          labelStyle: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 15),
-          unselectedLabelStyle: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.w600, fontSize: 14),
-          tabs: [
-            Tab(text: l.tasbihCounter),
-            Tab(text: l.tasbihStats),
-          ],
-        ),
       ),
       body: Stack(
         children: [
-          TabBarView(
-            controller: _tabController,
-            children: [
-              _buildCounterTab(cs, l, isDark, tasbihState),
-              _buildStatsTab(cs, l, isDark, tasbihState),
-            ],
+          if (activeTheme != null)
+            _buildThemeBackground(context, activeTheme, isDark),
+          GestureDetector(
+            onTapDown: (details) => _onTap(details, activeDhikr),
+            behavior: HitTestBehavior.opaque,
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 32),
+                  // 1. Current Dhikr Name
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Center(
+                      child: Text(
+                        activeDhikr.name,
+                        textDirection: TextDirection.rtl,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          color: cs.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  // 2 & 3. Counter Number (largest) & Progress Indicator
+                  Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        _AnimatedRing(
+                          animation: _ringAnim,
+                          isDark: isDark,
+                          color: cs.primary,
+                          theme: activeTheme,
+                          preferences: activePreferences,
+                        ),
+                        _CounterDisplay(
+                          count: count,
+                          cs: cs,
+                          target: activeDhikr.target,
+                          theme: activeTheme,
+                          preferences: activePreferences,
+                        ).animate(key: ValueKey('count-${activeDhikr.id}-$count'))
+                         .scale(
+                           begin: const Offset(1.1, 1.1),
+                           end: const Offset(1.0, 1.0),
+                           duration: 200.ms,
+                           curve: Curves.easeOut,
+                         ),
+                      ],
+                    ),
+                  ),
+                  const Spacer(),
+                  // 5. Dhikr Selector Chips (positioned at the bottom)
+                  _DhikrChips(
+                    cs: cs,
+                    dhikrs: tasbihState.dhikrs,
+                    selectedIndex: _selectedDhikrIndex,
+                    onSelected: (i) {
+                      setState(() {
+                        _selectedDhikrIndex = i;
+                      });
+                    },
+                    onAddPressed: _showAddDhikrDialog,
+                    onDeletePressed: (id) {
+                      final name = tasbihState.dhikrs.firstWhere((d) => d.id == id).name;
+                      _onDeleteDhikr(id, name);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  // 6. Reset Button
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 0, 32, 24),
+                    child: _ResetButton(onReset: () => _reset(activeDhikr), l: l),
+                  ),
+                ],
+              ),
+            ),
           ),
+          if (!_hintShown)
+            _buildFloatingHintOverlay(cs, l),
+          if (_rippleVisible && _ripplePos != null)
+            Positioned(
+              left: _ripplePos!.dx - 40,
+              top: _ripplePos!.dy - 40,
+              child: _RippleEffect(),
+            ),
           if (_showCelebration)
             Positioned.fill(
               child: Container(

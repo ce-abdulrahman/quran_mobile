@@ -193,6 +193,36 @@ class AppLocalizations {
   String get prayerAzanNotification => 'ئاگادارکردنەوەی نوێژەکان';
   String get prayerAzanNotificationSub => 'لێدانی دەنگی ئازان لە کاتی هاتنی نوێژەکاندا';
   String get prayerTimesNotificationEnabled => 'چالاککردنی دەنگی ئازان';
+
+  // ── Redesign Additions ─────────────────────────────────────────────
+  String get welcome => 'بەخێربێیت';
+  String get guestProfileSub => 'تۆمارێکی نوێ بکە بۆ هاوکاتکردنی دەستکەوتەکان، بەردەوامی، پشتیوانی و ئامارەکان.';
+  String get login => 'چوونە ژوورەوە';
+  String get register => 'تۆمارکردن';
+  String get personalizationGroup => 'تایبەتمەندکردن';
+  String get progressGroup => 'پێشکەوتن';
+  String get productivityGroup => 'بەرهەمداری';
+  String get dataGroup => 'داتا';
+  String get menuThemes => 'ڕووکارەکان';
+  String get menuCounterSettings => 'ڕێکخستنی ژمارەکەر';
+  String get menuFingerprintMode => 'مۆدی پەنجەمۆر';
+  String get menuStatistics => 'ئامارەکان';
+  String get menuDailyGoals => 'ئامانجە ڕۆژانەکان';
+  String get menuAchievements => 'دەستکەوتەکان';
+  String get menuStreakSystem => 'سیستەمی بەردەوامی';
+  String get menuSessions => 'خولەکانی زیکر';
+  String get menuSmartReminders => 'ئاگادارکەرەوە زیرەکەکان';
+  String get menuBackupRestore => 'پاشەکەوت و گەڕاندنەوە';
+  String get cardNextAchievement => 'دەستکەوتی داهاتوو';
+  String get cardLastSession => 'کۆتا خول';
+  String get cardInsight => 'تێڕوانین';
+  String get productivityScoreLabel => 'نمرەی بەرهەمداری';
+  String get bestStreakLabel => 'باشترین بەردەوامی';
+  String get totalSessionsLabel => 'کۆی خولەکان';
+  String get dhikrWord => 'زیکر';
+  String get minutesWord => 'خولەک';
+  String get firstTimeHintTap => 'لە هەر شوێنێک دابگرە بۆ ژماردن.';
+  String get firstTimeHintSettings => '⚙️ بکەرەوە بۆ تایبەتمەندییە پێشکەوتووەکان.';
 }
 
 class _AppLocalizationsDelegate

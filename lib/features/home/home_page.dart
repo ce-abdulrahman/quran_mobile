@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:home_widget/home_widget.dart';
+import 'package:intl/intl.dart' hide TextDirection;
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/providers/statistics_provider.dart';
 import '../../core/models/ayah_model.dart';
 import '../../core/models/banner_model.dart';
 import '../../core/utils/responsive.dart';
@@ -30,8 +32,9 @@ import '../tajweed/tajweed_page.dart';
 import '../memorization/memorization_providers.dart';
 import '../auth/welcome_page.dart';
 import '../auth/profile_page.dart';
+import '../auth/login_page.dart';
+import '../auth/register_page.dart';
 import '../../core/providers/auth_provider.dart';
-import '../../core/providers/tasbih_theme_provider.dart';
 import '../tasbih/themes/theme_selector_page.dart';
 import '../../core/providers/tasbih_session_provider.dart';
 import '../tasbih/active_session_page.dart';
@@ -216,7 +219,7 @@ List<_CatData> _buildCats(BuildContext context) => [
 // HomePage
 // ─────────────────────────────────────────────────────────────────────────────
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   /// Send fallback today's verse to the Android home screen widget
@@ -266,13 +269,969 @@ class HomePage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  final Map<int, bool> _expandedCards = {
+    5: false, // Next Achievement
+    6: false, // Last Session
+    7: false, // Quick Statistics
+    8: false, // Smart Insight
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = ref.read(authProvider);
+      if (authState.status == AuthStatus.authenticated && authState.user != null) {
+        ref.read(statisticsProvider.notifier).load('30d');
+        ref.read(tasbihSessionProvider.notifier).fetchHistory();
+      }
+    });
+  }
+
+  void _showChangeGoalDialog() {
+    final tasbihState = ref.read(tasbihProvider);
+    final customCtrl = TextEditingController();
+    int? selectedPredefined = [100, 500, 1000].contains(tasbihState.dailyGoalValue)
+        ? tasbihState.dailyGoalValue
+        : null;
+
+    if (selectedPredefined == null) {
+      customCtrl.text = tasbihState.dailyGoalValue.toString();
+    }
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final cs = AppColorScheme.of(context);
+        final l = context.l10n;
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: cs.card,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              title: Text(
+                l.tasbihGoalSelect,
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l.tasbihPredefinedGoals,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: cs.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [100, 500, 1000].map((val) {
+                      final isSelected = selectedPredefined == val;
+                      return ChoiceChip(
+                        label: Text('$val', style: const TextStyle(fontFamily: 'Cairo')),
+                        selected: isSelected,
+                        selectedColor: cs.primary,
+                        labelStyle: TextStyle(
+                          color: isSelected ? Colors.white : cs.textSecondary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        onSelected: (selected) {
+                          if (selected) {
+                            setDialogState(() {
+                              selectedPredefined = val;
+                              customCtrl.clear();
+                            });
+                          }
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    l.tasbihCustomGoal,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: cs.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: customCtrl,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(fontFamily: 'Cairo', color: cs.textPrimary),
+                    decoration: InputDecoration(
+                      hintText: 'نموونە: 1500',
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    onChanged: (val) {
+                      if (val.trim().isNotEmpty) {
+                        setDialogState(() {
+                          selectedPredefined = null;
+                        });
+                      }
+                    },
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text(
+                    'پاشگەزبوونەوە',
+                    style: TextStyle(fontFamily: 'Cairo'),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    int? finalVal;
+                    if (selectedPredefined != null) {
+                      finalVal = selectedPredefined;
+                    } else {
+                      finalVal = int.tryParse(customCtrl.text.trim());
+                    }
+
+                    if (finalVal != null && finalVal > 0) {
+                      ref.read(tasbihProvider.notifier).setDailyGoal(finalVal);
+                      Navigator.pop(ctx);
+                      
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'ئامانجی ڕۆژانە گۆڕدرا بۆ $finalVal زیکر',
+                            textDirection: TextDirection.rtl,
+                            style: const TextStyle(fontFamily: 'Cairo'),
+                          ),
+                          backgroundColor: const Color(0xFF0F8F4C),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            l.tasbihGoalMinError,
+                            textDirection: TextDirection.rtl,
+                            style: const TextStyle(fontFamily: 'Cairo'),
+                          ),
+                          backgroundColor: Colors.red,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                      );
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: cs.primary,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Text(
+                    'سەپاندن',
+                    style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildGuestProfileCard(BuildContext context, Color accentColor, AppColorScheme cs) {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.card,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: cs.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(Icons.person_outline_rounded, color: accentColor, size: 22),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  context.l10n.welcome,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: cs.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            context.l10n.guestProfileSub,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 12,
+              color: cs.textSecondary,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginPage()),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: cs.cardBorder),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  ),
+                  child: Text(
+                    context.l10n.login,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: cs.textPrimary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const RegisterPage()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: accentColor,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    context.l10n.register,
+                    style: const TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTodayDhikrCard(
+    BuildContext context,
+    AppColorScheme cs,
+    Color accentColor,
+    StatisticsState statisticsState,
+    TasbihState tasbihState,
+    String locale,
+  ) {
+    final todayCount = tasbihState.dailyGoalProgress;
+    final trendPct = statisticsState.dhikr.trendPct;
+    final trendDirection = statisticsState.dhikr.trendDirection;
+
+    String trendText = '';
+    if (trendPct > 0) {
+      if (locale == 'ku') {
+        trendText = trendDirection == 'up'
+            ? '+$trendPct% زیاتر لە دوێنێ'
+            : '-$trendPct% کەمتر لە دوێنێ';
+      } else if (locale == 'ar') {
+        trendText = trendDirection == 'up'
+            ? '+$trendPct% أكثر من أمس'
+            : '-$trendPct% أقل من أمس';
+      } else {
+        trendText = trendDirection == 'up'
+            ? '+$trendPct% than yesterday'
+            : '-$trendPct% than yesterday';
+      }
+    } else {
+      trendText = locale == 'ku' ? 'ئەمڕۆ جێگیرە بە بەراورد لەگەڵ دوێنێ' : 'Steady comparison to yesterday';
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.card,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: cs.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.circle_outlined, color: accentColor, size: 24),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  locale == 'ku' ? 'زیکری ئەمڕۆ' : 'Today\'s Dhikr',
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: cs.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  NumberFormat.decimalPattern().format(todayCount),
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: cs.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  trendText,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 11,
+                    color: trendDirection == 'up' ? const Color(0xFF0F8F4C) : Colors.red,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDailyGoalProgressCard(
+    BuildContext context,
+    AppColorScheme cs,
+    Color accentColor,
+    TasbihState tasbihState,
+  ) {
+    final progress = tasbihState.dailyGoalProgress;
+    final goal = tasbihState.dailyGoalValue;
+    final pct = goal > 0 ? (progress / goal).clamp(0.0, 1.0) : 0.0;
+
+    return GestureDetector(
+      onTap: _showChangeGoalDialog,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: cs.card,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: cs.cardBorder),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.amber.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.track_changes_rounded, color: Colors.amber, size: 24),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        context.l10n.tasbihDailyGoal,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: cs.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        '$progress / $goal',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          color: cs.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: LinearProgressIndicator(
+                      value: pct,
+                      minHeight: 8,
+                      backgroundColor: cs.divider.withValues(alpha: 0.2),
+                      valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Icon(Icons.edit_rounded, size: 10, color: cs.textSecondary),
+                      const SizedBox(width: 4),
+                      Text(
+                        context.l10n.tasbihChangeGoal,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 10,
+                          color: cs.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCurrentStreakCard(
+    BuildContext context,
+    AppColorScheme cs,
+    Color accentColor,
+    TasbihState tasbihState,
+  ) {
+    final current = tasbihState.currentStreak;
+    final best = tasbihState.longestStreak;
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.card,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: cs.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: const BoxDecoration(
+              color: Color(0xFFFFF3CD),
+              shape: BoxShape.circle,
+            ),
+            child: const Text('🔥', style: TextStyle(fontSize: 24)),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.l10n.menuStreakSystem,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: cs.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$current ڕۆژ',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: cs.textPrimary,
+                          ),
+                        ),
+                        const Text(
+                          'ئەمڕۆ',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 10,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          '$best ڕۆژ',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: cs.textPrimary,
+                          ),
+                        ),
+                        Text(
+                          context.l10n.bestStreakLabel,
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 10,
+                            color: cs.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNextAchievementCard(
+    BuildContext context,
+    AppColorScheme cs,
+    Color accentColor,
+    StatisticsState statisticsState,
+  ) {
+    if (statisticsState.isLoading) {
+      return _buildCardSkeleton(cs);
+    }
+
+    final nextMilestone = statisticsState.milestones.isEmpty
+        ? null
+        : statisticsState.milestones.firstWhere((m) => !m.completed, orElse: () => statisticsState.milestones.last);
+
+    if (nextMilestone == null) {
+      return const SizedBox.shrink();
+    }
+
+    final pct = nextMilestone.target > 0
+        ? (nextMilestone.current / nextMilestone.target).clamp(0.0, 1.0)
+        : 0.0;
+
+    return _HomeCollapsibleCard(
+      title: context.l10n.cardNextAchievement,
+      emoji: '🏆',
+      isInitiallyExpanded: _expandedCards[5] ?? false,
+      onToggle: (exp) {
+        setState(() {
+          _expandedCards[5] = exp;
+        });
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  nextMilestone.label,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: cs.textPrimary,
+                  ),
+                ),
+              ),
+              Text(
+                '${nextMilestone.current} / ${nextMilestone.target}',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12,
+                  color: cs.textSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: pct,
+              minHeight: 8,
+              backgroundColor: cs.divider.withValues(alpha: 0.1),
+              valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLastSessionCard(
+    BuildContext context,
+    AppColorScheme cs,
+    Color accentColor,
+    TasbihSessionState sessionState,
+  ) {
+    if (sessionState.isLoading) {
+      return _buildCardSkeleton(cs);
+    }
+
+    final lastSession = sessionState.history.isNotEmpty ? sessionState.history.first : null;
+
+    if (lastSession == null) {
+      return _HomeCollapsibleCard(
+        title: context.l10n.cardLastSession,
+        emoji: '📖',
+        isInitiallyExpanded: _expandedCards[6] ?? false,
+        onToggle: (exp) {
+          setState(() {
+            _expandedCards[6] = exp;
+          });
+        },
+        child: Center(
+          child: Text(
+            'هیچ خولێکی زیکر نییە',
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 12,
+              color: cs.textSecondary,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final minutes = lastSession.durationSeconds ~/ 60;
+    final formattedTime = DateFormat('yyyy/MM/dd hh:mm a').format(lastSession.startTime);
+    final dhikrName = lastSession.customDhikrName ?? lastSession.dhikr?.name ?? context.l10n.dhikrWord;
+
+    return _HomeCollapsibleCard(
+      title: context.l10n.cardLastSession,
+      emoji: '📖',
+      isInitiallyExpanded: _expandedCards[6] ?? false,
+      onToggle: (exp) {
+        setState(() {
+          _expandedCards[6] = exp;
+        });
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            dhikrName,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: cs.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '${lastSession.totalCount} ${context.l10n.dhikrWord}',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: cs.textPrimary,
+                ),
+              ),
+              Text(
+                '$minutes ${context.l10n.minutesWord}',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: cs.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            formattedTime,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 11,
+              color: cs.textSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickStatsCard(
+    BuildContext context,
+    AppColorScheme cs,
+    Color accentColor,
+    StatisticsState statisticsState,
+  ) {
+    if (statisticsState.isLoading) {
+      return _buildCardSkeleton(cs);
+    }
+
+    final totalDhikr = statisticsState.dashboard.totalDhikr;
+    final totalSessions = statisticsState.dashboard.totalSessions;
+    final rareAchievements = statisticsState.dashboard.rareAchievements;
+
+    return _HomeCollapsibleCard(
+      title: context.l10n.statsQuickActionInsights,
+      emoji: '📊',
+      isInitiallyExpanded: _expandedCards[7] ?? false,
+      onToggle: (exp) {
+        setState(() {
+          _expandedCards[7] = exp;
+        });
+      },
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'کۆی تەواوی زیکرەکان',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+              Text(
+                NumberFormat.decimalPattern().format(totalDhikr),
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: cs.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                context.l10n.totalSessionsLabel,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12,
+                  color: cs.textSecondary,
+                ),
+              ),
+              Text(
+                '$totalSessions',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: cs.textPrimary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'دەستکەوتە دەگمەنەکان',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12,
+                  color: Colors.grey,
+                ),
+              ),
+              Text(
+                '$rareAchievements',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: cs.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSmartInsightCard(
+    BuildContext context,
+    AppColorScheme cs,
+    Color accentColor,
+    StatisticsState statisticsState,
+  ) {
+    if (statisticsState.isLoading) {
+      return _buildCardSkeleton(cs);
+    }
+
+    final insight = statisticsState.insights.isNotEmpty ? statisticsState.insights.first : null;
+    final insightText = insight?.fallback ?? 'زۆرترین چالاکیت لە دوای نوێژی مەغریبە.';
+    final insightEmoji = insight?.icon ?? '💡';
+
+    return _HomeCollapsibleCard(
+      title: context.l10n.cardInsight,
+      emoji: insightEmoji,
+      isInitiallyExpanded: _expandedCards[8] ?? false,
+      onToggle: (exp) {
+        setState(() {
+          _expandedCards[8] = exp;
+        });
+      },
+      child: Text(
+        insightText,
+        textDirection: TextDirection.rtl,
+        style: TextStyle(
+          fontFamily: 'Cairo',
+          fontSize: 13,
+          color: cs.textPrimary,
+          height: 1.4,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardSkeleton(AppColorScheme cs) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      height: 80,
+      decoration: BoxDecoration(
+        color: cs.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: cs.cardBorder),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            CircleAvatar(
+              backgroundColor: cs.divider.withValues(alpha: 0.1),
+              radius: 20,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 12,
+                    width: 150,
+                    decoration: BoxDecoration(
+                      color: cs.divider.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 10,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: cs.divider.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1.seconds, color: cs.primary.withValues(alpha: 0.05));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final p = Responsive.pagePadding(context);
 
     // Listen to the provider to push updates to the widget dynamically when resolved
     ref.listen<AsyncValue<AyahModel>>(dailyVerseProvider, (previous, next) {
       next.whenData((ayah) {
-        _updateWidgetWithData(
+        HomePage._updateWidgetWithData(
           ayah.textUthmani,
           ayah.textKu ?? ayah.textEn ?? '',
           '— ${ayah.surah?.nameEn ?? ""} ${ayah.surah?.number ?? ""}:${ayah.ayahNumber}',
@@ -284,23 +1243,32 @@ class HomePage extends ConsumerWidget {
     final dailyVerse = ref.watch(dailyVerseProvider).valueOrNull;
     if (dailyVerse != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        _updateWidgetWithData(
+        HomePage._updateWidgetWithData(
           dailyVerse.textUthmani,
           dailyVerse.textKu ?? dailyVerse.textEn ?? '',
           '— ${dailyVerse.surah?.nameEn ?? ""} ${dailyVerse.surah?.number ?? ""}:${dailyVerse.ayahNumber}',
         );
       });
     } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _updateWidgetDefault());
+      WidgetsBinding.instance.addPostFrameCallback((_) => HomePage._updateWidgetDefault());
     }
 
     final topPadding = MediaQuery.of(context).padding.top;
+    final cs = AppColorScheme.of(context);
+    final accentColor = ref.watch(accentColorProvider);
+    final authState = ref.watch(authProvider);
+    final statisticsState = ref.watch(statisticsProvider);
+    final tasbihSessionState = ref.watch(tasbihSessionProvider);
+    final tasbihState = ref.watch(tasbihProvider);
+    final locale = Localizations.localeOf(context).languageCode;
+
+    final isAuthenticated = authState.status == AuthStatus.authenticated && authState.user != null;
 
     return Scaffold(
-      backgroundColor: AppColorScheme.of(context).bg,
+      backgroundColor: cs.bg,
       body: Stack(
         children: [
-          // ── Scrollable content area (placed first so it sits behind the header) ──────
+          // ── Scrollable content area ──────
           Positioned.fill(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -310,12 +1278,6 @@ class HomePage extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  // 0. Profile / Guest Welcome Card
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 25, p, 0),
-                    child: const _HomeProfileCard(),
-                  ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
-
                   // 1. Prayer Times Countdown Widget
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 15, p, 0),
@@ -330,59 +1292,164 @@ class HomePage extends ConsumerWidget {
                     ),
                   ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
 
-                  // ── Categories grid (scrollable with single scroll) ──
+                  // ── Categories grid ──
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 0, p, 16),
                     child: const _CategoriesGrid(),
                   ),
 
+                  // ── Section: ئامار و بەردەوامی ──
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 20, p, 12),
                     child: _SectionDivider(
-                      title: context.l10n.homeFeaturesTwo,
+                      title: context.l10n.statsQuickActionInsights,
                     ),
                   ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
 
-                  // 2. Reading Streak Card
+                  // ── 8 Motivation/Analytics Cards ──
+                  
+                  // Card 1: Profile Card (Guest or Authenticated)
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: const _StreakBanner(),
+                    child: isAuthenticated
+                        ? const _HomeProfileCard()
+                        : _buildGuestProfileCard(context, accentColor, cs),
                   ).animate().fadeIn(duration: 400.ms, delay: 120.ms),
 
-                  // 3. Continue Reading Card
+                  // Card 2: Today's Dhikr Card (Always Expanded)
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: const _ContinueReadingCard(),
+                    child: _buildTodayDhikrCard(context, cs, accentColor, statisticsState, tasbihState, locale),
                   ).animate().fadeIn(duration: 400.ms, delay: 130.ms),
 
-                  // 4. Today's Memorization Goal Card
+                  // Card 3: Daily Goal Progress Card (Always Expanded, Tapping opens dialog)
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: const _TodayMemorizationCard(),
+                    child: _buildDailyGoalProgressCard(context, cs, accentColor, tasbihState),
                   ).animate().fadeIn(duration: 400.ms, delay: 140.ms),
 
-                  // 5. Khatm Progress Card
+                  // Card 4: Current Streak Card (Always Expanded)
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: const _KhatmProgressCard(),
+                    child: _buildCurrentStreakCard(context, cs, accentColor, tasbihState),
                   ).animate().fadeIn(duration: 400.ms, delay: 150.ms),
 
-                  // 6. Daily Goals Checklist Card
+                  // Card 5: Next Achievement Card (Collapsible)
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: const _DailyGoalsCard(),
+                    child: _buildNextAchievementCard(context, cs, accentColor, statisticsState),
                   ).animate().fadeIn(duration: 400.ms, delay: 160.ms),
+
+                  // Card 6: Last Session Summary Card (Collapsible)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    child: _buildLastSessionCard(context, cs, accentColor, tasbihSessionState),
+                  ).animate().fadeIn(duration: 400.ms, delay: 170.ms),
+
+                  // Card 7: Quick Statistics Card (Collapsible)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    child: _buildQuickStatsCard(context, cs, accentColor, statisticsState),
+                  ).animate().fadeIn(duration: 400.ms, delay: 180.ms),
+
+                  // Card 8: Smart Insight Card (Collapsible)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                    child: _buildSmartInsightCard(context, cs, accentColor, statisticsState),
+                  ).animate().fadeIn(duration: 400.ms, delay: 190.ms),
                 ],
               ),
             ),
           ),
 
-          // ── Sticky/Fixed top header zone (placed last so it sits on top) ──────
+          // ── Sticky/Fixed top header zone ──────
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: _GreenZone(padding: p),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Home Collapsible Card Wrapper
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _HomeCollapsibleCard extends StatelessWidget {
+  final String title;
+  final String emoji;
+  final bool isInitiallyExpanded;
+  final ValueChanged<bool> onToggle;
+  final Widget child;
+
+  const _HomeCollapsibleCard({
+    required this.title,
+    required this.emoji,
+    this.isInitiallyExpanded = false,
+    required this.onToggle,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = AppColorScheme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: cs.card,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: cs.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          InkWell(
+            onTap: () => onToggle(!isInitiallyExpanded),
+            borderRadius: BorderRadius.circular(24),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              child: Row(
+                children: [
+                  Text(emoji, style: const TextStyle(fontSize: 22)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: cs.textPrimary,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    isInitiallyExpanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+                    color: cs.textSecondary,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedCrossFade(
+            firstChild: const SizedBox.shrink(),
+            secondChild: Padding(
+              padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+              child: child,
+            ),
+            crossFadeState: isInitiallyExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+            duration: const Duration(milliseconds: 200),
           ),
         ],
       ),
@@ -2106,24 +3173,23 @@ class _HomeProfileCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = AppColorScheme.of(context);
     final accentColor = ref.watch(accentColorProvider);
     final locale = Localizations.localeOf(context).languageCode;
-    final activeTheme = ref.watch(tasbihThemeProvider).activeTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final isAuthenticated = authState.status == AuthStatus.authenticated && authState.user != null;
 
     if (isAuthenticated) {
       final user = authState.user!;
       final stats = authState.stats ?? {};
+      final statsState = ref.watch(statisticsProvider);
+      final dashboard = statsState.dashboard;
 
-      final streak = stats['current_streak'] ?? 0;
-      final achievements = stats['achievements_count'] ?? 0;
-      final goalProgress = stats['goal_completion_rate'] ?? 0;
-      final fingerprintCounts = stats['fingerprint_total_counts'] ?? 0;
-      final themeName = activeTheme?.name ?? 
-          (locale == 'ku' ? 'کەعبە' : (locale == 'ar' ? 'الكعبة' : 'Kaaba Theme'));
+      final streak = dashboard.currentStreak > 0 ? dashboard.currentStreak : (stats['current_streak'] ?? 0);
+      final achievements = dashboard.totalAchievements > 0 ? dashboard.totalAchievements : (stats['achievements_count'] ?? 0);
+      final goalProgress = dashboard.goalCompletionRate > 0 ? dashboard.goalCompletionRate.round() : (stats['goal_completion_rate'] ?? 0);
+      final productivity = dashboard.productivityScore;
 
       return Container(
         padding: const EdgeInsets.all(18),
@@ -2204,7 +3270,7 @@ class _HomeProfileCard extends ConsumerWidget {
                     context,
                     '🔥',
                     locale == 'ku' ? '$streak ڕۆژ' : (locale == 'ar' ? '$streak يوم' : '$streak Days'),
-                    locale == 'ku' ? 'ستریک' : 'Streak',
+                    locale == 'ku' ? 'بەردەوامی' : 'Streak',
                   ),
                 ),
                 Expanded(
@@ -2212,7 +3278,7 @@ class _HomeProfileCard extends ConsumerWidget {
                     context,
                     '🏆',
                     '$achievements',
-                    locale == 'ku' ? 'دەستکەوت' : 'Badges',
+                    locale == 'ku' ? 'دەستکەوتەکان' : 'Achievements',
                   ),
                 ),
               ],
@@ -2225,62 +3291,17 @@ class _HomeProfileCard extends ConsumerWidget {
                 Expanded(
                   child: _buildStatItem(
                     context,
-                    '🎨',
-                    themeName,
-                    locale == 'ku' ? 'ڕووکاری چالاک' : 'Active Theme',
+                    '🎯',
+                    '$goalProgress%',
+                    locale == 'ku' ? 'تەواوکردنی ئامانج' : 'Goal Completion',
                   ),
                 ),
                 Expanded(
                   child: _buildStatItem(
                     context,
-                    '👆',
-                    '$fingerprintCounts',
-                    locale == 'ku' ? 'لێدانی پەنجەمۆر' : 'Fingerprint Taps',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Goal progress
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      locale == 'ku'
-                          ? 'پێشکەوتنی ئامانجی ڕۆژانە'
-                          : (locale == 'ar' ? 'نسبة الأهداف اليومية' : 'Daily Goal Progress'),
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: cs.textSecondary,
-                      ),
-                    ),
-                    Text(
-                      '$goalProgress%',
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w800,
-                        color: accentColor,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: LinearProgressIndicator(
-                    value: goalProgress / 100,
-                    minHeight: 8,
-                    backgroundColor: isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : accentColor.withValues(alpha: 0.1),
-                    valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                    '📊',
+                    '$productivity',
+                    context.l10n.productivityScoreLabel,
                   ),
                 ),
               ],
