@@ -8,172 +8,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:encrypt/encrypt.dart' as enc;
 import 'package:crypto/crypto.dart';
 
-import '../models/backup_model.dart';
-import '../models/backup_preview_model.dart';
-import '../repositories/backup_repository.dart';
 import 'app_providers.dart';
 
 class BackupState {
   final bool isLoading;
-  final bool isRestoring;
-  final List<BackupModel> backups;
   final String? errorMessage;
   final String? successMessage;
-  final BackupPreviewModel? previewReport;
-  final String autoBackupInterval;
 
   BackupState({
     this.isLoading = false,
-    this.isRestoring = false,
-    this.backups = const [],
     this.errorMessage,
     this.successMessage,
-    this.previewReport,
-    this.autoBackupInterval = 'disabled',
   });
 
   BackupState copyWith({
     bool? isLoading,
-    bool? isRestoring,
-    List<BackupModel>? backups,
     String? errorMessage,
     String? successMessage,
-    BackupPreviewModel? previewReport,
-    String? autoBackupInterval,
   }) {
     return BackupState(
       isLoading: isLoading ?? this.isLoading,
-      isRestoring: isRestoring ?? this.isRestoring,
-      backups: backups ?? this.backups,
       errorMessage: errorMessage ?? this.errorMessage,
       successMessage: successMessage ?? this.successMessage,
-      previewReport: previewReport ?? this.previewReport,
-      autoBackupInterval: autoBackupInterval ?? this.autoBackupInterval,
     );
   }
 }
 
 class BackupNotifier extends StateNotifier<BackupState> {
-  final BackupRepository _repository;
   final SharedPreferences _prefs;
   final Ref _ref;
 
-  static const _autoIntervalKey = 'backup_auto_interval';
-
-  BackupNotifier(this._repository, this._prefs, this._ref)
-      : super(BackupState()) {
-    _init();
-  }
-
-  void _init() {
-    final interval = _prefs.getString(_autoIntervalKey) ?? 'disabled';
-    state = state.copyWith(autoBackupInterval: interval);
-    fetchCloudBackups();
-  }
-
-  /// Fetch user backups list from cloud
-  Future<void> fetchCloudBackups() async {
-    state = state.copyWith(isLoading: true, errorMessage: null, successMessage: null);
-    final result = await _repository.getBackups();
-    result.when(
-      success: (data) {
-        state = state.copyWith(backups: data, isLoading: false);
-      },
-      error: (message, code, cached) {
-        state = state.copyWith(errorMessage: message, isLoading: false);
-      },
-    );
-  }
-
-  /// Create a cloud backup
-  Future<void> createCloudBackup({String? password}) async {
-    state = state.copyWith(isLoading: true, errorMessage: null, successMessage: null);
-    final result = await _repository.createBackup(
-      password: password,
-      deviceType: 'Mobile App',
-      platform: Platform.isAndroid ? 'Android' : 'iOS',
-      appVersion: '1.0.0',
-    );
-    result.when(
-      success: (message) {
-        state = state.copyWith(successMessage: message);
-        fetchCloudBackups();
-      },
-      error: (message, code, cached) {
-        state = state.copyWith(errorMessage: message, isLoading: false);
-      },
-    );
-  }
-
-  /// Delete a cloud backup
-  Future<void> deleteCloudBackup(int id) async {
-    state = state.copyWith(isLoading: true, errorMessage: null, successMessage: null);
-    final result = await _repository.deleteBackup(id);
-    result.when(
-      success: (message) {
-        state = state.copyWith(successMessage: message);
-        fetchCloudBackups();
-      },
-      error: (message, code, cached) {
-        state = state.copyWith(errorMessage: message, isLoading: false);
-      },
-    );
-  }
-
-  /// Request Restoration Preview report from server
-  Future<void> generateRestorePreview({int? backupId, File? localFile, String? password}) async {
-    state = state.copyWith(isLoading: true, errorMessage: null, successMessage: null, previewReport: null);
-    final result = await _repository.getRestorePreview(
-      backupId: backupId,
-      localFile: localFile,
-      password: password,
-    );
-    result.when(
-      success: (preview) {
-        state = state.copyWith(previewReport: preview, isLoading: false);
-      },
-      error: (message, code, cached) {
-        state = state.copyWith(errorMessage: message, isLoading: false);
-      },
-    );
-  }
-
-  /// Execute Restoration
-  Future<bool> executeRestore({
-    int? backupId,
-    File? localFile,
-    required String conflictResolution,
-    required List<String> modules,
-    String? password,
-  }) async {
-    state = state.copyWith(isRestoring: true, errorMessage: null, successMessage: null);
-    final result = await _repository.restoreBackup(
-      backupId: backupId,
-      localFile: localFile,
-      conflictResolution: conflictResolution,
-      modules: modules,
-      password: password,
-    );
-
-    return result.when(
-      success: (message) {
-        state = state.copyWith(successMessage: message, isRestoring: false, previewReport: null);
-        // Refresh tasbihs / reminders locally
-        _ref.invalidate(appSettingsProvider);
-        return true;
-      },
-      error: (message, code, cached) {
-        state = state.copyWith(errorMessage: message, isRestoring: false);
-        return false;
-      },
-    );
-  }
-
-  /// Configure auto-backup interval
-  Future<void> setAutoBackupInterval(String interval) async {
-    await _prefs.setString(_autoIntervalKey, interval);
-    state = state.copyWith(autoBackupInterval: interval);
-  }
+  BackupNotifier(this._prefs, this._ref) : super(BackupState());
 
   /// Export local settings to file & share
   Future<void> exportLocalBackup(String? password) async {
@@ -306,7 +171,7 @@ class BackupNotifier extends StateNotifier<BackupState> {
 }
 
 final backupStateProvider = StateNotifierProvider<BackupNotifier, BackupState>((ref) {
-  final repository = ref.watch(backupRepositoryProvider);
   final prefs = ref.watch(sharedPreferencesProvider);
-  return BackupNotifier(repository, prefs, ref);
+  return BackupNotifier(prefs, ref);
 });
+

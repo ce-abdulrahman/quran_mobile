@@ -3,7 +3,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/providers/app_providers.dart';
+import 'core/providers/feature_flag_provider.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/notification_coordinator.dart';
 import 'core/services/reminder_engine.dart';
 import 'core/repositories/reminder_repository.dart';
 import 'core/network/api_client.dart';
@@ -11,13 +13,21 @@ import 'features/splash/splash_page.dart';
 import 'shell/app_shell.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final sharedPrefs = await SharedPreferences.getInstance(); 
 
+  // Initialize Hive for high-performance, low-memory caching
+  await Hive.initFlutter();
+  final cacheBox = await Hive.openBox('app_cache_box');
+
   // Initialize local notifications
-  await NotificationService.initialize(); 
+  await NotificationService.initialize();
+
+  // Initialize new notification channels (Phase 3 — 9-channel architecture)
+  await NotificationCoordinator().initChannels();
 
   // Setup smart reminder click response handlers for tracking analytics
   final reminderRepo = ReminderRepository(ApiClient());
@@ -36,10 +46,21 @@ void main() async {
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+        hiveCacheBoxProvider.overrideWithValue(cacheBox),
       ],
       child: const QuranApp(),
     ),
   );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Feature Flag Boot Sync
+// Called from SplashPage after ProviderScope is ready.
+// ─────────────────────────────────────────────────────────────────────────────
+
+Future<void> syncFeatureFlagsOnBoot(WidgetRef ref) async {
+  // Non-blocking: syncs in background, uses cached flags immediately
+  ref.read(featureFlagServiceProvider).sync();
 }
 
 class QuranApp extends ConsumerWidget {

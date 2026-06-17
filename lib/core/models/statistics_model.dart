@@ -244,12 +244,12 @@ class MilestoneModel {
 // ── Statistics Period ─────────────────────────────────────────────────────────
 
 enum StatsPeriod {
-  today('today', 'Today'),
-  sevenDays('7d', '7 Days'),
-  thirtyDays('30d', '30 Days'),
-  ninetyDays('90d', '90 Days'),
-  twelveMonths('12m', '12 Months'),
-  allTime('all', 'All Time');
+  today('today', 'ئەمڕۆ'),
+  sevenDays('7d', '٧ ڕۆژ'),
+  thirtyDays('30d', '٣٠ ڕۆژ'),
+  ninetyDays('90d', '٩٠ ڕۆژ'),
+  twelveMonths('12m', '١٢ مانگ'),
+  allTime('all', 'هەمیشەیی');
 
   final String value;
   final String label;

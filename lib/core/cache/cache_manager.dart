@@ -1,21 +1,21 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 
 class CacheManager {
   static const String _timestampSuffix = '_timestamp';
   static const String _ttlSuffix = '_ttl';
 
-  final SharedPreferences _prefs;
+  final Box _box;
 
-  const CacheManager(this._prefs);
+  const CacheManager(this._box);
 
   /// Retrieves cached JSON data (Map or List) if present and valid.
   dynamic get(String key) {
-    final jsonStr = _prefs.getString(key);
+    final jsonStr = _box.get(key) as String?;
     if (jsonStr == null) return null;
 
-    final timestampMs = _prefs.getInt('$key$_timestampSuffix');
-    final ttlMs = _prefs.getInt('$key$_ttlSuffix');
+    final timestampMs = _box.get('$key$_timestampSuffix') as int?;
+    final ttlMs = _box.get('$key$_ttlSuffix') as int?;
 
     if (timestampMs == null || ttlMs == null) {
       return null;
@@ -43,9 +43,9 @@ class CacheManager {
       final timestampMs = DateTime.now().millisecondsSinceEpoch;
       final ttlMs = ttl.inMilliseconds;
 
-      await _prefs.setString(key, jsonStr);
-      await _prefs.setInt('$key$_timestampSuffix', timestampMs);
-      await _prefs.setInt('$key$_ttlSuffix', ttlMs);
+      await _box.put(key, jsonStr);
+      await _box.put('$key$_timestampSuffix', timestampMs);
+      await _box.put('$key$_ttlSuffix', ttlMs);
       return true;
     } catch (_) {
       return false;
@@ -54,8 +54,8 @@ class CacheManager {
 
   /// Invalidates/removes the cached data.
   Future<void> invalidate(String key) async {
-    await _prefs.remove(key);
-    await _prefs.remove('$key$_timestampSuffix');
-    await _prefs.remove('$key$_ttlSuffix');
+    await _box.delete(key);
+    await _box.delete('$key$_timestampSuffix');
+    await _box.delete('$key$_ttlSuffix');
   }
 }

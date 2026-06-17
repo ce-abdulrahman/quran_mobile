@@ -17,6 +17,7 @@ class ApiConstants {
   static const String settings        = '/settings';
   static const String dailyVerse      = '/ayahs/daily';
   static const String banners         = '/banners';
+  static const String prayerWidget    = '/prayer-widget';
   static const String adhkars         = '/adhkars';
   static const String tasbihs         = '/tasbihs';
   static const String hadiths         = '/hadiths';
@@ -25,6 +26,14 @@ class ApiConstants {
   static String pageAyahs(int page)   => '/search/by-page/$page';
   static const String memorizationPlansToday = '/memorization-plans/today';
   static const String memorizationReviews = '/memorization-reviews';
+  static const String dueReviews      = '/reviews/due';
+  static const String weakReviews     = '/reviews/weak';
+  static const String learningReviews = '/reviews/learning';
+  static const String statsFull       = '/memorization/statistics';
+  static const String progressDetailed= '/memorization/progress';
+  static const String forecastDetailed= '/memorization/forecast';
+  static const String sessionLog      = '/memorization/sessions';
+  static const String dashboardStats  = '/user-ayah-progress/dashboard';
 
   // ── Achievements ───────────────────────────────────────────────────────────
   static const String achievements        = '/achievements';

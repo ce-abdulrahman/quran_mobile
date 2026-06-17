@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:adhan/adhan.dart';
 import '../providers/prayer_times_provider.dart';
+import 'notification_coordinator.dart';
 
 class PrayerNotificationService {
   static final PrayerNotificationService _instance = PrayerNotificationService._internal();
@@ -11,7 +12,7 @@ class PrayerNotificationService {
 
   final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
 
-  static const _channelId = 'quran_azan_prayers_channel';
+  static const _channelId = NotificationChannels.prayerCh;
   static const _channelName = 'ئاگادارکردنەوەی بانگدان';
   static const _channelDesc = 'لێدانی دەنگی بانگ لە کاتی نوێژەکاندا';
 

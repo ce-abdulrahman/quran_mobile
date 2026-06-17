@@ -25,8 +25,10 @@ import '../khatm/khatm_tracker_page.dart';
 import '../adhkar/adhkar_page.dart';
 import '../tasbih/tasbih_page.dart';
 import '../memorization/memorization_quiz_page.dart';
+import '../memorization/memorization_dashboard_page.dart';
 import '../../core/providers/prayer_times_provider.dart';
 import '../prayer/prayer_times_page.dart';
+import '../prayer/widgets/prayer_widget_card.dart';
 import '../hadith/hadith_page.dart';
 import '../tajweed/tajweed_page.dart';
 import '../memorization/memorization_providers.dart';
@@ -102,7 +104,7 @@ List<_CatData> _buildCats(BuildContext context) => [
         label: (l) => l.memorizationQuizTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
-              MaterialPageRoute(builder: (_) => const MemorizationQuizPage(showBackButton: true)),
+              MaterialPageRoute(builder: (_) => const MemorizationDashboardPage()),
             ),
       ),
       _CatData(
@@ -1280,8 +1282,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                 children: [
                   // 1. Prayer Times Countdown Widget
                   Padding(
-                    padding: EdgeInsets.fromLTRB(p, 15, p, 0),
-                    child: const _PrayerCountdownBanner(),
+                    padding: EdgeInsets.fromLTRB(p, 35, p, 0),
+                    child: const PrayerWidgetCard(),
                   ).animate().fadeIn(duration: 400.ms, delay: 155.ms),
 
                   // ── Section: تایبەتمەندییەکان ────────────────────
@@ -1970,6 +1972,86 @@ class _DashedLine extends StatelessWidget {
 // Prayer Times Countdown Banner
 // ─────────────────────────────────────────────────────────────────────────────
 
+class _CountdownTimerText extends StatefulWidget {
+  final DateTime targetTime;
+  final TextStyle style;
+  final VoidCallback? onFinished;
+
+  const _CountdownTimerText({
+    required this.targetTime,
+    required this.style,
+    this.onFinished,
+  });
+
+  @override
+  State<_CountdownTimerText> createState() => _CountdownTimerTextState();
+}
+
+class _CountdownTimerTextState extends State<_CountdownTimerText> {
+  late Timer _timer;
+  late ValueNotifier<Duration> _remainingNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    final initialRemaining = widget.targetTime.difference(DateTime.now());
+    _remainingNotifier = ValueNotifier(initialRemaining);
+    _startTimer();
+  }
+
+  @override
+  void didUpdateWidget(covariant _CountdownTimerText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.targetTime != widget.targetTime) {
+      _timer.cancel();
+      _remainingNotifier.value = widget.targetTime.difference(DateTime.now());
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final diff = widget.targetTime.difference(DateTime.now());
+      if (diff.isNegative || diff.inSeconds <= 0) {
+        _remainingNotifier.value = Duration.zero;
+        _timer.cancel();
+        if (widget.onFinished != null) {
+          widget.onFinished!();
+        }
+      } else {
+        _remainingNotifier.value = diff;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _remainingNotifier.dispose();
+    super.dispose();
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Duration>(
+      valueListenable: _remainingNotifier,
+      builder: (context, remaining, child) {
+        return Text(
+          _formatDuration(remaining),
+          style: widget.style,
+        );
+      },
+    );
+  }
+}
+
 class _PrayerCountdownBanner extends ConsumerStatefulWidget {
   const _PrayerCountdownBanner();
 
@@ -1978,42 +2060,53 @@ class _PrayerCountdownBanner extends ConsumerStatefulWidget {
 }
 
 class _PrayerCountdownBannerState extends ConsumerState<_PrayerCountdownBanner> {
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    // Refresh countdown every 30 seconds
-    _timer = Timer.periodic(const Duration(seconds: 30), (_) {
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  String _formatRemaining(Duration remaining) {
-    final hours = remaining.inHours;
-    final minutes = remaining.inMinutes.remainder(60);
-    if (hours > 0) {
-      return '$hours کاتژمێر و $minutes خولەک';
-    } else {
-      return '$minutes خولەک';
-    }
+  String _formatTime(DateTime time) {
+    final hour = time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
+    final minute = time.minute.toString().padLeft(2, '0');
+    final period = time.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $period';
   }
 
   @override
   Widget build(BuildContext context) {
-    final cs = AppColorScheme.of(context);
-    final l = context.l10n;
-    
     final nextInfo = ref.watch(nextPrayerProvider);
     final settings = ref.watch(prayerTimesSettingsProvider);
     
     if (nextInfo == null) return const SizedBox.shrink();
+
+    List<Color> gradientColors;
+    switch (nextInfo.prayerType) {
+      case PrayerType.fajr:
+        gradientColors = [
+          const Color(0xFF2B5876),
+          const Color(0xFF4E4376),
+        ];
+        break;
+      case PrayerType.dhuhr:
+        gradientColors = [
+          const Color(0xFFF7971E),
+          const Color(0xFFFFD200),
+        ];
+        break;
+      case PrayerType.asr:
+        gradientColors = [
+          const Color(0xFFF12711),
+          const Color(0xFFF5AF19),
+        ];
+        break;
+      case PrayerType.maghrib:
+        gradientColors = [
+          const Color(0xFF833AB4),
+          const Color(0xFFFD1D1D),
+        ];
+        break;
+      case PrayerType.isha:
+        gradientColors = [
+          const Color(0xFF0D1B2A),
+          const Color(0xFF1B263B),
+        ];
+        break;
+    }
 
     return GestureDetector(
       onTap: () {
@@ -2023,106 +2116,136 @@ class _PrayerCountdownBannerState extends ConsumerState<_PrayerCountdownBanner> 
         );
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: cs.card,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: cs.cardBorder),
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.02),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+              color: gradientColors.first.withValues(alpha: 0.3),
+              blurRadius: 16,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Left: Next prayer info & remaining time
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
                     children: [
-                      Container(
-                        width: 6,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: cs.primary,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
+                      const Icon(Icons.location_on_rounded, size: 12, color: Colors.white),
+                      const SizedBox(width: 4),
                       Text(
-                        'نوێژی داهاتوو: ${nextInfo.kurdishName}',
-                        style: TextStyle(
+                        settings.selectedCity.nameKu,
+                        style: const TextStyle(
                           fontFamily: 'Cairo',
-                          fontSize: 13,
                           fontWeight: FontWeight.bold,
-                          color: cs.textPrimary,
+                          fontSize: 11,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${_formatRemaining(nextInfo.remaining)} ماوە بۆ نوێژ',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 11,
-                      color: cs.textSecondary,
-                    ),
+                ),
+                Text(
+                  'کاتی نوێژی داهاتوو',
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
+                    color: Colors.white.withValues(alpha: 0.8),
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-
-            // Right: Mosque/Clock Icon & Location
+            const SizedBox(height: 16),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      settings.selectedCity.nameKu,
-                      style: TextStyle(
+                      nextInfo.kurdishName,
+                      style: const TextStyle(
                         fontFamily: 'Cairo',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: cs.textPrimary,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      l.prayerTimesTitle,
+                      'بانگ: ${_formatTime(nextInfo.time)}',
                       style: TextStyle(
                         fontFamily: 'Cairo',
-                        fontSize: 10,
-                        color: cs.textSecondary,
+                        fontSize: 13,
+                        color: Colors.white.withValues(alpha: 0.85),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(width: 12),
                 Container(
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: cs.primary.withValues(alpha: 0.1),
+                    color: Colors.white.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.mosque_rounded,
-                    size: 20,
-                    color: cs.primary,
+                    size: 32,
+                    color: Colors.white,
                   ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            const Divider(color: Colors.white24, height: 1),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'کاتی ماوە',
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
+                    color: Colors.white.withValues(alpha: 0.7),
+                  ),
+                ),
+                _CountdownTimerText(
+                  targetTime: nextInfo.time,
+                  style: const TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 1,
+                  ),
+                  onFinished: () {
+                    ref.read(prayerTimesSettingsProvider.notifier).reschedule();
+                    setState(() {});
+                  },
                 ),
               ],
             ),
           ],
         ),
-      ),
+      ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+       .shimmer(duration: 4.seconds, color: Colors.white.withValues(alpha: 0.08)),
     );
   }
 }
@@ -2478,7 +2601,7 @@ class _TodayMemorizationCard extends ConsumerWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const MemorizationQuizPage(showBackButton: true),
+                  builder: (_) => const MemorizationDashboardPage(),
                 ),
               );
             },
@@ -2546,7 +2669,7 @@ class _TodayMemorizationCard extends ConsumerWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const MemorizationQuizPage(showBackButton: true),
+                          builder: (_) => const MemorizationDashboardPage(),
                         ),
                       );
                     },

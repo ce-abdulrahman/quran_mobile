@@ -141,3 +141,40 @@
 2026-06-14 11:22:02.111: [INFO] Sync initialization duration: 19257ms
 2026-06-14 14:03:50.419: [INFO] OnDoneLoading sync enabled: 1
 2026-06-14 14:05:18.814: [INFO] Sync initialization duration: 83770ms
+2026-06-14 16:56:19.223: [INFO] OnDoneLoading sync enabled: 0
+2026-06-14 16:56:22.340: [INFO] Primary account changed.
+2026-06-14 16:56:22.340: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-06-14 16:56:49.865: [INFO] Sync initialization duration: 30638ms
+2026-06-14 19:39:55.462: [INFO] OnDoneLoading sync enabled: 1
+2026-06-14 19:42:03.998: [INFO] Sync initialization duration: 122828ms
+2026-06-14 20:05:03.994: [INFO] OnDoneLoading sync enabled: 0
+2026-06-14 20:05:31.917: [INFO] Primary account changed.
+2026-06-14 20:05:31.917: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-06-14 20:06:09.602: [INFO] Sync initialization duration: 65603ms
+2026-06-14 20:19:52.913: [INFO] OnDoneLoading sync enabled: 1
+2026-06-14 20:21:54.737: [INFO] Sync initialization duration: 116163ms
+2026-06-15 15:12:43.214: [INFO] OnDoneLoading sync enabled: 0
+2026-06-15 15:12:47.612: [INFO] Primary account changed.
+2026-06-15 15:12:47.612: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-06-15 15:13:20.298: [INFO] Sync initialization duration: 37080ms
+2026-06-15 15:20:27.649: [INFO] OnDoneLoading sync enabled: 1
+2026-06-15 15:20:36.623: [INFO] Sync initialization duration: 3463ms
+2026-06-15 15:26:52.581: [INFO] OnDoneLoading sync enabled: 0
+2026-06-15 15:26:54.536: [INFO] Primary account changed.
+2026-06-15 15:26:54.536: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-06-15 15:27:19.929: [INFO] Sync initialization duration: 27343ms
+2026-06-15 15:31:51.399: [INFO] OnDoneLoading sync enabled: 1
+2026-06-15 15:31:58.686: [INFO] Sync initialization duration: 2312ms
+2026-06-15 15:52:55.737: [INFO] OnDoneLoading sync enabled: 0
+2026-06-15 15:53:06.683: [INFO] Primary account changed.
+2026-06-15 15:53:06.683: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-06-15 15:53:44.414: [INFO] Sync initialization duration: 48673ms
+2026-06-17 15:51:39.551: [INFO] OnDoneLoading sync enabled: 1
+2026-06-17 15:51:46.947: [INFO] Sync initialization duration: 2466ms
+2026-06-17 16:19:09.625: [INFO] VisibilityChanged: 0
+2026-06-17 16:29:21.657: [INFO] OnDoneLoading sync enabled: 0
+2026-06-17 16:29:24.118: [INFO] Primary account changed.
+2026-06-17 16:29:24.118: [INFO] OnPrimaryAccountChanged PrimaryAccountChangeEvent::Type::kSet
+2026-06-17 16:29:41.844: [INFO] Sync initialization duration: 20181ms
+2026-06-17 16:59:18.233: [INFO] OnDoneLoading sync enabled: 1
+2026-06-17 16:59:27.770: [INFO] Sync initialization duration: 3306ms

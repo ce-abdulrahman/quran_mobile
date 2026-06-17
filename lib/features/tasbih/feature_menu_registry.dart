@@ -8,7 +8,7 @@ import '../statistics/statistics_page.dart';
 import '../achievements/achievements_page.dart';
 import '../tracker/reading_tracker_page.dart';
 import '../settings/reminders_page.dart';
-import '../settings/backup_restore_page.dart';
+import '../settings/settings_page.dart';
 
 enum FeatureMenuGroup {
   personalization,
@@ -109,7 +109,7 @@ class FeatureMenuRegistry {
           icon: Icons.notifications_active_rounded,
           title: (l) => l.menuSmartReminders,
           onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const RemindersPage())),
-          isVisible: (_) => true,
+          isVisible: (ref) => ref.watch(authProvider).status == AuthStatus.authenticated,
         ),
       ],
       FeatureMenuGroup.data: [
@@ -117,7 +117,7 @@ class FeatureMenuRegistry {
           id: 'backup_restore',
           icon: Icons.backup_rounded,
           title: (l) => l.menuBackupRestore,
-          onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const BackupRestorePage())),
+          onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const SettingsPage(showBackButton: true))),
           isVisible: (_) => true,
         ),
       ],

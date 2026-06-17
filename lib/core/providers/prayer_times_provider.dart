@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
 import 'app_providers.dart';
 import '../services/prayer_notification_service.dart';
+import '../../features/auth/auth_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Kurdish City Model & Data
@@ -35,6 +36,29 @@ class KurdishCity {
         latitude: (json['latitude'] as num? ?? 36.1912).toDouble(),
         longitude: (json['longitude'] as num? ?? 44.0091).toDouble(),
       );
+
+  factory KurdishCity.fromApi(Map<String, dynamic> json) {
+    final name = json['name'] as String? ?? '';
+    String nameKu = name;
+    if (name.toLowerCase() == 'erbil') {
+      nameKu = 'هەولێر';
+    } else if (name.toLowerCase() == 'sulaymaniyah') {
+      nameKu = 'سلێمانی';
+    } else if (name.toLowerCase() == 'duhok') {
+      nameKu = 'دهۆک';
+    } else if (name.toLowerCase() == 'kirkuk') {
+      nameKu = 'کەرکووک';
+    } else if (name.toLowerCase() == 'halabja') {
+      nameKu = 'هەڵەبجە';
+    }
+    
+    return KurdishCity(
+      nameKu: nameKu,
+      nameEn: name,
+      latitude: (json['lat'] as num? ?? 0.0).toDouble(),
+      longitude: (json['lng'] as num? ?? 0.0).toDouble(),
+    );
+  }
 }
 
 const List<KurdishCity> kurdishCities = [
@@ -45,6 +69,8 @@ const List<KurdishCity> kurdishCities = [
   KurdishCity(nameKu: 'هەڵەبجە', nameEn: 'Halabja', latitude: 35.1778, longitude: 45.9861),
 ];
 
+enum PrayerType { fajr, dhuhr, asr, maghrib, isha }
+
 // ─────────────────────────────────────────────────────────────────────────────
 // State Class
 // ─────────────────────────────────────────────────────────────────────────────
@@ -53,22 +79,34 @@ class PrayerTimesState {
   final KurdishCity selectedCity;
   final bool isAzanEnabled;
   final Map<String, bool> prayerToggles; // {'Fajr': true, 'Dhuhr': true...}
+  final String calculationMethod;
+  final List<KurdishCity> cities;
+  final String versionHash;
 
   const PrayerTimesState({
     required this.selectedCity,
     required this.isAzanEnabled,
     required this.prayerToggles,
+    this.calculationMethod = 'muslim_world_league',
+    this.cities = kurdishCities,
+    this.versionHash = '',
   });
 
   PrayerTimesState copyWith({
     KurdishCity? selectedCity,
     bool? isAzanEnabled,
     Map<String, bool>? prayerToggles,
+    String? calculationMethod,
+    List<KurdishCity>? cities,
+    String? versionHash,
   }) {
     return PrayerTimesState(
       selectedCity: selectedCity ?? this.selectedCity,
       isAzanEnabled: isAzanEnabled ?? this.isAzanEnabled,
       prayerToggles: prayerToggles ?? this.prayerToggles,
+      calculationMethod: calculationMethod ?? this.calculationMethod,
+      cities: cities ?? this.cities,
+      versionHash: versionHash ?? this.versionHash,
     );
   }
 }
@@ -79,11 +117,12 @@ class PrayerTimesState {
 
 class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
   final SharedPreferences _prefs;
+  final Ref _ref;
   static const _cityKey = 'prayer_selected_city';
   static const _azanEnabledKey = 'prayer_azan_enabled';
   static const _togglesKey = 'prayer_toggles';
 
-  PrayerTimesNotifier(this._prefs)
+  PrayerTimesNotifier(this._prefs, this._ref)
       : super(
           PrayerTimesState(
             selectedCity: kurdishCities.first,
@@ -98,6 +137,25 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
           ),
         ) {
     _loadSettings();
+    _ref.listen<AuthState>(authProvider, (previous, next) {
+      _handleAuthChange(next);
+    });
+  }
+
+  void _handleAuthChange(AuthState authState) {
+    if (authState.status == AuthStatus.authenticated && authState.user?.province != null) {
+      final provinceName = authState.user!.province!.getLocalizedName('en');
+      final matchingCity = state.cities.firstWhere(
+        (c) => c.nameEn.toLowerCase() == provinceName.toLowerCase(),
+        orElse: () => state.selectedCity,
+      );
+      if (matchingCity.nameEn.toLowerCase() == provinceName.toLowerCase() &&
+          matchingCity.nameEn != state.selectedCity.nameEn) {
+        state = state.copyWith(selectedCity: matchingCity);
+        _prefs.setString(_cityKey, jsonEncode(matchingCity.toJson()));
+        reschedule();
+      }
+    }
   }
 
   void reschedule() {
@@ -113,11 +171,29 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     final rawAzan = _prefs.getBool(_azanEnabledKey);
     final rawToggles = _prefs.getString(_togglesKey);
 
-    KurdishCity city = kurdishCities.first;
+    // Load API cached settings
+    final cachedMethod = _prefs.getString('prayer_settings_calculation_method') ?? 'muslim_world_league';
+    final cachedHash = _prefs.getString('prayer_settings_version_hash') ?? '';
+    final cachedCitiesRaw = _prefs.getString('prayer_settings_cities_list');
+    
+    List<KurdishCity> listCities = kurdishCities;
+    if (cachedCitiesRaw != null) {
+      try {
+        final decoded = jsonDecode(cachedCitiesRaw) as List<dynamic>;
+        listCities = decoded.map((c) => KurdishCity.fromJson(c as Map<String, dynamic>)).toList();
+      } catch (_) {}
+    }
+
+    KurdishCity city = listCities.first;
     if (rawCity != null) {
       try {
         city = KurdishCity.fromJson(jsonDecode(rawCity) as Map<String, dynamic>);
       } catch (_) {}
+    }
+
+    bool exists = listCities.any((c) => c.nameEn == city.nameEn);
+    if (!exists && listCities.isNotEmpty) {
+      city = listCities.first;
     }
 
     bool azanEnabled = rawAzan ?? true;
@@ -138,17 +214,115 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
       } catch (_) {}
     }
 
+    // Check if user is authenticated and overwrite city if they have a province set
+    KurdishCity initialSelectedCity = city;
+    try {
+      final authState = _ref.read(authProvider);
+      if (authState.status == AuthStatus.authenticated && authState.user?.province != null) {
+        final provinceName = authState.user!.province!.getLocalizedName('en');
+        final matchingCity = listCities.firstWhere(
+          (c) => c.nameEn.toLowerCase() == provinceName.toLowerCase(),
+          orElse: () => city,
+        );
+        if (matchingCity.nameEn.toLowerCase() == provinceName.toLowerCase()) {
+          initialSelectedCity = matchingCity;
+        }
+      }
+    } catch (_) {}
+
     state = PrayerTimesState(
-      selectedCity: city,
+      selectedCity: initialSelectedCity,
       isAzanEnabled: azanEnabled,
       prayerToggles: toggles,
+      calculationMethod: cachedMethod,
+      cities: listCities,
+      versionHash: cachedHash,
     );
 
-    // Run rescheduling in microtask to avoid running during constructor init
-    Future.microtask(() => reschedule());
+    // Run rescheduling and API sync
+    Future.microtask(() {
+      reschedule();
+      syncWithApi();
+    });
+  }
+
+  Future<void> syncWithApi() async {
+    try {
+      final client = _ref.read(apiClientProvider);
+      final storedHash = _prefs.getString('prayer_settings_version_hash') ?? '';
+      
+      final response = await client.get(
+        '/prayer-settings',
+        queryParameters: {'version_hash': storedHash},
+      );
+      
+      if (response.statusCode == 304) {
+        return;
+      }
+      
+      if (response.statusCode == 200 && response.data != null) {
+        final resData = response.data as Map<String, dynamic>;
+        final data = resData['data'] as Map<String, dynamic>;
+        final newHash = data['version_hash'] as String? ?? '';
+        final method = data['calculation_method'] as String? ?? 'muslim_world_league';
+        final isEnabled = data['global_notifications_enabled'] as bool? ?? true;
+        
+        final rawCities = data['cities'] as List<dynamic>? ?? [];
+        List<KurdishCity> fetchedCities = [];
+        for (final c in rawCities) {
+          fetchedCities.add(KurdishCity.fromApi(c as Map<String, dynamic>));
+        }
+        
+        if (fetchedCities.isEmpty) {
+          fetchedCities = kurdishCities;
+        }
+        
+        // Save to cache
+        await _prefs.setString('prayer_settings_version_hash', newHash);
+        await _prefs.setString('prayer_settings_calculation_method', method);
+        await _prefs.setBool('prayer_settings_global_notifications', isEnabled);
+        await _prefs.setString('prayer_settings_cities_list', jsonEncode(fetchedCities.map((c) => c.toJson()).toList()));
+        
+        // Update selected city if not in the list anymore, or align with user province
+        KurdishCity currentSelected = state.selectedCity;
+        final authState = _ref.read(authProvider);
+        if (authState.status == AuthStatus.authenticated && authState.user?.province != null) {
+          final provinceName = authState.user!.province!.getLocalizedName('en');
+          final matchingCity = fetchedCities.firstWhere(
+            (c) => c.nameEn.toLowerCase() == provinceName.toLowerCase(),
+            orElse: () => currentSelected,
+          );
+          if (matchingCity.nameEn.toLowerCase() == provinceName.toLowerCase()) {
+            currentSelected = matchingCity;
+          }
+        } else {
+          bool exists = fetchedCities.any((c) => c.nameEn == currentSelected.nameEn);
+          if (!exists && fetchedCities.isNotEmpty) {
+            currentSelected = fetchedCities.first;
+          }
+        }
+        await _prefs.setString(_cityKey, jsonEncode(currentSelected.toJson()));
+        
+        state = state.copyWith(
+          selectedCity: currentSelected,
+          calculationMethod: method,
+          cities: fetchedCities,
+          versionHash: newHash,
+        );
+        
+        reschedule();
+      }
+    } catch (e) {
+      // Offline fallback
+    }
   }
 
   Future<void> changeCity(KurdishCity city) async {
+    final authState = _ref.read(authProvider);
+    if (authState.status == AuthStatus.authenticated) {
+      // Lock city updates for authenticated users
+      return;
+    }
     state = state.copyWith(selectedCity: city);
     await _prefs.setString(_cityKey, jsonEncode(city.toJson()));
     reschedule();
@@ -167,6 +341,22 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     await _prefs.setString(_togglesKey, jsonEncode(updatedToggles));
     reschedule();
   }
+
+  Future<void> changeCalculationMethod(String key) async {
+    // 1. Update state locally
+    state = state.copyWith(calculationMethod: key);
+    await _prefs.setString('prayer_settings_calculation_method', key);
+    reschedule();
+
+    // 2. Sync with backend if authenticated
+    try {
+      final auth = _ref.read(authProvider);
+      if (auth.status == AuthStatus.authenticated) {
+        final client = _ref.read(apiClientProvider);
+        await client.post('/user/prayer-method', data: {'prayer_method_key': key});
+      }
+    } catch (_) {}
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -176,7 +366,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
 final prayerTimesSettingsProvider =
     StateNotifierProvider<PrayerTimesNotifier, PrayerTimesState>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return PrayerTimesNotifier(prefs);
+  return PrayerTimesNotifier(prefs, ref);
 });
 
 // Calculate prayer times for a given day
@@ -186,7 +376,49 @@ final prayerTimesForDateProvider =
   final city = settings.selectedCity;
   
   final coordinates = Coordinates(city.latitude, city.longitude);
-  final params = CalculationMethod.muslim_world_league.getParameters();
+  
+  CalculationParameters params;
+  switch (settings.calculationMethod) {
+    case 'egyptian':
+      params = CalculationMethod.egyptian.getParameters();
+      break;
+    case 'karachi':
+      params = CalculationMethod.karachi.getParameters();
+      break;
+    case 'umm_al_qura':
+      params = CalculationMethod.umm_al_qura.getParameters();
+      break;
+    case 'gulf':
+      params = CalculationMethod.dubai.getParameters();
+      break;
+    case 'moonsighting_committee':
+      params = CalculationMethod.moon_sighting_committee.getParameters();
+      break;
+    case 'isna':
+    case 'north_america':
+      params = CalculationMethod.north_america.getParameters();
+      break;
+    case 'kurdistan':
+      params = CalculationMethod.muslim_world_league.getParameters();
+      break;
+    case 'turkey':
+      params = CalculationMethod.turkey.getParameters();
+      break;
+    case 'singapore':
+      params = CalculationMethod.singapore.getParameters();
+      break;
+    case 'tehran':
+      params = CalculationMethod.tehran.getParameters();
+      break;
+    case 'shia':
+      params = CalculationMethod.other.getParameters();
+      break;
+    case 'muslim_world_league':
+    default:
+      params = CalculationMethod.muslim_world_league.getParameters();
+      break;
+  }
+  
   params.madhab = Madhab.shafi;
 
   final dateComponents = DateComponents(date.year, date.month, date.day);
@@ -199,12 +431,14 @@ class NextPrayerInfo {
   final String kurdishName;
   final DateTime time;
   final Duration remaining;
+  final PrayerType prayerType;
 
   NextPrayerInfo({
     required this.arabicName,
     required this.kurdishName,
     required this.time,
     required this.remaining,
+    required this.prayerType,
   });
 }
 
@@ -218,26 +452,31 @@ final nextPrayerProvider = Provider<NextPrayerInfo?>((ref) {
       'nameAr': 'الفجر',
       'nameKu': 'بەیانی',
       'time': todayTimes.fajr.toLocal(),
+      'type': PrayerType.fajr,
     },
     {
       'nameAr': 'الظهر',
       'nameKu': 'نیوەڕۆ',
       'time': todayTimes.dhuhr.toLocal(),
+      'type': PrayerType.dhuhr,
     },
     {
       'nameAr': 'العصر',
       'nameKu': 'عەسڕ',
       'time': todayTimes.asr.toLocal(),
+      'type': PrayerType.asr,
     },
     {
       'nameAr': 'المغرب',
       'nameKu': 'مەغریب',
       'time': todayTimes.maghrib.toLocal(),
+      'type': PrayerType.maghrib,
     },
     {
       'nameAr': 'العشاء',
       'nameKu': 'عیشا',
       'time': todayTimes.isha.toLocal(),
+      'type': PrayerType.isha,
     },
   ];
 
@@ -250,6 +489,7 @@ final nextPrayerProvider = Provider<NextPrayerInfo?>((ref) {
         kurdishName: p['nameKu'] as String,
         time: pTime,
         remaining: pTime.difference(now),
+        prayerType: p['type'] as PrayerType,
       );
     }
   }
@@ -264,5 +504,150 @@ final nextPrayerProvider = Provider<NextPrayerInfo?>((ref) {
     kurdishName: 'بەیانی',
     time: tomorrowFajr,
     remaining: tomorrowFajr.difference(now),
+    prayerType: PrayerType.fajr,
   );
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Prayer Calculation Methods Model & Providers
+// ─────────────────────────────────────────────────────────────────────────────
+
+class AppPrayerMethod {
+  final int id;
+  final String key;
+  final String translationKeyName;
+  final String translationKeyDesc;
+  final Map<String, dynamic> config;
+  final bool isDefault;
+  final bool isUserActive;
+
+  AppPrayerMethod({
+    required this.id,
+    required this.key,
+    required this.translationKeyName,
+    required this.translationKeyDesc,
+    required this.config,
+    required this.isDefault,
+    required this.isUserActive,
+  });
+
+  factory AppPrayerMethod.fromJson(Map<String, dynamic> json) => AppPrayerMethod(
+        id: json['id'] as int? ?? 0,
+        key: json['key'] as String? ?? '',
+        translationKeyName: json['translation_key_name'] as String? ?? '',
+        translationKeyDesc: json['translation_key_desc'] as String? ?? '',
+        config: json['config'] as Map<String, dynamic>? ?? {},
+        isDefault: json['is_default'] as bool? ?? false,
+        isUserActive: json['is_user_active'] as bool? ?? false,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'key': key,
+        'translation_key_name': translationKeyName,
+        'translation_key_desc': translationKeyDesc,
+        'config': config,
+        'is_default': isDefault,
+        'is_user_active': isUserActive,
+      };
+}
+
+class PrayerMethodsState {
+  final List<AppPrayerMethod> methods;
+  final bool isLoading;
+  final String versionHash;
+
+  PrayerMethodsState({
+    this.methods = const [],
+    this.isLoading = false,
+    this.versionHash = '',
+  });
+
+  PrayerMethodsState copyWith({
+    List<AppPrayerMethod>? methods,
+    bool? isLoading,
+    String? versionHash,
+  }) {
+    return PrayerMethodsState(
+      methods: methods ?? this.methods,
+      isLoading: isLoading ?? this.isLoading,
+      versionHash: versionHash ?? this.versionHash,
+    );
+  }
+}
+
+class PrayerMethodsNotifier extends StateNotifier<PrayerMethodsState> {
+  final SharedPreferences _prefs;
+  final Ref _ref;
+
+  PrayerMethodsNotifier(this._prefs, this._ref) : super(PrayerMethodsState()) {
+    _loadFromCache();
+    Future.microtask(() => syncMethods());
+  }
+
+  void _loadFromCache() {
+    final cachedHash = _prefs.getString('prayer_methods_version_hash') ?? '';
+    final cachedListRaw = _prefs.getString('prayer_methods_list_json');
+    List<AppPrayerMethod> list = [];
+    if (cachedListRaw != null) {
+      try {
+        final decoded = jsonDecode(cachedListRaw) as List<dynamic>;
+        list = decoded.map((c) => AppPrayerMethod.fromJson(c as Map<String, dynamic>)).toList();
+      } catch (_) {}
+    }
+    state = PrayerMethodsState(methods: list, versionHash: cachedHash);
+  }
+
+  Future<void> syncMethods() async {
+    state = state.copyWith(isLoading: state.methods.isEmpty);
+    try {
+      final client = _ref.read(apiClientProvider);
+      final storedHash = state.versionHash;
+      
+      final response = await client.get(
+        '/prayer-methods',
+        queryParameters: {'version_hash': storedHash},
+      );
+
+      if (response.statusCode == 304) {
+        state = state.copyWith(isLoading: false);
+        return;
+      }
+
+      if (response.statusCode == 200 && response.data != null) {
+        final resData = response.data as Map<String, dynamic>;
+        final data = resData['data'] as Map<String, dynamic>;
+        final newHash = data['version_hash'] as String? ?? '';
+        final rawMethods = data['methods'] as List<dynamic>? ?? [];
+        
+        final fetchedMethods = rawMethods.map((m) => AppPrayerMethod.fromJson(m as Map<String, dynamic>)).toList();
+        
+        await _prefs.setString('prayer_methods_version_hash', newHash);
+        await _prefs.setString('prayer_methods_list_json', jsonEncode(fetchedMethods.map((m) => m.toJson()).toList()));
+        
+        final activeMethodKey = data['active_method_key'] as String?;
+        if (activeMethodKey != null && activeMethodKey.isNotEmpty) {
+          final settingsNotifier = _ref.read(prayerTimesSettingsProvider.notifier);
+          if (settingsNotifier.state.calculationMethod != activeMethodKey) {
+            settingsNotifier.state = settingsNotifier.state.copyWith(calculationMethod: activeMethodKey);
+            await _prefs.setString('prayer_settings_calculation_method', activeMethodKey);
+            settingsNotifier.reschedule();
+          }
+        }
+
+        state = PrayerMethodsState(
+          methods: fetchedMethods,
+          versionHash: newHash,
+          isLoading: false,
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(isLoading: false);
+    }
+  }
+}
+
+final prayerMethodsListProvider = StateNotifierProvider<PrayerMethodsNotifier, PrayerMethodsState>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return PrayerMethodsNotifier(prefs, ref);
 });

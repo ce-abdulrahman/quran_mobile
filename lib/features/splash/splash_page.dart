@@ -4,6 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/providers/auth_provider.dart';
+import '../../core/providers/feature_flag_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -16,6 +18,13 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   void initState() {
     super.initState();
+    // Kick off auth check + feature flag sync in parallel during splash
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Auth check (non-blocking; app_shell handles all states gracefully)
+      ref.read(authProvider.notifier).checkAuthState();
+      // Feature flags background sync (uses cached flags if offline)
+      ref.read(featureFlagServiceProvider).sync();
+    });
     Timer(const Duration(milliseconds: 2600), () {
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/shell');

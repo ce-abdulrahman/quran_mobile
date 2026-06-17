@@ -235,4 +235,108 @@ class NotificationService {
       'minute': prefs.getInt(_notifMinuteKey) ?? 0,
     };
   }
+
+  // ── Spaced Repetition & Memorization Reminders ──────────────────────────────
+
+  Future<void> showDueReviewNotification(int dueCount) async {
+    if (dueCount <= 0) return;
+    await _plugin.show(
+      1002,
+      'پێداچوونەوەی پێویست ✨',
+      'تۆ $dueCount ئایەتت هەیە بۆ پێداچوونەوە لە خشتەی Spaced Repetition.',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'quran_memorization_reviews',
+          'پێداچوونەوەی لەبەرکردن',
+          channelDescription: 'ئاگادارکردنەوەی پێداچوونەوەی ئایەتەکان',
+          importance: Importance.high,
+          priority: Priority.high,
+          color: Color(0xFF1AB66D),
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+    );
+  }
+
+  Future<void> scheduleStreakReminder() async {
+    final now = tz.TZDateTime.now(tz.local);
+    final scheduledDate = _nextInstanceOfTime(21, 0, daysAhead: 0, now: now);
+
+    await _plugin.zonedSchedule(
+      1003,
+      'پاراستنی زنجیرە (Streak) 🔥',
+      'ئەمڕۆ هێشتا پێداچوونەوەت نەکردووە! دۆخی زنجیرەکەت بپارێزە.',
+      scheduledDate,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'quran_memorization_streak',
+          'زنجیرەی لەبەرکردن',
+          channelDescription: 'ئاگادارکردنەوەی پاراستنی زنجیرەی ڕۆژانە',
+          importance: Importance.high,
+          priority: Priority.high,
+          color: Colors.orange,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+  }
+
+  Future<void> showMissedReviewNotification() async {
+    await _plugin.show(
+      1004,
+      'پێداچوونەوەت لەدەستچووە ⚠️',
+      'زیاتر لە دوو ڕۆژە پێداچوونەوەی لەبەرکردنت نەکردووە. بگەڕێوە بۆ هێشتنەوەی لەبەرکراوەکانت.',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'quran_memorization_missed',
+          'پێداچوونەوەی لەدەستچوو',
+          channelDescription: 'ئاگادارکردنەوەی کاتێک پێداچوونەوە دواکەوتووە',
+          importance: Importance.high,
+          priority: Priority.high,
+          color: Colors.redAccent,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+    );
+  }
+
+  Future<void> showOverdueReviewNotification(int overdueCount) async {
+    if (overdueCount <= 0) return;
+    await _plugin.show(
+      1005,
+      'ئایەتی دواکەوتوو (Overdue) 🚨',
+      'تۆ $overdueCount ئایەتی دواکەوتووت هەیە کە پێویستیان بە پێداچوونەوەی خێرا هەیە.',
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'quran_memorization_overdue',
+          'ئایەتی دواکەوتوو',
+          channelDescription: 'ئاگادارکردنەوەی ئایەتە دواکەوتووەکانی خشتەی پێداچوونەوە',
+          importance: Importance.max,
+          priority: Priority.high,
+          color: Colors.redAccent,
+        ),
+        iOS: DarwinNotificationDetails(
+          presentAlert: true,
+          presentBadge: true,
+          presentSound: true,
+        ),
+      ),
+    );
+  }
 }

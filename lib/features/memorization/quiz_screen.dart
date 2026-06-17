@@ -20,6 +20,7 @@ class QuizScreen extends ConsumerStatefulWidget {
   final int questionCount;
   final String quizType; // 'continue' or 'guess_surah'
   final MemorizationItemModel? planItem;
+  final List<int>? targetAyahIds;
 
   const QuizScreen({
     super.key,
@@ -29,6 +30,7 @@ class QuizScreen extends ConsumerStatefulWidget {
     required this.questionCount,
     required this.quizType,
     this.planItem,
+    this.targetAyahIds,
   });
 
   @override
@@ -43,10 +45,12 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   int _score = 0;
   final List<Map<String, dynamic>> _wrongAnswersList = [];
   bool _isSubmitting = false;
+  late final DateTime _startedAt;
 
   @override
   void initState() {
     super.initState();
+    _startedAt = DateTime.now();
     _generateQuestions();
   }
 
@@ -83,12 +87,26 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       // Candidates are ayahs that have a next ayah in the list
       final List<int> candidateIndices = [];
       for (int i = 0; i < widget.ayahs.length - 1; i++) {
-        candidateIndices.add(i);
+        if (widget.targetAyahIds != null) {
+          if (widget.targetAyahIds!.contains(widget.ayahs[i].id)) {
+            candidateIndices.add(i);
+          }
+        } else {
+          candidateIndices.add(i);
+        }
       }
 
       if (candidateIndices.isEmpty) {
-        // Fallback for 1-ayah scopes
-        candidateIndices.add(0);
+        if (widget.targetAyahIds != null && widget.targetAyahIds!.isNotEmpty) {
+          for (int i = 0; i < widget.ayahs.length; i++) {
+            if (widget.targetAyahIds!.contains(widget.ayahs[i].id)) {
+              candidateIndices.add(i);
+            }
+          }
+        }
+        if (candidateIndices.isEmpty) {
+          candidateIndices.add(0);
+        }
       }
 
       candidateIndices.shuffle();
@@ -170,40 +188,57 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         _answered = false;
       });
     } else {
-      // Quiz Finished! Submit review data if it is a plan item quiz
+      // Quiz Finished! Submit session and review data
       bool syncSuccess = false;
-      if (widget.planItem != null) {
-        setState(() => _isSubmitting = true);
-        final repo = ref.read(memorizationRepositoryProvider);
+      setState(() => _isSubmitting = true);
+      final repo = ref.read(memorizationRepositoryProvider);
 
-        // If user passed, update the plan item status
-        final scorePercent = _score / _questions.length;
-        if (scorePercent >= 0.8) {
-          await repo.updateItemStatus(
-            widget.planItem!.memorizationPlanId,
-            widget.planItem!.id,
-            'completed',
-          );
-          // Refresh list
-          ref.invalidate(memorizationTodayProvider);
-        }
-
-        // Post reviews for the wrong and right ayahs
-        for (final q in _questions) {
-          final isWrong = _wrongAnswersList.any((w) => w['questionText'] == q['questionText']);
-          final resultStr = isWrong ? 'needs_work' : 'perfect';
-          final levelStr = isWrong ? 'learning' : 'reviewing';
-
-          final ayah = q['ayah'] as AyahModel;
-          syncSuccess = await repo.saveReview(
-            ayahId: ayah.id,
-            reviewLevel: levelStr,
-            result: resultStr,
-            notes: 'Test result: $_score/${_questions.length}',
-          );
-        }
-        setState(() => _isSubmitting = false);
+      // If user passed, update the plan item status (if it was a plan quiz)
+      final scorePercent = _questions.isEmpty ? 0.0 : _score / _questions.length;
+      if (widget.planItem != null && scorePercent >= 0.8) {
+        await repo.updateItemStatus(
+          widget.planItem!.memorizationPlanId,
+          widget.planItem!.id,
+          'completed',
+        );
+        ref.invalidate(memorizationTodayProvider);
       }
+
+      // Log the memorization session
+      await repo.logSession(
+        sessionType: 'quiz',
+        status: 'completed',
+        startedAt: _startedAt,
+        endedAt: DateTime.now(),
+        completedAt: DateTime.now(),
+        durationSeconds: DateTime.now().difference(_startedAt).inSeconds,
+        ayahsReviewed: _questions.length,
+        ayahsMemorized: _wrongAnswersList.length < _questions.length ? (_questions.length - _wrongAnswersList.length) : 0,
+        score: (_score * 10).clamp(0, 100),
+      );
+
+      // Post reviews for the wrong and right ayahs
+      final List<UserAyahProgressModel> progressList = [];
+      for (final q in _questions) {
+        final isWrong = _wrongAnswersList.any((w) => w['questionText'] == q['questionText']);
+        final resultStr = isWrong ? 'forgot' : 'perfect';
+        final levelStr = isWrong ? 'learning' : 'reviewing';
+
+        final ayah = q['ayah'] as AyahModel;
+        final res = await repo.saveReview(
+          ayahId: ayah.id,
+          reviewLevel: levelStr,
+          result: resultStr,
+          notes: 'Quiz: $_score/${_questions.length}',
+        );
+        if (res != null) {
+          progressList.add(res);
+          syncSuccess = true;
+        }
+      }
+
+      ref.invalidate(memorizationDashboardProvider);
+      setState(() => _isSubmitting = false);
 
       if (mounted) {
         Navigator.pushReplacement(
@@ -219,11 +254,29 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               planItem: widget.planItem,
               ayahs: widget.ayahs,
               allSurahs: widget.allSurahs,
+              progressList: progressList,
             ),
           ),
         );
       }
     }
+  }
+
+  Future<void> _logInterruptedSession() async {
+    final repo = ref.read(memorizationRepositoryProvider);
+    final duration = DateTime.now().difference(_startedAt).inSeconds;
+    await repo.logSession(
+      sessionType: 'quiz',
+      status: 'interrupted',
+      startedAt: _startedAt,
+      endedAt: null,
+      completedAt: null,
+      durationSeconds: duration,
+      ayahsReviewed: _currentIndex,
+      ayahsMemorized: 0,
+      score: (_score * 10).clamp(0, 100),
+    );
+    ref.invalidate(memorizationDashboardProvider);
   }
 
   Future<bool> _onWillPop() async {
@@ -278,7 +331,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         if (didPop) return;
         final shouldPop = await _onWillPop();
         if (shouldPop && context.mounted) {
-          Navigator.pop(context);
+          await _logInterruptedSession();
+          if (context.mounted) {
+            Navigator.pop(context);
+          }
         }
       },
       child: Scaffold(
@@ -291,7 +347,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             onPressed: () async {
               final shouldPop = await _onWillPop();
               if (shouldPop && context.mounted) {
-                Navigator.pop(context);
+                await _logInterruptedSession();
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
               }
             },
           ),

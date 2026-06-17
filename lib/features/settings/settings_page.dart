@@ -1,12 +1,19 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:file_picker/file_picker.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/services/notification_service.dart';
 import 'reminders_page.dart';
-import 'backup_restore_page.dart';
+import 'prayer_method_settings_page.dart';
+import '../../core/providers/auth_provider.dart';
+import '../../core/providers/backup_provider.dart';
+import '../../core/local_db/content_package.dart';
+import '../../core/providers/package_manager_provider.dart';
+import '../../core/services/audio_download_manager.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Settings Page
@@ -26,9 +33,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   int _notifHour = 8;
   int _notifMinute = 0;
 
+  int _audioStorageBytes = 0;
+
   @override
   void initState() {
     super.initState();
+    _loadAudioStorage();
     Future.microtask(() async {
       try {
         final settings = await ref.read(appSettingsProvider.future);
@@ -101,8 +111,244 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     }
   }
 
+  Future<void> _loadAudioStorage() async {
+    final bytes = await AudioDownloadManager().getTotalStorageBytes();
+    if (mounted) {
+      setState(() {
+        _audioStorageBytes = bytes;
+      });
+    }
+  }
+
+  void _showExportPasswordDialog(BuildContext context) {
+    final passwordController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('هەناردەکردنی داتا', style: TextStyle(fontFamily: 'Cairo')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'تکایە تێپەڕەوشەیەک بنووسە ئەگەر دەتەوێت فایلەکە تەشفیر (سڕ) بکەیت بۆ پاراستنی زیاتر. دەتوانیت بە بەتاڵی جێی بهێڵیت.',
+              style: TextStyle(fontFamily: 'Cairo', fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'تێپەڕەوشە (ئارەزوومەندانە)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('پاشگەزبوونەوە', style: TextStyle(fontFamily: 'Cairo')),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final pw = passwordController.text;
+              await ref.read(backupStateProvider.notifier).exportLocalBackup(pw.isNotEmpty ? pw : null);
+            },
+            child: const Text('ناردن', style: TextStyle(fontFamily: 'Cairo')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickAndImportData(BuildContext context) async {
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['json'],
+    );
+    if (result != null && result.files.single.path != null) {
+      final file = File(result.files.single.path!);
+      if (!context.mounted) return;
+      _showImportPasswordDialog(context, file);
+    }
+  }
+
+  void _showImportPasswordDialog(BuildContext context, File file) {
+    final passwordController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('هێنانە ناوەوەی داتا', style: TextStyle(fontFamily: 'Cairo')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'ئەگەر فایلەکە بە تێپەڕەوشە پارێزراوە، تکایە تێپەڕەوشەکەی بنووسە. ئەگەر نا، بە بەتاڵی جێی بهێڵە.',
+              style: TextStyle(fontFamily: 'Cairo', fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'تێپەڕەوشە',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('پاشگەزبوونەوە', style: TextStyle(fontFamily: 'Cairo')),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              final pw = passwordController.text;
+              final success = await ref.read(backupStateProvider.notifier).importLocalBackup(
+                file,
+                password: pw.isNotEmpty ? pw : null,
+              );
+              if (success && context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('داتاکان بە سەرکەوتوویی هێنرانە ناوەوە', style: TextStyle(fontFamily: 'Cairo')),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            },
+            child: const Text('هێنانە ناوەوە', style: TextStyle(fontFamily: 'Cairo')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOfflineContentDownloader(BuildContext context) {
+    final cs = AppColorScheme.of(context);
+    final downloadState = ref.watch(packageDownloadProgressProvider);
+
+    return downloadState.when(
+      data: (event) {
+        if (!event.isCompleted) {
+          return SizedBox(
+            width: 80,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LinearProgressIndicator(value: event.progress, color: cs.primary),
+                const SizedBox(height: 4),
+                Text(
+                  '${(event.progress * 100).toStringAsFixed(0)}%',
+                  style: TextStyle(fontSize: 10, color: cs.primary, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          );
+        }
+        return IconButton(
+          icon: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 20),
+          onPressed: () => _downloadAllOfflineContent(context),
+        );
+      },
+      error: (e, s) => IconButton(
+        icon: const Icon(Icons.error_outline_rounded, color: Colors.red, size: 20),
+        onPressed: () => _downloadAllOfflineContent(context),
+      ),
+      loading: () => const SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(strokeWidth: 2),
+      ),
+    );
+  }
+
+  Future<void> _downloadAllOfflineContent(BuildContext context) async {
+    final manager = ref.read(packageManagerProvider);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('دەستکرا بە داگرتنی ناوەڕۆکەکان لە پاشبنەما...', style: TextStyle(fontFamily: 'Cairo'))),
+    );
+    try {
+      await manager.downloadPackage(ContentPackage.quran);
+      await manager.downloadPackage(ContentPackage.tajweed);
+      await manager.downloadPackage(ContentPackage.adhkar);
+      await manager.downloadPackage(ContentPackage.hadith);
+      await manager.downloadPackage(ContentPackage.tafsir);
+      await manager.downloadPackage(ContentPackage.translations);
+    } catch (_) {}
+  }
+
+  Widget _buildAudioStorageRow(BuildContext context) {
+    final cs = AppColorScheme.of(context);
+    final mb = _audioStorageBytes / (1024 * 1024);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          '${mb.toStringAsFixed(1)} MB',
+          style: TextStyle(
+            fontFamily: 'Cairo',
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: cs.textSecondary,
+          ),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          icon: const Icon(Icons.delete_sweep_rounded, color: Colors.red, size: 20),
+          onPressed: () async {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('پاککردنەوەی فایلە دەنگییەکان', style: TextStyle(fontFamily: 'Cairo')),
+                content: const Text('ئایا دڵنیایت لە سڕینەوەی هەموو فایلە دەنگییە داگیراوەکانی قورئان؟', style: TextStyle(fontFamily: 'Cairo')),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('نا', style: TextStyle(fontFamily: 'Cairo')),
+                  ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await AudioDownloadManager().enforceSizeLimit(0);
+                      await _loadAudioStorage();
+                    },
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                    child: const Text('بەڵێ، بسڕەوە', style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    ref.listen<BackupState>(backupStateProvider, (previous, next) {
+      if (next.successMessage != null && next.successMessage != previous?.successMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.successMessage!, style: const TextStyle(fontFamily: 'Cairo')),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+      if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!, style: const TextStyle(fontFamily: 'Cairo')),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    });
+
     final cs = AppColorScheme.of(context);
     final l = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -455,6 +701,25 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       trailing: IconButton(
                         icon: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: cs.primary),
                         onPressed: () {
+                          if (ref.read(authProvider).status != AuthStatus.authenticated) {
+                            final locale = Localizations.localeOf(context).languageCode;
+                            final message = locale == 'ku'
+                                ? 'تکایە سەرەتا بچۆ ژوورەوە بۆ بەکارهێنانی ئەم تایبەتمەندییە'
+                                : (locale == 'ar'
+                                    ? 'يرجى تسجيل الدخول أولاً لاستخدام هذه الميزة'
+                                    : 'Please log in first to use this feature');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  message,
+                                  textDirection: TextDirection.rtl,
+                                  style: const TextStyle(fontFamily: 'Cairo'),
+                                ),
+                                backgroundColor: Colors.orange,
+                              ),
+                            );
+                            return;
+                          }
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const RemindersPage()),
@@ -467,26 +732,78 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
                 const SizedBox(height: 16),
 
-                // ── Backup & Restore card ─────────────────────────
-                _SectionLabel(label: 'پاراستنی زانیارییەکان', cs: cs),
+                // ── Calculation Method card ────────────────────────
+                _SectionLabel(label: 'ڕێگای هەژمارکردنی کاتەکان', cs: cs),
                 const SizedBox(height: 10),
                 _SettingsCard(
                   cs: cs,
                   children: [
                     _SettingRow(
-                      icon: Icons.backup_rounded,
-                      label: 'پاشەکەوت و گەڕاندنەوە',
-                      subLabel: 'زانیارییەکانت بپارێزە یان بگەڕێنەوە',
+                      icon: Icons.settings_suggest_rounded,
+                      label: 'ڕێگای کاتی نوێژ',
+                      subLabel: 'هەڵبژاردنی ڕێگای هەژمارکردنی کاتەکانی بانگ',
                       cs: cs,
                       trailing: IconButton(
                         icon: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: cs.primary),
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const BackupRestorePage()),
+                            MaterialPageRoute(builder: (context) => const PrayerMethodSettingsPage()),
                           );
                         },
                       ),
+                    ),
+                  ],
+                ).animate().fadeIn(duration: 300.ms, delay: 180.ms),
+
+                const SizedBox(height: 16),
+
+                // ── Data Management section ─────────────────────────
+                _SectionLabel(label: 'بەڕێوەبردنی داتاکان (Data Management)', cs: cs),
+                const SizedBox(height: 10),
+                _SettingsCard(
+                  cs: cs,
+                  children: [
+                    // Export local data
+                    _SettingRow(
+                      icon: Icons.upload_file_rounded,
+                      label: 'هەناردەکردنی داتاکان',
+                      subLabel: 'هەناردەکردنی زانیارییەکانت بۆ ناو فایلێک بۆ پاشەکەوت',
+                      cs: cs,
+                      trailing: IconButton(
+                        icon: Icon(Icons.share_rounded, color: cs.primary),
+                        onPressed: () => _showExportPasswordDialog(context),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    // Import local data
+                    _SettingRow(
+                      icon: Icons.file_download_rounded,
+                      label: 'هێنانە ناوەوەی داتاکان',
+                      subLabel: 'گەڕاندنەوەی زانیارییەکان لە فایلی کۆپی پاشەکەوتەوە',
+                      cs: cs,
+                      trailing: IconButton(
+                        icon: Icon(Icons.file_open_rounded, color: cs.primary),
+                        onPressed: () => _pickAndImportData(context),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    // Download offline content
+                    _SettingRow(
+                      icon: Icons.download_for_offline_rounded,
+                      label: 'داگرتنی هەموو ناوەڕۆکەکان',
+                      subLabel: 'داگرتنی داتای قورئان و تەجوید و ئەزکار بۆ بەکارهێنانی ئۆفلاین',
+                      cs: cs,
+                      trailing: _buildOfflineContentDownloader(context),
+                    ),
+                    const Divider(height: 1),
+                    // Audio Downloads
+                    _SettingRow(
+                      icon: Icons.library_music_rounded,
+                      label: 'فایلە دەنگییەکان',
+                      subLabel: 'بەڕێوەبردنی فایلە دەنگییە داگیراوەکانی قورئان',
+                      cs: cs,
+                      trailing: _buildAudioStorageRow(context),
                     ),
                   ],
                 ).animate().fadeIn(duration: 300.ms, delay: 190.ms),

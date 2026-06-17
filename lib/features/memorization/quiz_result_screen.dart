@@ -16,6 +16,7 @@ class QuizResultScreen extends StatelessWidget {
   final MemorizationItemModel? planItem;
   final List<AyahModel> ayahs;
   final List<SurahModel> allSurahs;
+  final List<UserAyahProgressModel>? progressList;
 
   const QuizResultScreen({
     super.key,
@@ -28,6 +29,7 @@ class QuizResultScreen extends StatelessWidget {
     this.planItem,
     required this.ayahs,
     required this.allSurahs,
+    this.progressList,
   });
 
   @override
@@ -160,7 +162,79 @@ class QuizResultScreen extends StatelessWidget {
 
                     // Sync status card
                     _buildSyncStatusCard(context, cs),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
+
+                    if (progressList != null && progressList!.isNotEmpty) ...[
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: cs.card,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: cs.cardBorder),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(Icons.schedule_rounded, color: cs.primary, size: 20),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'خشتەی پێداچوونەوە (Spaced Repetition)',
+                                  style: TextStyle(
+                                    fontFamily: 'Cairo',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: cs.textPrimary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            ...progressList!.map((progress) {
+                              String levelKu = progress.masteryLevel;
+                              if (progress.masteryLevel == 'mastered') levelKu = 'لەبەرکراو';
+                              if (progress.masteryLevel == 'reviewing') levelKu = 'پێداچوونەوە';
+                              if (progress.masteryLevel == 'learning') levelKu = 'خوێندن';
+                              
+                              final nextDate = progress.nextReviewDate ?? 'سبەی';
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: cs.bg.withOpacity(0.4),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      'ئایەتی ${progress.ayahId}',
+                                      style: TextStyle(
+                                        fontFamily: 'Cairo',
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.bold,
+                                        color: cs.textPrimary,
+                                      ),
+                                    ),
+                                    Text(
+                                      'ئاست: $levelKu • پێداچوونەوە: $nextDate',
+                                      style: TextStyle(
+                                        fontFamily: 'Cairo',
+                                        fontSize: 12,
+                                        color: progress.masteryLevel == 'mastered' ? const Color(0xFF10B981) : cs.textSecondary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
                     // Quiz Details Card
                     Container(
@@ -349,6 +423,7 @@ class QuizResultScreen extends StatelessWidget {
                               questionCount: total,
                               quizType: quizType,
                               planItem: planItem,
+                              targetAyahIds: progressList?.map((e) => e.ayahId).toList(),
                             ),
                           ),
                         );

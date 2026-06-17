@@ -1043,21 +1043,18 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
       ),
       builder: (ctx) {
         return Consumer(
-          builder: (context, ref, _) {
+          builder: (consumerContext, ref, _) {
             final categorized = FeatureMenuRegistry.getCategorizedItems(
               context,
               ref,
               onDailyGoalsTap: () {
-                Navigator.pop(ctx);
                 _showChangeGoalDialog();
               },
               onSessionsTap: () {
-                Navigator.pop(ctx);
                 final tasbihState = ref.read(tasbihProvider);
                 _showStartSessionDialog(context, cs, tasbihState);
               },
               onCounterSettingsTap: () {
-                Navigator.pop(ctx);
                 _showCounterSettingsDialog();
               },
               activeDhikr: activeDhikr,

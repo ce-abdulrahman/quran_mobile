@@ -26,7 +26,8 @@ class _RemindersPageState extends ConsumerState<RemindersPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            success ? 'Reminders updated successfully!' : 'Failed to save settings.',
+            success ? 'بیرخەرەوەکان بە سەرکەوتوویی نوێکرانەوە!' : 'نوێکردنەوەی ڕێکخستنەکان شکستی هێنا.',
+            style: const TextStyle(fontFamily: 'Cairo'),
           ),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
@@ -51,8 +52,9 @@ class _RemindersPageState extends ConsumerState<RemindersPage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Reminder Settings',
+          'ڕێکخستنی بیرخەرەوەکان',
           style: TextStyle(
+            fontFamily: 'Cairo',
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -77,7 +79,7 @@ class _RemindersPageState extends ConsumerState<RemindersPage> {
                         const SizedBox(height: 16),
                         ElevatedButton(
                           onPressed: () => ref.read(reminderProvider.notifier).loadReminders(),
-                          child: const Text('Try Again'),
+                          child: const Text('دووبارە هەوڵ بدەرەوە', style: TextStyle(fontFamily: 'Cairo')),
                         ),
                       ],
                     ),
@@ -116,8 +118,9 @@ class _RemindersPageState extends ConsumerState<RemindersPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Enable Reminders',
+                                  'چالاککردنی بیرخەرەوەکان',
                                   style: TextStyle(
+                                    fontFamily: 'Cairo',
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
@@ -125,8 +128,9 @@ class _RemindersPageState extends ConsumerState<RemindersPage> {
                                 ),
                                 SizedBox(height: 4),
                                 Text(
-                                  'Toggle all notification reminders at once',
+                                  'هەموو بیرخەرەوەکانی ئاگادارکردنەوە پێکەوە چالاک/ناچالاک بکە',
                                   style: TextStyle(
+                                    fontFamily: 'Cairo',
                                     fontSize: 12,
                                     color: Colors.white70,
                                   ),
@@ -197,8 +201,8 @@ class _RemindersPageState extends ConsumerState<RemindersPage> {
                           Icon(Icons.save_rounded),
                           SizedBox(width: 8),
                           Text(
-                            'Save Preferences',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            'خەزنکردنی ڕێکخستنەکان',
+                            style: TextStyle(fontFamily: 'Cairo', fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ],
                       ),

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../core/constants/app_colors.dart';
-
+import '../../core/providers/auth_provider.dart';
+import '../../core/widgets/auth_gate_card.dart';
 import '../../core/models/leaderboard_model.dart';
 import '../../core/models/leaderboard_settings_model.dart';
 import '../../core/providers/leaderboard_provider.dart';
@@ -38,9 +39,37 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(leaderboardProvider);
+    final authState = ref.watch(authProvider);
     final cs = AppColorScheme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Auth gate: leaderboard requires account for cloud-based rankings
+    if (!authState.isAuthenticated) {
+      return Scaffold(
+        appBar: AppBar(
+          backgroundColor: isDark ? AppColorScheme.darken(cs.primary, 0.35) : cs.primary,
+          elevation: 0,
+          centerTitle: true,
+          title: const Text(
+            'پێشەنگەکان',
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ),
+        body: const AuthGateCard(
+          featureContext: 'ڕیزبەندی پێشەنگەکان خاڵەکانی بەکارهێنەران نیشان دەدات لەسەر بنەمای تەسبیحەکان و پێشکەوتنی لەبەرکردنی قورئان لەگەڵ هەموو بەکارهێنەرانی تر.',
+        ),
+      );
+    }
+
+    final state = ref.watch(leaderboardProvider);
 
     return Scaffold(
       backgroundColor: cs.bg,

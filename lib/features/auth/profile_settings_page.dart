@@ -49,7 +49,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           _confirmPasswordController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('شیکارەکەت بە سەرکەوتوویی نوێکرایەوە', textDirection: TextDirection.rtl, style: TextStyle(fontFamily: 'Cairo')),
+              content: Text('وشەی نهێنی بە سەرکەوتوویی نوێکرایەوە', textDirection: TextDirection.rtl, style: TextStyle(fontFamily: 'Cairo')),
               backgroundColor: Colors.green,
             ),
           );
@@ -157,7 +157,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
             // Password Reset Section
             const Text(
-              'گۆڕینی شیکارە (Password)',
+              'گۆڕینی وشەی نهێني', 
               textAlign: TextAlign.right,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
             ),
@@ -176,7 +176,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         controller: _currentPasswordController,
                         obscureText: _obscureCurrent,
                         decoration: InputDecoration(
-                          labelText: 'شیکارەی ئێستا',
+                          labelText: 'وشەی نهێنی ئێستا',
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(_obscureCurrent ? Icons.visibility_off_outlined : Icons.visibility_outlined),
@@ -184,7 +184,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                           ),
                         ),
                         textDirection: TextDirection.ltr,
-                        validator: (value) => value == null || value.isEmpty ? 'تکایە شیکارەی ئێستات بنووسە' : null,
+                        validator: (value) => value == null || value.isEmpty ? 'تکایە وشەی نهێنی ئێستات بنووسە' : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -193,7 +193,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         controller: _newPasswordController,
                         obscureText: _obscureNew,
                         decoration: InputDecoration(
-                          labelText: 'شیکارەی نوێ',
+                          labelText: 'وشەی نهێنی نوێ',
                           prefixIcon: const Icon(Icons.lock_clock_outlined),
                           suffixIcon: IconButton(
                             icon: Icon(_obscureNew ? Icons.visibility_off_outlined : Icons.visibility_outlined),
@@ -202,8 +202,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         ),
                         textDirection: TextDirection.ltr,
                         validator: (value) {
-                          if (value == null || value.isEmpty) return 'تکایە شیکارە نوێیەکە دیاری بکە';
-                          if (value.length < 8) return 'شیکارە دەبێت لانی کەم ٨ پیت یان ژمارە بێت';
+                          if (value == null || value.isEmpty) return 'تکایە وشەی نهێنی نوێیەکە دیاری بکە';
+                          if (value.length < 8) return 'وشەی نهێنی دەبێت لانی کەم ٨ پیت یان ژمارە بێت';
                           return null;
                         },
                       ),
@@ -214,7 +214,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         controller: _confirmPasswordController,
                         obscureText: _obscureConfirm,
                         decoration: InputDecoration(
-                          labelText: 'دووبارەکردنەوەی شیکارەی نوێ',
+                          labelText: 'دووبارەکردنەوەی وشه نوێ',
                           prefixIcon: const Icon(Icons.lock_reset),
                           suffixIcon: IconButton(
                             icon: Icon(_obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined),
@@ -223,8 +223,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         ),
                         textDirection: TextDirection.ltr,
                         validator: (value) {
-                          if (value == null || value.isEmpty) return 'تکایە شیکارە نوێیەکە دووبارە بکەرەوە';
-                          if (value != _newPasswordController.text) return 'شیکارەکان وەک یەک نین';
+                          if (value == null || value.isEmpty) return 'تکایە وشەی نهێنی نوێیەکە دووبارە بکەرەوە';
+                          if (value != _newPasswordController.text) return 'وشەکان وەک یەک نین';
                           return null;
                         },
                       ),
@@ -240,7 +240,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         ),
                         child: _isChangingPassword
                             ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text('شیکارە بگۆڕە', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+                            : const Text('وشەی نهێنی بگۆڕە', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -251,7 +251,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
 
             // Danger Zone
             const Text(
-              'ناوچەی مەترسی (Danger Zone)',
+              'ناوچەی مەترسی',
               textAlign: TextAlign.right,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.redAccent, fontFamily: 'Cairo'),
             ),
@@ -299,7 +299,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     // Soft Delete Account
                     ListTile(
                       leading: const Icon(Icons.delete_forever_outlined, color: Colors.redAccent),
-                      title: const Text('سڕینەوەی ئەکاونت (Delete Account)', style: TextStyle(fontFamily: 'Cairo', color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                      title: const Text('سڕینەوەی ئەکاونت', style: TextStyle(fontFamily: 'Cairo', color: Colors.redAccent, fontWeight: FontWeight.bold)),
                       onTap: () => _showDeleteAccountDialog(context),
                     ),
                   ],

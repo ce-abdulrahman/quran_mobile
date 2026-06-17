@@ -83,7 +83,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    'بخێر بێیتەوە',
+                    'بەخێربێیەوە',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 26,
@@ -130,7 +130,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
-                      labelText: 'شیکارە (Password)',
+                      labelText: 'وشەیی نهێنی',
                       hintText: '••••••••',
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
@@ -147,7 +147,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     textDirection: TextDirection.ltr,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'تکایە شیکارەکەت بنووسە';
+                        return 'تکایە وشەیی نهێنيت بنووسە';
                       }
                       return null;
                     },
@@ -163,7 +163,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         );
                       },
                       child: Text(
-                        'شیکارەکەت بیرچووە؟',
+                        'وشەی نهێنی لە بیرچووە؟',
                         style: TextStyle(
                           color: accentColor,
                           fontWeight: FontWeight.w600,
@@ -219,7 +219,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                       ),
                       const Text(
-                        'ئەکاونتت نییە؟',
+                        'ئەگەر ئەکاونتت نییە؟',
                         style: TextStyle(fontFamily: 'Cairo'),
                       ),
                     ],

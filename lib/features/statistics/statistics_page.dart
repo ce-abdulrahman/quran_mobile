@@ -61,7 +61,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
         backgroundColor: cs.card,
         elevation: 0,
         title: Text(
-          'Statistics & Insights',
+          'ئامار و زانیارییەکان',
           style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, color: cs.textPrimary),
         ),
         actions: [
@@ -148,12 +148,12 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
 
   Widget _buildSummaryCards(StatisticsDashboard d, AppColorScheme cs) {
     final cards = [
-      _SummaryCard(icon: '📿', label: 'Total Dhikr',    value: _fmt(d.totalDhikr),    color: const Color(0xFF6366F1)),
-      _SummaryCard(icon: '🔥', label: 'Current Streak', value: '${d.currentStreak}d', color: const Color(0xFFEF4444)),
-      _SummaryCard(icon: '🏆', label: 'Best Streak',    value: '${d.longestStreak}d', color: const Color(0xFFF59E0B)),
-      _SummaryCard(icon: '🎯', label: 'Goals Done',     value: _fmt(d.totalGoalsCompleted), color: const Color(0xFF10B981)),
-      _SummaryCard(icon: '⭐', label: 'Achievements',   value: '${d.totalAchievements}', color: const Color(0xFF8B5CF6)),
-      _SummaryCard(icon: '📊', label: 'Sessions',       value: _fmt(d.totalSessions),  color: const Color(0xFF3B82F6)),
+      _SummaryCard(icon: '📿', label: 'کۆی زیکرەکان',    value: _fmt(d.totalDhikr),    color: const Color(0xFF6366F1)),
+      _SummaryCard(icon: '🔥', label: 'بەردەوامی ئێستا', value: '${d.currentStreak} ڕۆژ', color: const Color(0xFFEF4444)),
+      _SummaryCard(icon: '🏆', label: 'باشترین بەردەوامی',    value: '${d.longestStreak} ڕۆژ', color: const Color(0xFFF59E0B)),
+      _SummaryCard(icon: '🎯', label: 'ئامانجی تەواوبوو',     value: _fmt(d.totalGoalsCompleted), color: const Color(0xFF10B981)),
+      _SummaryCard(icon: '⭐', label: 'دەستکەوتەکان',   value: '${d.totalAchievements}', color: const Color(0xFF8B5CF6)),
+      _SummaryCard(icon: '📊', label: 'خولەکان',       value: _fmt(d.totalSessions),  color: const Color(0xFF3B82F6)),
     ];
 
     return SizedBox(
@@ -237,15 +237,21 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Spiritual Productivity Score', style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary)),
+                  Text('نمرەی بەرهەمداری ڕۆحی', style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary)),
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
-                    child: Text(d.productivityLabel.toUpperCase(), style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                    child: Text(
+                      d.productivityLabel == 'master' ? 'مامۆستا' :
+                      d.productivityLabel == 'advanced' ? 'پێشکەوتوو' :
+                      d.productivityLabel == 'dedicated' ? 'پابەندبوو' :
+                      d.productivityLabel == 'active' ? 'چالاک' : 'سەرەتا',
+                      style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                    ),
                   ),
                   const SizedBox(height: 8),
-                  Text('Goal: ${d.goalCompletionRate.toStringAsFixed(1)}%  •  Streak: ${d.currentStreak} days', style: TextStyle(fontFamily: 'Cairo', fontSize: 11, color: cs.textSecondary)),
+                  Text('ئامانج: ${d.goalCompletionRate.toStringAsFixed(1)}%  •  بەردەوامی: ${d.currentStreak} ڕۆژ', style: TextStyle(fontFamily: 'Cairo', fontSize: 11, color: cs.textSecondary)),
                 ],
               ),
             ),
@@ -266,7 +272,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: 'Daily Dhikr Activity',
+        title: 'چالاکی ڕۆژانەی زیکر',
         child: SizedBox(
           height: 180,
           child: LineChart(
@@ -322,7 +328,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
       child: Row(
         children: [
           Expanded(child: _TrendTile(
-            label: 'Dhikr vs Previous',
+            label: 'بەراوردی زیکر بە پێشوو',
             current: dhikr.totalCurrent,
             previous: dhikr.totalPrevious,
             trendPct: dhikr.trendPct,
@@ -330,9 +336,9 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
           )),
           const SizedBox(width: 10),
           Expanded(child: _TrendTile(
-            label: 'Sessions vs Previous',
+            label: 'بەراوردی خول بە پێشوو',
             current: sessions.totalSessions,
-            previous: sessions.totalSessions, // fallback — sessions has prevCount embedded
+            previous: sessions.totalSessions,
             trendPct: sessions.sessionsTrendPct,
             cs: cs,
           )),
@@ -361,8 +367,8 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: '🔥 Streak Heatmap',
-        subtitle: 'Current: ${streaks.currentStreak}d  •  Best: ${streaks.longestStreak}d  •  Success: ${streaks.successRate.toStringAsFixed(0)}%',
+        title: '🔥 نەخشەی بەردەوامی',
+        subtitle: 'ئێستا: ${streaks.currentStreak}ڕ  •  باشترین: ${streaks.longestStreak}ڕ  •  ڕێژەی سەرکەوتن: ${streaks.successRate.toStringAsFixed(0)}%',
         child: SizedBox(
           height: 90,
           child: GridView.builder(
@@ -399,7 +405,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: 'Most Used Dhikr',
+        title: 'زۆرترین زیکری بەکارهاتوو',
         child: Column(
           children: dhikr.breakdown.asMap().entries.map((e) {
             final item = e.value;
@@ -439,23 +445,37 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
   Widget _buildSessionCards(SessionAnalytics s, AppColorScheme cs) {
     String hourLabel(int? h) {
       if (h == null) return '—';
-      if (h >= 4 && h < 8)   return 'Fajr (${h}h)';
-      if (h >= 12 && h < 14) return 'Dhuhr (${h}h)';
-      if (h >= 15 && h < 17) return 'Asr (${h}h)';
-      if (h >= 18 && h < 20) return 'Maghrib (${h}h)';
-      if (h >= 20 && h < 23) return 'Isha (${h}h)';
-      return '${h}:00';
+      if (h >= 4 && h < 8)   return 'بەیانی ($hک)';
+      if (h >= 12 && h < 14) return 'نیوەڕۆ ($hک)';
+      if (h >= 15 && h < 17) return 'عەسڕ ($hک)';
+      if (h >= 18 && h < 20) return 'مەغریب ($hک)';
+      if (h >= 20 && h < 23) return 'عیشا ($hک)';
+      return 'کاتژمێر $h:00';
     }
 
     String durLabel(int secs) {
-      if (secs < 60) return '${secs}s';
-      return '${(secs ~/ 60)}m ${secs % 60}s';
+      if (secs < 60) return '$secs چرکە';
+      return '${(secs ~/ 60)} خولەک و ${secs % 60} چرکە';
+    }
+
+    String dayLabel(String? d) {
+      if (d == null) return '—';
+      switch (d.toLowerCase()) {
+        case 'monday': return 'دووشەممە';
+        case 'tuesday': return 'سێشەممە';
+        case 'wednesday': return 'چوارشەممە';
+        case 'thursday': return 'پێنجشەممە';
+        case 'friday': return 'هەینی';
+        case 'saturday': return 'شەممە';
+        case 'sunday': return 'یەکشەممە';
+        default: return d;
+      }
     }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: 'Session Analytics',
+        title: 'شیکاریی خولەکان',
         child: GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -464,12 +484,12 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
           children: [
-            _StatTile('Total Sessions',     '${s.totalSessions}',                cs),
-            _StatTile('Avg Duration',        durLabel(s.avgDurationSeconds),      cs),
-            _StatTile('Longest Session',     durLabel(s.longestSessionSecs),      cs),
-            _StatTile('Avg Dhikr/min',       '${s.avgDhikrPerMinute.toStringAsFixed(1)}', cs),
-            _StatTile('Peak Hour',           hourLabel(s.mostProductiveHour),     cs),
-            _StatTile('Peak Day',            s.mostProductiveDay ?? '—',          cs),
+            _StatTile('کۆی خولەکان',     '${s.totalSessions}',                cs),
+            _StatTile('تێکڕای ماوە',        durLabel(s.avgDurationSeconds),      cs),
+            _StatTile('درێژترین خول',     durLabel(s.longestSessionSecs),      cs),
+            _StatTile('تێکڕای زیکر/خولەک',       '${s.avgDhikrPerMinute.toStringAsFixed(1)}', cs),
+            _StatTile('کاتژمێری لوتکە',           hourLabel(s.mostProductiveHour),     cs),
+            _StatTile('ڕۆژی لوتکە',            dayLabel(s.mostProductiveDay),          cs),
           ],
         ),
       ),
@@ -485,7 +505,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: '🎯 Upcoming Milestones',
+        title: '🎯 ئامانجەکانی داهاتوو',
         child: Column(
           children: pending.map((m) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -509,7 +529,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text('${m.progressPct.toStringAsFixed(1)}% complete', style: TextStyle(fontFamily: 'Cairo', fontSize: 10, color: cs.textSecondary)),
+                Text('${m.progressPct.toStringAsFixed(1)}% تەواو بووە', style: TextStyle(fontFamily: 'Cairo', fontSize: 10, color: cs.textSecondary)),
               ],
             ),
           )).toList(),
@@ -526,7 +546,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: '💡 Insights',
+        title: '💡 تێڕوانینەکان',
         child: Column(
           children: insights.map((i) => Container(
             margin: const EdgeInsets.only(bottom: 10),
@@ -618,7 +638,7 @@ class _TrendTile extends StatelessWidget {
           Row(
             children: [
               Icon(isUp ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded, size: 14, color: color),
-              Text('${trendPct.abs().toStringAsFixed(1)}% vs prev', style: TextStyle(fontFamily: 'Cairo', fontSize: 10, color: color)),
+              Text('${trendPct.abs().toStringAsFixed(1)}% بە بەراورد بە پێشوو', style: TextStyle(fontFamily: 'Cairo', fontSize: 10, color: color)),
             ],
           ),
         ],

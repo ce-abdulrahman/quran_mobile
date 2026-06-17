@@ -21,13 +21,13 @@ class _FrequencyPickerState extends State<FrequencyPicker> {
   late List<int> _selectedDays;
 
   final Map<int, String> _weekdaysMap = {
-    1: 'Mon',
-    2: 'Tue',
-    3: 'Wed',
-    4: 'Thu',
-    5: 'Fri',
-    6: 'Sat',
-    7: 'Sun',
+    1: 'د',
+    2: 'س',
+    3: 'چ',
+    4: 'پ',
+    5: 'هـ',
+    6: 'ش',
+    7: 'ی',
   };
 
   @override
@@ -80,8 +80,9 @@ class _FrequencyPickerState extends State<FrequencyPicker> {
             ),
             
             Text(
-              'Select Frequency',
+              'دیاریکردنی دووبارەبوونەوە',
               style: theme.textTheme.titleLarge?.copyWith(
+                fontFamily: 'Cairo',
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -90,32 +91,32 @@ class _FrequencyPickerState extends State<FrequencyPicker> {
 
             // Daily option
             _buildRadioTile(
-              title: 'Daily',
-              subtitle: 'Every day of the week',
+              title: 'ڕۆژانە',
+              subtitle: 'هەموو ڕۆژەکانی هەفتە',
               value: 'daily',
             ),
             const SizedBox(height: 8),
 
             // Weekdays option
             _buildRadioTile(
-              title: 'Weekdays',
-              subtitle: 'Monday through Friday',
+              title: 'ڕۆژانی ناوەڕاستی هەفتە',
+              subtitle: 'دووشەممە تا هەینی',
               value: 'weekdays',
             ),
             const SizedBox(height: 8),
 
             // Weekends option
             _buildRadioTile(
-              title: 'Weekends',
-              subtitle: 'Saturday and Sunday',
+              title: 'ڕۆژانی کۆتایی هەفتە',
+              subtitle: 'شەممە و یەکشەممە',
               value: 'weekends',
             ),
             const SizedBox(height: 8),
 
             // Custom days option
             _buildRadioTile(
-              title: 'Custom Days',
-              subtitle: 'Select specific days of the week',
+              title: 'ڕۆژانی تایبەت',
+              subtitle: 'ڕۆژە دیاریکراوەکانی هەفتە هەڵبژێرە',
               value: 'custom',
             ),
 
@@ -145,7 +146,7 @@ class _FrequencyPickerState extends State<FrequencyPicker> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        entry.value.substring(0, 1),
+                        entry.value,
                         style: TextStyle(
                           color: isSelected
                               ? Colors.white
@@ -173,7 +174,7 @@ class _FrequencyPickerState extends State<FrequencyPicker> {
               onPressed: () {
                 if (_selectedFrequency == 'custom' && _selectedDays.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please select at least one day.')),
+                    const SnackBar(content: Text('تکایە لانی کەم یەک ڕۆژ دیاری بکە.', style: TextStyle(fontFamily: 'Cairo'))),
                   );
                   return;
                 }
@@ -181,8 +182,8 @@ class _FrequencyPickerState extends State<FrequencyPicker> {
                 Navigator.pop(context);
               },
               child: const Text(
-                'Confirm Selection',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                'پەسەندکردن',
+                style: TextStyle(fontFamily: 'Cairo', fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -232,6 +233,7 @@ class _FrequencyPickerState extends State<FrequencyPicker> {
                   Text(
                     title,
                     style: TextStyle(
+                      fontFamily: 'Cairo',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: isSelected
@@ -243,6 +245,7 @@ class _FrequencyPickerState extends State<FrequencyPicker> {
                   Text(
                     subtitle,
                     style: TextStyle(
+                      fontFamily: 'Cairo',
                       fontSize: 13,
                       color: isDark ? Colors.white38 : Colors.black38,
                     ),

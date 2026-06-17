@@ -3,6 +3,8 @@ import 'package:timezone/timezone.dart' as tz;
 import '../models/reminder_model.dart';
 import '../repositories/reminder_repository.dart';
 import '../services/reminder_engine.dart';
+import '../services/notification_coordinator.dart';
+import '../../features/auth/auth_provider.dart';
 import 'app_providers.dart';
 import 'achievement_provider.dart';
 
@@ -52,9 +54,95 @@ class ReminderNotifier extends StateNotifier<ReminderState> {
 
   ReminderNotifier(this._repository, this._ref) : super(const ReminderState());
 
-  /// Load all reminder configurations from the server
+  /// Load all reminder configurations
   Future<void> loadReminders() async {
     state = state.copyWith(isLoading: true, clearError: true);
+    final authState = _ref.read(authProvider);
+    final isGuest = authState.status != AuthStatus.authenticated;
+
+    if (isGuest) {
+      final local = await NotificationCoordinator.loadReminderSettings();
+      String formatTime(int h, int m) => '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}';
+      final list = [
+        ReminderModel(
+          type: 'PRAYER',
+          key: 'prayer_notif',
+          icon: '🕌',
+          title: 'ئاگادارکردنەوەی کاتی نوێژەکان',
+          body: 'کاتی نوێژەکان و بانگدان بۆ شارەکەت',
+          priority: 5,
+          sortOrder: 1,
+          version: 1,
+          enabled: local['prayer_enabled'] as bool? ?? true,
+          scheduledTime: '00:00',
+          frequency: 'daily',
+          customDays: [],
+          timezone: tz.local.name,
+        ),
+        ReminderModel(
+          type: 'MEMORIZATION',
+          key: 'memo_notif',
+          icon: '📖',
+          title: 'کاتی لەبەرکردن',
+          body: 'بیرخستنەوەی ڕۆژانە بۆ لەبەرکردنی ئایەتەکان',
+          priority: 5,
+          sortOrder: 2,
+          version: 1,
+          enabled: local['memorization_enabled'] as bool? ?? false,
+          scheduledTime: formatTime(local['memorization_hour'] as int? ?? 8, local['memorization_minute'] as int? ?? 0),
+          frequency: 'daily',
+          customDays: [],
+          timezone: tz.local.name,
+        ),
+        ReminderModel(
+          type: 'REVIEW',
+          key: 'review_notif',
+          icon: '🧠',
+          title: 'پێداچوونەوەی لەبەرکراوەکان',
+          body: 'ئایەتی لەبەرکراوی ئەمڕۆت پێداچوونەوە بکە',
+          priority: 5,
+          sortOrder: 3,
+          version: 1,
+          enabled: local['review_enabled'] as bool? ?? false,
+          scheduledTime: formatTime(local['review_hour'] as int? ?? 18, local['review_minute'] as int? ?? 0),
+          frequency: 'daily',
+          customDays: [],
+          timezone: tz.local.name,
+        ),
+        ReminderModel(
+          type: 'WIRD',
+          key: 'wird_notif',
+          icon: '📿',
+          title: 'وردی ڕۆژانە',
+          body: 'خوێندنەوەی ئەزکار و وردی ڕۆژانەی بەیانی یان ئێوارە',
+          priority: 5,
+          sortOrder: 4,
+          version: 1,
+          enabled: local['wird_enabled'] as bool? ?? false,
+          scheduledTime: formatTime(local['wird_hour'] as int? ?? 6, local['wird_minute'] as int? ?? 30),
+          frequency: 'daily',
+          customDays: [],
+          timezone: tz.local.name,
+        ),
+        ReminderModel(
+          type: 'TASBIH',
+          key: 'tasbih_notif',
+          icon: '🤲',
+          title: 'بیرخستنەوەی تەسبیح',
+          body: 'کاتی تەسبیحات و یادی خوای گەورە',
+          priority: 5,
+          sortOrder: 5,
+          version: 1,
+          enabled: local['tasbih_enabled'] as bool? ?? false,
+          scheduledTime: formatTime(local['tasbih_hour'] as int? ?? 20, local['tasbih_minute'] as int? ?? 0),
+          frequency: 'daily',
+          customDays: [],
+          timezone: tz.local.name,
+        ),
+      ];
+      state = state.copyWith(reminders: list, isLoading: false);
+      return;
+    }
 
     final result = await _repository.getReminders();
     result.when(
@@ -103,36 +191,125 @@ class ReminderNotifier extends StateNotifier<ReminderState> {
     );
   }
 
-  /// Save all current reminder preferences in bulk to the server and trigger local reschedule.
+  /// Save preferences in bulk and trigger local reschedule.
   Future<bool> savePreferences() async {
     state = state.copyWith(isSaving: true, clearError: true);
+    final authState = _ref.read(authProvider);
+    final isGuest = authState.status != AuthStatus.authenticated;
 
-    // Ensure user's device timezone is set for all reminders being saved
-    final localTimezone = tz.local.name;
-    final updatedList = state.reminders.map((r) {
-      return r.copyWith(timezone: localTimezone);
-    }).toList();
+    ReminderModel? getReminder(String type) {
+      for (final r in state.reminders) {
+        if (r.type == type) return r;
+      }
+      return null;
+    }
 
-    final result = await _repository.saveReminders(updatedList);
-    return result.when(
-      success: (_) async {
-        state = state.copyWith(reminders: updatedList, isSaving: false);
-        // Refresh local schedules by syncing with backend
-        await syncAndReschedule();
-        return true;
-      },
-      error: (msg, _, __) {
-        state = state.copyWith(isSaving: false, errorMessage: msg);
-        return false;
-      },
+    int? getHour(String type) {
+      final r = getReminder(type);
+      if (r == null) return null;
+      final parts = r.scheduledTime.split(':');
+      return parts.isNotEmpty ? int.tryParse(parts[0]) : null;
+    }
+
+    int? getMinute(String type) {
+      final r = getReminder(type);
+      if (r == null) return null;
+      final parts = r.scheduledTime.split(':');
+      return parts.length > 1 ? int.tryParse(parts[1]) : null;
+    }
+
+    bool? getEnabled(String type) {
+      final r = getReminder(type);
+      return r?.enabled;
+    }
+
+    // Save locally
+    await NotificationCoordinator.saveReminderSettings(
+      prayerEnabled: getEnabled('PRAYER'),
+      memorizationEnabled: getEnabled('MEMORIZATION'),
+      reviewEnabled: getEnabled('REVIEW'),
+      wirdEnabled: getEnabled('WIRD'),
+      tasbihEnabled: getEnabled('TASBIH'),
+      tasbihHour: getHour('TASBIH'),
+      tasbihMinute: getMinute('TASBIH'),
+      reviewHour: getHour('REVIEW'),
+      reviewMinute: getMinute('REVIEW'),
+      wirdHour: getHour('WIRD'),
+      wirdMinute: getMinute('WIRD'),
+      memorizationHour: getHour('MEMORIZATION'),
+      memorizationMinute: getMinute('MEMORIZATION'),
     );
+
+    // Local rescheduling
+    final coordinator = NotificationCoordinator();
+    
+    if (getEnabled('MEMORIZATION') == true) {
+      await coordinator.scheduleMemorizationReminder(
+        hour: getHour('MEMORIZATION') ?? 8,
+        minute: getMinute('MEMORIZATION') ?? 0,
+      );
+    } else {
+      await coordinator.cancelMemorizationReminder();
+    }
+
+    if (getEnabled('REVIEW') == true) {
+      await coordinator.scheduleReviewReminder(
+        hour: getHour('REVIEW') ?? 18,
+        minute: getMinute('REVIEW') ?? 0,
+      );
+    } else {
+      await coordinator.cancelReviewReminder();
+    }
+
+    if (getEnabled('WIRD') == true) {
+      await coordinator.scheduleWirdReminder(
+        hour: getHour('WIRD') ?? 6,
+        minute: getMinute('WIRD') ?? 30,
+      );
+    } else {
+      await coordinator.cancelWirdReminder();
+    }
+
+    if (getEnabled('TASBIH') == true) {
+      await coordinator.scheduleTasbihReminder(
+        hour: getHour('TASBIH') ?? 20,
+        minute: getMinute('TASBIH') ?? 0,
+      );
+    } else {
+      await coordinator.cancelTasbihReminder();
+    }
+
+    if (!isGuest) {
+      final localTimezone = tz.local.name;
+      final updatedList = state.reminders.map((r) {
+        return r.copyWith(timezone: localTimezone);
+      }).toList();
+
+      final result = await _repository.saveReminders(updatedList);
+      return result.when(
+        success: (_) async {
+          state = state.copyWith(reminders: updatedList, isSaving: false);
+          await syncAndReschedule();
+          return true;
+        },
+        error: (msg, _, __) {
+          state = state.copyWith(isSaving: false, errorMessage: msg);
+          return false;
+        },
+      );
+    } else {
+      state = state.copyWith(isSaving: false);
+      return true;
+    }
   }
 
   /// Sync schedules from backend (using live user metrics) and reschedule local alarms.
   Future<void> syncAndReschedule() async {
+    final authState = _ref.read(authProvider);
+    if (authState.status != AuthStatus.authenticated) return;
+
     final tasbihState = _ref.read(tasbihProvider);
     
-    // Check if achievementProvider has loaded, to get nearAchievement status
     bool nearAchievement = false;
     try {
       final achsState = _ref.read(achievementProvider);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 import '../cache/cache_manager.dart';
 import '../network/api_client.dart';
 import '../repositories/surah_repository.dart';
@@ -36,9 +37,13 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('Initialize SharedPreferences in main.dart first');
 });
 
+final hiveCacheBoxProvider = Provider<Box>((ref) {
+  throw UnimplementedError('Initialize Hive cache box in main.dart first');
+});
+
 final cacheManagerProvider = Provider<CacheManager>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return CacheManager(prefs);
+  final box = ref.watch(hiveCacheBoxProvider);
+  return CacheManager(box);
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {

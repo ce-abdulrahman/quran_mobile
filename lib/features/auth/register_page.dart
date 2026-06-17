@@ -172,7 +172,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    labelText: 'ناو (Full Name)',
+                    labelText: 'ناوی تەواوت',
                     hintText: 'Full Name',
                     prefixIcon: const Icon(Icons.person_outline),
                     border: OutlineInputBorder(
@@ -193,7 +193,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                    labelText: 'ناوی بەکارهێنەر (Username)',
+                    labelText: 'ناوی بەکارهێنەر',
                     hintText: 'username',
                     prefixIcon: const Icon(Icons.alternate_email_outlined),
                     border: OutlineInputBorder(
@@ -215,7 +215,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'ئیمەیڵ (Email)',
+                    labelText: 'ئیمەیڵ',
                     hintText: 'example@email.com',
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
@@ -242,7 +242,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'شیکارە (Password)',
+                    labelText: 'وشەی نهێنی بنووسە',
                     hintText: '••••••••',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
@@ -259,10 +259,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   textDirection: TextDirection.ltr,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'تکایە شیکارەیەک دیاری بکە';
+                      return 'تکایە وشەی نهێنی بنووسە';
                     }
                     if (value.length < 8) {
-                      return 'شیکارە دەبێت لانی کەم ٨ پیت یان ژمارە بێت';
+                      return 'وشەی نهێنی دەبێت لانی کەم ٨ پیت یان ژمارە بێت';
                     }
                     return null;
                   },
@@ -274,7 +274,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   controller: _passwordConfirmController,
                   obscureText: _obscurePasswordConfirm,
                   decoration: InputDecoration(
-                    labelText: 'دووبارەکردنەوەی شیکارە (Confirm Password)',
+                    labelText: 'دووبارەکردنەوەی وشەی نهێنی',
                     hintText: '••••••••',
                     prefixIcon: const Icon(Icons.lock_reset_outlined),
                     suffixIcon: IconButton(
@@ -291,10 +291,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   textDirection: TextDirection.ltr,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'تکایە شیکارەکەت دووبارە بنووسەوە';
+                      return 'تکایە وشەی نهێنی دووبارە بنووسەوە';
                     }
                     if (value != _passwordController.text) {
-                      return 'شیکارەکان وەک یەک نین';
+                      return 'وشەکان وەک یەک نین';
                     }
                     return null;
                   },
@@ -304,7 +304,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 // Optional profile demographic settings
                 const Divider(height: 32),
                 const Text(
-                  'زانیارییە دیمۆگرافییەکان (ئارەزوومەندانە)',
+                  'زانیارییە زیاتر (ئارەزوومەندانە)',
                   textAlign: TextAlign.right,
                   style: TextStyle(
                     fontSize: 15,
@@ -325,9 +325,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                   ),
                   items: const [
-                    DropdownMenuItem(value: 'male', child: Text('نێر (Male)')),
-                    DropdownMenuItem(value: 'female', child: Text('مێ (Female)')),
-                    DropdownMenuItem(value: 'other', child: Text('تر (Other)')),
+                    DropdownMenuItem(value: 'male', child: Text('نێر')),
+                    DropdownMenuItem(value: 'female', child: Text('مێ')),
                   ],
                   onChanged: (val) => setState(() => _selectedGender = val),
                 ),
@@ -337,7 +336,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 DropdownButtonFormField<int>(
                   value: _selectedBirthYear,
                   decoration: InputDecoration(
-                    labelText: 'ساڵی لەدایکبوون (Birth Year)',
+                    labelText: 'ساڵی لەدایکبوون',
                     prefixIcon: const Icon(Icons.cake_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -358,7 +357,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 DropdownButtonFormField<int>(
                   value: _selectedCountryId,
                   decoration: InputDecoration(
-                    labelText: 'وڵات (Country)',
+                    labelText: 'وڵات',
                     prefixIcon: const Icon(Icons.public_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -392,7 +391,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 DropdownButtonFormField<int>(
                   value: _selectedProvinceId,
                   decoration: InputDecoration(
-                    labelText: 'شار/پارێزگا (Province)',
+                    labelText: 'شار/پارێزگا',
                     prefixIcon: const Icon(Icons.map_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),

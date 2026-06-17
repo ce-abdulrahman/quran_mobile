@@ -123,7 +123,7 @@ class AchievementDetailPage extends StatelessWidget {
                 children: [
                   if (achievement.description != null)
                     _InfoCard(
-                      title: 'وصف',
+                      title: 'وەسف',
                       child: Text(
                         achievement.description!,
                         style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5),
@@ -198,8 +198,9 @@ class AchievementDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '+${achievement.rewardPoints} پوائنت',
+                              '+${achievement.rewardPoints} خاڵ',
                               style: const TextStyle(
+                                fontFamily: 'Cairo',
                                 color: Color(0xFFFFD700),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -261,6 +262,7 @@ class _InfoCard extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
+              fontFamily: 'Cairo',
               color: Colors.white54,
               fontSize: 11,
               fontWeight: FontWeight.w600,

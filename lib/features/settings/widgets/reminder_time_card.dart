@@ -21,15 +21,15 @@ class ReminderTimeCard extends StatelessWidget {
   String _formatFrequencyLabel(String freq, List<int> days) {
     switch (freq.toLowerCase()) {
       case 'daily':
-        return 'Daily';
+        return 'ڕۆژانە';
       case 'weekdays':
-        return 'Weekdays (Mon-Fri)';
+        return 'ناوەڕاستی هەفتە (دووشەممە-هەینی)';
       case 'weekends':
-        return 'Weekends (Sat-Sun)';
+        return 'کۆتایی هەفتە (شەممە-یەکشەممە)';
       case 'custom':
-        if (days.isEmpty) return 'Select Days';
+        if (days.isEmpty) return 'ڕۆژەکان دیاری بکە';
         final Map<int, String> dayNames = {
-          1: 'Mon', 2: 'Tue', 3: 'Wed', 4: 'Thu', 5: 'Fri', 6: 'Sat', 7: 'Sun'
+          1: 'دووشەممە', 2: 'سێشەممە', 3: 'چوارشەممە', 4: 'پێنجشەممە', 5: 'هەینی', 6: 'شەممە', 7: 'یەکشەممە'
         };
         final sorted = List<int>.from(days)..sort();
         return sorted.map((d) => dayNames[d] ?? '').join(', ');
@@ -195,8 +195,9 @@ class ReminderTimeCard extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Time',
+                                      'کات',
                                       style: TextStyle(
+                                        fontFamily: 'Cairo',
                                         fontSize: 11,
                                         color: isDark ? Colors.white38 : Colors.black38,
                                       ),
@@ -237,8 +238,9 @@ class ReminderTimeCard extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Frequency',
+                                      'دووبارەبوونەوە',
                                       style: TextStyle(
+                                        fontFamily: 'Cairo',
                                         fontSize: 11,
                                         color: isDark ? Colors.white38 : Colors.black38,
                                       ),

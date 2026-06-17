@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
+import '../local_db/guest_memorization_db.dart';
+import '../services/guest_memo_migration_service.dart';
 import 'app_providers.dart';
 import 'tasbih_session_provider.dart';
 import 'achievement_provider.dart';
@@ -27,6 +29,14 @@ class AuthState {
     this.stats,
     this.errorMessage,
   });
+
+  /// True only when the user has a valid authenticated session.
+  bool get isAuthenticated => status == AuthStatus.authenticated;
+
+  /// True for both explicit guest mode and unauthenticated state —
+  /// i.e., any non-authenticated user who can browse freely.
+  bool get isGuest =>
+      status == AuthStatus.guest || status == AuthStatus.unauthenticated;
 
   AuthState copyWith({
     AuthStatus? status,
@@ -57,15 +67,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   SharedPreferences get _prefs => _ref.read(sharedPreferencesProvider);
 
-  /// Check token on app boot
+  /// Check token on app boot.
+  /// Always resolves to a usable state — never blocks the user.
   Future<void> checkAuthState() async {
     state = state.copyWith(status: AuthStatus.loading);
     final token = _prefs.getString('auth_token');
-    
+
     if (token != null && token.isNotEmpty) {
       final repo = _ref.read(authRepositoryProvider);
       final result = await repo.getProfile();
-      
+
       result.when(
         success: (data) {
           state = AuthState(
@@ -77,26 +88,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
           _ref.read(tasbihThemeProvider.notifier).syncOnLogin();
         },
         error: (message, statusCode, cachedData) {
-          // If unauthenticated (401), clear tokens
+          // 401/403 → token is invalid, clear it, continue as guest
           if (statusCode == 401 || statusCode == 403) {
             _prefs.remove('auth_token');
-            state = const AuthState(status: AuthStatus.unauthenticated);
-          } else {
-            // Network issue, use cached or unauthenticated
-            state = AuthState(
-              status: AuthStatus.unauthenticated,
-              errorMessage: message,
-            );
           }
+          // Any error (network or auth) → guest mode so app is always usable
+          state = AuthState(
+            status: AuthStatus.guest,
+            errorMessage: message,
+          );
         },
       );
     } else {
-      final isGuestMode = _prefs.getBool('is_guest_mode') ?? false;
-      if (isGuestMode) {
-        state = const AuthState(status: AuthStatus.guest);
-      } else {
-        state = const AuthState(status: AuthStatus.unauthenticated);
-      }
+      // No token → always enter guest mode (app is always usable without login)
+      _prefs.setBool('is_guest_mode', true);
+      state = const AuthState(status: AuthStatus.guest);
     }
   }
 
@@ -143,6 +149,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
         // Sync themes on login
         _ref.read(tasbihThemeProvider.notifier).syncOnLogin();
+        // Migrate any guest memorization drafts to the backend
+        _migrateGuestMemoDrafts();
         return true;
       },
       error: (message, statusCode, cachedData) {
@@ -214,6 +222,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
         // Sync themes on register
         _ref.read(tasbihThemeProvider.notifier).syncOnLogin();
+        // Migrate any guest memorization drafts to the backend
+        _migrateGuestMemoDrafts();
         return true;
       },
       error: (message, statusCode, cachedData) {
@@ -279,18 +289,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
-  /// User Logout
+  /// User Logout — always reverts to guest mode so app stays usable
   Future<void> logout({String? deviceIdentifier}) async {
     final repo = _ref.read(authRepositoryProvider);
     await repo.logout(deviceIdentifier: deviceIdentifier);
-    
+
     _prefs.remove('auth_token');
-    _prefs.setBool('is_guest_mode', false);
-    
-    state = const AuthState(status: AuthStatus.unauthenticated);
+    _prefs.setBool('is_guest_mode', true);
+
+    state = const AuthState(status: AuthStatus.guest);
   }
 
-  /// Soft Delete Account
+  /// Soft Delete Account — reverts to guest mode
   Future<bool> deleteAccount() async {
     final repo = _ref.read(authRepositoryProvider);
     final result = await repo.deleteAccount();
@@ -298,14 +308,39 @@ class AuthNotifier extends StateNotifier<AuthState> {
     return result.when(
       success: (_) {
         _prefs.remove('auth_token');
-        _prefs.setBool('is_guest_mode', false);
-        state = const AuthState(status: AuthStatus.unauthenticated);
+        _prefs.setBool('is_guest_mode', true);
+        state = const AuthState(status: AuthStatus.guest);
         return true;
       },
       error: (message, statusCode, cachedData) {
         return false;
       },
     );
+  }
+
+  /// Background migration of guest memorization drafts to backend API.
+  /// Called after successful login or registration.
+  void _migrateGuestMemoDrafts() {
+    // Run in the background — don't await, don't block login flow
+    Future.microtask(() async {
+      try {
+        final db = GuestMemorizationDb();
+        await db.init();
+        if (db.pendingCount == 0) return;
+
+        final apiClient = _ref.read(apiClientProvider);
+        final service = GuestMemoDraftMigrationService(db, apiClient);
+        final result = await service.migrate();
+
+        if (result.succeeded > 0) {
+          // Could show a SnackBar via a global key if needed
+          // For now: silent background migration
+        }
+      } catch (e) {
+        // Migration failure is non-fatal; drafts remain in local DB
+        // and can be retried later
+      }
+    });
   }
 
   /// Gathers local progress state for merging with user profile

@@ -307,35 +307,8 @@ class _MemorizationQuizPageState extends ConsumerState<MemorizationQuizPage>
           ),
           const SizedBox(height: 20),
 
-          // Quiz Type Selection
-          Text(
-            'جۆری تاقیکردنەوە',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(fontFamily: 'Cairo', fontSize: 13, fontWeight: FontWeight.bold, color: cs.textPrimary),
-          ),
+          // Quiz Type Selection is hidden in V1. Default is 'continue'.
           const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: _buildQuizTypeCard(
-                  type: 'guess_surah',
-                  title: 'دۆزینەوەی سورەت',
-                  icon: Icons.map_rounded,
-                  cs: cs,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildQuizTypeCard(
-                  type: 'continue',
-                  title: 'بەردەوامی ئایەت',
-                  icon: Icons.arrow_forward_rounded,
-                  cs: cs,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
 
           // Question Count Choice
           Text(
