@@ -631,253 +631,6 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
     );
   }
 
-  Color _getProgressBarColor(double percentage) {
-    if (percentage < 0.5) {
-      return Colors.blue;
-    } else if (percentage < 0.8) {
-      return Colors.orange;
-    } else {
-      return const Color(0xFF0F8F4C); // Green
-    }
-  }
-
-  Widget _buildStatusBadge(double percentage, AppColorScheme cs, AppLocalizations l) {
-    String text;
-    Color color;
-    final locale = Localizations.localeOf(context).languageCode;
-    if (percentage < 0.5) {
-      text = locale == 'ku' ? '🔵 لە کاردایە' : (locale == 'ar' ? '🔵 قيد التقدم' : '🔵 In Progress');
-      color = Colors.blue;
-    } else if (percentage < 0.8) {
-      text = locale == 'ku' ? '🟠 نزیک لە تەواوبوون' : (locale == 'ar' ? '🟠 قريب من الانتهاء' : '🟠 Near Completion');
-      color = Colors.orange;
-    } else {
-      text = locale == 'ku' ? '🟢 تەواوکراوە' : (locale == 'ar' ? '🟢 مكتمل' : '🟢 Completed');
-      color = const Color(0xFF0F8F4C);
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.25), width: 1),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(
-          fontFamily: 'Cairo',
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          color: color,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLinearProgressBar(double percentage, AppColorScheme cs) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: 0.0, end: percentage),
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOut,
-      builder: (context, val, child) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(6),
-          child: LinearProgressIndicator(
-            value: val,
-            backgroundColor: cs.divider.withValues(alpha: 0.3),
-            valueColor: AlwaysStoppedAnimation<Color>(_getProgressBarColor(val)),
-            minHeight: 10,
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDailyGoalCard(AppColorScheme cs, AppLocalizations l, TasbihState tasbihState) {
-    final progress = tasbihState.dailyGoalProgress;
-    final target = tasbihState.dailyGoalValue;
-    final percentage = target > 0 ? (progress / target).clamp(0.0, 1.0) : 0.0;
-    final isCompleted = progress >= target;
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: cs.card,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: cs.cardBorder, width: 1.5),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          isCompleted ? Icons.check_circle_rounded : Icons.track_changes_rounded,
-                          color: _getProgressBarColor(percentage),
-                          size: 18,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          l.tasbihDailyGoal,
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: cs.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      isCompleted
-                          ? l.tasbihGoalCompleted
-                          : '$progress / $target (${(percentage * 100).toStringAsFixed(0)}%)',
-                      textDirection: TextDirection.rtl,
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: _getProgressBarColor(percentage),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Stack(
-                alignment: Alignment.center,
-                children: [
-                  SizedBox(
-                    width: 70,
-                    height: 70,
-                    child: CircularProgressIndicator(
-                      value: percentage,
-                      backgroundColor: cs.divider.withValues(alpha: 0.5),
-                      color: _getProgressBarColor(percentage),
-                      strokeWidth: 6,
-                      strokeCap: StrokeCap.round,
-                    ),
-                  ),
-                  Text(
-                    '${(percentage * 100).toStringAsFixed(0)}%',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: _getProgressBarColor(percentage),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildStatusBadge(percentage, cs, l),
-              ElevatedButton(
-                onPressed: _showChangeGoalDialog,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: cs.primary.withValues(alpha: 0.1),
-                  foregroundColor: cs.primary,
-                  elevation: 0,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: Text(
-                  l.tasbihChangeGoal,
-                  style: const TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildLinearProgressBar(percentage, cs),
-        ],
-      ),
-    ).animate(target: isCompleted ? 1 : 0)
-     .shimmer(duration: 1200.ms, color: Colors.amber.withValues(alpha: 0.2))
-     .scale(begin: const Offset(1.0, 1.0), end: const Offset(1.02, 1.02), duration: 300.ms);
-  }
-
-  // ── Statistics Calculators ──────────────────────────────────────────
-
-  int get _todayTotal {
-    final todayStr = DateTime.now().toIso8601String().substring(0, 10);
-    return _history
-        .where((entry) => entry['date'] == todayStr)
-        .fold(0, (sum, entry) => sum + ((entry['count'] as num?)?.toInt() ?? 0));
-  }
-
-  int get _weekTotal {
-    final now = DateTime.now();
-    final last7Days = List.generate(7, (i) {
-      return now.subtract(Duration(days: i)).toIso8601String().substring(0, 10);
-    });
-    return _history
-        .where((entry) => last7Days.contains(entry['date']))
-        .fold(0, (sum, entry) => sum + ((entry['count'] as num?)?.toInt() ?? 0));
-  }
-
-  int get _monthTotal {
-    final now = DateTime.now();
-    final last30Days = List.generate(30, (i) {
-      return now.subtract(Duration(days: i)).toIso8601String().substring(0, 10);
-    });
-    return _history
-        .where((entry) => last30Days.contains(entry['date']))
-        .fold(0, (sum, entry) => sum + ((entry['count'] as num?)?.toInt() ?? 0));
-  }
-
-  int get _allTimeTotal {
-    return _history.fold(0, (sum, entry) => sum + ((entry['count'] as num?)?.toInt() ?? 0));
-  }
-
-
-  List<String> get _activeHistoryDates {
-    final dates = _history
-        .where((e) => ((e['count'] as num?)?.toInt() ?? 0) > 0)
-        .map((e) => e['date'] as String)
-        .toSet()
-        .toList();
-    dates.sort((a, b) => b.compareTo(a));
-    return dates;
-  }
-
-  String _formatDate(String dateStr) {
-    try {
-      final parsed = DateTime.parse(dateStr);
-      return '${parsed.year}/${parsed.month.toString().padLeft(2, '0')}/${parsed.day.toString().padLeft(2, '0')}';
-    } catch (_) {
-      return dateStr;
-    }
-  }
-
   // ── Counter UI & Dialogs ──────────────────────────────────────────────
 
   Widget _buildThemeBackground(BuildContext context, TasbihThemeModel theme, bool isDark) {
@@ -920,10 +673,10 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
     if (value.toString().contains('#')) {
       final hexes = RegExp(r'#[0-9a-fA-F]{6}').allMatches(value.toString());
       if (hexes.length >= 2) {
-        startColor = Color(int.parse(hexes.elementAt(0).group(0)!.replaceAll('#', '0xFF'))).withOpacity(isDark ? 0.1 : 0.2);
-        endColor = Color(int.parse(hexes.elementAt(1).group(0)!.replaceAll('#', '0xFF'))).withOpacity(isDark ? 0.15 : 0.3);
+        startColor = Color(int.parse(hexes.elementAt(0).group(0)!.replaceAll('#', '0xFF'))).withValues(alpha: isDark ? 0.1 : 0.2);
+        endColor = Color(int.parse(hexes.elementAt(1).group(0)!.replaceAll('#', '0xFF'))).withValues(alpha: isDark ? 0.15 : 0.3);
       } else if (hexes.length == 1) {
-        startColor = Color(int.parse(hexes.elementAt(0).group(0)!.replaceAll('#', '0xFF'))).withOpacity(isDark ? 0.1 : 0.2);
+        startColor = Color(int.parse(hexes.elementAt(0).group(0)!.replaceAll('#', '0xFF'))).withValues(alpha: isDark ? 0.1 : 0.2);
       }
     }
 
@@ -1181,7 +934,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 11),
                     ),
                     value: prefs.soundEnabled,
-                    activeColor: cs.primary,
+                    activeThumbColor: cs.primary,
                     onChanged: (val) {
                       ref.read(tasbihThemeProvider.notifier).savePreferences(
                         prefs.copyWith(soundEnabled: val),
@@ -1199,7 +952,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 11),
                     ),
                     value: prefs.hapticEnabled,
-                    activeColor: cs.primary,
+                    activeThumbColor: cs.primary,
                     onChanged: (val) {
                       ref.read(tasbihThemeProvider.notifier).savePreferences(
                         prefs.copyWith(hapticEnabled: val),
@@ -1738,6 +1491,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                       );
                     } else if (mounted) {
                       final errorMsg = ref.read(tasbihSessionProvider).errorMessage ?? 'Error starting session';
+                      if (!mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(errorMsg, style: const TextStyle(fontFamily: 'Cairo')),
@@ -1763,86 +1517,10 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
     );
   }
 
-  Widget _buildSessionBanner(BuildContext context, AppColorScheme cs, WidgetRef ref, TasbihState tasbihState) {
-    final sessionState = ref.watch(tasbihSessionProvider);
-    final locale = Localizations.localeOf(context).languageCode;
-    final hasActive = sessionState.activeSession != null;
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: hasActive ? const Color(0xFFE8F5E9) : cs.cardBorder.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: hasActive ? const Color(0xFFC8E6C9) : cs.cardBorder),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              if (hasActive)
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.green),
-                ).animate(onPlay: (c) => c.repeat(reverse: true)).fade(begin: 0.3, end: 1.0, duration: 600.ms)
-              else
-                Icon(Icons.timer_outlined, color: cs.primary, size: 18),
-              const SizedBox(width: 8),
-              Text(
-                hasActive
-                    ? (locale == 'ku' ? 'خولێکی زیکر چالاکە' : (locale == 'ar' ? 'هناك جلسة ذكر نشطة' : 'Dhikr session is active'))
-                    : (locale == 'ku' ? 'خولی زیکری کاتی و خێرا' : (locale == 'ar' ? 'جلسة ذكر زمنية وسريعة' : 'Timed Dhikr Session')),
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: hasActive ? const Color(0xFF2E7D32) : cs.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (hasActive) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ActiveSessionPage()),
-                );
-              } else {
-                _showStartSessionDialog(context, cs, tasbihState);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: hasActive ? const Color(0xFF2E7D32) : cs.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            child: Text(
-              hasActive
-                  ? (locale == 'ku' ? 'چوونە ناوەوە' : (locale == 'ar' ? 'دخول' : 'Resume'))
-                  : (locale == 'ku' ? 'دەستپێکردن' : (locale == 'ar' ? 'بدء' : 'Start')),
-              style: const TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 11,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Dhikr Chips
 // ─────────────────────────────────────────────────────────────────────────────
+
+} // end _TasbihPageState
 
 class _DhikrChips extends ConsumerWidget {
   const _DhikrChips({
@@ -2056,7 +1734,7 @@ class _RingPainter extends CustomPainter {
       center,
       radius,
       Paint()
-        ..color = color.withOpacity(isDark ? 0.08 : 0.1)
+        ..color = color.withValues(alpha: isDark ? 0.08 : 0.1)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2,
     );
@@ -2067,7 +1745,7 @@ class _RingPainter extends CustomPainter {
         center,
         radius - 20,
         Paint()
-          ..color = color.withOpacity(isDark ? 0.05 : 0.07)
+          ..color = color.withValues(alpha: isDark ? 0.05 : 0.07)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 1,
       );
@@ -2081,8 +1759,8 @@ class _RingPainter extends CustomPainter {
     final arcPaint = Paint()
       ..shader = SweepGradient(
         colors: [
-          color.withOpacity(0.0),
-          color.withOpacity(0.6),
+          color.withValues(alpha: 0.0),
+          color.withValues(alpha: 0.6),
         ],
         startAngle: 0,
         endAngle: 3.14 * 2,
@@ -2164,10 +1842,10 @@ class _CounterDisplay extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: textColor.withOpacity(0.1),
+            color: textColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: textColor.withOpacity(0.25),
+              color: textColor.withValues(alpha: 0.25),
             ),
           ),
           child: Text(
@@ -2176,7 +1854,7 @@ class _CounterDisplay extends StatelessWidget {
               fontFamily: fontFamily,
               fontSize: 15 * fontScale,
               fontWeight: FontWeight.w600,
-              color: textColor.withOpacity(0.7),
+              color: textColor.withValues(alpha: 0.7),
             ),
           ),
         ),

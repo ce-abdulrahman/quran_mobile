@@ -10,6 +10,8 @@ class AyahModel {
   final SurahModel? surah;
   final int? pageNumber;
   final int? juzNumber;
+  final int? hizbNumber;
+  final int? rubNumber;
   final List<TajweedSegmentModel> tajweedSegments;
 
   const AyahModel({
@@ -21,8 +23,21 @@ class AyahModel {
     this.surah,
     this.pageNumber,
     this.juzNumber,
+    this.hizbNumber,
+    this.rubNumber,
     this.tajweedSegments = const [],
   });
+
+  int get manzilNumber {
+    final s = surah?.number ?? 1;
+    if (s <= 4) return 1;
+    if (s <= 9) return 2;
+    if (s <= 16) return 3;
+    if (s <= 25) return 4;
+    if (s <= 36) return 5;
+    if (s <= 49) return 6;
+    return 7;
+  }
 
   factory AyahModel.fromJson(Map<String, dynamic> json) {
     String? textEn = json['text_en'] as String?;
@@ -69,6 +84,8 @@ class AyahModel {
       surah: surah,
       pageNumber: json['page_number'] as int?,
       juzNumber: json['juz_number'] as int?,
+      hizbNumber: json['hizb_number'] as int?,
+      rubNumber: json['rub_number'] as int?,
       tajweedSegments: segments,
     );
   }
@@ -83,6 +100,8 @@ class AyahModel {
       'surah': surah?.toJson(),
       'page_number': pageNumber,
       'juz_number': juzNumber,
+      'hizb_number': hizbNumber,
+      'rub_number': rubNumber,
       'tajweed_segments': tajweedSegments.map((x) => x.toJson()).toList(),
     };
   }

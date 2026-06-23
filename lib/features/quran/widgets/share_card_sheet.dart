@@ -86,6 +86,38 @@ class _ShareCardSheetState extends State<ShareCardSheet> {
   bool _showEnglish = false;
   bool _isSharing = false;
 
+  String _selectedArabicFont = 'UthmanicHafs';
+  String _selectedKurdishFont = 'Cairo';
+  String _selectedEnglishFont = 'Cairo';
+
+  // Font mappings with friendly names and fontFamily values
+  static const List<Map<String, String>> _arabicFonts = [
+    {'name': 'QPC Hafs (Default)', 'family': 'UthmanicHafs'},
+    {'name': 'Amiri', 'family': 'Amiri'},
+    {'name': 'Amiri Quran', 'family': 'AmiriQuran'},
+    {'name': 'Scheherazade New', 'family': 'ScheherazadeNew'},
+    {'name': 'Wafeq', 'family': 'Wafeq'},
+    {'name': 'Hafs 18', 'family': 'Hafs18'},
+    {'name': 'Hafs Smart', 'family': 'HafsSmart'},
+    {'name': 'Warsh', 'family': 'Warsh'},
+  ];
+
+  static const List<Map<String, String>> _kurdishFonts = [
+    {'name': 'Cairo (Default)', 'family': 'Cairo'},
+    {'name': 'Nizar Nastaliq', 'family': 'NizarNastaliq'},
+    {'name': 'UniQAIDAR', 'family': 'UniQAIDAR'},
+    {'name': 'NRT Bd', 'family': 'NRTBd'},
+    {'name': 'Normal Ganel', 'family': 'NormalGanel'},
+    {'name': 'Sarchia Qaisy', 'family': 'SarchiaQaisy'},
+    {'name': 'Sarchia Makka', 'family': 'SarchiaMakka'},
+    {'name': 'Rudaw Bold', 'family': 'RudawBold'},
+  ];
+
+  static const List<Map<String, String>> _englishFonts = [
+    {'name': 'Cairo (Default)', 'family': 'Cairo'},
+    {'name': 'Patua One', 'family': 'Patua One'},
+  ];
+
   // Premium Background Templates
   final List<Map<String, dynamic>> _bgTemplates = [
     {
@@ -349,7 +381,7 @@ class _ShareCardSheetState extends State<ShareCardSheet> {
                           textDirection: TextDirection.rtl,
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontFamily: 'UthmanicHafs',
+                            fontFamily: _selectedArabicFont,
                             fontSize: 22,
                             height: 1.9,
                             color: textColor,
@@ -364,7 +396,7 @@ class _ShareCardSheetState extends State<ShareCardSheet> {
                             textDirection: TextDirection.rtl,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily: 'Cairo',
+                              fontFamily: _selectedKurdishFont,
                               fontSize: 13.5,
                               height: 1.6,
                               color: translationColor,
@@ -380,7 +412,7 @@ class _ShareCardSheetState extends State<ShareCardSheet> {
                             textDirection: TextDirection.ltr,
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontFamily: 'Cairo',
+                              fontFamily: _selectedEnglishFont,
                               fontSize: 12.5,
                               height: 1.5,
                               color: translationColor.withValues(alpha: 0.8),
@@ -511,6 +543,72 @@ class _ShareCardSheetState extends State<ShareCardSheet> {
                 ],
               ),
             ),
+
+            // ── Font Customizer ──────────────────────────────────
+            Container(
+              margin: const EdgeInsets.only(top: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: cs.card,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: cs.cardBorder),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'هەڵبژاردنی فۆنتی زمانەکان',
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: cs.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Arabic Font Dropdown (Always shown)
+                  _buildFontDropdownRow(
+                    label: 'فۆنتی عەرەبی (ئایەت)',
+                    value: _selectedArabicFont,
+                    items: _arabicFonts,
+                    onChanged: (val) {
+                      if (val != null) setState(() => _selectedArabicFont = val);
+                    },
+                    cs: cs,
+                  ),
+
+                  // Kurdish Font Dropdown (Shown if Kurdish is active)
+                  if (_showKurdish && widget.data.textKu != null && widget.data.textKu!.isNotEmpty) ...[
+                    Divider(color: cs.divider, height: 20),
+                    _buildFontDropdownRow(
+                      label: 'فۆنتی کوردی (تەفسیر)',
+                      value: _selectedKurdishFont,
+                      items: _kurdishFonts,
+                      onChanged: (val) {
+                        if (val != null) setState(() => _selectedKurdishFont = val);
+                      },
+                      cs: cs,
+                    ),
+                  ],
+
+                  // English Font Dropdown (Shown if English is active)
+                  if (_showEnglish && widget.data.textEn != null && widget.data.textEn!.isNotEmpty) ...[
+                    Divider(color: cs.divider, height: 20),
+                    _buildFontDropdownRow(
+                      label: 'فۆنتی ئینگلیزی (تەفسیر)',
+                      value: _selectedEnglishFont,
+                      items: _englishFonts,
+                      onChanged: (val) {
+                        if (val != null) setState(() => _selectedEnglishFont = val);
+                      },
+                      cs: cs,
+                    ),
+                  ],
+                ],
+              ),
+            ),
             const SizedBox(height: 24),
 
             // ── Share Actions ─────────────────────────────────────
@@ -567,6 +665,63 @@ class _ShareCardSheetState extends State<ShareCardSheet> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFontDropdownRow({
+    required String label,
+    required String value,
+    required List<Map<String, String>> items,
+    required ValueChanged<String?> onChanged,
+    required AppColorScheme cs,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontSize: 13,
+              color: cs.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Container(
+          height: 38,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: cs.bg,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: cs.cardBorder),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: value,
+              icon: Icon(Icons.arrow_drop_down_rounded, color: cs.primary),
+              dropdownColor: cs.card,
+              borderRadius: BorderRadius.circular(12),
+              items: items.map((font) {
+                return DropdownMenuItem<String>(
+                  value: font['family'],
+                  child: Text(
+                    font['name']!,
+                    style: TextStyle(
+                      fontFamily: font['family'],
+                      fontSize: 13,
+                      color: cs.textPrimary,
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

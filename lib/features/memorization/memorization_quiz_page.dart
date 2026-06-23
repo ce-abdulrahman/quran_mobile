@@ -370,37 +370,6 @@ class _MemorizationQuizPageState extends ConsumerState<MemorizationQuizPage>
     );
   }
 
-  Widget _buildQuizTypeCard({required String type, required String title, required IconData icon, required AppColorScheme cs}) {
-    final active = _quizType == type;
-    return GestureDetector(
-      onTap: () => setState(() => _quizType = type),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-        decoration: BoxDecoration(
-          color: active ? cs.primary.withValues(alpha: 0.1) : cs.card,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: active ? cs.primary : cs.cardBorder, width: 1.5),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 24, color: active ? cs.primary : cs.textSecondary),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: active ? cs.primary : cs.textPrimary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildPlanQuizTab(AppColorScheme cs, AppLocalizations l, List<SurahModel> surahs) {
     final todayPlansAsync = ref.watch(memorizationTodayProvider);

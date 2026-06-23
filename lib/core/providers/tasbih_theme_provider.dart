@@ -484,7 +484,7 @@ class TasbihThemeNotifier extends StateNotifier<TasbihThemeState> {
 
   void _loadMockOfflineThemes() {
     // Basic offline mockup themes in case the backend API is completely unreachable
-    final mockCats = [
+    final mockCats = const [
       TasbihThemeCategoryModel(
         id: 1,
         icon: 'bi bi-moon-stars-fill',

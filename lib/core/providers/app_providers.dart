@@ -41,6 +41,10 @@ final hiveCacheBoxProvider = Provider<Box>((ref) {
   throw UnimplementedError('Initialize Hive cache box in main.dart first');
 });
 
+final prayerTimesHiveBoxProvider = Provider<Box>((ref) {
+  throw UnimplementedError('Initialize Prayer Times Hive box in main.dart first');
+});
+
 final cacheManagerProvider = Provider<CacheManager>((ref) {
   final box = ref.watch(hiveCacheBoxProvider);
   return CacheManager(box);
@@ -116,6 +120,8 @@ class ReaderSettings {
   final bool showEnglish;
   final bool distractionFree;
   final bool showTajweed;
+  final double lineHeight;
+  final String bgMode; // 'light' | 'dark' | 'cream' | 'khaki'
 
   const ReaderSettings({
     required this.fontSize,
@@ -123,6 +129,8 @@ class ReaderSettings {
     required this.showEnglish,
     required this.distractionFree,
     required this.showTajweed,
+    required this.lineHeight,
+    required this.bgMode,
   });
 
   ReaderSettings copyWith({
@@ -131,6 +139,8 @@ class ReaderSettings {
     bool? showEnglish,
     bool? distractionFree,
     bool? showTajweed,
+    double? lineHeight,
+    String? bgMode,
   }) {
     return ReaderSettings(
       fontSize: fontSize ?? this.fontSize,
@@ -138,6 +148,8 @@ class ReaderSettings {
       showEnglish: showEnglish ?? this.showEnglish,
       distractionFree: distractionFree ?? this.distractionFree,
       showTajweed: showTajweed ?? this.showTajweed,
+      lineHeight: lineHeight ?? this.lineHeight,
+      bgMode: bgMode ?? this.bgMode,
     );
   }
 }
@@ -149,6 +161,8 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
   static const _showEnKey = 'reader_show_english';
   static const _distractionFreeKey = 'reader_distraction_free';
   static const _showTajweedKey = 'reader_show_tajweed';
+  static const _lineHeightKey = 'reader_line_height';
+  static const _bgModeKey = 'reader_bg_mode';
 
   ReaderSettingsNotifier(this._prefs)
       : super(ReaderSettings(
@@ -157,6 +171,8 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
           showEnglish: _prefs.getBool(_showEnKey) ?? true,
           distractionFree: _prefs.getBool(_distractionFreeKey) ?? true,
           showTajweed: _prefs.getBool(_showTajweedKey) ?? true,
+          lineHeight: _prefs.getDouble(_lineHeightKey) ?? 2.0,
+          bgMode: _prefs.getString(_bgModeKey) ?? 'cream',
         ));
 
   Future<void> setFontSize(double size) async {
@@ -182,6 +198,16 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
   Future<void> toggleTajweed(bool val) async {
     state = state.copyWith(showTajweed: val);
     await _prefs.setBool(_showTajweedKey, val);
+  }
+
+  Future<void> setLineHeight(double height) async {
+    state = state.copyWith(lineHeight: height);
+    await _prefs.setDouble(_lineHeightKey, height);
+  }
+
+  Future<void> setBgMode(String mode) async {
+    state = state.copyWith(bgMode: mode);
+    await _prefs.setString(_bgModeKey, mode);
   }
 }
 
@@ -359,5 +385,24 @@ final backupRepositoryProvider = Provider<BackupRepository>((ref) {
   final client = ref.watch(apiClientProvider);
   return BackupRepository(client);
 });
+
+final appLocaleProvider = StateNotifierProvider<AppLocaleNotifier, Locale>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return AppLocaleNotifier(prefs);
+});
+
+class AppLocaleNotifier extends StateNotifier<Locale> {
+  final SharedPreferences _prefs;
+  static const _key = 'app_language_code';
+
+  AppLocaleNotifier(this._prefs)
+      : super(Locale(_prefs.getString(_key) ?? 'ku'));
+
+  Future<void> setLocale(String languageCode) async {
+    state = Locale(languageCode);
+    await _prefs.setString(_key, languageCode);
+  }
+}
+
 
 

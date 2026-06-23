@@ -526,8 +526,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     Slider(
                       value: readerSettings.fontSize,
                       min: 12,
-                      max: 28,
-                      divisions: 8,
+                      max: 40,
+                      divisions: 28,
                       activeColor: cs.primary,
                       inactiveColor:
                           cs.primary.withValues(alpha: 0.2),
@@ -597,24 +597,77 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 _SettingsCard(
                   cs: cs,
                   children: [
-                    _SettingRow(
-                      icon: Icons.language_outlined,
-                      label: l.settingsLanguage,
-                      cs: cs,
-                      trailing: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: cs.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'کوردی',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: cs.primary,
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => Consumer(
+                            builder: (context, ref, _) {
+                              final currentLocale = ref.watch(appLocaleProvider);
+                              final localL10n = context.l10n;
+                              return AlertDialog(
+                                title: Text(
+                                  localL10n.settingsLanguage,
+                                  style: const TextStyle(fontFamily: 'Cairo'),
+                                ),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _LanguageOption(
+                                      label: 'کوردی',
+                                      code: 'ku',
+                                      active: currentLocale.languageCode == 'ku',
+                                      onTap: () {
+                                        ref.read(appLocaleProvider.notifier).setLocale('ku');
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    _LanguageOption(
+                                      label: 'العربية',
+                                      code: 'ar',
+                                      active: currentLocale.languageCode == 'ar',
+                                      onTap: () {
+                                        ref.read(appLocaleProvider.notifier).setLocale('ar');
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    _LanguageOption(
+                                      label: 'English',
+                                      code: 'en',
+                                      active: currentLocale.languageCode == 'en',
+                                      onTap: () {
+                                        ref.read(appLocaleProvider.notifier).setLocale('en');
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                      child: _SettingRow(
+                        icon: Icons.language_outlined,
+                        label: l.settingsLanguage,
+                        cs: cs,
+                        trailing: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: cs.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            ref.watch(appLocaleProvider).languageCode == 'ku'
+                                ? 'کوردی'
+                                : (ref.watch(appLocaleProvider).languageCode == 'ar' ? 'العربية' : 'English'),
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: cs.primary,
+                            ),
                           ),
                         ),
                       ),
@@ -1161,6 +1214,37 @@ class _ColorPickerSection extends StatelessWidget {
           curve: Curves.easeOutBack,
         );
       }).toList(),
+    );
+  }
+}
+
+class _LanguageOption extends StatelessWidget {
+  final String label;
+  final String code;
+  final bool active;
+  final VoidCallback onTap;
+
+  const _LanguageOption({
+    required this.label,
+    required this.code,
+    required this.active,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = AppColorScheme.of(context);
+    return ListTile(
+      title: Text(
+        label,
+        style: TextStyle(
+          fontFamily: 'Cairo',
+          fontWeight: active ? FontWeight.bold : FontWeight.normal,
+          color: active ? cs.primary : cs.textPrimary,
+        ),
+      ),
+      trailing: active ? Icon(Icons.check_circle_rounded, color: cs.primary) : null,
+      onTap: onTap,
     );
   }
 }

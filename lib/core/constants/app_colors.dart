@@ -22,6 +22,41 @@ class AppColors {
   ];
 }
 
+class AppThemeTokens {
+  AppThemeTokens._();
+
+  // Spacing
+  static const double s4 = 4.0;
+  static const double s8 = 8.0;
+  static const double s12 = 12.0;
+  static const double s14 = 14.0;
+  static const double s16 = 16.0;
+  static const double s20 = 20.0;
+  static const double s24 = 24.0;
+  static const double s32 = 32.0;
+
+  // Radius
+  static const double r8 = 8.0;
+  static const double r10 = 10.0;
+  static const double r12 = 12.0;
+  static const double r16 = 16.0;
+  static const double r20 = 20.0;
+  static const double r24 = 24.0;
+  static const double r28 = 28.0;
+  static const double r32 = 32.0;
+
+  // Durations
+  static const Duration d150 = Duration(milliseconds: 150);
+  static const Duration d250 = Duration(milliseconds: 250);
+  static const Duration d350 = Duration(milliseconds: 350);
+  static const Duration d500 = Duration(milliseconds: 500);
+
+  // Islamic Accent Colors
+  static const Color emerald = Color(0xFF1AB66D);
+  static const Color gold = Color(0xFFCD9D27);
+  static const Color sepia = Color(0xFF7A726F);
+}
+
 class AppColorScheme {
   final Color bg;
   final Color card;
@@ -50,11 +85,36 @@ class AppColorScheme {
     return hslDark.toColor();
   }
 
-  static AppColorScheme of(BuildContext context) {
+  static AppColorScheme of(BuildContext context, [String? bgMode]) {
     final brightness = Theme.of(context).brightness;
     final primary = Theme.of(context).colorScheme.primary;
     final primaryDeep = darken(primary, 0.12);
-    if (brightness == Brightness.dark) {
+
+    final mode = bgMode ?? (brightness == Brightness.dark ? 'dark' : 'light');
+
+    if (mode == 'cream') {
+      return AppColorScheme(
+        bg: const Color(0xFFF5EFEB),
+        card: const Color(0xFFFDFBF7),
+        cardBorder: const Color(0xFFEDE5DF),
+        divider: const Color(0xFFEDE5DF),
+        textPrimary: const Color(0xFF2E2B2A),
+        textSecondary: const Color(0xFF7A726F),
+        primary: primary,
+        primaryDeep: primaryDeep,
+      );
+    } else if (mode == 'khaki') {
+      return AppColorScheme(
+        bg: const Color(0xFFEDEADF),
+        card: const Color(0xFFF6F3EB),
+        cardBorder: const Color(0xFFDFDACB),
+        divider: const Color(0xFFDFDACB),
+        textPrimary: const Color(0xFF2C2A24),
+        textSecondary: const Color(0xFF787265),
+        primary: primary,
+        primaryDeep: primaryDeep,
+      );
+    } else if (mode == 'dark') {
       return AppColorScheme(
         bg: const Color(0xFF09120D),
         card: const Color(0xFF0F1F18),
@@ -65,16 +125,17 @@ class AppColorScheme {
         primary: primary,
         primaryDeep: primaryDeep,
       );
+    } else { // light / default
+      return AppColorScheme(
+        bg: const Color(0xFFF5F7F5),
+        card: const Color(0xFFFFFFFF),
+        cardBorder: const Color(0xFFE2E8E1),
+        divider: const Color(0xFFCBD5C4),
+        textPrimary: const Color(0xFF1F2937),
+        textSecondary: const Color(0xFF6B7280),
+        primary: primary,
+        primaryDeep: primaryDeep,
+      );
     }
-    return AppColorScheme(
-      bg: const Color(0xFFF5F7F5),
-      card: const Color(0xFFFFFFFF),
-      cardBorder: const Color(0xFFE2E8E1),
-      divider: const Color(0xFFCBD5C4),
-      textPrimary: const Color(0xFF1F2937),
-      textSecondary: const Color(0xFF6B7280),
-      primary: primary,
-      primaryDeep: primaryDeep,
-    );
   }
 }

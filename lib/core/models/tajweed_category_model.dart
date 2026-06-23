@@ -23,17 +23,22 @@ class TajweedCategoryModel {
 
   factory TajweedCategoryModel.fromJson(Map<String, dynamic> json) {
     final rawRules = json['rules'] as List? ?? [];
+    // Rules arrive pre-sorted by priority from API; sort again as safety net
+    final parsedRules = rawRules
+        .map((r) => TajweedRuleModel.fromJson(r as Map<String, dynamic>))
+        .toList()
+      ..sort((a, b) => a.priority.compareTo(b.priority));
+
     return TajweedCategoryModel(
-      id: json['id'] as int? ?? 0,
-      slug: json['slug'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      nameKu: json['name_ku'] as String? ?? json['name'] as String? ?? '',
-      nameAr: json['name_ar'] as String?,
+      id:            json['id']             as int?    ?? 0,
+      slug:          json['slug']           as String? ?? '',
+      name:          json['name']           as String? ?? '',
+      nameKu:        json['name_ku']        as String? ?? json['name'] as String? ?? '',
+      nameAr:        json['name_ar']        as String?,
       descriptionKu: json['description_ku'] as String?,
-      order: json['order'] as int? ?? 0,
-      rules: rawRules
-          .map((r) => TajweedRuleModel.fromJson(r as Map<String, dynamic>))
-          .toList(),
+      order:         json['order']          as int?    ?? 0,
+      rules:         parsedRules,
     );
   }
 }
+

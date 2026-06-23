@@ -22,6 +22,16 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = ref.read(authProvider);
+      if (!authState.isAuthenticated) {
+        AuthGateCard.showProtectProgressSheet(
+          context,
+          ref,
+          featureContext: 'ڕیزبەندی پێشەنگەکان خاڵەکانی بەکارهێنەران نیشان دەدات لەسەر بنەمای تەسبیحەکان و پێشکەوتنی لەبەرکردنی قورئان لەگەڵ هەموو بەکارهێنەرانی تر.',
+        );
+      }
+    });
   }
 
   @override
@@ -42,33 +52,6 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
     final authState = ref.watch(authProvider);
     final cs = AppColorScheme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Auth gate: leaderboard requires account for cloud-based rankings
-    if (!authState.isAuthenticated) {
-      return Scaffold(
-        appBar: AppBar(
-          backgroundColor: isDark ? AppColorScheme.darken(cs.primary, 0.35) : cs.primary,
-          elevation: 0,
-          centerTitle: true,
-          title: const Text(
-            'پێشەنگەکان',
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-            onPressed: () => Navigator.pop(context),
-          ),
-        ),
-        body: const AuthGateCard(
-          featureContext: 'ڕیزبەندی پێشەنگەکان خاڵەکانی بەکارهێنەران نیشان دەدات لەسەر بنەمای تەسبیحەکان و پێشکەوتنی لەبەرکردنی قورئان لەگەڵ هەموو بەکارهێنەرانی تر.',
-        ),
-      );
-    }
-
     final state = ref.watch(leaderboardProvider);
 
     return Scaffold(
@@ -94,10 +77,11 @@ class _LeaderboardPageState extends ConsumerState<LeaderboardPage> {
             icon: const Icon(Icons.filter_alt_rounded, color: Colors.white),
             onPressed: () => _showFiltersSheet(context),
           ),
-          IconButton(
-            icon: const Icon(Icons.security_rounded, color: Colors.white),
-            onPressed: () => _showPrivacySheet(context),
-          ),
+          if (authState.isAuthenticated)
+            IconButton(
+              icon: const Icon(Icons.security_rounded, color: Colors.white),
+              onPressed: () => _showPrivacySheet(context),
+            ),
           const SizedBox(width: 8),
         ],
       ),

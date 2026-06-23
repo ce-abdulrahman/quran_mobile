@@ -116,9 +116,8 @@ class ReadingTrackerPage extends ConsumerWidget {
     final trackerState = ref.watch(readingTrackerProvider);
     final tracker = ref.watch(readingTrackerProvider.notifier);
     
-    final streakData = tracker.calculateStreak();
-    final currentStreak = streakData['current_streak'] as int? ?? 0;
-    final longestStreak = streakData['longest_streak'] as int? ?? 0;
+    final currentStreak = trackerState.cachedStats.currentStreak;
+    final longestStreak = trackerState.cachedStats.longestStreak;
 
     final totalAyahsRead = tracker.getTotalUniqueAyahsRead();
     final totalTimeSpent = tracker.getTotalTimeSpentSeconds();

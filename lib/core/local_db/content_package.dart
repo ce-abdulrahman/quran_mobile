@@ -14,6 +14,9 @@ class PackageManifest {
   final DateTime cachedAt;
   final int sizeBytes;
   final bool isComplete;
+  final List<ContentPackage> dependencies;
+  final String? backupVersion;
+  final String? backupChecksum;
 
   PackageManifest({
     required this.package,
@@ -22,7 +25,33 @@ class PackageManifest {
     required this.cachedAt,
     required this.sizeBytes,
     required this.isComplete,
+    this.dependencies = const [],
+    this.backupVersion,
+    this.backupChecksum,
   });
+
+  PackageManifest copyWith({
+    String? version,
+    String? checksum,
+    DateTime? cachedAt,
+    int? sizeBytes,
+    bool? isComplete,
+    List<ContentPackage>? dependencies,
+    String? backupVersion,
+    String? backupChecksum,
+  }) {
+    return PackageManifest(
+      package: package,
+      version: version ?? this.version,
+      checksum: checksum ?? this.checksum,
+      cachedAt: cachedAt ?? this.cachedAt,
+      sizeBytes: sizeBytes ?? this.sizeBytes,
+      isComplete: isComplete ?? this.isComplete,
+      dependencies: dependencies ?? this.dependencies,
+      backupVersion: backupVersion ?? this.backupVersion,
+      backupChecksum: backupChecksum ?? this.backupChecksum,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         'package': package.name,
@@ -31,6 +60,9 @@ class PackageManifest {
         'cachedAt': cachedAt.toIso8601String(),
         'sizeBytes': sizeBytes,
         'isComplete': isComplete,
+        'dependencies': dependencies.map((e) => e.name).toList(),
+        'backupVersion': backupVersion,
+        'backupChecksum': backupChecksum,
       };
 
   factory PackageManifest.fromJson(Map<String, dynamic> json) => PackageManifest(
@@ -40,6 +72,11 @@ class PackageManifest {
         cachedAt: DateTime.parse(json['cachedAt'] as String? ?? DateTime.now().toIso8601String()),
         sizeBytes: json['sizeBytes'] as int? ?? 0,
         isComplete: json['isComplete'] as bool? ?? false,
+        dependencies: (json['dependencies'] as List? ?? [])
+            .map((e) => ContentPackage.values.firstWhere((p) => p.name == e))
+            .toList(),
+        backupVersion: json['backupVersion'] as String?,
+        backupChecksum: json['backupChecksum'] as String?,
       );
 }
 

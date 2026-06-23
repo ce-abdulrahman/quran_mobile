@@ -29,10 +29,14 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   intl: ^0.20.2
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  isar_generator: ^3.1.0+1
+  build_runner: ^2.4.9
 flutter:
   uses-material-design: true
   assets:
@@ -56,3 +60,54 @@ flutter:
           weight: 500
         - asset: assets/fonts/Cairo-Bold.ttf
           weight: 700
+    - family: UthmanicHafs
+      fonts:
+        - asset: assets/fonts/ar/QPC_Hafs.ttf
+    - family: Amiri
+      fonts:
+        - asset: assets/fonts/ar/Amiri-Regular.ttf
+    - family: AmiriQuran
+      fonts:
+        - asset: assets/fonts/ar/AmiriQuran-Regular.ttf
+    - family: ScheherazadeNew
+      fonts:
+        - asset: assets/fonts/ar/ScheherazadeNew-Regular.ttf
+    - family: Wafeq
+      fonts:
+        - asset: assets/fonts/ar/Wafeq-Regular.otf
+    - family: Hafs18
+      fonts:
+        - asset: assets/fonts/ar/hafs.18.ttf
+    - family: HafsSmart
+      fonts:
+        - asset: assets/fonts/ar/hafssmart.8.ttf
+    - family: Warsh
+      fonts:
+        - asset: assets/fonts/ar/warsh.10.ttf
+    - family: NizarNastaliq
+      fonts:
+        - asset: assets/fonts/ku/1_NizarNastaliqKurdish.ttf
+    - family: UniQAIDAR
+      fonts:
+        - asset: assets/fonts/ku/2_UniQAIDAR_Nastaliq_001.ttf
+    - family: NRTBd
+      fonts:
+        - asset: assets/fonts/ku/3_NRT-Bd.ttf
+    - family: NormalGanel
+      fonts:
+        - asset: assets/fonts/ku/4_Normal_Ganel_KJino.TTF
+    - family: SarchiaQaisy
+      fonts:
+        - asset: assets/fonts/ku/5_Sarchia_Qaisy.ttf
+    - family: SarchiaMakka
+      fonts:
+        - asset: assets/fonts/ku/6_Sarchia_Makka.ttf
+    - family: RudawBold
+      fonts:
+        - asset: assets/fonts/ku/7_not_saport_kurdish_rudawbold.ttf
+    - family: SurahHeader
+      fonts:
+        - asset: assets/fonts/ar/Surah_Header.ttf
+    - family: QPCV4Tajweed
+      fonts:
+        - asset: assets/fonts/ar/QPC_V4_Tajweed.ttf

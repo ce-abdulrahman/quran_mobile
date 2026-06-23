@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:isar/isar.dart';
 import '../models/user_model.dart';
-import '../local_db/guest_memorization_db.dart';
-import '../services/guest_memo_migration_service.dart';
+import '../local_db/isar_service.dart';
+import '../local_db/isar_collections.dart';
 import 'app_providers.dart';
 import 'tasbih_session_provider.dart';
 import 'achievement_provider.dart';
@@ -149,8 +151,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
         // Sync themes on login
         _ref.read(tasbihThemeProvider.notifier).syncOnLogin();
-        // Migrate any guest memorization drafts to the backend
-        _migrateGuestMemoDrafts();
+        // Migrate any local guest progress/drafts to the backend
+        _migrateLocalIsarData();
         return true;
       },
       error: (message, statusCode, cachedData) {
@@ -222,8 +224,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
         // Sync themes on register
         _ref.read(tasbihThemeProvider.notifier).syncOnLogin();
-        // Migrate any guest memorization drafts to the backend
-        _migrateGuestMemoDrafts();
+        // Migrate any local guest progress/drafts to the backend
+        _migrateLocalIsarData();
         return true;
       },
       error: (message, statusCode, cachedData) {
@@ -318,27 +320,73 @@ class AuthNotifier extends StateNotifier<AuthState> {
     );
   }
 
-  /// Background migration of guest memorization drafts to backend API.
+  /// Background migration of local Isar progress to backend API.
   /// Called after successful login or registration.
-  void _migrateGuestMemoDrafts() {
-    // Run in the background — don't await, don't block login flow
+  void _migrateLocalIsarData() {
     Future.microtask(() async {
       try {
-        final db = GuestMemorizationDb();
-        await db.init();
-        if (db.pendingCount == 0) return;
-
+        final isar = IsarService.instance.isar;
         final apiClient = _ref.read(apiClientProvider);
-        final service = GuestMemoDraftMigrationService(db, apiClient);
-        final result = await service.migrate();
 
-        if (result.succeeded > 0) {
-          // Could show a SnackBar via a global key if needed
-          // For now: silent background migration
+        // 1. Migrate Memorization Plans
+        final plans = await isar.memorizationPlanCollections.filter().isSyncedEqualTo(false).findAll();
+        for (final plan in plans) {
+          final response = await apiClient.post('/memorization-plans/sync', data: {
+            'plan_id': plan.planId,
+            'surah_id': plan.surahId,
+            'from_ayah': plan.fromAyah,
+            'to_ayah': plan.toAyah,
+            'status': plan.status,
+            'notes': plan.notes,
+            'created_at': plan.createdAt.toIso8601String(),
+            'updated_at': plan.updatedAt.toIso8601String(),
+          });
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            await isar.writeTxn(() async {
+              plan.isSynced = true;
+              await isar.memorizationPlanCollections.put(plan);
+            });
+          }
+        }
+
+        // 2. Migrate Bookmarks
+        final bookmarks = await isar.bookmarkCollections.filter().isSyncedEqualTo(false).findAll();
+        for (final bookmark in bookmarks) {
+          final response = await apiClient.post('/bookmarks/sync', data: {
+            'bookmark_id': bookmark.bookmarkId,
+            'surah_number': bookmark.surahNumber,
+            'ayah_number': bookmark.ayahNumber,
+            'created_at': bookmark.createdAt.toIso8601String(),
+            'updated_at': bookmark.updatedAt.toIso8601String(),
+          });
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            await isar.writeTxn(() async {
+              bookmark.isSynced = true;
+              await isar.bookmarkCollections.put(bookmark);
+            });
+          }
+        }
+
+        // 3. Migrate Notes
+        final notes = await isar.noteCollections.filter().isSyncedEqualTo(false).findAll();
+        for (final note in notes) {
+          final response = await apiClient.post('/notes/sync', data: {
+            'note_id': note.noteId,
+            'surah_number': note.surahNumber,
+            'ayah_number': note.ayahNumber,
+            'content': note.content,
+            'created_at': note.createdAt.toIso8601String(),
+            'updated_at': note.updatedAt.toIso8601String(),
+          });
+          if (response.statusCode == 200 || response.statusCode == 201) {
+            await isar.writeTxn(() async {
+              note.isSynced = true;
+              await isar.noteCollections.put(note);
+            });
+          }
         }
       } catch (e) {
-        // Migration failure is non-fatal; drafts remain in local DB
-        // and can be retried later
+        debugPrint('[AuthNotifier] Local data migration failed: $e');
       }
     });
   }

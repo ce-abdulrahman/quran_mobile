@@ -14,14 +14,17 @@ import 'shell/app_shell.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'core/local_db/isar_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await IsarService.init();
   final sharedPrefs = await SharedPreferences.getInstance(); 
 
   // Initialize Hive for high-performance, low-memory caching
   await Hive.initFlutter();
   final cacheBox = await Hive.openBox('app_cache_box');
+  final prayerTimesBox = await Hive.openBox('prayer_times_box');
 
   // Initialize local notifications
   await NotificationService.initialize();
@@ -47,6 +50,7 @@ void main() async {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
         hiveCacheBoxProvider.overrideWithValue(cacheBox),
+        prayerTimesHiveBoxProvider.overrideWithValue(prayerTimesBox),
       ],
       child: const QuranApp(),
     ),
@@ -70,10 +74,12 @@ class QuranApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final accentColor = ref.watch(accentColorProvider);
+    final appLocale = ref.watch(appLocaleProvider);
 
     return MaterialApp(
       title: 'قورئانەکەم',
       themeMode: themeMode,
+      locale: appLocale,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.light,
@@ -93,11 +99,14 @@ class QuranApp extends ConsumerWidget {
       ),
       localizationsDelegates: const [
         AppLocalizations.delegate,
+        RtlKurdishWidgetsLocalizationsDelegate(),
+        RtlKurdishMaterialLocalizationsDelegate(),
+        RtlKurdishCupertinoLocalizationsDelegate(),
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [Locale('en'), Locale('ar'), Locale('ku')],
+      supportedLocales: const [Locale('ku'), Locale('ar'), Locale('en')],
       initialRoute: '/',
       routes: {
         '/': (_) => const SplashPage(),

@@ -67,7 +67,7 @@ class TasbihSessionState {
 
 final tasbihSessionRepositoryProvider = Provider<TasbihSessionRepository>((ref) {
   final apiClient = ref.watch(apiClientProvider);
-  return TasbihSessionRepository(apiClient);
+  return TasbihSessionRepository(ref, apiClient);
 });
 
 class TasbihSessionNotifier extends StateNotifier<TasbihSessionState> {

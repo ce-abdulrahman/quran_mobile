@@ -81,7 +81,7 @@ class FeatureFlagService {
           : null;
 
       final response = await _apiClient.get(
-        '/v1/feature-flags',
+        '/feature-flags',
         options: options,
       );
 

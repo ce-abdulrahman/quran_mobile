@@ -33,6 +33,31 @@ class AuthGateCard extends ConsumerWidget {
     this.featureContext,
   });
 
+  static void showProtectProgressSheet(BuildContext context, WidgetRef ref, {String? featureContext}) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: SingleChildScrollView(
+            child: AuthGateCard(
+              showContinueAsGuest: true,
+              featureContext: featureContext,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = AppColorScheme.of(context);
@@ -210,6 +235,9 @@ class AuthGateCard extends ConsumerWidget {
                 TextButton(
                   onPressed: () {
                     ref.read(authProvider.notifier).continueAsGuest();
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    }
                   },
                   child: Text(
                     'بەردەوامبوون وەک میوان',

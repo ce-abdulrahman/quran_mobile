@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:adhan/adhan.dart';
+import 'package:hive/hive.dart';
+import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'dart:io';
 import '../providers/prayer_times_provider.dart';
 import 'notification_coordinator.dart';
 
@@ -21,6 +25,11 @@ class PrayerNotificationService {
     required Map<String, bool> toggles,
     required bool isAzanEnabled,
   }) async {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+      debugPrint('Skipping prayer notifications scheduling in test environment.');
+      return;
+    }
+
     // Cancel previous scheduled prayer notifications (range 10000 to 10100)
     for (int id = 10000; id < 10100; id++) {
       await _plugin.cancel(id);
@@ -43,23 +52,70 @@ class PrayerNotificationService {
 
     int notificationId = 10000;
 
-    // Use adhan library calculation params
+    // Use adhan library calculation params as fallback
     final params = CalculationMethod.muslim_world_league.getParameters();
     params.madhab = Madhab.shafi;
     final coordinates = Coordinates(city.latitude, city.longitude);
 
+    int? cityId = city.id;
+    if (cityId == null) {
+      final match = kurdishCities.firstWhere(
+        (c) => c.nameEn.toLowerCase() == city.nameEn.toLowerCase(),
+        orElse: () => kurdishCities.first,
+      );
+      cityId = match.id;
+    }
+
     for (int day = 0; day < 7; day++) {
       final targetDate = now.add(Duration(days: day));
-      final dateComponents = DateComponents(targetDate.year, targetDate.month, targetDate.day);
-      final prayerTimes = PrayerTimes(coordinates, dateComponents, params);
 
-      final Map<String, DateTime> times = {
-        'Fajr': prayerTimes.fajr.toLocal(),
-        'Dhuhr': prayerTimes.dhuhr.toLocal(),
-        'Asr': prayerTimes.asr.toLocal(),
-        'Maghrib': prayerTimes.maghrib.toLocal(),
-        'Isha': prayerTimes.isha.toLocal(),
-      };
+      Map<String, String>? cachedTimes;
+      if (cityId != null) {
+        try {
+          final box = Hive.box('prayer_times_box');
+          final cacheKey = 'city_${cityId}_year_${targetDate.year}';
+          final cachedJson = box.get(cacheKey) as String?;
+          if (cachedJson != null) {
+            final decoded = jsonDecode(cachedJson) as Map<String, dynamic>;
+            final rawData = decoded['data'] as List<dynamic>? ?? [];
+            final targetDateStr = DateFormat('yyyy-MM-dd').format(targetDate);
+            final entryJson = rawData.firstWhere(
+              (e) => e['date'] == targetDateStr,
+              orElse: () => null,
+            );
+            if (entryJson != null) {
+              cachedTimes = {
+                'Fajr': entryJson['fajr'] as String,
+                'Dhuhr': entryJson['dhuhr'] as String,
+                'Asr': entryJson['asr'] as String,
+                'Maghrib': entryJson['maghrib'] as String,
+                'Isha': entryJson['isha'] as String,
+              };
+            }
+          }
+        } catch (_) {}
+      }
+
+      final Map<String, DateTime> times = {};
+      if (cachedTimes != null) {
+        DateTime parseHHMM(String hhmm, DateTime date) {
+          final parts = hhmm.split(':');
+          return DateTime(date.year, date.month, date.day, int.parse(parts[0]), int.parse(parts[1]));
+        }
+        times['Fajr'] = parseHHMM(cachedTimes['Fajr']!, targetDate);
+        times['Dhuhr'] = parseHHMM(cachedTimes['Dhuhr']!, targetDate);
+        times['Asr'] = parseHHMM(cachedTimes['Asr']!, targetDate);
+        times['Maghrib'] = parseHHMM(cachedTimes['Maghrib']!, targetDate);
+        times['Isha'] = parseHHMM(cachedTimes['Isha']!, targetDate);
+      } else {
+        final dateComponents = DateComponents(targetDate.year, targetDate.month, targetDate.day);
+        final prayerTimes = PrayerTimes(coordinates, dateComponents, params);
+        times['Fajr'] = prayerTimes.fajr.toLocal();
+        times['Dhuhr'] = prayerTimes.dhuhr.toLocal();
+        times['Asr'] = prayerTimes.asr.toLocal();
+        times['Maghrib'] = prayerTimes.maghrib.toLocal();
+        times['Isha'] = prayerTimes.isha.toLocal();
+      }
 
       for (int i = 0; i < prayerKeys.length; i++) {
         final key = prayerKeys[i];

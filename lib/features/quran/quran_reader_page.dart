@@ -1,21 +1,26 @@
 import 'dart:async';
+import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/models/ayah_model.dart';
-import '../../core/models/tajweed_segment_model.dart';
+import '../../core/models/sajdah_model.dart';
 import '../../core/models/surah_model.dart';
+import '../../core/services/tajweed_engine.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/providers/bookmarks_provider.dart';
+import '../../core/providers/notes_provider.dart';
 import '../../core/utils/responsive.dart';
+import '../../core/utils/quran_utils.dart';
 import 'quran_providers.dart';
 import 'widgets/audio_player_panel.dart';
 import 'providers/audio_player_provider.dart';
 import 'widgets/share_card_sheet.dart';
-import '../tajweed/tajweed_page.dart';
 import 'mushaf_reader_page.dart';
+import 'widgets/quran_settings_sheet.dart';
 
 class QuranReaderPage extends ConsumerStatefulWidget {
   final SurahModel surah;
@@ -53,6 +58,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
               widget.surah.nameEn,
               widget.initialAyahNumber ?? 1,
               secondsSpent: 1,
+              readingMode: 'list',
             );
       }
     });
@@ -143,6 +149,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
               widget.surah.nameEn,
               visibleAyah,
               secondsSpent: 2,
+              readingMode: 'list',
             );
       }
     } catch (_) {}
@@ -199,8 +206,34 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     }
   }
 
-  void _showSettingsBottomSheet(BuildContext context) {
+  void _showSettingsBottomSheet(BuildContext context, AsyncValue<List<AyahModel>> ayahsAsync) {
+    QuranSettingsSheet.show(
+      context,
+      surahId: widget.surah.id,
+      isMushaf: false,
+      onJumpToPage: (page) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => MushafReaderPage(initialPage: page)),
+        );
+      },
+      onJumpToSurah: (surah) {
+        if (surah.id != widget.surah.id) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => QuranReaderPage(surah: surah)),
+          );
+        }
+      },
+      onJumpToAyah: (ayahNum) {
+        ayahsAsync.whenData((list) => _scrollToAyah(ayahNum, list));
+      },
+    );
+  }
+
+  void _showBookmarkCategoryPicker(BuildContext context, AyahModel ayah) {
     final cs = AppColorScheme.of(context);
+    final l = context.l10n;
 
     showModalBottomSheet(
       context: context,
@@ -209,7 +242,15 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
       builder: (ctx) {
         return Consumer(
           builder: (context, ref, _) {
-            final readerSettings = ref.watch(readerSettingsProvider);
+            final bookmarks = ref.watch(bookmarksProvider);
+            
+            final categories = [
+              (id: 'reading', label: l.readingBookmark, icon: Icons.menu_book_rounded, color: cs.primary),
+              (id: 'memorization', label: l.memorizationBookmark, icon: Icons.memory_rounded, color: Colors.blue),
+              (id: 'reflection', label: l.reflectionBookmark, icon: Icons.psychology_rounded, color: Colors.purple),
+              (id: 'favorite', label: l.favoriteBookmark, icon: Icons.favorite_rounded, color: Colors.red),
+            ];
+
             return Container(
               decoration: BoxDecoration(
                 color: cs.card,
@@ -221,11 +262,10 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
               ),
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
               child: SafeArea(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                     Center(
                       child: Container(
                         width: 48,
@@ -238,7 +278,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                     ),
                     const SizedBox(height: 20),
                     Text(
-                      'ڕێکخستنی خوێندنەوە',
+                      l.bookmarkCategory,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Cairo',
@@ -247,260 +287,50 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                         color: cs.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'قەبارەی فۆنت',
+                    const SizedBox(height: 16),
+                    ...categories.map((cat) {
+                      final hasThisBook = bookmarks.any((b) =>
+                          b.surahId == widget.surah.id &&
+                          b.ayahNumber == ayah.ayahNumber &&
+                          b.category == cat.id);
+                      return ListTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: cat.color.withValues(alpha: 0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(cat.icon, color: cat.color, size: 20),
+                        ),
+                        title: Text(
+                          cat.label,
                           style: TextStyle(
                             fontFamily: 'Cairo',
-                            fontSize: 13,
                             fontWeight: FontWeight.w700,
                             color: cs.textPrimary,
+                            fontSize: 14,
                           ),
                         ),
-                        Text(
-                          '${readerSettings.fontSize.round()}',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                            color: cs.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Slider(
-                      value: readerSettings.fontSize,
-                      min: 12,
-                      max: 28,
-                      divisions: 8,
-                      activeColor: cs.primary,
-                      inactiveColor: cs.primary.withValues(alpha: 0.15),
-                      onChanged: (v) {
-                        ref.read(readerSettingsProvider.notifier).setFontSize(v);
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Divider(color: cs.cardBorder),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.translate_rounded,
-                                size: 20, color: cs.primary),
-                            const SizedBox(width: 12),
-                            Text(
-                              'وەرگێڕانی کوردی',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: cs.textPrimary,
+                        trailing: Checkbox(
+                          value: hasThisBook,
+                          activeColor: cs.primary,
+                          onChanged: (val) {
+                            ref.read(bookmarksProvider.notifier).toggle(
+                              LocalBookmark(
+                                surahId: widget.surah.id,
+                                surahName: widget.surah.nameEn,
+                                ayahNumber: ayah.ayahNumber,
+                                preview: ayah.textUthmani,
+                                category: cat.id,
                               ),
-                            ),
-                          ],
-                        ),
-                        Switch(
-                          value: readerSettings.showKurdish == true,
-                          activeThumbColor: cs.primary,
-                          onChanged: (v) {
-                            ref.read(readerSettingsProvider.notifier).toggleKurdish(v);
+                            );
                           },
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.language_rounded,
-                                size: 20, color: cs.primary),
-                            const SizedBox(width: 12),
-                            Text(
-                              'وەرگێڕانی ئینگلیزی',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: cs.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Switch(
-                          value: readerSettings.showEnglish == true,
-                          activeThumbColor: cs.primary,
-                          onChanged: (v) {
-                            ref.read(readerSettingsProvider.notifier).toggleEnglish(v);
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.palette_rounded, size: 20, color: cs.primary),
-                            const SizedBox(width: 12),
-                            Text(
-                              'ڕەنگەکانی تەجوید',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w700,
-                                color: cs.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Switch(
-                          value: readerSettings.showTajweed == true,
-                          activeThumbColor: cs.primary,
-                          onChanged: (v) {
-                            ref.read(readerSettingsProvider.notifier).toggleTajweed(v);
-                          },
-                        ),
-                      ],
-                    ),
-                    // ── Tajweed Rules Manager Button ──────────────────────────
-                    AnimatedSize(
-                      duration: const Duration(milliseconds: 250),
-                      curve: Curves.easeInOut,
-                      child: readerSettings.showTajweed
-                          ? Padding(
-                              padding: const EdgeInsets.only(top: 8, bottom: 4),
-                              child: Consumer(
-                                builder: (context, ref, _) {
-                                  final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
-                                  final activeCount = inactiveRules.isEmpty ? null : inactiveRules.length;
-                                  return InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const TajweedPage(),
-                                        ),
-                                      );
-                                    },
-                                    borderRadius: BorderRadius.circular(14),
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                                      decoration: BoxDecoration(
-                                        color: cs.primary.withValues(alpha: 0.08),
-                                        borderRadius: BorderRadius.circular(14),
-                                        border: Border.all(color: cs.primary.withValues(alpha: 0.2), width: 1),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.tune_rounded, color: cs.primary, size: 20),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'بەڕێوەبردنی یاساکانی تەجوید',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Cairo',
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w700,
-                                                    color: cs.textPrimary,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  activeCount == null
-                                                      ? 'هەموو یاساکان چالاکن'
-                                                      : '$activeCount یاسا ناچالاکە',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Cairo',
-                                                    fontSize: 10,
-                                                    color: activeCount == null
-                                                        ? cs.textSecondary
-                                                        : Colors.orange,
-                                                    fontWeight: activeCount == null
-                                                        ? FontWeight.normal
-                                                        : FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Icon(
-                                            Icons.arrow_forward_ios_rounded,
-                                            color: cs.primary.withValues(alpha: 0.7),
-                                            size: 16,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : const SizedBox.shrink(),
-                    ),
-                    const SizedBox(height: 12),
-                    Divider(color: cs.cardBorder),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              Icon(Icons.visibility_off_rounded,
-                                  size: 20, color: cs.primary),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      context.l10n.settingsDistractionFree,
-                                      style: TextStyle(
-                                        fontFamily: 'Cairo',
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w700,
-                                        color: cs.textPrimary,
-                                      ),
-                                    ),
-                                    Text(
-                                      context.l10n.settingsDistractionFreeSub,
-                                      style: TextStyle(
-                                        fontFamily: 'Cairo',
-                                        fontSize: 10,
-                                        color: cs.textSecondary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Switch(
-                          value: readerSettings.distractionFree == true,
-                          activeThumbColor: cs.primary,
-                          onChanged: (v) {
-                            ref.read(readerSettingsProvider.notifier).toggleDistractionFree(v);
-                          },
-                        ),
-                      ],
-                    ),
+                      );
+                    }),
                   ],
                 ),
               ),
-            ),
             );
           },
         );
@@ -508,10 +338,519 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     );
   }
 
+  void _showAyahActionSheet(BuildContext context, AyahModel ayah, WidgetRef ref) {
+    final cs = AppColorScheme.of(context);
+    final bookmarks = ref.read(bookmarksProvider);
+    final favorites = ref.read(favoritesProvider);
+    final notes = ref.read(notesProvider);
+    final isBookmarked = bookmarks.any((b) => b.surahId == widget.surah.id && b.ayahNumber == ayah.ayahNumber);
+    final isFavorited = favorites.any((f) => f.surahId == widget.surah.id && f.ayahNumber == ayah.ayahNumber);
+    final hasNote = notes.any((n) => n.surahNumber == widget.surah.id && n.ayahNumber == ayah.ayahNumber);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      builder: (ctx) {
+        return Container(
+          decoration: BoxDecoration(
+            color: cs.card,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(28),
+              topRight: Radius.circular(28),
+            ),
+            border: Border.all(color: cs.cardBorder),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 48,
+                    height: 5,
+                    decoration: BoxDecoration(
+                      color: cs.textSecondary.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'ئایەتی ${ayah.ayahNumber}',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: cs.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 1.1,
+                  children: [
+                    _buildActionButton(
+                      context,
+                      icon: Icons.play_arrow_rounded,
+                      label: 'خوێندنەوە',
+                      color: cs.primary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        ref.read(audioPlayerProvider.notifier).playAyah(widget.surah.id, ayah.ayahNumber);
+                      },
+                    ),
+                    _buildActionButton(
+                      context,
+                      icon: isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
+                      label: 'نیشانە',
+                      color: isBookmarked ? AppColors.accentGoldDeep : cs.textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _showBookmarkCategoryPicker(context, ayah);
+                      },
+                    ),
+                    _buildActionButton(
+                      context,
+                      icon: isFavorited ? Icons.star_rounded : Icons.star_border_rounded,
+                      label: 'دڵخواز',
+                      color: isFavorited ? const Color(0xFFE6A23C) : cs.textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        ref.read(favoritesProvider.notifier).toggle(
+                              LocalFavorite(
+                                surahId: widget.surah.id,
+                                surahName: widget.surah.nameEn,
+                                ayahNumber: ayah.ayahNumber,
+                                textUthmani: ayah.textUthmani,
+                                textKu: ayah.textKu,
+                                textEn: ayah.textEn,
+                              ),
+                            );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              isFavorited ? 'ئایەتەکە لە دڵخوازەکان لادرا' : 'ئایەتەکە بە دڵخواز کرا',
+                              textDirection: TextDirection.rtl,
+                              style: const TextStyle(fontFamily: 'Cairo'),
+                            ),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildActionButton(
+                      context,
+                      icon: Icons.share_rounded,
+                      label: 'بڵاوکردنەوە',
+                      color: cs.textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        showShareCardSheet(
+                          context,
+                          ShareAyahData.fromAyahModel(ayah, widget.surah.nameEn),
+                        );
+                      },
+                    ),
+                    _buildActionButton(
+                      context,
+                      icon: Icons.copy_rounded,
+                      label: 'کۆپی دەق',
+                      color: cs.textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        final messenger = ScaffoldMessenger.of(context);
+                        Clipboard.setData(ClipboardData(text: '${ayah.textUthmani}\n\n${ayah.textKu ?? ''}')).then((_) {
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: const Text(
+                                'دەقی ئایەتەکە کۆپی کرا',
+                                textDirection: TextDirection.rtl,
+                                style: TextStyle(fontFamily: 'Cairo'),
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        });
+                      },
+                    ),
+                    _buildActionButton(
+                      context,
+                      icon: hasNote ? Icons.edit_note_rounded : Icons.note_add_rounded,
+                      label: 'تێبینی/ڕامان',
+                      color: hasNote ? Colors.purple : cs.textSecondary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        _showNoteDialog(context, ayah, ref);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showNoteDialog(BuildContext context, AyahModel ayah, WidgetRef ref) {
+    final cs = AppColorScheme.of(context);
+    final existingNote = ref.read(notesProvider.notifier).getNote(widget.surah.id, ayah.ayahNumber);
+    final textController = TextEditingController(text: existingNote?.content ?? '');
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: cs.card,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Text(
+            'نووسینی تێبینی/ڕامان',
+            textDirection: TextDirection.rtl,
+            style: TextStyle(
+              fontFamily: 'Cairo',
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'ئایەتی ${ayah.ayahNumber} لە سورەتی ${widget.surah.nameEn}',
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12,
+                  color: cs.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: textController,
+                maxLines: 4,
+                textDirection: TextDirection.rtl,
+                autofocus: true,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 14,
+                  color: cs.textPrimary,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'تێبینی یان تێڕامانی خۆت لێرە بنووسە...',
+                  hintStyle: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
+                    color: cs.textSecondary.withValues(alpha: 0.5),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: cs.cardBorder),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: cs.primary),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(
+                'پاشگەزبوونەوە',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  color: cs.textSecondary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            if (existingNote != null)
+              TextButton(
+                onPressed: () {
+                  ref.read(notesProvider.notifier).deleteNote(widget.surah.id, ayah.ayahNumber);
+                  Navigator.pop(ctx);
+                },
+                child: const Text(
+                  'سڕینەوە',
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ElevatedButton(
+              onPressed: () {
+                final content = textController.text.trim();
+                if (content.isNotEmpty) {
+                  ref.read(notesProvider.notifier).saveNote(
+                        surahNumber: widget.surah.id,
+                        ayahNumber: ayah.ayahNumber,
+                        content: content,
+                      );
+                } else if (existingNote != null) {
+                  ref.read(notesProvider.notifier).deleteNote(widget.surah.id, ayah.ayahNumber);
+                }
+                Navigator.pop(ctx);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: cs.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: const Text(
+                'پاشەکەوت',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildActionButton(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    final cs = AppColorScheme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: cs.bg,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: cs.cardBorder),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 11,
+                fontWeight: FontWeight.bold,
+                color: cs.textPrimary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFloatingHeader(
+    BuildContext context,
+    AppColorScheme cs,
+    bool isDark,
+    double p,
+    AsyncValue<List<AyahModel>> ayahsAsync,
+    double height,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: cs.bg.withValues(alpha: isDark ? 0.82 : 0.88),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+        border: Border(
+          bottom: BorderSide(color: cs.cardBorder.withValues(alpha: 0.5), width: 1),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Custom AppBar
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.textPrimary),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                    Text(
+                      widget.surah.nameEn,
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: cs.textPrimary,
+                      ),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Tooltip(
+                          message: 'مۆدی موسحەف',
+                          child: IconButton(
+                            icon: Icon(Icons.menu_book_rounded, color: cs.textPrimary),
+                            onPressed: () {
+                              final int? surahStartPage = ayahsAsync.valueOrNull
+                                  ?.firstOrNull
+                                  ?.pageNumber ?? widget.surah.pageStart;
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MushafReaderPage(
+                                    initialPage: surahStartPage,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.tune_rounded, color: cs.textPrimary),
+                          onPressed: () => _showSettingsBottomSheet(context, ayahsAsync),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                // ── Surah Info Banner ──
+                Padding(
+                  padding: EdgeInsets.fromLTRB(p, 4, p, 16),
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Text(
+                          getSurahHeaderCharacter(widget.surah.number),
+                          style: TextStyle(
+                            fontFamily: 'SurahHeader',
+                            fontFamilyFallback: const ['UthmanicHafs', 'Amiri', 'Cairo'],
+                            fontSize: (MediaQuery.of(context).size.width * 0.22).clamp(70.0, 140.0),
+                            color: cs.primary,
+                          ),
+                        ),
+                      ),
+                      if (widget.surah.totalAyahs > 30) ...[
+                        const SizedBox(height: 10),
+                        Container(
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: cs.bg.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: cs.cardBorder,
+                              width: 1,
+                            ),
+                          ),
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (v) {
+                              setState(() {
+                                _searchQuery = v;
+                              });
+                              _debounceTimer?.cancel();
+                              _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+                                ayahsAsync.whenData((list) => _scrollToMatch(v, list));
+                              });
+                            },
+                            onSubmitted: (v) {
+                              _debounceTimer?.cancel();
+                              ayahsAsync.whenData((list) => _scrollToMatch(v, list));
+                            },
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontSize: 13,
+                              color: cs.textPrimary,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'گەڕان بەپێی دەق یان ژمارەی ئایەت...',
+                              hintStyle: TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 12,
+                                color: cs.textSecondary.withValues(alpha: 0.6),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search_rounded,
+                                color: cs.textSecondary.withValues(alpha: 0.7),
+                                size: 18,
+                              ),
+                              suffixIcon: _searchQuery.isNotEmpty
+                                  ? GestureDetector(
+                                      onTap: () {
+                                        _searchController.clear();
+                                        setState(() {
+                                          _searchQuery = '';
+                                        });
+                                      },
+                                      child: Icon(
+                                        Icons.close_rounded,
+                                        color: cs.textSecondary,
+                                        size: 16,
+                                      ),
+                                    )
+                                  : null,
+                              border: InputBorder.none,
+                              contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cs = AppColorScheme.of(context);
-    final l = context.l10n;
     final p = Responsive.pagePadding(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -520,7 +859,6 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     final favorites = ref.watch(favoritesProvider);
     final readerSettings = ref.watch(readerSettingsProvider);
     final playerState = ref.watch(audioPlayerProvider);
-    final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
 
     ref.listen(audioPlayerProvider, (previous, next) {
       if (next.currentAyahNumber != null &&
@@ -535,246 +873,22 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
               widget.surah.nameEn,
               next.currentAyahNumber!,
               secondsSpent: 3,
+              readingMode: 'list',
             );
       }
     });
 
     final showBismillah = widget.surah.number != 1 && widget.surah.number != 9;
+    final topPadding = MediaQuery.of(context).padding.top;
+    final topOffset = topPadding + 140.0 + (widget.surah.totalAyahs > 30 ? 58.0 : 0.0);
+    final bottomOffset = MediaQuery.of(context).padding.bottom + 96.0;
 
     return Scaffold(
       backgroundColor: cs.bg,
-      body: Column(
+      body: Stack(
         children: [
-          // Collapsible Top Header (AppBar + Surah Info Banner)
-          ClipRect(
-            child: AnimatedSize(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: _isHeaderVisible
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Custom AppBar
-                        Container(
-                          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-                          color: isDark ? AppColorScheme.darken(cs.primary, 0.35) : cs.primary,
-                          height: kToolbarHeight + MediaQuery.of(context).padding.top,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-                                onPressed: () => Navigator.pop(context),
-                              ),
-                              Text(
-                                widget.surah.nameEn,
-                                style: const TextStyle(
-                                  fontFamily: 'Cairo',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // ── Mushaf Mode Button ────────────────────────
-                                  Tooltip(
-                                    message: 'مۆدی موسحەف',
-                                    child: IconButton(
-                                      icon: const Icon(Icons.menu_book_rounded, color: Colors.white),
-                                      onPressed: () {
-                                        // Get the page number of the first ayah of this surah
-                                        final int? surahStartPage = ayahsAsync.valueOrNull
-                                            ?.firstOrNull
-                                            ?.pageNumber ?? widget.surah.pageStart;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => MushafReaderPage(
-                                              initialPage: surahStartPage,
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  // ── Settings Button ───────────────────────────
-                                  IconButton(
-                                    icon: const Icon(Icons.tune_rounded, color: Colors.white),
-                                    onPressed: () => _showSettingsBottomSheet(context),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        // ── Surah Info Banner ─────────────────────────────────────
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.fromLTRB(p, 16, p, 24),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: isDark
-                                  ? [AppColorScheme.darken(cs.primary, 0.35), AppColorScheme.darken(cs.primary, 0.42)]
-                                  : [cs.primary, cs.primaryDeep],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(24),
-                              bottomRight: Radius.circular(24),
-                            ),
-                          ),
-                          child: Column(
-                            children: [
-                              Hero(
-                                tag: 'surah-ar-${widget.surah.number}',
-                                child: Text(
-                                  widget.surah.nameAr,
-                                  style: const TextStyle(
-                                    fontFamily: 'UthmanicHafs',
-                                    fontSize: 28,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Hero(
-                                    tag: 'surah-num-${widget.surah.number}',
-                                    child: Container(
-                                      width: 32,
-                                      height: 32,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white.withValues(alpha: 0.15),
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: Colors.white.withValues(alpha: 0.3),
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          '${widget.surah.number}',
-                                          style: const TextStyle(
-                                            fontFamily: 'Cairo',
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Text(
-                                    '${widget.surah.totalAyahs} ${l.quranAyahs}',
-                                    style: TextStyle(
-                                      fontFamily: 'Cairo',
-                                      fontSize: 12,
-                                      color: Colors.white.withValues(alpha: 0.8),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Container(
-                                    width: 4,
-                                    height: 4,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white54,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    widget.surah.isMeccan ? l.quranMeccan : l.quranMedinan,
-                                    style: TextStyle(
-                                      fontFamily: 'Cairo',
-                                      fontSize: 12,
-                                      color: Colors.white.withValues(alpha: 0.8),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (widget.surah.totalAyahs > 30) ...[
-                                const SizedBox(height: 16),
-                                Container(
-                                  height: 42,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: Colors.white.withValues(alpha: 0.2),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  child: TextField(
-                                    controller: _searchController,
-                                    onChanged: (v) {
-                                      setState(() {
-                                        _searchQuery = v;
-                                      });
-                                      // Debounce search scroll action by 500ms
-                                      _debounceTimer?.cancel();
-                                      _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-                                        ayahsAsync.whenData((list) => _scrollToMatch(v, list));
-                                      });
-                                    },
-                                    onSubmitted: (v) {
-                                      _debounceTimer?.cancel();
-                                      ayahsAsync.whenData((list) => _scrollToMatch(v, list));
-                                    },
-                                    textDirection: TextDirection.rtl,
-                                    style: const TextStyle(
-                                      fontFamily: 'Cairo',
-                                      fontSize: 13,
-                                      color: Colors.white,
-                                    ),
-                                    decoration: InputDecoration(
-                                      hintText: 'گەڕان بەپێی دەق یان ژمارەی ئایەت...',
-                                      hintStyle: TextStyle(
-                                        fontFamily: 'Cairo',
-                                        fontSize: 12,
-                                        color: Colors.white.withValues(alpha: 0.6),
-                                      ),
-                                      prefixIcon: Icon(
-                                        Icons.search_rounded,
-                                        color: Colors.white.withValues(alpha: 0.7),
-                                        size: 18,
-                                      ),
-                                      suffixIcon: _searchQuery.isNotEmpty
-                                          ? GestureDetector(
-                                              onTap: () {
-                                                _searchController.clear();
-                                                setState(() {
-                                                  _searchQuery = '';
-                                                });
-                                              },
-                                              child: Icon(
-                                                Icons.close_rounded,
-                                                color: Colors.white.withValues(alpha: 0.7),
-                                                size: 16,
-                                              ),
-                                            )
-                                          : null,
-                                      border: InputBorder.none,
-                                      contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ),
-          ),
-
-          // ── Ayahs list ────────────────────────────────────────────
-          Expanded(
+          // ── Ayahs list ──
+          Positioned.fill(
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
@@ -783,152 +897,108 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                 });
               },
               child: ayahsAsync.when(
-              data: (ayahs) {
-                // Scroll to index on load if from bookmarks
-                if (widget.initialAyahNumber != null && !_scrolled) {
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    final targetKey = _ayahKeys[widget.initialAyahNumber];
-                    if (targetKey != null && targetKey.currentContext != null) {
-                      Scrollable.ensureVisible(
-                        targetKey.currentContext!,
-                        duration: const Duration(milliseconds: 600),
-                        curve: Curves.easeInOut,
-                      );
-                      setState(() {
-                        _scrolled = true;
-                      });
-                    }
-                  });
-                }
-
-                return ListView.builder(
-                  controller: _scrollController,
-                  padding: EdgeInsets.fromLTRB(p, 16, p, 40),
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: ayahs.length + (showBismillah ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (showBismillah && index == 0) {
-                      return const _BismillahBanner()
-                          .animate()
-                          .fadeIn(duration: 400.ms);
-                    }
-
-                    final ayahIndex = showBismillah ? index - 1 : index;
-                    final ayah = ayahs[ayahIndex];
-
-                    final isBookmarked = bookmarks.any((b) =>
-                        b.surahId == widget.surah.id &&
-                        b.ayahNumber == ayah.ayahNumber);
-
-                    final isFavorited = favorites.any((f) =>
-                        f.surahId == widget.surah.id &&
-                        f.ayahNumber == ayah.ayahNumber);
-
-                    // Check if this ayah matches the search query to highlight it
-                    final isHighlighted = _searchQuery.trim().isNotEmpty &&
-                      ayah.ayahNumber.toString() == _searchQuery.trim();
-
-                    final key = _ayahKeys.putIfAbsent(ayah.ayahNumber, () => GlobalKey());
-
-                    return _AyahRow(
-                      key: key,
-                      ayah: ayah,
-                      surah: widget.surah,
-                      fontSize: readerSettings.fontSize,
-                      showKurdish: readerSettings.showKurdish == true,
-                      showEnglish: readerSettings.showEnglish == true,
-                      showTajweed: readerSettings.showTajweed == true,
-                      inactiveRules: inactiveRules,
-                      isBookmarked: isBookmarked,
-                      isFavorited: isFavorited,
-                      isHighlighted: isHighlighted || (playerState.currentAyahNumber == ayah.ayahNumber),
-                      cs: cs,
-                      onBookmark: () {
-                        ref.read(bookmarksProvider.notifier).toggle(
-                              LocalBookmark(
-                                surahId: widget.surah.id,
-                                surahName: widget.surah.nameEn,
-                                ayahNumber: ayah.ayahNumber,
-                                preview: ayah.textUthmani,
-                              ),
-                            );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              isBookmarked
-                                  ? 'ئایەتەکە لە لیستەکە لادرا'
-                                  : 'ئایەتەکە پارێزرا لە لیستەکەتدا',
-                              textDirection: TextDirection.rtl,
-                              style: const TextStyle(fontFamily: 'Cairo'),
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            duration: const Duration(seconds: 1),
-                          ),
+                data: (ayahs) {
+                  // Scroll to index on load if from bookmarks
+                  if (widget.initialAyahNumber != null && !_scrolled) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      final targetKey = _ayahKeys[widget.initialAyahNumber];
+                      if (targetKey != null && targetKey.currentContext != null) {
+                        Scrollable.ensureVisible(
+                          targetKey.currentContext!,
+                          duration: const Duration(milliseconds: 600),
+                          curve: Curves.easeInOut,
                         );
-                      },
-                      onFavorite: () {
-                        ref.read(favoritesProvider.notifier).toggle(
-                              LocalFavorite(
-                                surahId: widget.surah.id,
-                                surahName: widget.surah.nameEn,
-                                ayahNumber: ayah.ayahNumber,
-                                textUthmani: ayah.textUthmani,
-                                textKu: ayah.textKu,
-                                textEn: ayah.textEn,
-                              ),
-                            );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              isFavorited
-                                  ? 'ئایەتەکە لە دڵخوازەکان لادرا'
-                                  : 'ئایەتەکە بە دڵخواز کرا',
-                              textDirection: TextDirection.rtl,
-                              style: const TextStyle(fontFamily: 'Cairo'),
-                            ),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            duration: const Duration(seconds: 1),
-                          ),
-                        );
-                      },
-                      onShare: () {
-                        showShareCardSheet(
-                          context,
-                          ShareAyahData.fromAyahModel(ayah, widget.surah.nameEn),
-                        );
-                      },
-                    ).animate().fadeIn(
-                          duration: 250.ms,
-                          delay: Duration(milliseconds: 30 * (index % 10)),
-                        );
-                  },
-                );
-              },
-              loading: () => _AyahsSkeleton(padding: p, cs: cs),
-              error: (err, _) => _AyahsErrorState(
-                message: err.toString().replaceAll('Exception: ', ''),
-                cs: cs,
-                onRetry: () => ref.refresh(ayahsProvider(widget.surah.id)),
+                        setState(() {
+                          _scrolled = true;
+                        });
+                      }
+                    });
+                  }
+
+                  return ListView.builder(
+                    controller: _scrollController,
+                    padding: EdgeInsets.fromLTRB(p, topOffset, p, bottomOffset),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: ayahs.length + (showBismillah ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (showBismillah && index == 0) {
+                        return const _BismillahBanner()
+                            .animate()
+                            .fadeIn(duration: 400.ms);
+                      }
+
+                      final ayahIndex = showBismillah ? index - 1 : index;
+                      final ayah = ayahs[ayahIndex];
+
+                      final isBookmarked = bookmarks.any((b) =>
+                          b.surahId == widget.surah.id &&
+                          b.ayahNumber == ayah.ayahNumber);
+
+                      final isFavorited = favorites.any((f) =>
+                          f.surahId == widget.surah.id &&
+                          f.ayahNumber == ayah.ayahNumber);
+
+                      final isHighlighted = _searchQuery.trim().isNotEmpty &&
+                        ayah.ayahNumber.toString() == _searchQuery.trim();
+
+                      final key = _ayahKeys.putIfAbsent(ayah.ayahNumber, () => GlobalKey());
+
+                      return _AyahRow(
+                        key: key,
+                        ayah: ayah,
+                        surah: widget.surah,
+                        fontSize: readerSettings.fontSize,
+                        showKurdish: readerSettings.showKurdish == true,
+                        showEnglish: readerSettings.showEnglish == true,
+                        showTajweed: readerSettings.showTajweed == true,
+                        isBookmarked: isBookmarked,
+                        isFavorited: isFavorited,
+                        isHighlighted: isHighlighted || (playerState.currentAyahNumber == ayah.ayahNumber),
+                        cs: cs,
+                        onTap: () => _showAyahActionSheet(context, ayah, ref),
+                      ).animate().fadeIn(
+                            duration: 250.ms,
+                            delay: Duration(milliseconds: 30 * (index % 10)),
+                          );
+                    },
+                  );
+                },
+                loading: () => _AyahsSkeleton(padding: p, cs: cs),
+                error: (err, _) => _AyahsErrorState(
+                  message: err.toString().replaceAll('Exception: ', ''),
+                  cs: cs,
+                  onRetry: () => ref.refresh(ayahsProvider(widget.surah.id)),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    ),
-      bottomNavigationBar: ClipRect(
-        child: AnimatedSize(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          child: _isHeaderVisible
-              ? AudioPlayerPanel(surahId: widget.surah.id)
-              : const SizedBox.shrink(),
-        ),
+
+          // ── Floating Top AppBar ──
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            top: _isHeaderVisible ? 0 : -topOffset - 20,
+            left: 0,
+            right: 0,
+            child: _buildFloatingHeader(context, cs, isDark, p, ayahsAsync, topOffset),
+          ),
+
+          // ── Floating Bottom Audio Panel ──
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            bottom: _isHeaderVisible ? 0 : -140,
+            left: 0,
+            right: 0,
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: AudioPlayerPanel(surahId: widget.surah.id),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -956,21 +1026,21 @@ class _BismillahBanner extends StatelessWidget {
   }
 }
 
-class _AyahRow extends StatelessWidget {
+// _AyahRow watches inactiveTajweedRulesProvider directly so any rule
+// toggle from TajweedPage immediately re-renders every visible ayah,
+// bypassing ListView.builder's element cache.
+class _AyahRow extends ConsumerWidget {
   final AyahModel ayah;
   final SurahModel surah;
   final double fontSize;
   final bool showKurdish;
   final bool showEnglish;
   final bool showTajweed;
-  final Set<String> inactiveRules;
   final bool isBookmarked;
   final bool isFavorited;
   final bool isHighlighted;
   final AppColorScheme cs;
-  final VoidCallback onBookmark;
-  final VoidCallback onFavorite;
-  final VoidCallback onShare;
+  final VoidCallback onTap;
 
   const _AyahRow({
     super.key,
@@ -980,241 +1050,227 @@ class _AyahRow extends StatelessWidget {
     required this.showKurdish,
     required this.showEnglish,
     required this.showTajweed,
-    required this.inactiveRules,
     required this.isBookmarked,
     required this.isFavorited,
     required this.isHighlighted,
     required this.cs,
-    required this.onBookmark,
-    required this.onFavorite,
-    required this.onShare,
+    required this.onTap,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final sajdah = SajdahModel.list.cast<SajdahModel?>().firstWhere(
+      (s) => s?.surahId == surah.id && s?.ayahNumber == ayah.ayahNumber,
+      orElse: () => null,
+    );
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      decoration: BoxDecoration(
-        color: isHighlighted
-            ? (isDark ? cs.primary.withValues(alpha: 0.15) : cs.primary.withValues(alpha: 0.1))
-            : null,
-        borderRadius: isHighlighted ? BorderRadius.circular(16) : null,
-        border: Border(
-          bottom: BorderSide(
-            color: isHighlighted
-                ? cs.primary
-                : cs.cardBorder.withValues(alpha: 0.4),
-            width: isHighlighted ? 1.5 : 0.8,
+    final notes = ref.watch(notesProvider);
+    final note = notes.cast<LocalNote?>().firstWhere(
+      (n) => n?.surahNumber == surah.id && n?.ayahNumber == ayah.ayahNumber,
+      orElse: () => null,
+    );
+    final hasNote = note != null && note.content.isNotEmpty;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        decoration: BoxDecoration(
+          color: isHighlighted
+              ? (isDark ? cs.primary.withValues(alpha: 0.12) : cs.primary.withValues(alpha: 0.08))
+              : null,
+          borderRadius: BorderRadius.circular(16),
+          border: Border(
+            bottom: BorderSide(
+              color: isHighlighted
+                  ? cs.primary
+                  : cs.cardBorder.withValues(alpha: 0.3),
+              width: isHighlighted ? 1.5 : 0.8,
+            ),
           ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: cs.primary.withValues(alpha: 0.08),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: cs.primary.withValues(alpha: 0.2),
-                  ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: cs.primary.withValues(alpha: 0.08),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: cs.primary.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${ayah.ayahNumber}',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            color: cs.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (sajdah != null) ...[
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: sajdah.isObligatory ? Colors.red.withValues(alpha: 0.1) : cs.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: sajdah.isObligatory ? Colors.red.withValues(alpha: 0.3) : cs.primary.withValues(alpha: 0.3),
+                            width: 0.5,
+                          ),
+                        ),
+                        child: Text(
+                          '${context.l10n.sajdah} (${sajdah.isObligatory ? context.l10n.sajdahTypeObligatory : context.l10n.sajdahTypeRecommended})',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: sajdah.isObligatory ? Colors.red : cs.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
-                child: Center(
-                  child: Text(
-                    '${ayah.ayahNumber}',
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (isFavorited)
+                      const Icon(Icons.star_rounded, size: 16, color: Color(0xFFE6A23C)),
+                    if (isBookmarked) ...[
+                      if (isFavorited) const SizedBox(width: 4),
+                      const Icon(Icons.bookmark_rounded, size: 16, color: AppColors.accentGoldDeep),
+                    ],
+                    if (hasNote) ...[
+                      if (isFavorited || isBookmarked) const SizedBox(width: 4),
+                      const Icon(Icons.edit_note_rounded, size: 18, color: Colors.purple),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            showTajweed == true && ayah.tajweedSegments.isNotEmpty
+                ? Text.rich(
+                    TextSpan(
+                      children: TajweedEngine.buildSpans(
+                        text: ayah.textUthmani,
+                        segments: ayah.tajweedSegments,
+                        defaultColor: cs.textPrimary,
+                        inactiveRules: inactiveRules,
+                      ),
+                    ),
+                    textDirection: TextDirection.rtl,
+                    textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: cs.primary,
+                      fontFamily: 'QPCV4Tajweed',
+                      fontSize: fontSize + 4,
+                      height: 2.2,
+                    ),
+                  )
+                : Text(
+                    ayah.textUthmani,
+                    textDirection: TextDirection.rtl,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontFamily: 'UthmanicHafs',
+                      fontSize: fontSize + 4,
+                      height: 2.2,
+                      color: cs.textPrimary,
                     ),
                   ),
+            if (showKurdish == true && ayah.textKu != null && ayah.textKu!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                ayah.textKu!,
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: fontSize - 2,
+                  height: 1.6,
+                  color: cs.textSecondary,
                 ),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      isFavorited
-                          ? Icons.star_rounded
-                          : Icons.star_border_rounded,
-                      size: 20,
-                      color: isFavorited ? const Color(0xFFE6A23C) : cs.textSecondary,
-                    ),
-                    onPressed: onFavorite,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      isBookmarked
-                          ? Icons.bookmark_rounded
-                          : Icons.bookmark_border_rounded,
-                      size: 18,
-                      color: isBookmarked ? AppColors.accentGoldDeep : cs.textSecondary,
-                    ),
-                    onPressed: onBookmark,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.share_rounded, size: 18, color: cs.textSecondary),
-                    onPressed: onShare,
-                    visualDensity: VisualDensity.compact,
-                  ),
-                ],
               ),
             ],
-          ),
-          const SizedBox(height: 12),
-          showTajweed == true && ayah.tajweedSegments.isNotEmpty
-              ? Text.rich(
-                  TextSpan(
-                    children: _buildTajweedSpans(
-                      ayah.textUthmani,
-                      ayah.tajweedSegments,
-                      cs.textPrimary,
-                    ),
-                  ),
-                  textDirection: TextDirection.rtl,
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    fontFamily: 'UthmanicHafs',
-                    fontSize: fontSize + 4,
-                    height: 2.0,
-                  ),
-                )
-              : Text(
-                  ayah.textUthmani,
-                  textDirection: TextDirection.rtl,
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    fontFamily: 'UthmanicHafs',
-                    fontSize: fontSize + 4,
-                    height: 2.0,
-                    color: cs.textPrimary,
-                  ),
+            if (showEnglish == true && ayah.textEn != null && ayah.textEn!.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(
+                ayah.textEn!,
+                textDirection: TextDirection.ltr,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: fontSize - 3,
+                  height: 1.5,
+                  color: cs.textSecondary.withValues(alpha: 0.7),
                 ),
-          const SizedBox(height: 12),
-          if (showKurdish == true && ayah.textKu != null && ayah.textKu!.isNotEmpty) ...[
-            Text(
-              ayah.textKu!,
-              textDirection: TextDirection.rtl,
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: fontSize - 2,
-                height: 1.6,
-                color: cs.textSecondary,
               ),
-            ),
-            const SizedBox(height: 8),
-          ],
-          if (showEnglish == true && ayah.textEn != null && ayah.textEn!.isNotEmpty) ...[
-            Text(
-              ayah.textEn!,
-              textDirection: TextDirection.ltr,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: fontSize - 3,
-                height: 1.5,
-                color: cs.textSecondary.withValues(alpha: 0.7),
+            ],
+            if (hasNote) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.purple.withValues(alpha: 0.15)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Row(
+                      children: [
+                        Icon(Icons.edit_note_rounded, color: Colors.purple, size: 16),
+                        SizedBox(width: 6),
+                        Text(
+                          'تێبینی/ڕامانی تۆ',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.purple,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      note.content,
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: fontSize - 2,
+                        height: 1.5,
+                        color: cs.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
-  }
-
-  List<TextSpan> _buildTajweedSpans(
-    String text,
-    List<TajweedSegmentModel> segments,
-    Color defaultColor,
-  ) {
-    if (segments.isEmpty) {
-      return [TextSpan(text: text, style: TextStyle(color: defaultColor))];
-    }
-
-    final sorted = List<TajweedSegmentModel>.from(segments)
-      ..sort((a, b) => (a.startIndex ?? 0).compareTo(b.startIndex ?? 0));
-
-    final List<TextSpan> spans = [];
-    int currentIndex = 0;
-
-    for (final segment in sorted) {
-      final start = segment.startIndex;
-      final end = segment.endIndex;
-
-      if (start == null || end == null || start < currentIndex || start > text.length || end > text.length || start > end) {
-        continue;
-      }
-
-      if (start > currentIndex) {
-        spans.add(TextSpan(
-          text: text.substring(currentIndex, start),
-          style: TextStyle(color: defaultColor),
-        ));
-      }
-
-      final isRuleActive = segment.ruleSlug == null || !inactiveRules.contains(segment.ruleSlug);
-      if (isRuleActive) {
-        final segmentColor = _parseColor(segment.colorCode, defaultColor);
-        spans.add(TextSpan(
-          text: text.substring(start, end),
-          style: TextStyle(
-            color: segmentColor,
-            fontWeight: FontWeight.bold,
-          ),
-        ));
-      } else {
-        spans.add(TextSpan(
-          text: text.substring(start, end),
-          style: TextStyle(color: defaultColor),
-        ));
-      }
-
-      currentIndex = end;
-    }
-
-    if (currentIndex < text.length) {
-      spans.add(TextSpan(
-        text: text.substring(currentIndex),
-        style: TextStyle(color: defaultColor),
-      ));
-    }
-
-    return spans;
-  }
-
-  Color _parseColor(String? hexString, Color defaultColor) {
-    if (hexString == null || hexString.isEmpty) return const Color(0xFF1B7340);
-    // If the color code indicates pure black (#000000) or pure white (#FFFFFF),
-    // use defaultColor so that it's readable in the user's current theme (light or dark mode)
-    final cleaned = hexString.replaceFirst('#', '').toLowerCase();
-    if (cleaned == '000000' || cleaned == 'ffffff') {
-      return defaultColor;
-    }
-    try {
-      final buffer = StringBuffer();
-      if (cleaned.length == 6) buffer.write('ff');
-      buffer.write(cleaned);
-      final parsed = Color(int.parse(buffer.toString(), radix: 16));
-      if (parsed == const Color(0xFF000000) || parsed == const Color(0xFFFFFFFF)) {
-        return defaultColor;
-      }
-      return parsed;
-    } catch (_) {
-      return const Color(0xFF1B7340);
-    }
   }
 }
 

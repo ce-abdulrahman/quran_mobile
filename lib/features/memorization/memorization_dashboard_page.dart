@@ -10,30 +10,31 @@ import 'memorization_progress_page.dart';
 import 'memorization_analytics_page.dart';
 import 'memorization_quiz_page.dart';
 
-class MemorizationDashboardPage extends ConsumerWidget {
+class MemorizationDashboardPage extends ConsumerStatefulWidget {
   const MemorizationDashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
+  ConsumerState<MemorizationDashboardPage> createState() => _MemorizationDashboardPageState();
+}
 
-    // Auth gate: memorization requires cloud sync — not available to guests
-    if (!authState.isAuthenticated) {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'ناوەندی لەبەرکردن',
-            style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
-          ),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-        ),
-        body: const AuthGateCard(
+class _MemorizationDashboardPageState extends ConsumerState<MemorizationDashboardPage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authState = ref.read(authProvider);
+      if (!authState.isAuthenticated) {
+        AuthGateCard.showProtectProgressSheet(
+          context,
+          ref,
           featureContext: 'پلانەکانی لەبەرکردن و مێژووی پێداچوونەوەکانت بە پارێزراوی لە هەوردا پاشەکەوت دەبن و لەسەر هەموو ئامێرەکانت هاوکات دەکرێن.',
-        ),
-      );
-    }
+        );
+      }
+    });
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final dashboardAsync = ref.watch(memorizationDashboardProvider);
     final theme = Theme.of(context);
 

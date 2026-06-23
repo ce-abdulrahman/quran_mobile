@@ -12,7 +12,6 @@ class DueReviewsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dueReviewsAsync = ref.watch(dueReviewsProvider);
     final surahsAsync = ref.watch(surahListProvider);
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -79,7 +78,6 @@ class DueReviewsPage extends ConsumerWidget {
     List<SurahModel> allSurahs,
   ) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -87,10 +85,10 @@ class DueReviewsPage extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: theme.colorScheme.outlineVariant.withOpacity(0.5)),
+        border: Border.all(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -143,7 +141,7 @@ class DueReviewsPage extends ConsumerWidget {
               return Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.secondaryContainer.withOpacity(0.4),
+                  color: theme.colorScheme.secondaryContainer.withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -242,7 +240,7 @@ class DueReviewsPage extends ConsumerWidget {
             Icon(
               Icons.check_circle_outline_rounded,
               size: 80,
-              color: const Color(0xFF10B981).withOpacity(0.5),
+              color: const Color(0xFF10B981).withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(

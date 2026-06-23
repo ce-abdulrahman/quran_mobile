@@ -116,5 +116,10 @@ class ApiConstants {
   static const String fingerprintSettings   = '/fingerprint/settings';
   static const String fingerprintSession    = '/fingerprint/session';
   static const String fingerprintStatistics = '/fingerprint/statistics';
+
+  // ── Prayer Times Calendar ──────────────────────────────────────────────────
+  static const String prayerTimes        = '/prayer-times';
+  static const String prayerTimesCities  = '/prayer-times/cities';
+  static const Duration prayerTimesTtl   = Duration(hours: 24);
 }
 

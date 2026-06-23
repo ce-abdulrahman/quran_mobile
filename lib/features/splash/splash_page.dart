@@ -6,6 +6,9 @@ import '../../core/constants/app_colors.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/feature_flag_provider.dart';
+import '../../core/providers/prayer_times_provider.dart';
+import '../prayer/providers/prayer_times_provider.dart';
+import '../prayer/providers/prayer_widget_provider.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -15,6 +18,27 @@ class SplashPage extends ConsumerStatefulWidget {
 }
 
 class _SplashPageState extends ConsumerState<SplashPage> {
+  void _syncPrayerTimesOnBoot() {
+    try {
+      final settings = ref.read(prayerTimesSettingsProvider);
+      final city = settings.selectedCity;
+      final matched = settings.cities.firstWhere(
+        (c) => c.nameEn.toLowerCase() == city.nameEn.toLowerCase(),
+        orElse: () => city,
+      );
+      final cityId = matched.id ?? 1;
+      final year = DateTime.now().year;
+
+      ref.read(prayerTimesRepositoryProvider).fetchYear(
+        cityId: cityId,
+        year: year,
+      ).then((_) {
+        ref.read(prayerTimesSettingsProvider.notifier).reschedule();
+        ref.read(prayerWidgetProvider.notifier).refreshWidgetData().catchError((_) {});
+      }).catchError((_) {});
+    } catch (_) {}
+  }
+
   @override
   void initState() {
     super.initState();
@@ -24,6 +48,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       ref.read(authProvider.notifier).checkAuthState();
       // Feature flags background sync (uses cached flags if offline)
       ref.read(featureFlagServiceProvider).sync();
+      // Prayer times background sync on boot
+      _syncPrayerTimesOnBoot();
     });
     Timer(const Duration(milliseconds: 2600), () {
       if (!mounted) return;

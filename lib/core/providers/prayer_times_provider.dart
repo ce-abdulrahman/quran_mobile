@@ -5,18 +5,22 @@ import 'package:adhan/adhan.dart';
 import 'app_providers.dart';
 import '../services/prayer_notification_service.dart';
 import '../../features/auth/auth_provider.dart';
+import '../../features/prayer/providers/prayer_times_provider.dart';
+import '../../features/prayer/providers/prayer_widget_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Kurdish City Model & Data
 // ─────────────────────────────────────────────────────────────────────────────
 
 class KurdishCity {
+  final int? id;
   final String nameKu;
   final String nameEn;
   final double latitude;
   final double longitude;
 
   const KurdishCity({
+    this.id,
     required this.nameKu,
     required this.nameEn,
     required this.latitude,
@@ -24,6 +28,7 @@ class KurdishCity {
   });
 
   Map<String, dynamic> toJson() => {
+        'id': id,
         'nameKu': nameKu,
         'nameEn': nameEn,
         'latitude': latitude,
@@ -31,6 +36,7 @@ class KurdishCity {
       };
 
   factory KurdishCity.fromJson(Map<String, dynamic> json) => KurdishCity(
+        id: json['id'] as int?,
         nameKu: json['nameKu'] as String? ?? 'هەولێر',
         nameEn: json['nameEn'] as String? ?? 'Erbil',
         latitude: (json['latitude'] as num? ?? 36.1912).toDouble(),
@@ -53,6 +59,7 @@ class KurdishCity {
     }
     
     return KurdishCity(
+      id: json['id'] as int?,
       nameKu: nameKu,
       nameEn: name,
       latitude: (json['lat'] as num? ?? 0.0).toDouble(),
@@ -62,11 +69,11 @@ class KurdishCity {
 }
 
 const List<KurdishCity> kurdishCities = [
-  KurdishCity(nameKu: 'هەولێر', nameEn: 'Erbil', latitude: 36.1912, longitude: 44.0091),
-  KurdishCity(nameKu: 'سلێمانی', nameEn: 'Sulaymaniyah', latitude: 35.5619, longitude: 45.4375),
-  KurdishCity(nameKu: 'دهۆک', nameEn: 'Duhok', latitude: 36.8601, longitude: 42.9961),
-  KurdishCity(nameKu: 'کەرکووک', nameEn: 'Kirkuk', latitude: 35.4681, longitude: 44.3922),
-  KurdishCity(nameKu: 'هەڵەبجە', nameEn: 'Halabja', latitude: 35.1778, longitude: 45.9861),
+  KurdishCity(id: 1, nameKu: 'هەولێر', nameEn: 'Erbil', latitude: 36.1912, longitude: 44.0091),
+  KurdishCity(id: 2, nameKu: 'سلێمانی', nameEn: 'Sulaymaniyah', latitude: 35.5619, longitude: 45.4375),
+  KurdishCity(id: 3, nameKu: 'دهۆک', nameEn: 'Duhok', latitude: 36.8601, longitude: 42.9961),
+  KurdishCity(id: 4, nameKu: 'کەرکووک', nameEn: 'Kirkuk', latitude: 35.4681, longitude: 44.3922),
+  KurdishCity(id: 5, nameKu: 'هەڵەبجە', nameEn: 'Halabja', latitude: 35.1778, longitude: 45.9861),
 ];
 
 enum PrayerType { fajr, dhuhr, asr, maghrib, isha }
@@ -154,8 +161,27 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
         state = state.copyWith(selectedCity: matchingCity);
         _prefs.setString(_cityKey, jsonEncode(matchingCity.toJson()));
         reschedule();
+        _syncCityOnTrigger(matchingCity);
       }
     }
+  }
+
+  void _syncCityOnTrigger(KurdishCity city) {
+    try {
+      final matched = state.cities.firstWhere(
+        (c) => c.nameEn.toLowerCase() == city.nameEn.toLowerCase(),
+        orElse: () => city,
+      );
+      final cityId = matched.id ?? 1;
+      final year = DateTime.now().year;
+      _ref.read(prayerTimesRepositoryProvider).fetchYear(
+        cityId: cityId,
+        year: year,
+      ).then((_) {
+        reschedule();
+        _ref.read(prayerWidgetProvider.notifier).refreshWidgetData().catchError((_) {});
+      }).catchError((_) {});
+    } catch (_) {}
   }
 
   void reschedule() {
@@ -326,6 +352,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     state = state.copyWith(selectedCity: city);
     await _prefs.setString(_cityKey, jsonEncode(city.toJson()));
     reschedule();
+    _syncCityOnTrigger(city);
   }
 
   Future<void> toggleAzan(bool enabled) async {

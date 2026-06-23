@@ -7,7 +7,7 @@ import '../../core/models/tajweed_rule_model.dart';
 import '../../core/models/tajweed_category_model.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Tajweed Page — Category-first drill-down, driven by API data
+// Tajweed Page — Category-first drill-down, sorted by rule priority from API
 // ─────────────────────────────────────────────────────────────────────────────
 
 class TajweedPage extends ConsumerStatefulWidget {
@@ -21,7 +21,7 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
   // null = category grid, non-null = rules for that category index
   int? _selectedCategoryIndex;
 
-  // Static gradient palette (cycles for unknown categories)
+  // Gradient palette — cycles for categories beyond the list length
   static const List<List<Color>> _gradients = [
     [Color(0xFF1A8C4E), Color(0xFF0D5C33)],
     [Color(0xFF2563EB), Color(0xFF1E40AF)],
@@ -154,7 +154,7 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
                     onToggle: (slug, currentlyActive) {
                       ref
                           .read(inactiveTajweedRulesProvider.notifier)
-                          .toggleRule(slug, currentlyActive);
+                          .toggleRule(slug, !currentlyActive);
                     },
                   ),
           );
@@ -260,6 +260,7 @@ class _CategoryGrid extends StatelessWidget {
                 final cat = categories[i];
                 final grad = gradientFn(i);
                 final icon = iconFn(i);
+                // Rules already sorted by priority from API (orderBy('priority'))
                 final totalRules = cat.rules.length;
                 final activeCount = cat.rules
                     .where((r) => !inactiveRules.contains(r.slug))
@@ -433,8 +434,12 @@ class _RulesListState extends State<_RulesList> {
 
   @override
   Widget build(BuildContext context) {
+    // Sort by priority (ascending) — mirrors orderBy('priority') in API
     final rules = List<TajweedRuleModel>.from(widget.category.rules)
       ..sort((a, b) => a.priority.compareTo(b.priority));
+
+    final activeCount =
+        rules.where((r) => !widget.inactiveRules.contains(r.slug)).length;
 
     return Column(
       children: [
@@ -464,7 +469,18 @@ class _RulesListState extends State<_RulesList> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    if (widget.category.nameAr != null)
+                    Text(
+                      widget.category.nameKu,
+                      textDirection: TextDirection.rtl,
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                    if (widget.category.nameAr != null &&
+                        widget.category.nameAr!.isNotEmpty)
                       Text(
                         widget.category.nameAr!,
                         textDirection: TextDirection.rtl,
@@ -474,8 +490,9 @@ class _RulesListState extends State<_RulesList> {
                           color: Colors.white.withValues(alpha: 0.82),
                         ),
                       ),
+                    const SizedBox(height: 2),
                     Text(
-                      '${rules.length} یاسا لەم بابەتەدا',
+                      '$activeCount / ${rules.length} یاسا چالاکە',
                       textDirection: TextDirection.rtl,
                       style: TextStyle(
                         fontFamily: 'Cairo',
@@ -483,6 +500,23 @@ class _RulesListState extends State<_RulesList> {
                         color: Colors.white.withValues(alpha: 0.68),
                       ),
                     ),
+                    // Show category description if available
+                    if (widget.category.descriptionKu != null &&
+                        widget.category.descriptionKu!.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        widget.category.descriptionKu!,
+                        textDirection: TextDirection.rtl,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 10,
+                          color: Colors.white.withValues(alpha: 0.60),
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -504,6 +538,7 @@ class _RulesListState extends State<_RulesList> {
 
               return _RuleCard(
                 rule: rule,
+                index: i,
                 isActive: isActive,
                 isExpanded: isExpanded,
                 accentColor: accent,
@@ -541,6 +576,7 @@ class _RulesListState extends State<_RulesList> {
 
 class _RuleCard extends StatelessWidget {
   final TajweedRuleModel rule;
+  final int index;
   final bool isActive;
   final bool isExpanded;
   final Color accentColor;
@@ -550,6 +586,7 @@ class _RuleCard extends StatelessWidget {
 
   const _RuleCard({
     required this.rule,
+    required this.index,
     required this.isActive,
     required this.isExpanded,
     required this.accentColor,
@@ -595,6 +632,31 @@ class _RuleCard extends StatelessWidget {
                     child: Row(
                       textDirection: TextDirection.rtl,
                       children: [
+                        // Priority badge
+                        Container(
+                          width: 26,
+                          height: 26,
+                          margin: const EdgeInsets.only(left: 8),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? accentColor.withValues(alpha: 0.12)
+                                : cs.cardBorder.withValues(alpha: 0.5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${rule.priority}',
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: isActive
+                                    ? accentColor
+                                    : cs.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
                         // Color dot
                         Container(
                           width: 13,
@@ -716,7 +778,7 @@ class _RuleCard extends StatelessWidget {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'UthmanicHafs',
-                                fontSize: 20,
+                                fontSize: 22,
                                 height: 2.0,
                                 color: isActive ? accentColor : cs.textSecondary,
                               ),
