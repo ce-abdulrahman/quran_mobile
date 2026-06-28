@@ -1038,7 +1038,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         padding: const EdgeInsets.all(12),
                         child: ClipOval(
                           child: Image.asset(
-                            'images/logo.png',
+                            'assets/images/logo.png',
                             fit: BoxFit.contain,
                             errorBuilder: (_, __, ___) => Icon(
                               Icons.auto_stories_rounded,

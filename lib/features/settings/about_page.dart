@@ -97,7 +97,7 @@ class AboutPage extends StatelessWidget {
                           padding: const EdgeInsets.all(14),
                           child: ClipOval(
                             child: Image.asset(
-                              'images/logo.png',
+                              'assets/images/logo.png',
                               fit: BoxFit.contain,
                               errorBuilder: (_, __, ___) => const Icon(
                                 Icons.auto_stories_rounded,
