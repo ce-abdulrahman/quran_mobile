@@ -324,7 +324,7 @@ class AboutPage extends StatelessWidget {
                                   const SizedBox(height: 2),
                                   GestureDetector(
                                     onTap: () {
-                                      Clipboard.setData(const ClipboardData(text: '0750 434 2452'));
+                                      Clipboard.setData(const ClipboardData(text: '07504342452'));
                                       _showCopied(
                                         context,
                                         cs,
@@ -339,7 +339,7 @@ class AboutPage extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
-                                          '0750 434 2452',
+                                          '07504342452',
                                           style: TextStyle(
                                             fontFamily: 'Cairo',
                                             fontSize: 12,
@@ -380,11 +380,11 @@ class AboutPage extends StatelessWidget {
                           cs: cs,
                           icon: Icons.email_rounded,
                           label: l.aboutEmail,
-                          value: 'quranekam@gmail.com',
+                          value: 'aghaas7421@gmail.com',
                           color: const Color(0xFFEA4335),
                           onTap: () {
                             Clipboard.setData(const ClipboardData(
-                                text: 'quranekam@gmail.com'));
+                                text: 'aghaas7421@gmail.com'));
                             _showCopied(context, cs, l.aboutEmailCopied);
                           },
                         ),
@@ -393,27 +393,27 @@ class AboutPage extends StatelessWidget {
                           cs: cs,
                           icon: Icons.send_rounded,
                           label: l.aboutTelegram,
-                          value: '@quranekam',
+                          value: '@Agha_ACE',
                           color: const Color(0xFF0088CC),
                           onTap: () {
                             Clipboard.setData(
-                                const ClipboardData(text: '@quranekam'));
+                                const ClipboardData(text: '@Agha_ACE'));
                             _showCopied(context, cs, l.aboutTelegramCopied);
                           },
                         ),
                         const Divider(height: 20),
                         _SocialRow(
                           cs: cs,
-                          icon: Icons.code_rounded,
-                          label: l.aboutGithub,
-                          value: 'github.com/quranekam',
+                          icon: Icons.phone_rounded,
+                          label: l.aboutWhatsapp,
+                          value: '07504342452',
                           color: isDark
                               ? Colors.white70
                               : const Color(0xFF24292E),
                           onTap: () {
                             Clipboard.setData(const ClipboardData(
-                                text: 'https://github.com/quranekam'));
-                            _showCopied(context, cs, l.aboutGithubCopied);
+                                text: '07504342452'));
+                            _showCopied(context, cs, l.aboutWhatsappCopied);
                           },
                         ),
                       ],

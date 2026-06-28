@@ -202,7 +202,7 @@ class AppLocalizations {
   String get settingsGeneral => _translate(ku: 'گشتی', ar: 'عام', en: 'General');
 
   // ── About Page ───────────────────────────────────────────────────
-  String get aboutTitle => _translate(ku: 'دەربارەمان', ar: 'حولنا', en: 'About Us');
+  String get aboutTitle => _translate(ku: 'دەربارەی ئێمە', ar: 'حولنا', en: 'About Us');
   String aboutVersion(String version) => _translate(ku: 'وەشانی $version', ar: 'الإصدار $version', en: 'Version $version');
   String get aboutAppTitle => _translate(ku: 'دەربارەی ئەپ', ar: 'حول التطبيق', en: 'About App');
   String get aboutDescription => _translate(ku: 'قورئانەکەم ئەپێکی قورئانیە کە بە ئامانجی ئاسانکردنی خوێندنەوەی قورئانی پیرۆز دروستکراوە. لێرەدا دەتوانیت قورئان بخوێنیتەوە، گوێت لێ بگریت، تەجویدت فێر ببی، و خوێندنەوەت بشووێنێت.', ar: 'قرآني هو تطبيق قرآني تم إنشاؤه لتسهيل قراءة القرآن الكريم. هنا يمكنك قراءة القرآن، والاستماع إليه، وتعلم التجويد، ومتابعة قراءتك.', en: 'My Quran is a Quranic app created to facilitate reading the Holy Quran. Here you can read the Quran, listen to it, learn Tajweed, and track your reading.');
@@ -212,8 +212,8 @@ class AppLocalizations {
   String get aboutEmailCopied => _translate(ku: 'ئیمەیل کۆپی کرا', ar: 'تم نسخ البريد الإلكتروني', en: 'Email copied');
   String get aboutTelegram => _translate(ku: 'تێلیگرام', ar: 'تيليجرام', en: 'Telegram');
   String get aboutTelegramCopied => _translate(ku: 'تێلیگرام کۆپی کرا', ar: 'تم نسخ معرف تيليجرام', en: 'Telegram copied');
-  String get aboutGithub => _translate(ku: 'گیتهاب', ar: 'غيتهاب', en: 'GitHub');
-  String get aboutGithubCopied => _translate(ku: 'لینکی گیتهاب کۆپی کرا', ar: 'تم نسخ رابط غيتهاب', en: 'GitHub link copied');
+  String get aboutWhatsapp => _translate(ku: 'وەتسئاپ', ar: 'واتسئاپ', en: 'Whatsapp');
+  String get aboutWhatsappCopied => _translate(ku: 'وەتسئاپ کۆپی کرا', ar: 'تم نسخ رابط واتسئاپ', en: 'Whatsapp link copied');
   String get aboutFeatures => _translate(ku: 'تایبەتمەندییەکان', ar: 'الميزات', en: 'Features');
   String get aboutFeatQuran => _translate(ku: 'خوێندنەوەی قورئان بە فۆنتی ئوسمانی', ar: 'قراءة القرآن بالرسم العثماني', en: 'Read Quran in Uthmanic font');
   String get aboutFeatAudio => _translate(ku: 'گوێگرتن لە قورئانخوێن بە دەنگی بەرز', ar: 'الاستماع للقراء بصوت واضح', en: 'Listen to clear audio of reciters');

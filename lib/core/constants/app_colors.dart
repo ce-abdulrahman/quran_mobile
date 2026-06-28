@@ -35,6 +35,18 @@ class AppColors {
     (Color(0xFFE91E63), Color(0xFF880E4F), Color(0xFFD81B60), 'وردزی ئاڵتون'),
     // Midnight Teal
     (Color(0xFF00897B), Color(0xFF004D40), Color(0xFF00796B), 'تیلی شەو'),
+    // Desert Gold
+    (Color(0xFFE5A93B), Color(0xFF8C5E1B), Color(0xFFD49E35), 'ئاڵتوونی بیابان'),
+    // Magic Violet
+    (Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2), 'مۆری ئەفسوناوی'),
+    // Coastal Blue
+    (Color(0xFF00C6FF), Color(0xFF0072FF), Color(0xFF0072FF), 'شینی کەناراو'),
+    // Crimson Dawn
+    (Color(0xFFE65C00), Color(0xFFF9D423), Color(0xFFE65C00), 'شەبەقی سوور'),
+    // Olive Garden
+    (Color(0xFF708238), Color(0xFF4B5320), Color(0xFF708238), 'سەوزی زەیتوونی'),
+    // Soft Sakura
+    (Color(0xFFFF758C), Color(0xFFFF7EB3), Color(0xFFFF758C), 'پەمەیی ناسک'),
   ];
 }
 
