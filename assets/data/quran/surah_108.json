@@ -1,0 +1,71 @@
+[
+    {
+        "id": 6205,
+        "ayah_number": 1,
+        "text_uthmani": "إِنَّآ أَعْطَيْنَـٰكَ ٱلْكَوْثَرَ",
+        "text_simple": null,
+        "page_number": 1257,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12409,
+                "language_code": "en",
+                "content": "Indeed, We have granted you, [O Muḥammad], al-Kawthar.",
+                "is_active": true
+            },
+            {
+                "id": 12410,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ئێمه خێر و چاکه و خۆشی (هه‌ر دوو جیهان و ناوبانگی چاکه‌ی‎) تۆمان (محمد (صلی الله علیه وسلم) بێ ئه‌ندازه و بێ سنور کردوه (له هه‌موو جه‌رخ و زه‌مانێکدا).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6206,
+        "ayah_number": 2,
+        "text_uthmani": "فَصَلِّ لِرَبِّكَ وَٱنْحَرْ",
+        "text_simple": null,
+        "page_number": 1257,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12411,
+                "language_code": "en",
+                "content": "So pray to your Lord and offer sacrifice [to Him alone].",
+                "is_active": true
+            },
+            {
+                "id": 12412,
+                "language_code": "ku",
+                "content": "که‌واته نوێژ ته‌نها له‌به‌ر خوا و بۆ خوا و بۆ به‌ده‌ست هێنانی ڕه‌زامه‌ندی په‌روه‌ردگارت ئه‌جام بده‌و قوربانیش بکه (هه‌ر به‌و شێوه‌یه بۆ به‌ده‌ست هێنانی ڕه‌زامه‌ندی په‌روه‌ردگارت).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6207,
+        "ayah_number": 3,
+        "text_uthmani": "إِنَّ شَانِئَكَ هُوَ ٱلْأَبْتَرُ",
+        "text_simple": null,
+        "page_number": 1258,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12413,
+                "language_code": "en",
+                "content": "Indeed, your enemy is the one cut off.<sup foot_note=197824>1<\/sup>",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

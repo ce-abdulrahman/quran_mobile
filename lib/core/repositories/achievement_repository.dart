@@ -1,22 +1,106 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/achievement_model.dart';
 import '../network/api_client.dart';
-import '../network/api_constants.dart';
 import '../network/api_result.dart';
 
 class AchievementRepository {
-  final ApiClient _apiClient;
+  final SharedPreferences _prefs;
 
-  AchievementRepository(this._apiClient);
+  AchievementRepository(ApiClient apiClient, this._prefs);
+
+  String _getLang() {
+    return _prefs.getString('app_language_code') ?? 'ku';
+  }
+
+  /// Helper to load and build localized achievements with local progress.
+  Future<List<Map<String, dynamic>>> _loadLocalAchievementsList() async {
+    try {
+      final jsonString = await rootBundle.loadString('assets/data/achievements.json');
+      final categoriesList = jsonDecode(jsonString) as List;
+      final lang = _getLang();
+
+      final List<Map<String, dynamic>> flatAchievements = [];
+
+      for (final catJson in categoriesList) {
+        final catMap = catJson as Map<String, dynamic>;
+        final catId = catMap['id'] as int;
+        final catIcon = catMap['icon'] as String? ?? '🏆';
+        final catTranslations = catMap['translations'] as Map<String, dynamic>? ?? {};
+        final catName = catTranslations[lang] as String? ?? catTranslations['en'] as String? ?? 'Other';
+
+        final achievementsList = catMap['achievements'] as List? ?? [];
+        for (final achJson in achievementsList) {
+          final achMap = achJson as Map<String, dynamic>;
+          final key = achMap['key'] as String;
+          final achId = achMap['id'] as int;
+          final conditionType = achMap['condition_type'] as String;
+          final conditionValue = achMap['condition_value'] as int;
+
+          // Retrieve local progress and completion status
+          final isCompleted = _prefs.getBool('achievement_completed_$key') ?? false;
+          final progressValue = _prefs.getInt('achievement_progress_$key') ?? 0;
+          final completedAtStr = _prefs.getString('achievement_completed_at_$key');
+
+          final achTranslations = achMap['translations'] as Map<String, dynamic>? ?? {};
+          final transObj = achTranslations[lang] as Map<String, dynamic>? ?? achTranslations['en'] as Map<String, dynamic>? ?? {};
+          final name = transObj['name'] as String? ?? '';
+          final description = transObj['description'] as String? ?? '';
+
+          flatAchievements.add({
+            'id': achId,
+            'key': key,
+            'name': name,
+            'description': description,
+            'icon': achMap['icon'] as String? ?? '🏆',
+            'badge_image': achMap['badge_image'],
+            'condition_type': conditionType,
+            'condition_value': conditionValue,
+            'reward_type': achMap['reward_type'] ?? 'POINTS',
+            'reward_points': achMap['reward_points'] ?? 0,
+            'reward_value': achMap['reward_value'],
+            'version': achMap['version'] ?? 1,
+            'is_hidden': achMap['is_hidden'] ?? false,
+            'is_completed': isCompleted,
+            'progress_value': progressValue,
+            'completed_at': completedAtStr,
+            'unlocked_version': achMap['unlocked_version'] ?? 1,
+            'category': {
+              'id': catId,
+              'name': catName,
+              'icon': catIcon,
+            }
+          });
+        }
+      }
+
+      return flatAchievements;
+    } catch (e) {
+      return [];
+    }
+  }
 
   /// Fetch all achievements with user progress.
   Future<ApiResult<Map<String, dynamic>>> getAchievements() async {
     try {
-      final response = await _apiClient.get(ApiConstants.achievements);
-      final data = response.data;
-      if (data is Map<String, dynamic> && data['status'] == 'success') {
-        return ApiSuccess(data['data'] as Map<String, dynamic>);
-      }
-      return const ApiError('هەڵەیەک ڕوویدا لە بارکردنی دەستکەوتەکان');
+      final achievements = await _loadLocalAchievementsList();
+      final totalAvailable = achievements.length;
+      final totalEarned = achievements.where((a) => a['is_completed'] == true).length;
+      final completionPct = totalAvailable > 0 ? (totalEarned / totalAvailable) * 100.0 : 0.0;
+      final rareEarned = achievements.where((a) => a['is_completed'] == true && (a['reward_points'] as int) >= 200).length;
+
+      final summary = {
+        'total_available': totalAvailable,
+        'total_earned': totalEarned,
+        'completion_pct': completionPct,
+        'rare_earned': rareEarned,
+      };
+
+      return ApiSuccess({
+        'achievements': achievements,
+        'summary': summary,
+      });
     } catch (e) {
       return ApiError(e.toString());
     }
@@ -25,12 +109,9 @@ class AchievementRepository {
   /// Fetch a single achievement detail.
   Future<ApiResult<AchievementModel>> getAchievement(int id) async {
     try {
-      final response = await _apiClient.get(ApiConstants.achievement(id));
-      final data = response.data;
-      if (data is Map<String, dynamic> && data['status'] == 'success') {
-        return ApiSuccess(AchievementModel.fromJson(data['data'] as Map<String, dynamic>));
-      }
-      return const ApiError('دەستکەوتە نەدۆزرایەوە');
+      final achievements = await _loadLocalAchievementsList();
+      final item = achievements.firstWhere((a) => a['id'] == id, orElse: () => throw Exception('Achievement not found'));
+      return ApiSuccess(AchievementModel.fromJson(item));
     } catch (e) {
       return ApiError(e.toString());
     }
@@ -45,22 +126,46 @@ class AchievementRepository {
     int? sessionDhikrCount,
   }) async {
     try {
-      final payload = <String, dynamic>{};
-      if (totalDhikrCount != null) payload['total_dhikr_count'] = totalDhikrCount;
-      if (currentStreak != null) payload['current_streak'] = currentStreak;
-      if (goalsCompleted != null) payload['goals_completed'] = goalsCompleted;
-      if (sessionDhikrCount != null) payload['session_dhikr_count'] = sessionDhikrCount;
+      final achievements = await _loadLocalAchievementsList();
+      final List<AchievementModel> newlyUnlocked = [];
 
-      final response = await _apiClient.post(ApiConstants.achievementsSync, data: payload);
-      final data = response.data;
-      if (data is Map<String, dynamic> && data['status'] == 'success') {
-        final rawList = (data['newly_unlocked'] as List?) ?? [];
-        final achievements = rawList
-            .map((e) => AchievementModel.fromJson(e as Map<String, dynamic>))
-            .toList();
-        return ApiSuccess(achievements);
+      for (final a in achievements) {
+        final key = a['key'] as String;
+        final conditionType = a['condition_type'] as String;
+        final conditionValue = a['condition_value'] as int;
+        final wasCompleted = a['is_completed'] as bool;
+
+        int currentVal = a['progress_value'] as int? ?? 0;
+
+        if (conditionType == 'TOTAL_DHIKR' && totalDhikrCount != null) {
+          currentVal = totalDhikrCount;
+        } else if ((conditionType == 'CURRENT_STREAK' || conditionType == 'CONSECUTIVE_DAYS') && currentStreak != null) {
+          currentVal = currentStreak;
+        } else if (conditionType == 'GOALS_COMPLETED' && goalsCompleted != null) {
+          currentVal = goalsCompleted;
+        } else if (conditionType == 'SESSION_DHIKR_COUNT' && sessionDhikrCount != null) {
+          currentVal = sessionDhikrCount;
+        }
+
+        // Only update progress if new value is greater
+        if (currentVal > (a['progress_value'] as int)) {
+          await _prefs.setInt('achievement_progress_$key', currentVal);
+          a['progress_value'] = currentVal;
+        }
+
+        if (currentVal >= conditionValue && !wasCompleted) {
+          await _prefs.setBool('achievement_completed_$key', true);
+          final completedAtStr = DateTime.now().toIso8601String();
+          await _prefs.setString('achievement_completed_at_$key', completedAtStr);
+
+          a['is_completed'] = true;
+          a['completed_at'] = completedAtStr;
+
+          newlyUnlocked.add(AchievementModel.fromJson(a));
+        }
       }
-      return const ApiSuccess([]);
+
+      return ApiSuccess(newlyUnlocked);
     } catch (e) {
       return ApiError(e.toString());
     }
@@ -69,20 +174,20 @@ class AchievementRepository {
   /// Get recently unlocked achievements (since a timestamp).
   Future<ApiResult<List<AchievementModel>>> getUnlocked({String? since}) async {
     try {
-      final queryParams = since != null ? {'since': since} : <String, dynamic>{};
-      final response = await _apiClient.get(
-        ApiConstants.achievementsUnlocked,
-        queryParameters: queryParams,
-      );
-      final data = response.data;
-      if (data is Map<String, dynamic> && data['status'] == 'success') {
-        final rawList = (data['data'] as List?) ?? [];
-        final achievements = rawList
-            .map((e) => AchievementModel.fromJson(e as Map<String, dynamic>))
-            .toList();
-        return ApiSuccess(achievements);
-      }
-      return const ApiSuccess([]);
+      final achievements = await _loadLocalAchievementsList();
+      final unlocked = achievements.where((a) {
+        if (a['is_completed'] != true) return false;
+        if (since != null) {
+          final completedAt = DateTime.tryParse(a['completed_at'] as String? ?? '');
+          final sinceDate = DateTime.tryParse(since);
+          if (completedAt != null && sinceDate != null) {
+            return completedAt.isAfter(sinceDate);
+          }
+        }
+        return true;
+      }).map((item) => AchievementModel.fromJson(item)).toList();
+
+      return ApiSuccess(unlocked);
     } catch (e) {
       return ApiError(e.toString());
     }

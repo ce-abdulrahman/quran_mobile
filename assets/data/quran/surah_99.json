@@ -1,0 +1,202 @@
+[
+    {
+        "id": 6139,
+        "ayah_number": 1,
+        "text_uthmani": "إِذَا زُلْزِلَتِ ٱلْأَرْضُ زِلْزَالَهَا",
+        "text_simple": null,
+        "page_number": 1238,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12277,
+                "language_code": "en",
+                "content": "When the earth is shaken with its [final] earthquake",
+                "is_active": true
+            },
+            {
+                "id": 12278,
+                "language_code": "ku",
+                "content": "کاتێك زه‌وی ده‌هێنرێته له‌رزه‌و بوومه‌له‌رزه زۆر به‌هێزه‌که‌ی بۆ پێشهات.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6140,
+        "ayah_number": 2,
+        "text_uthmani": "وَأَخْرَجَتِ ٱلْأَرْضُ أَثْقَالَهَا",
+        "text_simple": null,
+        "page_number": 1238,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12279,
+                "language_code": "en",
+                "content": "And the earth discharges its burdens<sup foot_note=197793>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12280,
+                "language_code": "ku",
+                "content": "هه‌رچی له زه‌ویدا هه‌بوو له مادده سه‌نگینه‌کانی ناوی ده‌ری په‌ڕاندو هێنایه ده‌ره‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6141,
+        "ayah_number": 3,
+        "text_uthmani": "وَقَالَ ٱلْإِنسَـٰنُ مَا لَهَا",
+        "text_simple": null,
+        "page_number": 1238,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12281,
+                "language_code": "en",
+                "content": "And man says,<sup foot_note=197794>1<\/sup> \"What is [wrong] with it?\" -",
+                "is_active": true
+            },
+            {
+                "id": 12282,
+                "language_code": "ku",
+                "content": "(ئه‌و کاته‌) ئاده‌میزادیش ده‌ڵێت: ئه‌وه چیه‌تی، بۆ وای لێهات (ئیماندار هه‌ست ده‌کات کۆتایی دنیایه‌و به‌رپابوونی ڕۆژی قیامه‌ته‌، بێ ئیمانیش سه‌ری لێده‌شێوێت و نازانێت به‌ره‌و کوێ ڕابکات).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6142,
+        "ayah_number": 4,
+        "text_uthmani": "يَوْمَئِذٍ تُحَدِّثُ أَخْبَارَهَا",
+        "text_simple": null,
+        "page_number": 1238,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12283,
+                "language_code": "en",
+                "content": "That Day, it will report its news",
+                "is_active": true
+            },
+            {
+                "id": 12284,
+                "language_code": "ku",
+                "content": "له‌و ڕۆژه‌دا زه‌وی هه‌واڵه‌کانی خۆی ده‌گێڕێته‌وه‌...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6143,
+        "ayah_number": 5,
+        "text_uthmani": "بِأَنَّ رَبَّكَ أَوْحَىٰ لَهَا",
+        "text_simple": null,
+        "page_number": 1238,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12285,
+                "language_code": "en",
+                "content": "Because your Lord has inspired [i.e., commanded] it.",
+                "is_active": true
+            },
+            {
+                "id": 12286,
+                "language_code": "ku",
+                "content": "به‌هۆی ئه‌وه‌ی که په‌روه‌ردگارت ڕایگه‌یاندووه (ئه‌ی ئینسان) فه‌رمانی بۆ ده‌رکردووه (کاتی کۆتایی هاتنیه‌تی).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6144,
+        "ayah_number": 6,
+        "text_uthmani": "يَوْمَئِذٍ يَصْدُرُ ٱلنَّاسُ أَشْتَاتًا لِّيُرَوْا۟ أَعْمَـٰلَهُمْ",
+        "text_simple": null,
+        "page_number": 1239,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12287,
+                "language_code": "en",
+                "content": "That Day, the people will depart<sup foot_note=197795>1<\/sup> separated [into categories] to be shown [the result of] their deeds.",
+                "is_active": true
+            },
+            {
+                "id": 12288,
+                "language_code": "ku",
+                "content": "ئه‌و ڕۆژه خه‌ڵکی ده‌سته ده‌سته به‌ره‌و گۆڕه‌پانی لێپرسینه‌وه ده‌رده‌چن، به‌په‌رش و بڵاوی، تا کارو کرده‌وه‌کانیان ببیننه‌وه (دیاره که نامه‌ی کرده‌وه‌کان تۆمار کراوه به‌ده‌نگ و ڕه‌نگه‌وه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6145,
+        "ayah_number": 7,
+        "text_uthmani": "فَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ خَيْرًا يَرَهُۥ",
+        "text_simple": null,
+        "page_number": 1239,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12289,
+                "language_code": "en",
+                "content": "So whoever does an atom's weight<sup foot_note=197796>1<\/sup> of good will see it,",
+                "is_active": true
+            },
+            {
+                "id": 12290,
+                "language_code": "ku",
+                "content": "جا ئه‌وه‌ی به‌قه‌ده‌ر سه‌نگی گه‌ردیله‌یه‌ك خێرو چاکه‌ی ئه‌نجام دابێت ده‌یبینێته‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6146,
+        "ayah_number": 8,
+        "text_uthmani": "وَمَن يَعْمَلْ مِثْقَالَ ذَرَّةٍ شَرًّا يَرَهُۥ",
+        "text_simple": null,
+        "page_number": 1239,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12291,
+                "language_code": "en",
+                "content": "And whoever does an atom's weight of evil will see it.",
+                "is_active": true
+            },
+            {
+                "id": 12292,
+                "language_code": "ku",
+                "content": "ئه‌وه‌ش که به‌قه‌ده‌ر سه‌نگی گه‌ردیله‌یه‌ك شه‌ڕو خراپه‌ی هه‌بێت، ده‌یبینێته‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

@@ -17,6 +17,7 @@ import '../quran/quran_reader_page.dart';
 import '../bookmarks/bookmarks_page.dart';
 import '../favorites/favorites_page.dart';
 import '../settings/settings_page.dart';
+import '../settings/about_page.dart';
 import '../tracker/reading_tracker_page.dart';
 import '../khatm/khatm_tracker_page.dart';
 import '../adhkar/adhkar_page.dart';
@@ -27,18 +28,15 @@ import '../prayer/prayer_times_page.dart';
 import '../prayer/widgets/prayer_widget_card.dart';
 import '../hadith/hadith_page.dart';
 import '../tajweed/tajweed_page.dart';
-import '../auth/welcome_page.dart';
-import '../auth/profile_page.dart';
-import '../auth/login_page.dart';
-import '../auth/register_page.dart';
-import '../../core/providers/auth_provider.dart';
 import '../tasbih/themes/theme_selector_page.dart';
+import 'names_of_allah_page.dart';
+import 'seerah_page.dart';
+import 'sahaba_page.dart';
 import '../../core/providers/tasbih_session_provider.dart';
 import '../tasbih/active_session_page.dart';
 import '../achievements/achievements_page.dart';
-import '../tasbih/fingerprint/fingerprint_counter_page.dart';
-import '../leaderboard/leaderboard_page.dart';
 import '../statistics/statistics_page.dart';
+import '../notes/notes_page.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Ad Slide Data
@@ -70,14 +68,16 @@ const _slides = [
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _CatData {
-  final IconData icon;
+  final IconData? icon;
   final Color iconColor;
+  final Widget? customIcon;
   final String Function(AppLocalizations) label;
   final VoidCallback Function(WidgetRef, BuildContext) onTap;
 
   const _CatData({
-    required this.icon,
+    this.icon,
     required this.iconColor,
+    this.customIcon,
     required this.label,
     required this.onTap,
   });
@@ -94,12 +94,12 @@ List<_CatData> _buildCats(BuildContext context) => [
             ),
       ),
       _CatData(
-        icon: Icons.psychology_rounded,
-        iconColor: const Color(0xFFCD9D27),
-        label: (l) => l.memorizationQuizTitle,
+        icon: Icons.mosque_rounded,
+        iconColor: const Color(0xFF0F8F4C),
+        label: (l) => l.prayerTimesTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
-              MaterialPageRoute(builder: (_) => const MemorizationDashboardPage()),
+              MaterialPageRoute(builder: (_) => const PrayerTimesPage(showBackButton: true)),
             ),
       ),
       _CatData(
@@ -123,19 +123,60 @@ List<_CatData> _buildCats(BuildContext context) => [
       _CatData(
         icon: Icons.auto_stories_rounded,
         iconColor: const Color(0xFFE53935),
-        label: (l) => 'فەرموودە',
+        label: (l) => l.hadithTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
               MaterialPageRoute(builder: (_) => const HadithPage()),
             ),
       ),
       _CatData(
-        icon: Icons.school_rounded,
-        iconColor: const Color(0xFF9C27B0),
-        label: (l) => 'فێربوونی تەجوید',
+        iconColor: const Color(0xFF008080),
+        customIcon: const SizedBox(
+          height: 28,
+          child: Center(
+            child: Text(
+              'الله',
+              style: TextStyle(
+                fontFamily: 'Amiri',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF008080),
+                height: 1.0,
+              ),
+            ),
+          ),
+        ),
+        label: (l) => l.namesOfAllahTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
-              MaterialPageRoute(builder: (_) => const TajweedPage()),
+              MaterialPageRoute(builder: (_) => const NamesOfAllahPage()),
+            ),
+      ),
+      _CatData(
+        icon: Icons.history_edu_rounded,
+        iconColor: const Color(0xFF8B4513),
+        label: (l) => l.seerahTitle,
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const SeerahPage()),
+            ),
+      ),
+      _CatData(
+        icon: Icons.people_outline_rounded,
+        iconColor: const Color(0xFF3F51B5),
+        label: (l) => l.sahabaTitle,
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const SahabaPage()),
+            ),
+      ),
+      _CatData(
+        icon: Icons.psychology_rounded,
+        iconColor: const Color(0xFFCD9D27),
+        label: (l) => l.memorizationQuizTitle,
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const MemorizationDashboardPage()),
             ),
       ),
       _CatData(
@@ -148,30 +189,30 @@ List<_CatData> _buildCats(BuildContext context) => [
             ),
       ),
       _CatData(
-        icon: Icons.mosque_rounded,
-        iconColor: const Color(0xFF0F8F4C),
-        label: (l) => l.prayerTimesTitle,
+        icon: Icons.school_rounded,
+        iconColor: const Color(0xFF9C27B0),
+        label: (l) => l.tajweedTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
-              MaterialPageRoute(builder: (_) => const PrayerTimesPage(showBackButton: true)),
+              MaterialPageRoute(builder: (_) => const TajweedPage()),
             ),
       ),
       _CatData(
-        icon: Icons.bar_chart_rounded,
-        iconColor: const Color(0xFFFF5722),
-        label: (l) => 'ئاماری خوێندن',
+        icon: Icons.search_rounded,
+        iconColor: const Color(0xFF5B1A8A),
+        label: (l) => l.searchTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
-              MaterialPageRoute(builder: (_) => const ReadingTrackerPage(showBackButton: true)),
+              MaterialPageRoute(builder: (_) => const SearchPage()),
             ),
       ),
       _CatData(
-        icon: Icons.insights_rounded,
+        icon: Icons.note_alt_rounded,
         iconColor: const Color(0xFF6F42C1),
-        label: (l) => l.statsAndInsightsTitle,
+        label: (l) => l.notesTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
-              MaterialPageRoute(builder: (_) => const StatisticsPage()),
+              MaterialPageRoute(builder: (_) => const NotesPage()),
             ),
       ),
       _CatData(
@@ -193,12 +234,30 @@ List<_CatData> _buildCats(BuildContext context) => [
             ),
       ),
       _CatData(
-        icon: Icons.search_rounded,
-        iconColor: const Color(0xFF5B1A8A),
-        label: (l) => l.searchTitle,
+        icon: Icons.bar_chart_rounded,
+        iconColor: const Color(0xFFFF5722),
+        label: (l) => l.readingStatsTitle,
         onTap: (ref, ctx) => () => Navigator.push(
               ctx,
-              MaterialPageRoute(builder: (_) => const SearchPage()),
+              MaterialPageRoute(builder: (_) => const ReadingTrackerPage(showBackButton: true)),
+            ),
+      ),
+      _CatData(
+        icon: Icons.insights_rounded,
+        iconColor: const Color(0xFF6F42C1),
+        label: (l) => l.statsAndInsightsTitle,
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const StatisticsPage()),
+            ),
+      ),
+      _CatData(
+        icon: Icons.info_outline_rounded,
+        iconColor: const Color(0xFF00BCD4),
+        label: (l) => l.aboutAppTitle,
+        onTap: (ref, ctx) => () => Navigator.push(
+              ctx,
+              MaterialPageRoute(builder: (_) => const AboutPage()),
             ),
       ),
       _CatData(
@@ -281,11 +340,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authState = ref.read(authProvider);
-      if (authState.status == AuthStatus.authenticated && authState.user != null) {
-        ref.read(statisticsProvider.notifier).load('30d');
-        ref.read(tasbihSessionProvider.notifier).fetchHistory();
-      }
+      ref.read(statisticsProvider.notifier).load('30d');
+      ref.read(tasbihSessionProvider.notifier).fetchHistory();
     });
   }
 
@@ -373,7 +429,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     textDirection: TextDirection.rtl,
                     style: TextStyle(fontFamily: 'Cairo', color: cs.textPrimary),
                     decoration: InputDecoration(
-                      hintText: 'نموونە: 1500',
+                      hintText: l.homeExampleGoal,
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     ),
@@ -390,9 +446,9 @@ class _HomePageState extends ConsumerState<HomePage> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text(
-                    'پاشگەزبوونەوە',
-                    style: TextStyle(fontFamily: 'Cairo'),
+                  child: Text(
+                    l.homeCancel,
+                    style: const TextStyle(fontFamily: 'Cairo'),
                   ),
                 ),
                 ElevatedButton(
@@ -411,7 +467,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'ئامانجی ڕۆژانە گۆڕدرا بۆ $finalVal زیکر',
+                            l.homeDailyGoalChanged(finalVal.toString()),
                             textDirection: TextDirection.rtl,
                             style: const TextStyle(fontFamily: 'Cairo'),
                           ),
@@ -439,9 +495,9 @@ class _HomePageState extends ConsumerState<HomePage> {
                     backgroundColor: cs.primary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text(
-                    'سەپاندن',
-                    style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold),
+                  child: Text(
+                    l.homeApply,
+                    style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -452,118 +508,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildGuestProfileCard(BuildContext context, Color accentColor, AppColorScheme cs) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: cs.card,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: cs.cardBorder),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.person_outline_rounded, color: accentColor, size: 22),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  context.l10n.welcome,
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                    color: cs.textPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            context.l10n.guestProfileSub,
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontSize: 12,
-              color: cs.textSecondary,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const LoginPage()),
-                    );
-                  },
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: cs.cardBorder),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                  ),
-                  child: Text(
-                    context.l10n.login,
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: cs.textPrimary,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const RegisterPage()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accentColor,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    context.l10n.register,
-                    style: const TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget _buildTodayDhikrCard(
     BuildContext context,
@@ -571,29 +516,19 @@ class _HomePageState extends ConsumerState<HomePage> {
     Color accentColor,
     StatisticsState statisticsState,
     TasbihState tasbihState,
-    String locale,
   ) {
+    final l = context.l10n;
     final todayCount = tasbihState.dailyGoalProgress;
     final trendPct = statisticsState.dhikr.trendPct;
     final trendDirection = statisticsState.dhikr.trendDirection;
 
     String trendText = '';
     if (trendPct > 0) {
-      if (locale == 'ku') {
-        trendText = trendDirection == 'up'
-            ? '+$trendPct% زیاتر لە دوێنێ'
-            : '-$trendPct% کەمتر لە دوێنێ';
-      } else if (locale == 'ar') {
-        trendText = trendDirection == 'up'
-            ? '+$trendPct% أكثر من أمس'
-            : '-$trendPct% أقل من أمس';
-      } else {
-        trendText = trendDirection == 'up'
-            ? '+$trendPct% than yesterday'
-            : '-$trendPct% than yesterday';
-      }
+      trendText = trendDirection == 'up'
+          ? l.homeTrendMore(trendPct.toString())
+          : l.homeTrendLess(trendPct.toString());
     } else {
-      trendText = locale == 'ku' ? 'ئەمڕۆ جێگیرە بە بەراورد لەگەڵ دوێنێ' : 'Steady comparison to yesterday';
+      trendText = l.homeTrendSame;
     }
 
     return Container(
@@ -626,7 +561,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  locale == 'ku' ? 'زیکری ئەمڕۆ' : 'Today\'s Dhikr',
+                  l.homeTodaysDhikr,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 12,
@@ -768,6 +703,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     Color accentColor,
     TasbihState tasbihState,
   ) {
+    final l = context.l10n;
     final current = tasbihState.currentStreak;
     final best = tasbihState.longestStreak;
 
@@ -817,7 +753,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          '$current ڕۆژ',
+                          l.homeStreakCurrentDays(current),
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 18,
@@ -825,8 +761,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                             color: cs.textPrimary,
                           ),
                         ),
-                        const Text(
-                          'ئەمڕۆ',
+                        Text(
+                          l.homeToday,
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 10,
@@ -839,7 +775,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '$best ڕۆژ',
+                          l.homeStreakBestDays(best),
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 18,
@@ -946,6 +882,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     Color accentColor,
     TasbihSessionState sessionState,
   ) {
+    final l = context.l10n;
     if (sessionState.isLoading) {
       return _buildCardSkeleton(cs);
     }
@@ -964,7 +901,7 @@ class _HomePageState extends ConsumerState<HomePage> {
         },
         child: Center(
           child: Text(
-            'هیچ خولێکی زیکر نییە',
+            l.homeNoSessions,
             style: TextStyle(
               fontFamily: 'Cairo',
               fontSize: 12,
@@ -1044,6 +981,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     Color accentColor,
     StatisticsState statisticsState,
   ) {
+    final l = context.l10n;
     if (statisticsState.isLoading) {
       return _buildCardSkeleton(cs);
     }
@@ -1066,8 +1004,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'کۆی تەواوی زیکرەکان',
+              Text(
+                l.homeTotalDhikrs,
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 12,
@@ -1112,8 +1050,8 @@ class _HomePageState extends ConsumerState<HomePage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'دەستکەوتە دەگمەنەکان',
+              Text(
+                l.homeRareAchievements,
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   fontSize: 12,
@@ -1142,12 +1080,13 @@ class _HomePageState extends ConsumerState<HomePage> {
     Color accentColor,
     StatisticsState statisticsState,
   ) {
+    final l = context.l10n;
     if (statisticsState.isLoading) {
       return _buildCardSkeleton(cs);
     }
 
     final insight = statisticsState.insights.isNotEmpty ? statisticsState.insights.first : null;
-    final insightText = insight?.fallback ?? 'زۆرترین چالاکیت لە دوای نوێژی مەغریبە.';
+    final insightText = insight?.fallback ?? l.homeMostActiveAfterMaghrib;
     final insightEmoji = insight?.icon ?? '💡';
 
     return _HomeCollapsibleCard(
@@ -1253,13 +1192,9 @@ class _HomePageState extends ConsumerState<HomePage> {
     final topPadding = MediaQuery.of(context).padding.top;
     final cs = AppColorScheme.of(context);
     final accentColor = ref.watch(accentColorProvider);
-    final authState = ref.watch(authProvider);
     final statisticsState = ref.watch(statisticsProvider);
     final tasbihSessionState = ref.watch(tasbihSessionProvider);
     final tasbihState = ref.watch(tasbihProvider);
-    final locale = Localizations.localeOf(context).languageCode;
-
-    final isAuthenticated = authState.status == AuthStatus.authenticated && authState.user != null;
 
     return Scaffold(
       backgroundColor: cs.bg,
@@ -1308,15 +1243,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                   // Card 1: Profile Card (Guest or Authenticated)
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: isAuthenticated
-                        ? const _HomeProfileCard()
-                        : _buildGuestProfileCard(context, accentColor, cs),
+                    child: const _HomeProfileCard(),
                   ).animate().fadeIn(duration: 400.ms, delay: 120.ms),
 
                   // Card 2: Today's Dhikr Card (Always Expanded)
                   Padding(
                     padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: _buildTodayDhikrCard(context, cs, accentColor, statisticsState, tasbihState, locale),
+                    child: _buildTodayDhikrCard(context, cs, accentColor, statisticsState, tasbihState),
                   ).animate().fadeIn(duration: 400.ms, delay: 130.ms),
 
                   // Card 3: Daily Goal Progress Card (Always Expanded, Tapping opens dialog)
@@ -1673,34 +1606,104 @@ class _AppBarRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    final cs = AppColorScheme.of(context);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(padding, 10, padding, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // ── Theme toggle — left ──
-          GestureDetector(
-            onTap: () => ref.read(themeModeProvider.notifier).toggle(),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.22),
-                  width: 1,
+          // ── Theme toggle & Language switcher — left ──
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                onTap: () => ref.read(themeModeProvider.notifier).toggle(),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.22),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(
+                    ref.watch(themeModeProvider) == ThemeMode.dark
+                        ? Icons.light_mode_outlined
+                        : Icons.dark_mode_outlined,
+                    color: Colors.white.withValues(alpha: 0.9),
+                    size: 18,
+                  ),
                 ),
               ),
-              child: Icon(
-                ref.watch(themeModeProvider) == ThemeMode.dark
-                    ? Icons.light_mode_outlined
-                    : Icons.dark_mode_outlined,
-                color: Colors.white.withValues(alpha: 0.9),
-                size: 18,
+              const SizedBox(width: 8),
+              PopupMenuButton<String>(
+                offset: const Offset(0, 48),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                color: cs.card,
+                onSelected: (langCode) {
+                  ref.read(appLocaleProvider.notifier).setLocale(langCode);
+                },
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.22),
+                      width: 1,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.language_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+                itemBuilder: (context) => [
+                  PopupMenuItem(
+                    value: 'ku',
+                    child: Text(
+                      'کوردی',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        color: cs.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'ar',
+                    child: Text(
+                      'العربية',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        color: cs.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem(
+                    value: 'en',
+                    child: Text(
+                      'English',
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        color: cs.textPrimary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
+            ],
           ),
 
           // ── App name — center ──
@@ -2066,6 +2069,7 @@ class _PrayerCountdownBannerState extends ConsumerState<_PrayerCountdownBanner> 
   Widget build(BuildContext context) {
     final nextInfo = ref.watch(nextPrayerProvider);
     final settings = ref.watch(prayerTimesSettingsProvider);
+    final l = context.l10n;
     
     if (nextInfo == null) return const SizedBox.shrink();
 
@@ -2156,7 +2160,7 @@ class _PrayerCountdownBannerState extends ConsumerState<_PrayerCountdownBanner> 
                   ),
                 ),
                 Text(
-                  'کاتی نوێژی داهاتوو',
+                  l.homePrayerUpcoming,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 12,
@@ -2184,7 +2188,7 @@ class _PrayerCountdownBannerState extends ConsumerState<_PrayerCountdownBanner> 
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'بانگ: ${_formatTime(nextInfo.time)}',
+                      l.homePrayerBang(_formatTime(nextInfo.time)),
                       style: TextStyle(
                         fontFamily: 'Cairo',
                         fontSize: 13,
@@ -2214,7 +2218,7 @@ class _PrayerCountdownBannerState extends ConsumerState<_PrayerCountdownBanner> 
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'کاتی ماوە',
+                  l.homeTimeRemaining,
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 12,
@@ -2273,6 +2277,7 @@ class _CategoriesGrid extends ConsumerWidget {
         return _CatTile(
           icon: cat.icon,
           iconColor: cat.iconColor,
+          customIcon: cat.customIcon,
           label: cat.label(context.l10n),
           onTap: cat.onTap(ref, context),
         ).animate().fadeIn(
@@ -2286,13 +2291,15 @@ class _CategoriesGrid extends ConsumerWidget {
 
 class _CatTile extends StatelessWidget {
   const _CatTile({
-    required this.icon,
+    this.icon,
     required this.iconColor,
+    this.customIcon,
     required this.label,
     required this.onTap,
   });
-  final IconData icon;
+  final IconData? icon;
   final Color iconColor;
+  final Widget? customIcon;
   final String label;
   final VoidCallback onTap;
 
@@ -2317,22 +2324,29 @@ class _CatTile extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 28, color: iconColor),
+            if (customIcon != null)
+              customIcon!
+            else if (icon != null)
+              Icon(icon, size: 28, color: iconColor)
+            else
+              const SizedBox(height: 28),
             const SizedBox(height: 6),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text(
-                label,
-                textDirection: TextDirection.rtl,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: cs.textPrimary,
-                  height: 1.3,
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Text(
+                  label,
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: cs.textPrimary,
+                    height: 1.3,
+                  ),
                 ),
               ),
             ),
@@ -2427,255 +2441,52 @@ class _HomeProfileCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
     final cs = AppColorScheme.of(context);
     final accentColor = ref.watch(accentColorProvider);
-    final locale = Localizations.localeOf(context).languageCode;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final isAuthenticated = authState.status == AuthStatus.authenticated && authState.user != null;
+    const user = null;
+    final statsState = ref.watch(statisticsProvider);
+    final dashboard = statsState.dashboard;
 
-    if (isAuthenticated) {
-      final user = authState.user!;
-      final stats = authState.stats ?? {};
-      final statsState = ref.watch(statisticsProvider);
-      final dashboard = statsState.dashboard;
+    final streak = dashboard.currentStreak;
+    final achievements = dashboard.totalAchievements;
+    final goalProgress = dashboard.goalCompletionRate.round();
+    final productivity = dashboard.productivityScore;
 
-      final streak = dashboard.currentStreak > 0 ? dashboard.currentStreak : (stats['current_streak'] ?? 0);
-      final achievements = dashboard.totalAchievements > 0 ? dashboard.totalAchievements : (stats['achievements_count'] ?? 0);
-      final goalProgress = dashboard.goalCompletionRate > 0 ? dashboard.goalCompletionRate.round() : (stats['goal_completion_rate'] ?? 0);
-      final productivity = dashboard.productivityScore;
+    final name = context.l10n.homeReciter;
+    final title = context.l10n.homeOfflineMode;
 
-      return Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: cs.card,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: cs.cardBorder),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.03),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User info row
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 24,
-                  backgroundColor: accentColor.withValues(alpha: 0.1),
-                  child: Text(
-                    user.name.isNotEmpty ? user.name.substring(0, 1).toUpperCase() : 'U',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: accentColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        user.name,
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: cs.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '@${user.username}',
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 12,
-                          color: cs.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.play_circle_outline_rounded, color: accentColor, size: 22),
-                  onPressed: () {
-                    final tasbihState = ref.read(tasbihProvider);
-                    _showStartSessionDialogFromHome(context, ref, tasbihState);
-                  },
-                  tooltip: locale == 'ku' ? 'دەستپێکردنی زیکر' : 'Start Dhikr',
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-
-            // Stats items row 1
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatItem(
-                    context,
-                    '🔥',
-                    locale == 'ku' ? '$streak ڕۆژ' : (locale == 'ar' ? '$streak يوم' : '$streak Days'),
-                    locale == 'ku' ? 'بەردەوامی' : 'Streak',
-                  ),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    context,
-                    '🏆',
-                    '$achievements',
-                    locale == 'ku' ? 'دەستکەوتەکان' : 'Achievements',
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // Stats items row 2
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatItem(
-                    context,
-                    '🎯',
-                    '$goalProgress%',
-                    locale == 'ku' ? 'تەواوکردنی ئامانج' : 'Goal Completion',
-                  ),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    context,
-                    '📊',
-                    '$productivity',
-                    context.l10n.productivityScoreLabel,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Divider(color: cs.cardBorder, height: 1),
-            const SizedBox(height: 14),
-
-            // Quick Actions row
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  _buildQuickAction(
-                    context,
-                    Icons.person_outline_rounded,
-                    locale == 'ku' ? 'پرۆفایل' : 'Profile',
-                    accentColor,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfilePage())),
-                  ),
-                  const SizedBox(width: 16),
-                  _buildQuickAction(
-                    context,
-                    Icons.insights_rounded,
-                    locale == 'ku' ? 'ئامارەکان' : 'Insights',
-                    accentColor,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatisticsPage())),
-                  ),
-                  const SizedBox(width: 16),
-                  _buildQuickAction(
-                    context,
-                    Icons.emoji_events_outlined,
-                    locale == 'ku' ? 'دەستکەوت' : 'Badges',
-                    accentColor,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AchievementsPage())),
-                  ),
-                  const SizedBox(width: 16),
-                  _buildQuickAction(
-                    context,
-                    Icons.palette_outlined,
-                    locale == 'ku' ? 'ڕووکار' : 'Themes',
-                    accentColor,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ThemeSelectorPage())),
-                  ),
-                  const SizedBox(width: 16),
-                  _buildQuickAction(
-                    context,
-                    Icons.leaderboard_outlined,
-                    locale == 'ku' ? 'ڕیزبەندی' : 'Ranks',
-                    accentColor,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LeaderboardPage())),
-                  ),
-                  const SizedBox(width: 16),
-                  _buildQuickAction(
-                    context,
-                    Icons.fingerprint_rounded,
-                    locale == 'ku' ? 'پەنجەمۆر' : 'Fingerprint',
-                    accentColor,
-                    () => Navigator.push(context, MaterialPageRoute(builder: (_) => const FingerprintCounterPage())),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      // Guest state profile card
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const WelcomePage()),
-          );
-        },
-        child: Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [
-                      Colors.grey.shade900,
-                      Colors.grey.shade800,
-                    ]
-                  : [
-                      Colors.grey.shade100,
-                      Colors.white,
-                    ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.grey.shade300,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.02),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: cs.card,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: cs.cardBorder),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
-          child: Row(
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // User info row
+          Row(
             children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.person_add_alt_1_outlined,
-                  color: accentColor,
-                  size: 24,
+              CircleAvatar(
+                radius: 24,
+                backgroundColor: accentColor.withValues(alpha: 0.1),
+                child: Text(
+                  name.isNotEmpty ? name.substring(0, 1).toUpperCase() : 'U',
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: accentColor,
+                  ),
                 ),
               ),
               const SizedBox(width: 14),
@@ -2684,48 +2495,129 @@ class _HomeProfileCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      locale == 'ku'
-                          ? 'بە شێوازی مێوان بەردەوامی'
-                          : (locale == 'ar' ? 'أنت تتصفح كضيف' : 'Browsing as Guest'),
+                      name,
                       style: TextStyle(
                         fontFamily: 'Cairo',
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
                         color: cs.textPrimary,
                       ),
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 2),
                     Text(
-                      locale == 'ku'
-                          ? 'تۆماربکە بۆ پاراستنی سەرجەم داتاکانت'
-                          : (locale == 'ar' ? 'سجل لحفظ جميع بياناتك ومزامنتها' : 'Sign up to save & sync your progress'),
+                      user != null ? '@${user.username}' : title,
                       style: TextStyle(
                         fontFamily: 'Cairo',
-                        fontSize: 11,
+                        fontSize: 12,
                         color: cs.textSecondary,
                       ),
                     ),
                   ],
                 ),
               ),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 14,
-                color: cs.textSecondary,
+              IconButton(
+                icon: Icon(Icons.play_circle_outline_rounded, color: accentColor, size: 22),
+                onPressed: () {
+                  final tasbihState = ref.read(tasbihProvider);
+                  _showStartSessionDialogFromHome(context, ref, tasbihState);
+                },
+                tooltip: context.l10n.homeStartDhikr,
               ),
             ],
           ),
-        ),
-      );
-    }
+          const SizedBox(height: 16),
+
+          // Stats items row 1
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatItem(
+                  context,
+                  '🔥',
+                  context.l10n.homeStreakDaysCount(streak),
+                  context.l10n.homeStreakLabel,
+                ),
+              ),
+              Expanded(
+                child: _buildStatItem(
+                  context,
+                  '🏆',
+                  '$achievements',
+                  context.l10n.authAchievements,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+
+          // Stats items row 2
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatItem(
+                  context,
+                  '🎯',
+                  '$goalProgress%',
+                  context.l10n.homeGoalCompletion,
+                ),
+              ),
+              Expanded(
+                child: _buildStatItem(
+                  context,
+                  '📊',
+                  '$productivity',
+                  context.l10n.productivityScoreLabel,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Divider(color: cs.cardBorder, height: 1),
+          const SizedBox(height: 14),
+
+          // Quick Actions row (Local actions only, Profile and Ranks deferred to V2)
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            child: Row(
+              children: [
+                _buildQuickAction(
+                  context,
+                  Icons.insights_rounded,
+                  context.l10n.statsQuickActionInsights,
+                  accentColor,
+                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatisticsPage())),
+                ),
+                const SizedBox(width: 16),
+                _buildQuickAction(
+                  context,
+                  Icons.emoji_events_outlined,
+                  context.l10n.homeBadges,
+                  accentColor,
+                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AchievementsPage())),
+                ),
+                const SizedBox(width: 16),
+                _buildQuickAction(
+                  context,
+                  Icons.palette_outlined,
+                  context.l10n.homeThemes,
+                  accentColor,
+                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ThemeSelectorPage())),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
+
 
 void _showStartSessionDialogFromHome(BuildContext context, WidgetRef ref, TasbihState tasbihState) {
   final cs = AppColorScheme.of(context);
   final nameCtrl = TextEditingController();
   int? selectedPredefinedIndex;
-  final locale = Localizations.localeOf(context).languageCode;
 
   showDialog(
     context: context,
@@ -2736,7 +2628,7 @@ void _showStartSessionDialogFromHome(BuildContext context, WidgetRef ref, Tasbih
             backgroundColor: cs.card,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
             title: Text(
-              locale == 'ku' ? 'دەستپێکردنی خولی زیکر' : (locale == 'ar' ? 'بدء جلسة ذكر' : 'Start Dhikr Session'),
+              context.l10n.homeStartDhikrSession,
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.center,
               style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 18),
@@ -2747,9 +2639,7 @@ void _showStartSessionDialogFromHome(BuildContext context, WidgetRef ref, Tasbih
                 shrinkWrap: true,
                 children: [
                   Text(
-                    locale == 'ku'
-                        ? 'زیکرێک هەڵبژێرە بۆ دەستپێکردن:'
-                        : (locale == 'ar' ? 'اختر ذكراً للبدء:' : 'Select a dhikr to begin:'),
+                    context.l10n.homeSelectDhikrToBegin,
                     textDirection: TextDirection.rtl,
                     style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary),
                   ),
@@ -2791,9 +2681,7 @@ void _showStartSessionDialogFromHome(BuildContext context, WidgetRef ref, Tasbih
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    locale == 'ku'
-                        ? 'یان زیکرێکی تایبەت بنووسە:'
-                        : (locale == 'ar' ? 'أو اكتب ذكراً مخصصاً:' : 'Or type custom dhikr:'),
+                    context.l10n.homeOrTypeCustomDhikr,
                     textDirection: TextDirection.rtl,
                     style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary),
                   ),
@@ -2825,7 +2713,7 @@ void _showStartSessionDialogFromHome(BuildContext context, WidgetRef ref, Tasbih
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
                 child: Text(
-                  locale == 'ku' ? 'پاشگەزبوونەوە' : (locale == 'ar' ? 'إلغاء' : 'Cancel'),
+                  context.l10n.homeCancel,
                   style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
                 ),
               ),
@@ -2883,7 +2771,7 @@ void _showStartSessionDialogFromHome(BuildContext context, WidgetRef ref, Tasbih
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 child: Text(
-                  locale == 'ku' ? 'دەستپێکردن' : (locale == 'ar' ? 'بدء' : 'Start'),
+                  context.l10n.homeStartButton,
                   style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ),

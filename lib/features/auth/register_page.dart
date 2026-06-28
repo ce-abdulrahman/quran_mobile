@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/l10n/app_localizations.dart';
 import 'auth_provider.dart';
 import 'login_page.dart';
 
@@ -108,7 +109,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
       if (success) {
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        final error = ref.read(authProvider).errorMessage ?? 'هەڵەیەک لە دروستکردنی ئەکاونتدا ڕوویدا';
+        final error = ref.read(authProvider).errorMessage ?? context.l10n.authRegistrationError;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -128,12 +129,13 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     final accentColor = ref.watch(accentColorProvider);
     final authState = ref.watch(authProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'خۆتۆمارکردن',
-          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+        title: Text(
+          l.authRegister,
+          style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -147,10 +149,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'ئەکاونت دروستبکە',
+                Text(
+                  l.authRegisterTitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Cairo',
@@ -158,7 +160,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'زانیارییەکانت بنووسە بۆ تۆمارکردنی ئەکاونتێکی نوێ',
+                  l.authRegisterSub,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
@@ -172,7 +174,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(
-                    labelText: 'ناوی تەواوت',
+                    labelText: l.authFullName,
                     hintText: 'Full Name',
                     prefixIcon: const Icon(Icons.person_outline),
                     border: OutlineInputBorder(
@@ -182,7 +184,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'تکایە ناوەکەت بنووسە';
+                      return l.authFullNameRequired;
                     }
                     return null;
                   },
@@ -193,7 +195,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
-                    labelText: 'ناوی بەکارهێنەر',
+                    labelText: l.authUsername,
                     hintText: 'username',
                     prefixIcon: const Icon(Icons.alternate_email_outlined),
                     border: OutlineInputBorder(
@@ -204,7 +206,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   textDirection: TextDirection.ltr,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'تکایە ناوی بەکارهێنەر بنووسە';
+                      return l.authUsernameRequired;
                     }
                     return null;
                   },
@@ -215,7 +217,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'ئیمەیڵ',
+                    labelText: l.authEmail,
                     hintText: 'example@email.com',
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
@@ -227,10 +229,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'تکایە ئیمەیڵەکەت بنووسە';
+                      return l.authEmailRequired;
                     }
                     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                      return 'تکایە ئیمەیڵێکی دروست بنووسە';
+                      return l.authEmailInvalid;
                     }
                     return null;
                   },
@@ -242,7 +244,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
-                    labelText: 'وشەی نهێنی بنووسە',
+                    labelText: l.authPasswordLabel,
                     hintText: '••••••••',
                     prefixIcon: const Icon(Icons.lock_outline),
                     suffixIcon: IconButton(
@@ -259,10 +261,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   textDirection: TextDirection.ltr,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'تکایە وشەی نهێنی بنووسە';
+                      return l.authPasswordRequired;
                     }
                     if (value.length < 8) {
-                      return 'وشەی نهێنی دەبێت لانی کەم ٨ پیت یان ژمارە بێت';
+                      return l.authPasswordMinLength;
                     }
                     return null;
                   },
@@ -274,7 +276,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   controller: _passwordConfirmController,
                   obscureText: _obscurePasswordConfirm,
                   decoration: InputDecoration(
-                    labelText: 'دووبارەکردنەوەی وشەی نهێنی',
+                    labelText: l.authRepeatPassword,
                     hintText: '••••••••',
                     prefixIcon: const Icon(Icons.lock_reset_outlined),
                     suffixIcon: IconButton(
@@ -291,10 +293,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   textDirection: TextDirection.ltr,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'تکایە وشەی نهێنی دووبارە بنووسەوە';
+                      return l.authRepeatPasswordRequired;
                     }
                     if (value != _passwordController.text) {
-                      return 'وشەکان وەک یەک نین';
+                      return l.authPasswordsDontMatch;
                     }
                     return null;
                   },
@@ -303,10 +305,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
                 // Optional profile demographic settings
                 const Divider(height: 32),
-                const Text(
-                  'زانیارییە زیاتر (ئارەزوومەندانە)',
+                Text(
+                  l.authExtraInfo,
                   textAlign: TextAlign.right,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Cairo',
@@ -318,15 +320,15 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 DropdownButtonFormField<String>(
                   value: _selectedGender,
                   decoration: InputDecoration(
-                    labelText: 'ڕەگەز (Gender)',
+                    labelText: l.authGender,
                     prefixIcon: const Icon(Icons.family_restroom_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  items: const [
-                    DropdownMenuItem(value: 'male', child: Text('نێر')),
-                    DropdownMenuItem(value: 'female', child: Text('مێ')),
+                  items: [
+                    DropdownMenuItem(value: 'male', child: Text(l.authMale)),
+                    DropdownMenuItem(value: 'female', child: Text(l.authFemale)),
                   ],
                   onChanged: (val) => setState(() => _selectedGender = val),
                 ),
@@ -336,7 +338,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 DropdownButtonFormField<int>(
                   value: _selectedBirthYear,
                   decoration: InputDecoration(
-                    labelText: 'ساڵی لەدایکبوون',
+                    labelText: l.authBirthYear,
                     prefixIcon: const Icon(Icons.cake_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -357,7 +359,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 DropdownButtonFormField<int>(
                   value: _selectedCountryId,
                   decoration: InputDecoration(
-                    labelText: 'وڵات',
+                    labelText: l.authCountry,
                     prefixIcon: const Icon(Icons.public_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -391,7 +393,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 DropdownButtonFormField<int>(
                   value: _selectedProvinceId,
                   decoration: InputDecoration(
-                    labelText: 'شار/پارێزگا',
+                    labelText: l.authCityProvince,
                     prefixIcon: const Icon(Icons.map_outlined),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -422,9 +424,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   ),
                   child: authState.status == AuthStatus.loading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'دروستکردنی ئەکاونت',
-                          style: TextStyle(
+                      : Text(
+                          l.authRegisterTitle,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Cairo',
@@ -444,7 +446,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         );
                       },
                       child: Text(
-                        'بچۆ ژوورەوە',
+                        l.authGoToLogin,
                         style: TextStyle(
                           color: accentColor,
                           fontWeight: FontWeight.bold,
@@ -452,9 +454,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                       ),
                     ),
-                    const Text(
-                      'پێشتر ئەکاونتت دروستکردووە؟',
-                      style: TextStyle(fontFamily: 'Cairo'),
+                    Text(
+                      l.authAlreadyHaveAccount,
+                      style: const TextStyle(fontFamily: 'Cairo'),
                     ),
                   ],
                 ),

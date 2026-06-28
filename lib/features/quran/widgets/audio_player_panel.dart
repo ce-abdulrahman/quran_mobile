@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/models/reciter_model.dart';
+import '../../../core/models/recitation_models.dart';
 import '../providers/audio_player_provider.dart';
 import '../quran_providers.dart';
+import 'audio_settings_sheet.dart';
 
-class AudioPlayerPanel extends ConsumerWidget {
+class AudioPlayerPanel extends ConsumerStatefulWidget {
   final int surahId;
 
   const AudioPlayerPanel({
@@ -15,16 +17,38 @@ class AudioPlayerPanel extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AudioPlayerPanel> createState() => _AudioPlayerPanelState();
+}
+
+class _AudioPlayerPanelState extends ConsumerState<AudioPlayerPanel> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        ref.read(audioPlayerProvider.notifier).loadSurah(widget.surahId);
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(AudioPlayerPanel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.surahId != widget.surahId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          ref.read(audioPlayerProvider.notifier).loadSurah(widget.surahId);
+        }
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final cs = AppColorScheme.of(context);
     final playerState = ref.watch(audioPlayerProvider);
     final recitersAsync = ref.watch(recitersProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    // Trigger load of surah audio on mount
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(audioPlayerProvider.notifier).loadSurah(surahId);
-    });
 
     if (playerState.streamUrl == null && !playerState.isLoading && playerState.errorMessage == null) {
       return const SizedBox.shrink();
@@ -76,6 +100,79 @@ class AudioPlayerPanel extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
+
+              if (playerState.sessionRecoveryState == SessionRecoveryState.available) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: cs.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: cs.primary.withValues(alpha: 0.25)),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.history_rounded, color: cs.primary),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              'ئایا دەتەوێت بەردەوام بیت لە گوێگرتن لەو شوێنەی وەستابوویت؟',
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: cs.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              ref.read(audioPlayerProvider.notifier).cancelRecovery();
+                            },
+                            child: Text(
+                              'نەخێر',
+                              style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: cs.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            onPressed: () {
+                              ref.read(audioPlayerProvider.notifier).restoreSession();
+                            },
+                            child: const Text(
+                              'بەڵێ، بەردەوامبە',
+                              style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+
+              if (playerState.sessionRecoveryState == SessionRecoveryState.restoring) ...[
+                const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
 
               // Top row: Reciter selector & playback speed
               Row(
@@ -134,6 +231,20 @@ class AudioPlayerPanel extends ConsumerWidget {
                   // Speed Control & Auto Scroll Toggle
                   Row(
                     children: [
+                      // Advanced Audio Settings
+                      IconButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (context) => AudioSettingsSheet(surahId: widget.surahId),
+                          );
+                        },
+                        icon: Icon(Icons.settings_outlined, color: cs.primary, size: 20),
+                        tooltip: 'ڕێکخستنەکان',
+                      ),
+                      const SizedBox(width: 4),
                       // Auto-Scroll Toggle
                       IconButton(
                         onPressed: () => ref.read(audioPlayerProvider.notifier).toggleAutoScroll(),
@@ -252,6 +363,40 @@ class AudioPlayerPanel extends ConsumerWidget {
 
               const SizedBox(height: 12),
 
+              if (playerState.engineState == RecitationEngineState.waitingGap) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: cs.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 14,
+                        height: 14,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        'ماوەی بێدەنگی بۆ لەبەرکردن: ${playerState.gapRemainingSeconds} چرکە ماوە',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: cs.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+              ],
+
               // Play/Pause Controller Button
               if (!playerState.isLoading && playerState.errorMessage == null)
                 Center(
@@ -354,7 +499,7 @@ class AudioPlayerPanel extends ConsumerWidget {
                           ),
                           child: ListTile(
                             onTap: () {
-                              ref.read(audioPlayerProvider.notifier).changeReciter(reciter.id, surahId);
+                              ref.read(audioPlayerProvider.notifier).changeReciter(reciter.id, widget.surahId);
                               Navigator.pop(context);
                             },
                             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),

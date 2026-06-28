@@ -140,4 +140,14 @@ class PackageManager {
     final key = 'pkg_manifest_${pkg.name}';
     await _prefs.setString(key, jsonEncode(manifest.toJson()));
   }
+
+  Future<void> deletePackage(ContentPackage pkg) async {
+    final key = 'pkg_manifest_${pkg.name}';
+    await _prefs.remove(key);
+    _eventController.add(PackageDownloadEvent(
+      package: pkg,
+      progress: 0.0,
+      isCompleted: false,
+    ));
+  }
 }

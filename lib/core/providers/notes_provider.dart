@@ -46,15 +46,20 @@ class NotesNotifier extends StateNotifier<List<LocalNote>> {
     required int surahNumber,
     required int ayahNumber,
     required String content,
+    String? noteId,
   }) async {
     final isar = IsarService.instance.isar;
-    final noteId = '${surahNumber}_$ayahNumber';
-    final existing = await isar.noteCollections.filter().noteIdEqualTo(noteId).findFirst();
+    final resolvedNoteId = noteId ?? (
+      (surahNumber == 0 && ayahNumber == 0)
+        ? 'general_${DateTime.now().millisecondsSinceEpoch}'
+        : '${surahNumber}_$ayahNumber'
+    );
+    final existing = await isar.noteCollections.filter().noteIdEqualTo(resolvedNoteId).findFirst();
 
     await isar.writeTxn(() async {
       final now = DateTime.now();
       final item = NoteCollection(
-        noteId: noteId,
+        noteId: resolvedNoteId,
         surahNumber: surahNumber,
         ayahNumber: ayahNumber,
         content: content,
@@ -72,8 +77,12 @@ class NotesNotifier extends StateNotifier<List<LocalNote>> {
   }
 
   Future<void> deleteNote(int surahNumber, int ayahNumber) async {
-    final isar = IsarService.instance.isar;
     final noteId = '${surahNumber}_$ayahNumber';
+    await deleteNoteById(noteId);
+  }
+
+  Future<void> deleteNoteById(String noteId) async {
+    final isar = IsarService.instance.isar;
     final existing = await isar.noteCollections.filter().noteIdEqualTo(noteId).findFirst();
 
     if (existing != null) {

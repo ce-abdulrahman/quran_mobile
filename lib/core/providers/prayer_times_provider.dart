@@ -69,11 +69,27 @@ class KurdishCity {
 }
 
 const List<KurdishCity> kurdishCities = [
-  KurdishCity(id: 1, nameKu: 'هەولێر', nameEn: 'Erbil', latitude: 36.1912, longitude: 44.0091),
-  KurdishCity(id: 2, nameKu: 'سلێمانی', nameEn: 'Sulaymaniyah', latitude: 35.5619, longitude: 45.4375),
-  KurdishCity(id: 3, nameKu: 'دهۆک', nameEn: 'Duhok', latitude: 36.8601, longitude: 42.9961),
-  KurdishCity(id: 4, nameKu: 'کەرکووک', nameEn: 'Kirkuk', latitude: 35.4681, longitude: 44.3922),
-  KurdishCity(id: 5, nameKu: 'هەڵەبجە', nameEn: 'Halabja', latitude: 35.1778, longitude: 45.9861),
+  KurdishCity(id: 1, nameKu: 'هەولێر', nameEn: 'Erbil', latitude: 36.1901, longitude: 44.0091),
+  KurdishCity(id: 2, nameKu: 'دهۆک', nameEn: 'Duhok', latitude: 36.8668, longitude: 42.9506),
+  KurdishCity(id: 3, nameKu: 'زاخۆ', nameEn: 'Zakho', latitude: 37.1440, longitude: 42.6876),
+  KurdishCity(id: 4, nameKu: 'سلێمانی', nameEn: 'Sulaymaniyah', latitude: 35.5600, longitude: 45.4350),
+  KurdishCity(id: 5, nameKu: 'هەڵەبجە', nameEn: 'Halabja', latitude: 35.1787, longitude: 45.9862),
+  KurdishCity(id: 6, nameKu: 'چەمچەماڵ', nameEn: 'Chamchamal', latitude: 35.5264, longitude: 44.8367),
+  KurdishCity(id: 7, nameKu: 'ڕانیە', nameEn: 'Ranya', latitude: 36.2553, longitude: 44.8781),
+  KurdishCity(id: 8, nameKu: 'ئاکرێ', nameEn: 'Akre', latitude: 36.7436, longitude: 43.8841),
+  KurdishCity(id: 9, nameKu: 'پێنجوێن', nameEn: 'Penjwen', latitude: 35.6248, longitude: 45.9436),
+  KurdishCity(id: 10, nameKu: 'دەربەندیخان', nameEn: 'Darbandikhan', latitude: 35.1103, longitude: 45.6964),
+  KurdishCity(id: 11, nameKu: 'دۆکان', nameEn: 'Dokan', latitude: 35.9500, longitude: 44.9600),
+  KurdishCity(id: 12, nameKu: 'کفری', nameEn: 'Kifri', latitude: 34.6880, longitude: 44.9740),
+  KurdishCity(id: 13, nameKu: 'کەلار', nameEn: 'Kalar', latitude: 34.6314, longitude: 45.3228),
+  KurdishCity(id: 14, nameKu: 'خانەقین', nameEn: 'Khanaqin', latitude: 34.3379, longitude: 45.3705),
+  KurdishCity(id: 15, nameKu: 'کەرکووک', nameEn: 'Kirkuk', latitude: 35.4681, longitude: 44.3922),
+  KurdishCity(id: 16, nameKu: 'کۆیە', nameEn: 'Koysinjaq', latitude: 36.0866, longitude: 44.6315),
+  KurdishCity(id: 17, nameKu: 'مەخموور', nameEn: 'Makhmur', latitude: 35.7706, longitude: 43.5843),
+  KurdishCity(id: 18, nameKu: 'قەڵادزێ', nameEn: 'Qaladiza', latitude: 36.1781, longitude: 45.1240),
+  KurdishCity(id: 19, nameKu: 'قەسرێ', nameEn: 'Qasre', latitude: 36.8500, longitude: 44.5000),
+  KurdishCity(id: 20, nameKu: 'گۆخلان', nameEn: 'Gokhlan', latitude: 37.0000, longitude: 43.5000),
+  KurdishCity(id: 21, nameKu: 'توز خورماتوو', nameEn: 'Tuz Khurma', latitude: 34.8871, longitude: 44.6390),
 ];
 
 enum PrayerType { fajr, dhuhr, asr, maghrib, isha }

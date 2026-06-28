@@ -1,0 +1,1952 @@
+[
+    {
+        "id": 4902,
+        "ayah_number": 1,
+        "text_uthmani": "ٱلرَّحْمَـٰنُ",
+        "text_simple": null,
+        "page_number": 971,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9803,
+                "language_code": "en",
+                "content": "The Most Merciful",
+                "is_active": true
+            },
+            {
+                "id": 9804,
+                "language_code": "ku",
+                "content": "خوای میهره‌بان، کانگای سۆزو ڕه‌حمه‌ت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4903,
+        "ayah_number": 2,
+        "text_uthmani": "عَلَّمَ ٱلْقُرْءَانَ",
+        "text_simple": null,
+        "page_number": 971,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9805,
+                "language_code": "en",
+                "content": "Taught the Qur’ān,",
+                "is_active": true
+            },
+            {
+                "id": 9806,
+                "language_code": "ku",
+                "content": "قورئانی فێری ئاده‌میزاد کردووه‌( فێربوون و زانینی قورئان و تێگه‌یشتن له‌فه‌رمووده‌ی خوای میهره‌بان پیرۆزترین نازو نیعمه‌ته که‌ئیماندار لێی به‌هره‌وه‌ر ببێت له‌م ته‌مه‌نه‌کورته‌ی ژیانی دنیادا )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4904,
+        "ayah_number": 3,
+        "text_uthmani": "خَلَقَ ٱلْإِنسَـٰنَ",
+        "text_simple": null,
+        "page_number": 971,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9807,
+                "language_code": "en",
+                "content": "Created man,",
+                "is_active": true
+            },
+            {
+                "id": 9808,
+                "language_code": "ku",
+                "content": "هه‌ر خوا ئاده‌میزادی دروست کردووه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4905,
+        "ayah_number": 4,
+        "text_uthmani": "عَلَّمَهُ ٱلْبَيَانَ",
+        "text_simple": null,
+        "page_number": 971,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9809,
+                "language_code": "en",
+                "content": "[And] taught him eloquence.",
+                "is_active": true
+            },
+            {
+                "id": 9810,
+                "language_code": "ku",
+                "content": "هه‌ر ئه‌ویش فێری گوفتارو ئاخاوتنی کردووه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4906,
+        "ayah_number": 5,
+        "text_uthmani": "ٱلشَّمْسُ وَٱلْقَمَرُ بِحُسْبَانٍ",
+        "text_simple": null,
+        "page_number": 971,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9811,
+                "language_code": "en",
+                "content": "The sun and the moon [move] by precise calculation,",
+                "is_active": true
+            },
+            {
+                "id": 9812,
+                "language_code": "ku",
+                "content": "خۆرو مانگیشی به‌حسابێکی ورد دروست کردوون ودایناون له‌خولگه‌کانیاندا له‌سووڕانه‌وه‌دان",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4907,
+        "ayah_number": 6,
+        "text_uthmani": "وَٱلنَّجْمُ وَٱلشَّجَرُ يَسْجُدَانِ",
+        "text_simple": null,
+        "page_number": 972,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9813,
+                "language_code": "en",
+                "content": "And the stars and trees prostrate.<sup foot_note=197468>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 9814,
+                "language_code": "ku",
+                "content": "ئه‌ستێره و دره‌خته‌کان، ڕوه‌که‌بێ قه‌دو دره‌خته‌به‌رزه‌کان هه‌موویان، سوژده‌ده‌به‌ن بۆ دروستکاریان ( له‌نه‌خشه‌ی دیاری کراو ده‌رناچن که‌بۆیان دانراوه‌)",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4908,
+        "ayah_number": 7,
+        "text_uthmani": "وَٱلسَّمَآءَ رَفَعَهَا وَوَضَعَ ٱلْمِيزَانَ",
+        "text_simple": null,
+        "page_number": 972,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9815,
+                "language_code": "en",
+                "content": "And the heaven He raised and imposed the balance",
+                "is_active": true
+            },
+            {
+                "id": 9816,
+                "language_code": "ku",
+                "content": "ئاسمانیشی به‌رزو بڵندکردۆته‌وه ( بێ کۆڵه‌که و بێ ستوون ) و ته‌رازوو پێوه‌ی بۆ هه‌موو شتێک داناوه‌( هه‌موو شت به‌یاسایه و هیچ شتێک به‌هه‌ڕه‌مه‌کی و به‌بێ هوده‌دروست نه‌کراوه‌، بۆیه‌، پێویسته ئاده‌میزادیش به‌رنامه‌و یاسای هه‌بێت له‌چوارچێوه‌ی قورئان و سووننه‌تی ڕاست و دروستدا )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4909,
+        "ayah_number": 8,
+        "text_uthmani": "أَلَّا تَطْغَوْا۟ فِى ٱلْمِيزَانِ",
+        "text_simple": null,
+        "page_number": 972,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9817,
+                "language_code": "en",
+                "content": "That you not transgress within the balance.",
+                "is_active": true
+            },
+            {
+                "id": 9818,
+                "language_code": "ku",
+                "content": "ئێوه‌ش ئه‌ی نه‌وه‌ی ئاده‌م با ته‌رازوو پێوه‌رتان ڕێکوپێک بێت و سته‌م له‌یه‌کتر مه‌که‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4910,
+        "ayah_number": 9,
+        "text_uthmani": "وَأَقِيمُوا۟ ٱلْوَزْنَ بِٱلْقِسْطِ وَلَا تُخْسِرُوا۟ ٱلْمِيزَانَ",
+        "text_simple": null,
+        "page_number": 972,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9819,
+                "language_code": "en",
+                "content": "And establish weight in justice and do not make deficient the balance.",
+                "is_active": true
+            },
+            {
+                "id": 9820,
+                "language_code": "ku",
+                "content": "دادپه‌روه‌ر بن له کێشان و پێواندا، ته‌رازوو بازیی مه‌که‌ن و که‌م فرۆشی ئه‌نجام مه‌ده‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4911,
+        "ayah_number": 10,
+        "text_uthmani": "وَٱلْأَرْضَ وَضَعَهَا لِلْأَنَامِ",
+        "text_simple": null,
+        "page_number": 972,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9821,
+                "language_code": "en",
+                "content": "And the earth He laid [out] for the creatures.",
+                "is_active": true
+            },
+            {
+                "id": 9822,
+                "language_code": "ku",
+                "content": "زه‌ویشی بۆ خه‌ڵکی ڕاخستووه‌و باری هێناوه ( تا ژیانی خۆیانی تیادا به‌رنه‌سه‌ر )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4912,
+        "ayah_number": 11,
+        "text_uthmani": "فِيهَا فَـٰكِهَةٌ وَٱلنَّخْلُ ذَاتُ ٱلْأَكْمَامِ",
+        "text_simple": null,
+        "page_number": 973,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9823,
+                "language_code": "en",
+                "content": "Therein is fruit and palm trees having sheaths [of dates]",
+                "is_active": true
+            },
+            {
+                "id": 9824,
+                "language_code": "ku",
+                "content": "جۆره‌ها میوه‌ی تێدا دێته به‌ر، هه‌روه‌ها خورمای خاوه‌ن ده‌فری گوڵدانی بۆ فه‌راهه‌م هێناون",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4913,
+        "ayah_number": 12,
+        "text_uthmani": "وَٱلْحَبُّ ذُو ٱلْعَصْفِ وَٱلرَّيْحَانُ",
+        "text_simple": null,
+        "page_number": 973,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9825,
+                "language_code": "en",
+                "content": "And grain having husks and scented plants.",
+                "is_active": true
+            },
+            {
+                "id": 9826,
+                "language_code": "ku",
+                "content": "هه‌روه‌ها جۆره‌ها دانه‌وێڵه‌ی خاوه‌ن کاو په‌لوپۆدارو بۆنخۆشی تیادا به‌رهه‌م هێناوه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4914,
+        "ayah_number": 13,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 973,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9827,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?<sup foot_note=197469>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 9828,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4915,
+        "ayah_number": 14,
+        "text_uthmani": "خَلَقَ ٱلْإِنسَـٰنَ مِن صَلْصَـٰلٍ كَٱلْفَخَّارِ",
+        "text_simple": null,
+        "page_number": 973,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9829,
+                "language_code": "en",
+                "content": "He created man from clay like [that of] pottery.",
+                "is_active": true
+            },
+            {
+                "id": 9830,
+                "language_code": "ku",
+                "content": "ئاده‌میزادی درستکردووه‌له‌قوڕێکی وشک بوو، وه‌ک فه‌خفوری",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4916,
+        "ayah_number": 15,
+        "text_uthmani": "وَخَلَقَ ٱلْجَآنَّ مِن مَّارِجٍ مِّن نَّارٍ",
+        "text_simple": null,
+        "page_number": 973,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9831,
+                "language_code": "en",
+                "content": "And He created the jinn from a smokeless flame of fire.",
+                "is_active": true
+            },
+            {
+                "id": 9832,
+                "language_code": "ku",
+                "content": "په‌ریه‌کانیشی له‌بڵێسه‌ی ئاگر دروست کردووه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4917,
+        "ayah_number": 16,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 974,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9833,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9834,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4918,
+        "ayah_number": 17,
+        "text_uthmani": "رَبُّ ٱلْمَشْرِقَيْنِ وَرَبُّ ٱلْمَغْرِبَيْنِ",
+        "text_simple": null,
+        "page_number": 974,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9835,
+                "language_code": "en",
+                "content": "[He is] Lord of the two sunrises and Lord of the two sunsets.<sup foot_note=197470>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 9836,
+                "language_code": "ku",
+                "content": "خوا خاوه‌نی هه‌ردوو ڕۆژهه‌ڵات و هه‌ردوو ڕۆژئاوایه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4919,
+        "ayah_number": 18,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 974,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9837,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9838,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4920,
+        "ayah_number": 19,
+        "text_uthmani": "مَرَجَ ٱلْبَحْرَيْنِ يَلْتَقِيَانِ",
+        "text_simple": null,
+        "page_number": 974,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9839,
+                "language_code": "en",
+                "content": "He released the two seas,<sup foot_note=197471>1<\/sup> meeting [one another];",
+                "is_active": true
+            },
+            {
+                "id": 9840,
+                "language_code": "ku",
+                "content": "ئاوی دوو ده‌ریای به‌ره‌ڵا کردووه‌و به‌یه‌ک گه‌یاندووه تێکه‌ڵیش نابن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4921,
+        "ayah_number": 20,
+        "text_uthmani": "بَيْنَهُمَا بَرْزَخٌ لَّا يَبْغِيَانِ",
+        "text_simple": null,
+        "page_number": 974,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9841,
+                "language_code": "en",
+                "content": "Between them is a barrier so neither of them transgresses.",
+                "is_active": true
+            },
+            {
+                "id": 9842,
+                "language_code": "ku",
+                "content": "چونکه‌له‌نێوانیاندا به‌ربه‌ستێک هه‌یه نایه‌ڵێت تێکه‌ڵ ببن ( ئه‌م دیارده‌یه له‌نێوان ده‌ریای سپی و زه‌ریای ئه‌تڵه‌سیداو ده‌ریای سوورو ده‌ریای عه‌ره‌بدا ئاشکرایه )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4922,
+        "ayah_number": 21,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 975,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9843,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9844,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4923,
+        "ayah_number": 22,
+        "text_uthmani": "يَخْرُجُ مِنْهُمَا ٱللُّؤْلُؤُ وَٱلْمَرْجَانُ",
+        "text_simple": null,
+        "page_number": 975,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9845,
+                "language_code": "en",
+                "content": "From both of them emerge pearl and coral.",
+                "is_active": true
+            },
+            {
+                "id": 9846,
+                "language_code": "ku",
+                "content": "له‌و دوو جۆر ده‌ریایه مرواری و مه‌رجان ده‌رده‌چن ( که‌دوو جۆر گه‌وهه‌ری به‌نرخن )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4924,
+        "ayah_number": 23,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 975,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9847,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9848,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4925,
+        "ayah_number": 24,
+        "text_uthmani": "وَلَهُ ٱلْجَوَارِ ٱلْمُنشَـَٔاتُ فِى ٱلْبَحْرِ كَٱلْأَعْلَـٰمِ",
+        "text_simple": null,
+        "page_number": 975,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9849,
+                "language_code": "en",
+                "content": "And to Him belong the ships [with sails] elevated in the sea like mountains.",
+                "is_active": true
+            },
+            {
+                "id": 9850,
+                "language_code": "ku",
+                "content": "هه‌رچی که‌شتی هه‌یه له‌ده‌ریاکاندا وه‌ک به‌یداخ، وه‌ک شاخ هاتوچۆ ده‌که‌ن، هه‌ر خوایش خاوه‌نیانه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4926,
+        "ayah_number": 25,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 975,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9851,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9852,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4927,
+        "ayah_number": 26,
+        "text_uthmani": "كُلُّ مَنْ عَلَيْهَا فَانٍ",
+        "text_simple": null,
+        "page_number": 976,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9853,
+                "language_code": "en",
+                "content": "Everyone upon it [i.e., the earth] will perish,",
+                "is_active": true
+            },
+            {
+                "id": 9854,
+                "language_code": "ku",
+                "content": "هه‌موو ئه‌و که‌سانه‌ی له‌سه‌ر ڕووی زه‌وین، هه‌ر هه‌مووی فه‌وتاوو تیاچووه ده‌بێت بمرن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4928,
+        "ayah_number": 27,
+        "text_uthmani": "وَيَبْقَىٰ وَجْهُ رَبِّكَ ذُو ٱلْجَلَـٰلِ وَٱلْإِكْرَامِ",
+        "text_simple": null,
+        "page_number": 976,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9855,
+                "language_code": "en",
+                "content": "And there will remain the Face<sup foot_note=197472>1<\/sup> of your Lord, Owner of Majesty and Honor.",
+                "is_active": true
+            },
+            {
+                "id": 9856,
+                "language_code": "ku",
+                "content": "ته‌نها زاتی په‌روه‌ردگاری خاوه‌ن بڵندی و ڕێزداری تۆیه که‌ده‌مێنێته‌وه",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4929,
+        "ayah_number": 28,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 976,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9857,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9858,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4930,
+        "ayah_number": 29,
+        "text_uthmani": "يَسْـَٔلُهُۥ مَن فِى ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۚ كُلَّ يَوْمٍ هُوَ فِى شَأْنٍ",
+        "text_simple": null,
+        "page_number": 976,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9859,
+                "language_code": "en",
+                "content": "Whoever is within the heavens and earth asks Him; every day He is in [i.e., bringing about] a matter.<sup foot_note=197473>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 9860,
+                "language_code": "ku",
+                "content": "هه‌موو گیانله‌به‌رو زینده‌وه‌ران له‌ئاسمانه‌کان و زه‌ویدا به‌رده‌وام به‌گوفتارو به‌زمانی حاڵ، داوای پێداویستی و داخوازیه‌کان له‌په‌روه‌ردگار ده‌که‌ن، هه‌موو ڕۆژێک و هه‌موو کاتێک ( ملیۆنه‌هاو ملیاره‌ها، به‌ڵکو بێ شومار تاوتۆی ده‌کات له‌بوونه‌وه‌رو له‌جیهانی ئاده‌میزادو په‌ری و فریشته‌کان و... هتد )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4931,
+        "ayah_number": 30,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 976,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9861,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9862,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4932,
+        "ayah_number": 31,
+        "text_uthmani": "سَنَفْرُغُ لَكُمْ أَيُّهَ ٱلثَّقَلَانِ",
+        "text_simple": null,
+        "page_number": 977,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9863,
+                "language_code": "en",
+                "content": "We will attend to you, O prominent beings.<sup foot_note=197474>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 9864,
+                "language_code": "ku",
+                "content": "ئه‌ی گرۆی ئاده‌میزادو په‌ری، ڕۆژێک دێت به‌تایبه‌ت لێتان ده‌پرسینه‌وه و دادگایتان ده‌که‌ین ( خوای باڵاده‌ست هه‌ڕه‌شه له‌م دوو ده‌سته‌یه له‌دروستکراوه‌کانی ده‌کات، که‌له‌هه‌ندێک ڕووه‌وه سه‌رپشکی کردوون و ئازادی داونه‌تێ، به‌ڵام زۆربه‌یان یاخی و سه‌رکه‌شن، قوڕ به‌سه‌ر یاخیه‌کان له‌و ڕۆژه‌دا )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4933,
+        "ayah_number": 32,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 977,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9865,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9866,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4934,
+        "ayah_number": 33,
+        "text_uthmani": "يَـٰمَعْشَرَ ٱلْجِنِّ وَٱلْإِنسِ إِنِ ٱسْتَطَعْتُمْ أَن تَنفُذُوا۟ مِنْ أَقْطَارِ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ فَٱنفُذُوا۟ ۚ لَا تَنفُذُونَ إِلَّا بِسُلْطَـٰنٍ",
+        "text_simple": null,
+        "page_number": 977,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9867,
+                "language_code": "en",
+                "content": "O company of jinn and mankind, if you are able to pass beyond the regions of the heavens and the earth, then pass. You will not pass except by authority [from Allāh].",
+                "is_active": true
+            },
+            {
+                "id": 9868,
+                "language_code": "ku",
+                "content": "ئه‌ی گرۆی په‌ری و ئاده‌میزاد ئه‌گه‌ر ده‌توانن به‌به‌شه‌کانی ئاسمانه‌کان و زه‌ویدا ده‌رچن، ئه‌وکاره‌ئه‌نجام بده‌ن، دڵنیاش بن که‌ئه‌وکاره‌به‌هۆی ده‌زگای ماددی و توانای مه‌عنه‌ویه‌وه نه‌بێت ئه‌نجام نادرێت",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4935,
+        "ayah_number": 34,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 977,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9869,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9870,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4936,
+        "ayah_number": 35,
+        "text_uthmani": "يُرْسَلُ عَلَيْكُمَا شُوَاظٌ مِّن نَّارٍ وَنُحَاسٌ فَلَا تَنتَصِرَانِ",
+        "text_simple": null,
+        "page_number": 977,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9871,
+                "language_code": "en",
+                "content": "There will be sent upon you a flame of fire and smoke,<sup foot_note=197475>1<\/sup> and you will not defend yourselves.",
+                "is_active": true
+            },
+            {
+                "id": 9872,
+                "language_code": "ku",
+                "content": "خۆ ئه‌گه‌ر له‌سنوور ده‌رچوون، بڵێسه‌ی ئاگرتان هاوڕێ له‌گه‌ڵ مسی تواوه‌دا بۆ ڕه‌وانه‌ده‌کرێت، ئیتر شکست ده‌خۆن و سه‌رکه‌وتوو نابن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4937,
+        "ayah_number": 36,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 978,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9873,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9874,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4938,
+        "ayah_number": 37,
+        "text_uthmani": "فَإِذَا ٱنشَقَّتِ ٱلسَّمَآءُ فَكَانَتْ وَرْدَةً كَٱلدِّهَانِ",
+        "text_simple": null,
+        "page_number": 978,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9875,
+                "language_code": "en",
+                "content": "And when the heaven is split open and becomes rose-colored like oil<sup foot_note=197476>1<\/sup> -",
+                "is_active": true
+            },
+            {
+                "id": 9876,
+                "language_code": "ku",
+                "content": "کاتێک دێت ئاسمان له‌ت ده‌بێت و وه‌کو گوڵێکی سوور دێته به‌رچاو، یاخود وه‌ک ڕۆنی قرچاوی لێ دێت ( ئه‌مه‌ش قۆناغێکه له‌قۆناغه‌کانی تێکچوونی )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4939,
+        "ayah_number": 38,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 978,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9877,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny? -",
+                "is_active": true
+            },
+            {
+                "id": 9878,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4940,
+        "ayah_number": 39,
+        "text_uthmani": "فَيَوْمَئِذٍ لَّا يُسْـَٔلُ عَن ذَنۢبِهِۦٓ إِنسٌ وَلَا جَآنٌّ",
+        "text_simple": null,
+        "page_number": 978,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9879,
+                "language_code": "en",
+                "content": "Then on that Day none will be asked about his sin among men or jinn.<sup foot_note=197477>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 9880,
+                "language_code": "ku",
+                "content": "ئه‌و ڕۆژه هه‌موو شت ڕوون و ئاشکرایه‌، پرسیار له‌گوناهانی ئاده‌میزاد و په‌ریه‌کان ناکرێت، ( ڕه‌نگه‌ئه‌وه‌قۆناغێک بێت له‌قۆناغه‌کان، که‌به‌روخساریان جیاده‌کرێنه‌وه )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4941,
+        "ayah_number": 40,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 978,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9881,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9882,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4942,
+        "ayah_number": 41,
+        "text_uthmani": "يُعْرَفُ ٱلْمُجْرِمُونَ بِسِيمَـٰهُمْ فَيُؤْخَذُ بِٱلنَّوَٰصِى وَٱلْأَقْدَامِ",
+        "text_simple": null,
+        "page_number": 979,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9883,
+                "language_code": "en",
+                "content": "The criminals will be known by their marks, and they will be seized by the forelocks and the feet.",
+                "is_active": true
+            },
+            {
+                "id": 9884,
+                "language_code": "ku",
+                "content": "ئینجا تاوانکارو گوناهباران به‌رووخساریاندا ده‌ناسرێته‌وه‌، ئه‌وسا ده‌ست گیر ده‌کرێت له‌ناوچه‌وانیان و قاچیان و گڵۆڵیان ده‌که‌ن و فڕێ ده‌درێنه ناو ئاگری دۆزه‌خه‌وه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4943,
+        "ayah_number": 42,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 979,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9885,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9886,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4944,
+        "ayah_number": 43,
+        "text_uthmani": "هَـٰذِهِۦ جَهَنَّمُ ٱلَّتِى يُكَذِّبُ بِهَا ٱلْمُجْرِمُونَ",
+        "text_simple": null,
+        "page_number": 979,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9887,
+                "language_code": "en",
+                "content": "This is Hell, which the criminals deny.",
+                "is_active": true
+            },
+            {
+                "id": 9888,
+                "language_code": "ku",
+                "content": "ده‌وترێت: ئه‌مه‌ئه‌و دۆزه‌خه‌یه تاوانباران بڕیاریان پێی نه‌بوو",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4945,
+        "ayah_number": 44,
+        "text_uthmani": "يَطُوفُونَ بَيْنَهَا وَبَيْنَ حَمِيمٍ ءَانٍ",
+        "text_simple": null,
+        "page_number": 979,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9889,
+                "language_code": "en",
+                "content": "They will circulate between it and scalding water, heated [to the utmost degree].",
+                "is_active": true
+            },
+            {
+                "id": 9890,
+                "language_code": "ku",
+                "content": "جا له‌نێوان ئاگرو ئاوی گه‌رمدا که‌به‌سه‌رچاوه‌یاندا ده‌کرێت هه‌ر ده‌خولێنه‌وه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4946,
+        "ayah_number": 45,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 979,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9891,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9892,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4947,
+        "ayah_number": 46,
+        "text_uthmani": "وَلِمَنْ خَافَ مَقَامَ رَبِّهِۦ جَنَّتَانِ",
+        "text_simple": null,
+        "page_number": 980,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9893,
+                "language_code": "en",
+                "content": "But for he who has feared the position of his Lord<sup foot_note=197478>1<\/sup> are two gardens -",
+                "is_active": true
+            },
+            {
+                "id": 9894,
+                "language_code": "ku",
+                "content": "بۆ ئه‌و که‌سه‌ش له‌مقامی په‌روه‌ردگاری خۆی ترسابێت، دوو باخی ڕازاوه‌ئاماده‌یه",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4948,
+        "ayah_number": 47,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 980,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9895,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny? -",
+                "is_active": true
+            },
+            {
+                "id": 9896,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4949,
+        "ayah_number": 48,
+        "text_uthmani": "ذَوَاتَآ أَفْنَانٍ",
+        "text_simple": null,
+        "page_number": 980,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9897,
+                "language_code": "en",
+                "content": "Having [spreading] branches.",
+                "is_active": true
+            },
+            {
+                "id": 9898,
+                "language_code": "ku",
+                "content": "ئه‌و دوو باخه‌ش خاوه‌نی دارو دره‌ختی گه‌ڵا ناسک و جوان و بریسکه‌داره‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4950,
+        "ayah_number": 49,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 980,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9899,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9900,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4951,
+        "ayah_number": 50,
+        "text_uthmani": "فِيهِمَا عَيْنَانِ تَجْرِيَانِ",
+        "text_simple": null,
+        "page_number": 980,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9901,
+                "language_code": "en",
+                "content": "In both of them are two springs, flowing.",
+                "is_active": true
+            },
+            {
+                "id": 9902,
+                "language_code": "ku",
+                "content": "دوو سه‌رچاوه‌ی له‌کانی و ئاوی سازگاریان تیادایه‌و به‌خوڕ به‌جۆگه‌له‌کاندا ده‌ڕۆن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4952,
+        "ayah_number": 51,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 981,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9903,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9904,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4953,
+        "ayah_number": 52,
+        "text_uthmani": "فِيهِمَا مِن كُلِّ فَـٰكِهَةٍ زَوْجَانِ",
+        "text_simple": null,
+        "page_number": 981,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9905,
+                "language_code": "en",
+                "content": "In both of them are of every fruit, two kinds.",
+                "is_active": true
+            },
+            {
+                "id": 9906,
+                "language_code": "ku",
+                "content": "له‌هه‌موو جۆره میوه‌یه‌ک دوو جۆریان تیادایه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4954,
+        "ayah_number": 53,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 981,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9907,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9908,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4955,
+        "ayah_number": 54,
+        "text_uthmani": "مُتَّكِـِٔينَ عَلَىٰ فُرُشٍۭ بَطَآئِنُهَا مِنْ إِسْتَبْرَقٍ ۚ وَجَنَى ٱلْجَنَّتَيْنِ دَانٍ",
+        "text_simple": null,
+        "page_number": 981,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9909,
+                "language_code": "en",
+                "content": "[They are] reclining on beds whose linings are of silk brocade, and the fruit of the two gardens is hanging low.",
+                "is_active": true
+            },
+            {
+                "id": 9910,
+                "language_code": "ku",
+                "content": "له‌و به‌هه‌شته‌خۆشه‌دا به‌خته‌وه‌ران له‌سه‌ر کورسی و قه‌نه‌فه‌و جێگه و ڕێگه خۆشه‌کان، شانیان داداوه‌که‌له‌ئاوریشمی تایبه‌ت ناواخن کراوه‌، ( داخۆ به‌رگه‌که‌ی له‌چی بێت؟! ) لێکردنه‌وه‌ی هه‌ر میوه‌یه‌کیش نزیک و ئاسانه‌و دره‌خته‌کان خۆیان سه‌ر فرو ده‌هێنن بۆ ئه‌و به‌خته‌وه‌رانه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4956,
+        "ayah_number": 55,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 981,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9911,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9912,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4957,
+        "ayah_number": 56,
+        "text_uthmani": "فِيهِنَّ قَـٰصِرَٰتُ ٱلطَّرْفِ لَمْ يَطْمِثْهُنَّ إِنسٌ قَبْلَهُمْ وَلَا جَآنٌّ",
+        "text_simple": null,
+        "page_number": 982,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9913,
+                "language_code": "en",
+                "content": "In them are women limiting [their] glances,<sup foot_note=197480>1<\/sup> untouched<sup foot_note=197479>2<\/sup> before them by man or jinnī -",
+                "is_active": true
+            },
+            {
+                "id": 9914,
+                "language_code": "ku",
+                "content": "له‌و به‌هه‌شته‌دا حۆری تیادایه که‌ته‌نها ته‌ماشای هاوسه‌ره‌کانیان ده‌که‌ن، پێش ئه‌وان ده‌ستی که‌سیان لێنه‌وه‌وتووه‌، نه‌له‌گرۆی ئاده‌می و نه‌له‌په‌ری",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4958,
+        "ayah_number": 57,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 982,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9915,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny? -",
+                "is_active": true
+            },
+            {
+                "id": 9916,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4959,
+        "ayah_number": 58,
+        "text_uthmani": "كَأَنَّهُنَّ ٱلْيَاقُوتُ وَٱلْمَرْجَانُ",
+        "text_simple": null,
+        "page_number": 982,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9917,
+                "language_code": "en",
+                "content": "As if they were rubies and coral.<sup foot_note=197481>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 9918,
+                "language_code": "ku",
+                "content": "ئه‌و هاوسه‌رانه‌له‌جوانی و شۆخ و شه‌نگی و قه‌شه‌نگیدا وه‌کو یاقووت و مه‌رجان وان ( که‌دوو جۆر گه‌وهه‌ری به‌نرخن، له‌ده‌ریا ده‌رده‌هێنرێن )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4960,
+        "ayah_number": 59,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 982,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9919,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9920,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4961,
+        "ayah_number": 60,
+        "text_uthmani": "هَلْ جَزَآءُ ٱلْإِحْسَـٰنِ إِلَّا ٱلْإِحْسَـٰنُ",
+        "text_simple": null,
+        "page_number": 982,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9921,
+                "language_code": "en",
+                "content": "Is the reward for good [anything] but good?",
+                "is_active": true
+            },
+            {
+                "id": 9922,
+                "language_code": "ku",
+                "content": "مه‌گه‌ر پاداشتی چاکه‌ته‌نها چاکه‌نی یه؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4962,
+        "ayah_number": 61,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 983,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9923,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9924,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4963,
+        "ayah_number": 62,
+        "text_uthmani": "وَمِن دُونِهِمَا جَنَّتَانِ",
+        "text_simple": null,
+        "page_number": 983,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9925,
+                "language_code": "en",
+                "content": "And below them both [in excellence] are two [other] gardens -",
+                "is_active": true
+            },
+            {
+                "id": 9926,
+                "language_code": "ku",
+                "content": "جگه‌له‌و دوو به‌هه‌شته‌ی که‌باس کرا، به‌هه‌شتی تریش ئاماده‌یه بۆ ئه‌وانه‌ی که‌پله‌و پایه‌یان وا له‌خوار خاوه‌نی دوو به‌هه‌شتی ناوبراوه‌وه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4964,
+        "ayah_number": 63,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 983,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9927,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny? -",
+                "is_active": true
+            },
+            {
+                "id": 9928,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4965,
+        "ayah_number": 64,
+        "text_uthmani": "مُدْهَآمَّتَانِ",
+        "text_simple": null,
+        "page_number": 983,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9929,
+                "language_code": "en",
+                "content": "Dark green [in color].",
+                "is_active": true
+            },
+            {
+                "id": 9930,
+                "language_code": "ku",
+                "content": "( ئه‌و به‌هه‌شتانه‌ش ) ئه‌وه‌نده‌سه‌وز ده‌نوێنن مه‌یله و ڕه‌ش ده‌چنه‌وه‌له‌جوانی و تۆخیدا",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4966,
+        "ayah_number": 65,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 983,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9931,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9932,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4967,
+        "ayah_number": 66,
+        "text_uthmani": "فِيهِمَا عَيْنَانِ نَضَّاخَتَانِ",
+        "text_simple": null,
+        "page_number": 984,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9933,
+                "language_code": "en",
+                "content": "In both of them are two springs, spouting.",
+                "is_active": true
+            },
+            {
+                "id": 9934,
+                "language_code": "ku",
+                "content": "دوو سه‌رچاوه‌ی هه‌ڵقوڵاویان تێدایه ( که‌دیمه‌نیان زۆر دڵفڕێنه )",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4968,
+        "ayah_number": 67,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 984,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9935,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9936,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4969,
+        "ayah_number": 68,
+        "text_uthmani": "فِيهِمَا فَـٰكِهَةٌ وَنَخْلٌ وَرُمَّانٌ",
+        "text_simple": null,
+        "page_number": 984,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9937,
+                "language_code": "en",
+                "content": "In both of them are fruit and palm trees and pomegranates.",
+                "is_active": true
+            },
+            {
+                "id": 9938,
+                "language_code": "ku",
+                "content": "دره‌ختی میوه‌و دارخورماو هه‌ناریان تێدایه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4970,
+        "ayah_number": 69,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 984,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9939,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9940,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4971,
+        "ayah_number": 70,
+        "text_uthmani": "فِيهِنَّ خَيْرَٰتٌ حِسَانٌ",
+        "text_simple": null,
+        "page_number": 984,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9941,
+                "language_code": "en",
+                "content": "In them are good and beautiful women -",
+                "is_active": true
+            },
+            {
+                "id": 9942,
+                "language_code": "ku",
+                "content": "له‌و به‌هه‌شتانه‌دا حۆری جوان و شۆخ و شه‌نگ و ڕه‌وشت به‌رزی تیادایه‌",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4972,
+        "ayah_number": 71,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 985,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9943,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny? -",
+                "is_active": true
+            },
+            {
+                "id": 9944,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4973,
+        "ayah_number": 72,
+        "text_uthmani": "حُورٌ مَّقْصُورَٰتٌ فِى ٱلْخِيَامِ",
+        "text_simple": null,
+        "page_number": 985,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9945,
+                "language_code": "en",
+                "content": "Fair ones reserved in pavilions -",
+                "is_active": true
+            },
+            {
+                "id": 9946,
+                "language_code": "ku",
+                "content": "حۆری چاوگه‌ش و چاوڕه‌ش، له‌و ده‌واره‌تایبه‌تیانه‌ی که‌بۆیان ئاماده‌کراوه‌دوور ناکه‌ونه‌وه‌....",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4974,
+        "ayah_number": 73,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 985,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9947,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny? -",
+                "is_active": true
+            },
+            {
+                "id": 9948,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4975,
+        "ayah_number": 74,
+        "text_uthmani": "لَمْ يَطْمِثْهُنَّ إِنسٌ قَبْلَهُمْ وَلَا جَآنٌّ",
+        "text_simple": null,
+        "page_number": 985,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9949,
+                "language_code": "en",
+                "content": "Untouched before them by man or jinnī -",
+                "is_active": true
+            },
+            {
+                "id": 9950,
+                "language_code": "ku",
+                "content": "ئه‌و حۆریانه‌، پێش ئه‌وان ده‌ستی که‌سیان لێنه‌که‌وتووه‌، نه‌له‌گرۆی ئاده‌می و نه‌له‌په‌ری",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4976,
+        "ayah_number": 75,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 985,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9951,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny? -",
+                "is_active": true
+            },
+            {
+                "id": 9952,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4977,
+        "ayah_number": 76,
+        "text_uthmani": "مُتَّكِـِٔينَ عَلَىٰ رَفْرَفٍ خُضْرٍ وَعَبْقَرِىٍّ حِسَانٍ",
+        "text_simple": null,
+        "page_number": 986,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9953,
+                "language_code": "en",
+                "content": "Reclining on green cushions and beautiful fine carpets.",
+                "is_active": true
+            },
+            {
+                "id": 9954,
+                "language_code": "ku",
+                "content": "شانیان داداوه‌له‌سه‌ر پشتی سه‌وزوبای جوان و دۆشه‌کی نایاب و ڕازاوه",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4978,
+        "ayah_number": 77,
+        "text_uthmani": "فَبِأَىِّ ءَالَآءِ رَبِّكُمَا تُكَذِّبَانِ",
+        "text_simple": null,
+        "page_number": 986,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9955,
+                "language_code": "en",
+                "content": "So which of the favors of your Lord would you deny?",
+                "is_active": true
+            },
+            {
+                "id": 9956,
+                "language_code": "ku",
+                "content": "جا ئیتر گرۆی ئاده‌میزادو په‌ری به‌کام له‌نازو نیعمه‌ته‌کانی په‌روه‌ردگار بڕوا ناکه‌ن، کامه‌ی په‌سه‌ند ناکه‌ن",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4979,
+        "ayah_number": 78,
+        "text_uthmani": "تَبَـٰرَكَ ٱسْمُ رَبِّكَ ذِى ٱلْجَلَـٰلِ وَٱلْإِكْرَامِ",
+        "text_simple": null,
+        "page_number": 986,
+        "juz_number": 27,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9957,
+                "language_code": "en",
+                "content": "Blessed is the name of your Lord, Owner of Majesty and Honor.",
+                "is_active": true
+            },
+            {
+                "id": 9958,
+                "language_code": "ku",
+                "content": "موباره‌ک و به‌رزو به‌ڕێزه ناوی په‌روه‌ردگاری تۆ، چونکه‌ئه‌و زاتێکه خاوه‌نی به‌رزی و بڵندی و ڕێزی بێ سنووره‌بۆ ئیمانداران",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

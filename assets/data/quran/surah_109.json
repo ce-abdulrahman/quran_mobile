@@ -1,0 +1,152 @@
+[
+    {
+        "id": 6208,
+        "ayah_number": 1,
+        "text_uthmani": "قُلْ يَـٰٓأَيُّهَا ٱلْكَـٰفِرُونَ",
+        "text_simple": null,
+        "page_number": 1259,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12414,
+                "language_code": "en",
+                "content": "Say, \"O disbelievers,",
+                "is_active": true
+            },
+            {
+                "id": 12415,
+                "language_code": "ku",
+                "content": "(ئه‌ی محمد (صلی الله علیه وسلم) بڵێ: ئه‌ی کۆمه‌ڵی بێ باوه‌ڕ و خوانه‌ناسان.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6209,
+        "ayah_number": 2,
+        "text_uthmani": "لَآ أَعْبُدُ مَا تَعْبُدُونَ",
+        "text_simple": null,
+        "page_number": 1259,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12416,
+                "language_code": "en",
+                "content": "I do not worship what you worship.",
+                "is_active": true
+            },
+            {
+                "id": 12417,
+                "language_code": "ku",
+                "content": "من هه‌رگیز ئه‌و شتانه‌ی که ئێوه ده‌یپه‌رستن نایپه‌رستم (چونکه من خواپه‌رستم).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6210,
+        "ayah_number": 3,
+        "text_uthmani": "وَلَآ أَنتُمْ عَـٰبِدُونَ مَآ أَعْبُدُ",
+        "text_simple": null,
+        "page_number": 1259,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12418,
+                "language_code": "en",
+                "content": "Nor are you worshippers of what I worship.",
+                "is_active": true
+            },
+            {
+                "id": 12419,
+                "language_code": "ku",
+                "content": "ئێوه‌ش دیاره ئه‌وه‌ی من ده‌یپه‌رستم نای په‌رستن (چونکه بت په‌رستن).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6211,
+        "ayah_number": 4,
+        "text_uthmani": "وَلَآ أَنَا۠ عَابِدٌ مَّا عَبَدتُّمْ",
+        "text_simple": null,
+        "page_number": 1259,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12420,
+                "language_code": "en",
+                "content": "Nor will I be a worshipper of what you worship.",
+                "is_active": true
+            },
+            {
+                "id": 12421,
+                "language_code": "ku",
+                "content": "ئه‌وه‌ی ئێوه په‌رستوتانه من هیچ کات نایپه‌رستم.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6212,
+        "ayah_number": 5,
+        "text_uthmani": "وَلَآ أَنتُمْ عَـٰبِدُونَ مَآ أَعْبُدُ",
+        "text_simple": null,
+        "page_number": 1259,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12422,
+                "language_code": "en",
+                "content": "Nor will you be worshippers of what I worship.",
+                "is_active": true
+            },
+            {
+                "id": 12423,
+                "language_code": "ku",
+                "content": "ئێوه‌ش، ئه‌و زاته‌ی من ده‌یپه‌رستم نای په‌رستن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6213,
+        "ayah_number": 6,
+        "text_uthmani": "لَكُمْ دِينُكُمْ وَلِىَ دِينِ",
+        "text_simple": null,
+        "page_number": 1260,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12424,
+                "language_code": "en",
+                "content": "For you is your religion, and for me is my religion.\"",
+                "is_active": true
+            },
+            {
+                "id": 12425,
+                "language_code": "ku",
+                "content": "که‌واته دینی خۆتان بۆ خۆتان و دینی خۆم بۆ خۆم.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

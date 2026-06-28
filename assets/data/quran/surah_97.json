@@ -1,0 +1,127 @@
+[
+    {
+        "id": 6126,
+        "ayah_number": 1,
+        "text_uthmani": "بِّسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ إِنَّآ أَنزَلْنَـٰهُ فِى لَيْلَةِ ٱلْقَدْرِ",
+        "text_simple": null,
+        "page_number": 1234,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12251,
+                "language_code": "en",
+                "content": "Indeed, We sent it [i.e., the Qur’ān] down during the Night of Decree.",
+                "is_active": true
+            },
+            {
+                "id": 12252,
+                "language_code": "ku",
+                "content": "ئێمه به‌ڕاستی قورئانمان دابه‌زاندۆته خواره‌وه له شه‌وێکی به‌فه‌ڕو ڕێزداردا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6127,
+        "ayah_number": 2,
+        "text_uthmani": "وَمَآ أَدْرَىٰكَ مَا لَيْلَةُ ٱلْقَدْرِ",
+        "text_simple": null,
+        "page_number": 1234,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12253,
+                "language_code": "en",
+                "content": "And what can make you know what is the Night of Decree?",
+                "is_active": true
+            },
+            {
+                "id": 12254,
+                "language_code": "ku",
+                "content": "جا تۆ چووزانی شه‌وی به‌فه‌ڕ کامه‌یه‌و چ خێرو به‌ره‌که‌تێکه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6128,
+        "ayah_number": 3,
+        "text_uthmani": "لَيْلَةُ ٱلْقَدْرِ خَيْرٌ مِّنْ أَلْفِ شَهْرٍ",
+        "text_simple": null,
+        "page_number": 1234,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12255,
+                "language_code": "en",
+                "content": "The Night of Decree is better than a thousand months.",
+                "is_active": true
+            },
+            {
+                "id": 12256,
+                "language_code": "ku",
+                "content": "شه‌وی قه‌دری به‌ڕێز له هه‌زار مانگ ڕێزدارو خێردارتره (واته پاداشتی عیباده‌ت و خواپه‌رستی ئه‌و شه‌وه بێ سنووره‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6129,
+        "ayah_number": 4,
+        "text_uthmani": "تَنَزَّلُ ٱلْمَلَـٰٓئِكَةُ وَٱلرُّوحُ فِيهَا بِإِذْنِ رَبِّهِم مِّن كُلِّ أَمْرٍ",
+        "text_simple": null,
+        "page_number": 1234,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12257,
+                "language_code": "en",
+                "content": "The angels and the Spirit [i.e., Gabriel] descend therein by permission of their Lord for every matter.<sup foot_note=197788>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12258,
+                "language_code": "ku",
+                "content": "له‌و شه‌وه‌دا فریشته‌کان که جوبره‌ئیلیشیان له‌گه‌ڵدایه‌، داده‌به‌زن له‌سه‌ر ڕووخسه‌ت و مۆڵه‌تی په‌روه‌ردگاریان، به‌جۆره‌ها فرمان و کار (به‌تایبه‌ت بۆ سه‌ردانی خواپه‌رستان، بۆ سه‌ردانی مزگه‌وته‌کان، بۆ گوێگرتن له قورئان و... هتد).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6130,
+        "ayah_number": 5,
+        "text_uthmani": "سَلَـٰمٌ هِىَ حَتَّىٰ مَطْلَعِ ٱلْفَجْرِ",
+        "text_simple": null,
+        "page_number": 1235,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12259,
+                "language_code": "en",
+                "content": "Peace it is<sup foot_note=197789>1<\/sup> until the emergence of dawn.",
+                "is_active": true
+            },
+            {
+                "id": 12260,
+                "language_code": "ku",
+                "content": "ئه‌و شه‌وه ئاسووده‌یی و ئاشتی و هێمنی و ڕه‌حمه‌ت و میهره‌بانیه‌، هه‌تا کاتی به‌ره‌به‌یان. پێغه‌مبه‌ر صلی الله علیه وسلم فه‌رموویه‌تی: (من قام لیلة القدر ایمانا واحتسبا غفر له ما تقدم من زنبه‌). واته‌: ئه‌وه‌ی شه‌وی قه‌در به‌خواپه‌رستی و یادی خوا بباته سه‌ر به ئیمان و باوه‌ڕی دامه‌زراوو به‌ته‌مابوونی پاداشت و ڕه‌حمه‌ت، خوای گه‌وره له هه‌موو گوناهانی ڕابردووی خۆش ده‌بێت. (بوخاری و موسلیم) ڕیوایه‌تیان کردووه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

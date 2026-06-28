@@ -1,0 +1,34 @@
+[
+    {
+        "id": 1,
+        "name_ku": "بەیانیان",
+        "name_ar": "أذكار الصباح",
+        "order": 1,
+        "is_active": true,
+        "adhkars": []
+    },
+    {
+        "id": 2,
+        "name_ku": "ئێواران",
+        "name_ar": "أذكار المساء",
+        "order": 2,
+        "is_active": true,
+        "adhkars": []
+    },
+    {
+        "id": 3,
+        "name_ku": "دوای نوێژ",
+        "name_ar": "أذكار بعد الصلاة",
+        "order": 3,
+        "is_active": true,
+        "adhkars": []
+    },
+    {
+        "id": 4,
+        "name_ku": "پێش خەوتن",
+        "name_ar": "أذكار النوم",
+        "order": 4,
+        "is_active": true,
+        "adhkars": []
+    }
+]

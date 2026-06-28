@@ -11,6 +11,7 @@ import 'mushaf_reader_page.dart';
 import 'quran_statistics_page.dart';
 import '../../core/providers/app_providers.dart';
 import '../settings/settings_page.dart';
+import '../../core/widgets/feature_not_available_dialog.dart';
 
 import '../../core/models/juz_model.dart';
 import '../../core/models/hizb_model.dart';
@@ -69,11 +70,10 @@ class _QuranPageState extends ConsumerState<QuranPage> {
 
   @override
   Widget build(BuildContext context) {
-    final settings = ref.watch(readerSettingsProvider);
-    final cs = AppColorScheme.of(context, settings.bgMode);
+    final cs = AppColorScheme.of(context);
     final l = context.l10n;
     final p = Responsive.pagePadding(context);
-    final isDark = settings.bgMode == 'dark' || (settings.bgMode == 'default' && Theme.of(context).brightness == Brightness.dark);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final surahListAsync = ref.watch(surahListProvider);
 
@@ -105,12 +105,6 @@ class _QuranPageState extends ConsumerState<QuranPage> {
           Expanded(
             child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                SliverToBoxAdapter(
-                  child: _ContinueReadingSection(cs: cs, l: l, p: p),
-                ),
-                SliverToBoxAdapter(
-                  child: const SizedBox(height: 16),
-                ),
                 SliverToBoxAdapter(
                   child: _DirectoryTabs(
                     activeTab: _activeTab,
@@ -375,22 +369,7 @@ class _QuranHeader extends ConsumerWidget {
                               );
                             },
                           ),
-                          IconButton(
-                            icon: Icon(
-                              isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                            onPressed: () {
-                              if (isDark) {
-                                ref.read(readerSettingsProvider.notifier).setBgMode('light');
-                                ref.read(themeModeProvider.notifier).setMode(ThemeMode.light);
-                              } else {
-                                ref.read(readerSettingsProvider.notifier).setBgMode('dark');
-                                ref.read(themeModeProvider.notifier).setMode(ThemeMode.dark);
-                              }
-                            },
-                          ),
+
                         ],
                       ),
                       Column(
@@ -423,6 +402,18 @@ class _QuranHeader extends ConsumerWidget {
                           IconButton(
                             icon: const Icon(Icons.search_rounded, color: Colors.white, size: 22),
                             onPressed: () => onSearchToggle(true),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.mic_rounded, color: Colors.white, size: 22),
+                            tooltip: 'قورئانخوێنەکان',
+                            onPressed: () {
+                              showFeatureUnderDevelopmentDialog(
+                                context,
+                                messageKu: 'ئەم تایبەتمەندییە (خوێندنەوەی دەنگی قورئانخوێنەکان) لە ئێستادا کاری لەسەر دەکرێت بۆیە بەردەست نییە. سوپاس بۆ ئارامگریت.',
+                                messageAr: 'هذه الميزة (أصوات القراء) قيد التطوير حالياً وليست متوفرة. شكراً لصبركم.',
+                                messageEn: 'This feature (reciters audio) is currently under development and is not available. Thank you for your patience.',
+                              );
+                            },
                           ),
                           IconButton(
                             icon: const Icon(Icons.bar_chart_rounded, color: Colors.white, size: 22),
@@ -458,338 +449,6 @@ class _QuranHeader extends ConsumerWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Continue Reading & Recent Reads Section
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _ContinueReadingSection extends ConsumerWidget {
-  final AppColorScheme cs;
-  final AppLocalizations l;
-  final double p;
-
-  const _ContinueReadingSection({
-    required this.cs,
-    required this.l,
-    required this.p,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(readingTrackerProvider);
-    final lastRead = state.lastRead;
-    final tracker = ref.read(readingTrackerProvider.notifier);
-
-    // Calculate Khatmah progress
-    final uniqueRead = tracker.getTotalUniqueAyahsRead();
-    final progressPercent = (uniqueRead / 6236.0) * 100.0;
-    
-
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: p),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (lastRead != null) ...[
-            Container(
-              margin: const EdgeInsets.only(top: 16),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: cs.card,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: isDark ? cs.primary.withValues(alpha: 0.2) : cs.primary.withValues(alpha: 0.1),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.05),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: cs.primary.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(Icons.menu_book_rounded, color: cs.primary, size: 24),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l.continueReading.toUpperCase(),
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: cs.primary,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              '${lastRead.surahName} (ئایەتی ${lastRead.ayahNumber} — ل: ${lastRead.mushafPageNumber})',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: cs.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => const QuranStatisticsPage(),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              '${progressPercent.toStringAsFixed(1)}%',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: cs.primary,
-                              ),
-                            ),
-                            Text(
-                              l.khatmahProgress,
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 10,
-                                color: cs.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  // Progress indicator
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: progressPercent / 100.0,
-                      minHeight: 6,
-                      backgroundColor: cs.bg,
-                      valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        _getRelativeTime(lastRead.timestamp, l),
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 10,
-                          color: cs.textSecondary,
-                        ),
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextButton(
-                            onPressed: () => _openLastRead(context, ref, lastRead, forceMode: 'list'),
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              'کارت',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: cs.textSecondary,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          TextButton(
-                            onPressed: () => _openLastRead(context, ref, lastRead, forceMode: 'mushaf'),
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              'مۆدی لاپەڕە',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: cs.textSecondary,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          ElevatedButton(
-                            onPressed: () => _openLastRead(context, ref, lastRead),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: cs.primary,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  l.continueReading.split(' ').first,
-                                  style: const TextStyle(
-                                    fontFamily: 'Cairo',
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                const Icon(Icons.arrow_forward_rounded, size: 12),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-          if (state.recentReads.isNotEmpty) ...[
-            const SizedBox(height: 18),
-            Text(
-              l.recentReads,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: cs.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 48,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                reverse: true,
-                itemCount: state.recentReads.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, i) {
-                  final recent = state.recentReads[i];
-                  return ActionChip(
-                    onPressed: () => _openRecentRead(context, ref, recent),
-                    backgroundColor: cs.card,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(color: cs.cardBorder),
-                    ),
-                    label: Text(
-                      '${recent.surahName} ${recent.ayahNumber}',
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: cs.textPrimary,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-
-  String _getRelativeTime(DateTime ts, AppLocalizations l) {
-    final diff = DateTime.now().difference(ts);
-    if (diff.inMinutes < 1) return l.readTimeJustNow;
-    if (diff.inHours < 1) return l.readTimeFormat(diff.inMinutes);
-    if (diff.inDays < 1) return 'پێش ${diff.inHours} کاژێر';
-    return 'پێش ${diff.inDays} ڕۆژ';
-  }
-
-  void _openLastRead(BuildContext context, WidgetRef ref, LocalLastRead lr, {String? forceMode}) {
-    final mode = forceMode ?? lr.readingMode;
-    if (mode == 'mushaf') {
-      Navigator.push( 
-        context,
-        MaterialPageRoute(
-          builder: (_) => MushafReaderPage(initialPage: lr.mushafPageNumber),
-        ),
-      );
-    } else {
-      ref.read(surahListProvider).whenData((list) {
-        final surah = list.firstWhere((s) => s.id == lr.surahId, orElse: () => list.first);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => QuranReaderPage(
-              surah: surah,
-              initialAyahNumber: lr.ayahNumber,
-            ),
-          ),
-        );
-      });
-    }
-  }
-
-  void _openRecentRead(BuildContext context, WidgetRef ref, LocalRecentRead recent) {
-    if (recent.readingMode == 'mushaf') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => MushafReaderPage(initialPage: recent.pageNumber),
-        ),
-      );
-    } else {
-      ref.read(surahListProvider).whenData((list) {
-        final surah = list.firstWhere((s) => s.id == recent.surahId, orElse: () => list.first);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => QuranReaderPage(
-              surah: surah,
-              initialAyahNumber: recent.ayahNumber,
-            ),
-          ),
-        );
-      });
-    }
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // Directory Tabs
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -811,7 +470,7 @@ class _DirectoryTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      (QuranDirectoryTab.surahs, l.quranAllSurahs),
+      (QuranDirectoryTab.surahs, l.quranAllSurahs), 
       (QuranDirectoryTab.juzs, l.juz),
       (QuranDirectoryTab.hizbs, l.hizb),
       (QuranDirectoryTab.sajdahs, l.sajdah),
@@ -1457,10 +1116,10 @@ class _FilterTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      (_QuranFilter.all, l.quranAllSurahs),
-      (_QuranFilter.meccan, l.quranMeccan),
-      (_QuranFilter.medinan, l.quranMedinan),
       (_QuranFilter.bookmarked, l.quranBookmarked),
+      (_QuranFilter.medinan, l.quranMedinan),
+      (_QuranFilter.meccan, l.quranMeccan),
+      (_QuranFilter.all, l.quranAllSurahs),
     ];
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -1616,7 +1275,7 @@ class _SurahCard extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        surah.nameEn,
+                        l.localeCode == 'ku' ? surah.nameKu : surah.nameEn,
                         style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 15,

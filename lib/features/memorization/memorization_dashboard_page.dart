@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/providers/auth_provider.dart';
-import '../../core/widgets/auth_gate_card.dart';
 import 'memorization_providers.dart';
 import 'due_reviews_page.dart';
 import 'weak_ayahs_page.dart';
@@ -21,16 +19,16 @@ class _MemorizationDashboardPageState extends ConsumerState<MemorizationDashboar
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authState = ref.read(authProvider);
-      if (!authState.isAuthenticated) {
-        AuthGateCard.showProtectProgressSheet(
-          context,
-          ref,
-          featureContext: 'پلانەکانی لەبەرکردن و مێژووی پێداچوونەوەکانت بە پارێزراوی لە هەوردا پاشەکەوت دەبن و لەسەر هەموو ئامێرەکانت هاوکات دەکرێن.',
-        );
-      }
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final authState = ref.read(authProvider);
+    //   if (!authState.isAuthenticated) {
+    //     AuthGateCard.showProtectProgressSheet(
+    //       context,
+    //       ref,
+    //       featureContext: 'پلانەکانی لەبەرکردن و مێژووی پێداچوونەوەکانت بە پارێزراوی لە هەوردا پاشەکەوت دەبن و لەسەر هەموو ئامێرەکانت هاوکات دەکرێن.',
+    //     );
+    //   }
+    // });
   }
 
   @override

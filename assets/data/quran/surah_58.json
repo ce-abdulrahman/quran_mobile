@@ -1,0 +1,552 @@
+[
+    {
+        "id": 5105,
+        "ayah_number": 1,
+        "text_uthmani": "قَدْ سَمِعَ ٱللَّهُ قَوْلَ ٱلَّتِى تُجَـٰدِلُكَ فِى زَوْجِهَا وَتَشْتَكِىٓ إِلَى ٱللَّهِ وَٱللَّهُ يَسْمَعُ تَحَاوُرَكُمَآ ۚ إِنَّ ٱللَّهَ سَمِيعٌۢ بَصِيرٌ",
+        "text_simple": null,
+        "page_number": 1013,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10209,
+                "language_code": "en",
+                "content": "Certainly has Allāh heard the speech of the one who argues [i.e., pleads] with you, [O Muḥammad], concerning her husband and directs her complaint to Allāh. And Allāh hears your dialogue; indeed, Allāh is Hearing and Seeing.",
+                "is_active": true
+            },
+            {
+                "id": 10210,
+                "language_code": "ku",
+                "content": "ئه‌ی محمد (صلی الله علیه وسلم) بێگومان خوا بیستی و وه‌ریگرت وتووێژی ئه‌و ئافره‌ته‌ی که گفتوگۆت له‌گه‌لدا ده‌کات ده‌رباره‌ی هاوسه‌ره‌که‌ی، سکاڵای خۆیشی بۆلای خوا ده‌بات، خوایش گوێی له گفتوگۆکه‌تان بوو، به‌ڕاستی خوا بیسه‌رو بینایه‌. (چوار ئایه‌تی سه‌ره‌تای ئه‌م سووره‌ته ده‌رباره‌ی خه‌وله‌ی کچی ثه‌عله‌به‌و مێرده‌که‌ی هاتۆته خواره‌وه... ڕۆژێک مێرده‌که‌ی لێی تووڕه ده‌بێت و پێی ده‌ڵێت: تۆ له‌جێگه‌ی دایکمی، خه‌وله دێت بۆ خزمه‌تی پێغه‌مبه‌ر (صلی الله علیه وسلم)، باسه‌که‌ی بۆ ده‌گێڕێته‌وه‌، دوای تاوێک حاله‌تی وه‌حی به‌سه‌ر پێغه‌مبه‌ردا دێت و چوار ئایه‌تی سه‌ره‌تای ئه‌م سووره‌ته داده‌به‌زێت).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5106,
+        "ayah_number": 2,
+        "text_uthmani": "ٱلَّذِينَ يُظَـٰهِرُونَ مِنكُم مِّن نِّسَآئِهِم مَّا هُنَّ أُمَّهَـٰتِهِمْ ۖ إِنْ أُمَّهَـٰتُهُمْ إِلَّا ٱلَّـٰٓـِٔى وَلَدْنَهُمْ ۚ وَإِنَّهُمْ لَيَقُولُونَ مُنكَرًا مِّنَ ٱلْقَوْلِ وَزُورًا ۚ وَإِنَّ ٱللَّهَ لَعَفُوٌّ غَفُورٌ",
+        "text_simple": null,
+        "page_number": 1013,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10211,
+                "language_code": "en",
+                "content": "Those who pronounce ẓihār<sup foot_note=197511>1<\/sup> among you [to separate] from their wives - they are not [consequently] their mothers. Their mothers are none but those who gave birth to them. And indeed, they are saying an objectionable statement and a falsehood. But indeed, Allāh is Pardoning and Forgiving.",
+                "is_active": true
+            },
+            {
+                "id": 10212,
+                "language_code": "ku",
+                "content": "ئه‌وانه‌تان به‌هاوسه‌رانیان ده‌ڵێن: تۆ له جێگه‌ی ده‌یکمدایت، هاوسه‌ره‌که‌یان به‌و `قسه‌یه نابنه دایکیان، چونکه دایکیان ته‌نها ئه‌وانه‌ن که ئه‌وانیان لێ بووه‌، ئه‌وانه قسه‌یه‌کی نابه‌جێ ده‌که‌ن وبوختانێکی ناپه‌سه‌ند ده‌ڵێن، بێگومان خوا چاوپۆشی ده‌کات و لێخۆش ده‌بێت (ئه‌گه‌ر ئه‌وانه په‌شیمان ببنه‌وه و داوای لێخۆشبوون بکه‌ن)...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5107,
+        "ayah_number": 3,
+        "text_uthmani": "وَٱلَّذِينَ يُظَـٰهِرُونَ مِن نِّسَآئِهِمْ ثُمَّ يَعُودُونَ لِمَا قَالُوا۟ فَتَحْرِيرُ رَقَبَةٍ مِّن قَبْلِ أَن يَتَمَآسَّا ۚ ذَٰلِكُمْ تُوعَظُونَ بِهِۦ ۚ وَٱللَّهُ بِمَا تَعْمَلُونَ خَبِيرٌ",
+        "text_simple": null,
+        "page_number": 1013,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10213,
+                "language_code": "en",
+                "content": "And those who pronounce ẓihār from their wives and then [wish to] go back on what they said - then [there must be] the freeing of a slave before they touch one another. That is what you are admonished thereby; and Allāh is Aware of what you do.",
+                "is_active": true
+            },
+            {
+                "id": 10214,
+                "language_code": "ku",
+                "content": "ئه‌وانه‌ی وا به هاوسه‌ره‌کانیان ده‌ڵێن و دوایی په‌شیمان ده‌بنه‌وه له‌وه‌ی که وتویانه‌، ئه‌وه ده‌بێت کۆیله‌یه‌ک ئازاد بکه‌ن پێش ئه‌وه‌ی ئه‌و ژن و مێرده به‌یه‌ک بگه‌ن، ئه‌و بڕیاره ئێوه‌ی پێ ئامۆژگاری ده‌کرێت، خوایش ئاگاداره به‌و کارو‌کرده‌وانه‌ی ئه‌نجامی ده‌ده‌ن...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5108,
+        "ayah_number": 4,
+        "text_uthmani": "فَمَن لَّمْ يَجِدْ فَصِيَامُ شَهْرَيْنِ مُتَتَابِعَيْنِ مِن قَبْلِ أَن يَتَمَآسَّا ۖ فَمَن لَّمْ يَسْتَطِعْ فَإِطْعَامُ سِتِّينَ مِسْكِينًا ۚ ذَٰلِكَ لِتُؤْمِنُوا۟ بِٱللَّهِ وَرَسُولِهِۦ ۚ وَتِلْكَ حُدُودُ ٱللَّهِ ۗ وَلِلْكَـٰفِرِينَ عَذَابٌ أَلِيمٌ",
+        "text_simple": null,
+        "page_number": 1013,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10215,
+                "language_code": "en",
+                "content": "And he who does not find [a slave] - then a fast for two months consecutively<sup foot_note=197512>1<\/sup> before they touch one another; and he who is unable - then the feeding of sixty poor persons. That is for you to believe [completely] in Allāh and His Messenger; and those are the limits [set by] Allāh. And for the disbelievers is a painful punishment.",
+                "is_active": true
+            },
+            {
+                "id": 10216,
+                "language_code": "ku",
+                "content": "ئینجا ئه‌وه‌ی کۆیله‌ی ده‌ست نه‌که‌وت، ئه‌وه ده‌بێت دوو مانگ له‌سه‌ر یه‌ک به‌ڕۆژوو بێت پێش به‌یه‌کگه‌یشتنیان، جا ئه‌وه‌ی ناتوانێت به ڕۆژوو بێت، با شه‌ست هه‌ژار تێر بکات له ژه‌مێک خواردن، ئه‌وه‌ی که باسکرا بۆ ئه‌وه‌یه باوه‌ڕتان پته‌و بێت به‌خواو پێغه‌مبه‌ره‌که‌ی (چونکه خوا چاره‌سه‌ر داده‌نێت بۆ گیروگرفته‌کان)، ئه‌و بڕیارانه‌ش سنووری خوان، بۆ ئه‌وانه‌ش که کافرن (ملکه‌چی فه‌رمانی خوا نابن) سزای به ئێش و ئازار بۆیان ئاماده‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5109,
+        "ayah_number": 5,
+        "text_uthmani": "إِنَّ ٱلَّذِينَ يُحَآدُّونَ ٱللَّهَ وَرَسُولَهُۥ كُبِتُوا۟ كَمَا كُبِتَ ٱلَّذِينَ مِن قَبْلِهِمْ ۚ وَقَدْ أَنزَلْنَآ ءَايَـٰتٍۭ بَيِّنَـٰتٍ ۚ وَلِلْكَـٰفِرِينَ عَذَابٌ مُّهِينٌ",
+        "text_simple": null,
+        "page_number": 1013,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10217,
+                "language_code": "en",
+                "content": "Indeed, those who oppose Allāh and His Messenger are abased as those before them were abased. And We have certainly sent down verses of clear evidence. And for the disbelievers is a humiliating punishment",
+                "is_active": true
+            },
+            {
+                "id": 10218,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ئه‌وانه‌ی دژایه‌تی و دوژمنایه‌تی خواو پێغه‌مبه‌ره‌که‌ی ده‌که‌ن، سه‌رشۆڕ و خه‌جاڵه‌ت و شکست خورده‌ن، هه‌روه‌ک ئه‌وانه‌ی پێش ئه‌مان که سه‌رشۆر و خه‌جاڵه‌ت کران و تێکشکان، بێگومان ئێمه به‌ڵگه و نیشانه‌ی ڕوون و ئاشکرامان ناردۆته خواره‌وه له‌سه‌ر ئه‌م ڕاستیانه‌، جا بۆ ئه‌وانه‌ی که کافرو بێ باوه‌ڕن سزای ڕیسواکه‌ر ئاماده‌یه‌...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5110,
+        "ayah_number": 6,
+        "text_uthmani": "يَوْمَ يَبْعَثُهُمُ ٱللَّهُ جَمِيعًا فَيُنَبِّئُهُم بِمَا عَمِلُوٓا۟ ۚ أَحْصَىٰهُ ٱللَّهُ وَنَسُوهُ ۚ وَٱللَّهُ عَلَىٰ كُلِّ شَىْءٍ شَهِيدٌ",
+        "text_simple": null,
+        "page_number": 1014,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10219,
+                "language_code": "en",
+                "content": "On the Day when Allāh will resurrect them all and inform them of what they did. Allāh had enumerated it, while they forgot it; and Allāh is, over all things, Witness.<sup foot_note=197513>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 10220,
+                "language_code": "ku",
+                "content": "له ڕۆژێکدا که خوا هه‌موویان زیندوو ده‌کاته‌وه پێکه‌وه‌، ئه‌وسا هه‌واڵی هه‌موو کاروکرده‌وه‌کانیان پێ ڕاده‌گه‌یه‌نێت، خوا ئاماری کردووه ئه‌وان فه‌رامۆشیان کردووه‌، خوایش شایه‌ت و ئاگایه به‌سه‌ر هه‌موو شتێکدا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5111,
+        "ayah_number": 7,
+        "text_uthmani": "أَلَمْ تَرَ أَنَّ ٱللَّهَ يَعْلَمُ مَا فِى ٱلسَّمَـٰوَٰتِ وَمَا فِى ٱلْأَرْضِ ۖ مَا يَكُونُ مِن نَّجْوَىٰ ثَلَـٰثَةٍ إِلَّا هُوَ رَابِعُهُمْ وَلَا خَمْسَةٍ إِلَّا هُوَ سَادِسُهُمْ وَلَآ أَدْنَىٰ مِن ذَٰلِكَ وَلَآ أَكْثَرَ إِلَّا هُوَ مَعَهُمْ أَيْنَ مَا كَانُوا۟ ۖ ثُمَّ يُنَبِّئُهُم بِمَا عَمِلُوا۟ يَوْمَ ٱلْقِيَـٰمَةِ ۚ إِنَّ ٱللَّهَ بِكُلِّ شَىْءٍ عَلِيمٌ",
+        "text_simple": null,
+        "page_number": 1014,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10221,
+                "language_code": "en",
+                "content": "Have you not considered that Allāh knows what is in the heavens and what is on the earth? There are not three in a private conversation but that He is the fourth of them,<sup foot_note=197514>1<\/sup> nor are there five but that He is the sixth of them - and no less than that and no more except that He is with them [in knowledge] wherever they are. Then He will inform them of what they did, on the Day of Resurrection. Indeed Allāh is, of all things, Knowing.",
+                "is_active": true
+            },
+            {
+                "id": 10222,
+                "language_code": "ku",
+                "content": "ئایه سه‌رنجت نه‌داوه که به‌ڕاستی خوا به هه‌رچی له ئاسمانه‌کان و زه‌ریدا هه‌یه زانا و ئاگایه‌، سێ که‌س نیه چپه بکه‌ن به‌یه‌که‌وه خوا جوار‌هه‌میان نه‌بێت، پێنج که‌س نیه ئه‌و زاته شه‌شه‌میان نه‌بێت، له‌و ژمارانه که‌متر یان زیاتریش نیه که ئه‌و لایان نه‌بێت و ئاگادار نه‌بێت به سرته و چپه‌یان، له‌هه‌ر شوێنێک و له‌هه‌ر کوێدا بن، پاشان له ڕۆژی قیامه‌تدا ئاگاداریان ده‌کاته‌وه به هه‌موو ئه‌و کارو کرده‌وانه‌ی که ئه‌نجامیانداوه‌، چونکه به‌ڕاستی خوا به هه‌موو شتێک زانایه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5112,
+        "ayah_number": 8,
+        "text_uthmani": "أَلَمْ تَرَ إِلَى ٱلَّذِينَ نُهُوا۟ عَنِ ٱلنَّجْوَىٰ ثُمَّ يَعُودُونَ لِمَا نُهُوا۟ عَنْهُ وَيَتَنَـٰجَوْنَ بِٱلْإِثْمِ وَٱلْعُدْوَٰنِ وَمَعْصِيَتِ ٱلرَّسُولِ وَإِذَا جَآءُوكَ حَيَّوْكَ بِمَا لَمْ يُحَيِّكَ بِهِ ٱللَّهُ وَيَقُولُونَ فِىٓ أَنفُسِهِمْ لَوْلَا يُعَذِّبُنَا ٱللَّهُ بِمَا نَقُولُ ۚ حَسْبُهُمْ جَهَنَّمُ يَصْلَوْنَهَا ۖ فَبِئْسَ ٱلْمَصِيرُ",
+        "text_simple": null,
+        "page_number": 1014,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10223,
+                "language_code": "en",
+                "content": "Have you not considered those who were forbidden from private conversation [i.e., ridicule and conspiracy] and then return to that which they were forbidden and converse among themselves about sin and aggression and disobedience to the Messenger? And when they come to you, they greet you with that [word] by which Allāh does not greet you<sup foot_note=197515>1<\/sup> and say among themselves, \"Why does Allāh not punish us for what we say?\" Sufficient for them is Hell, which they will [enter to] burn, and wretched is the destination.",
+                "is_active": true
+            },
+            {
+                "id": 10224,
+                "language_code": "ku",
+                "content": "ئایا سه‌رنجت نه‌داوه له‌وانه‌ی قه‌ده‌غه‌ی چپه‌یان لێ کراوه‌، که‌چی له‌وه‌ودوا هه‌ر ده‌گه‌ڕێنه‌وه سه‌ر ئه‌و ڕه‌فتاره‌ی که لێیان قه‌ده‌غه‌کراوه‌، به‌رده‌وام خه‌ریکی چپه‌یه‌کن که هه‌مووی گوناهو دوژمنایه‌تی و نافه‌رمانی پێغه‌مبه‌ره‌، کاتێکیش دێن بۆ لات جۆرێک سڵاوت لێ ده‌که‌ن، که خوا به‌و شێوه‌یه سڵاوی لێ نه‌کردویت!! به‌گاڵته‌وه ده‌ڵێن: ئه‌وه بۆچی خوا سزامان نادات به‌هۆی ئه‌و قسانه‌وه که ده‌یڵێین!! ئه‌وانه دۆزه‌خیان به‌سه که بچنه ناوی و ببرژێنرێن تیایدا، ئای که سه‌رنجامێکی خراپه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5113,
+        "ayah_number": 9,
+        "text_uthmani": "يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ إِذَا تَنَـٰجَيْتُمْ فَلَا تَتَنَـٰجَوْا۟ بِٱلْإِثْمِ وَٱلْعُدْوَٰنِ وَمَعْصِيَتِ ٱلرَّسُولِ وَتَنَـٰجَوْا۟ بِٱلْبِرِّ وَٱلتَّقْوَىٰ ۖ وَٱتَّقُوا۟ ٱللَّهَ ٱلَّذِىٓ إِلَيْهِ تُحْشَرُونَ",
+        "text_simple": null,
+        "page_number": 1014,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10225,
+                "language_code": "en",
+                "content": "O you who have believed, when you converse privately, do not converse about sin and aggression and disobedience to the Messenger but converse about righteousness and piety. And fear Allāh, to whom you will be gathered.",
+                "is_active": true
+            },
+            {
+                "id": 10226,
+                "language_code": "ku",
+                "content": "ئه‌ی ئه‌و که‌سانه‌ی باوه‌ڕتان هێناوه کاتێک چپه ده‌که‌ن به‌یه‌که‌وه‌، چپه‌یه‌ک مه‌که‌ن که گوناهو دوژمنایه‌تی و نافه‌رمانی پێغه‌مبه‌ر بێت، با چپه‌کانتان هه‌مووی ده‌رباره‌ی چاکه و خواناسی و پارێزکاری بێت، له‌و خوایه بترسن که هه‌ر بۆ لای ئه‌و کۆده‌کرێنه‌وه (بۆ لێپرسینه‌وه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5114,
+        "ayah_number": 10,
+        "text_uthmani": "إِنَّمَا ٱلنَّجْوَىٰ مِنَ ٱلشَّيْطَـٰنِ لِيَحْزُنَ ٱلَّذِينَ ءَامَنُوا۟ وَلَيْسَ بِضَآرِّهِمْ شَيْـًٔا إِلَّا بِإِذْنِ ٱللَّهِ ۚ وَعَلَى ٱللَّهِ فَلْيَتَوَكَّلِ ٱلْمُؤْمِنُونَ",
+        "text_simple": null,
+        "page_number": 1014,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10227,
+                "language_code": "en",
+                "content": "Private conversation is only from Satan that he may grieve those who have believed,<sup foot_note=197516>1<\/sup> but he will not harm them at all except by permission of Allāh. And upon Allāh let the believers rely.",
+                "is_active": true
+            },
+            {
+                "id": 10228,
+                "language_code": "ku",
+                "content": "به‌ڕاستی چپه‌ی خراپ و نابه‌جێ هه‌ر له شه‌یتانه‌وه‌یه‌، تا ئه‌وانه غه‌مبار بکات که باوه‌ڕیان هێناوه‌، وه نه‌بێت ئه‌و چپه‌یه هیچ زیانێکیان پێ بگه‌یه‌نێت مه‌گه‌ر ویستی خوای له‌سه‌ر بێت، ده‌با ئیمانداران هه‌ر پشت به خوا ببه‌ستن تا له زیان به دوور بن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5115,
+        "ayah_number": 11,
+        "text_uthmani": "يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ إِذَا قِيلَ لَكُمْ تَفَسَّحُوا۟ فِى ٱلْمَجَـٰلِسِ فَٱفْسَحُوا۟ يَفْسَحِ ٱللَّهُ لَكُمْ ۖ وَإِذَا قِيلَ ٱنشُزُوا۟ فَٱنشُزُوا۟ يَرْفَعِ ٱللَّهُ ٱلَّذِينَ ءَامَنُوا۟ مِنكُمْ وَٱلَّذِينَ أُوتُوا۟ ٱلْعِلْمَ دَرَجَـٰتٍ ۚ وَٱللَّهُ بِمَا تَعْمَلُونَ خَبِيرٌ",
+        "text_simple": null,
+        "page_number": 1015,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10229,
+                "language_code": "en",
+                "content": "O you who have believed, when you are told, \"Space yourselves\" in assemblies, then make space; Allāh will make space for you.<sup foot_note=197518>1<\/sup> And when you are told, \"Arise,\"<sup foot_note=197517>2<\/sup> then arise; Allāh will raise those who have believed among you and those who were given knowledge, by degrees. And Allāh is Aware of what you do.",
+                "is_active": true
+            },
+            {
+                "id": 10230,
+                "language_code": "ku",
+                "content": "ئه‌ی ئه‌وانه‌ی باوه‌ڕتان هێناوه کاتێک له دانیشتن و کۆبونه‌وه‌کاندا پێتان ده‌وترێت: ڕێ بده‌ن به‌که‌سانی ترو ئه‌ڵقه‌ی دانیشتنه‌که فراوان بکه‌ن، ئه‌وه ئێوه‌ش فراوانی بکه‌ن، ئه‌گه‌ر ئێوه واتان کرد خوا پاداشتی فراوانتان پێ ده‌به‌خشێت، کاتێکیش پێتان ده‌وترێت هه‌ستن و جێگه چۆڵ بکه‌ن، (بۆ پیاوماقووڵ و ڕیش سپی و گه‌وره‌کانتان) جێگه چۆڵ بکه‌ن، جا ئه‌گه‌ر واتان کرد خوای گه‌وره ئه‌وانه‌ی ئیمانیان هێناوه له ئێوه و ئه‌وانه‌شتان زانست و زانیاریان پێدراوه چه‌نده‌ها پله‌و پایه به‌رزیان ده‌کاته‌وه‌، خوایش ئاگایه به‌و کارو کرده‌وانه‌ی که ئه‌نجامی ده‌ده‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5116,
+        "ayah_number": 12,
+        "text_uthmani": "يَـٰٓأَيُّهَا ٱلَّذِينَ ءَامَنُوٓا۟ إِذَا نَـٰجَيْتُمُ ٱلرَّسُولَ فَقَدِّمُوا۟ بَيْنَ يَدَىْ نَجْوَىٰكُمْ صَدَقَةً ۚ ذَٰلِكَ خَيْرٌ لَّكُمْ وَأَطْهَرُ ۚ فَإِن لَّمْ تَجِدُوا۟ فَإِنَّ ٱللَّهَ غَفُورٌ رَّحِيمٌ",
+        "text_simple": null,
+        "page_number": 1015,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10231,
+                "language_code": "en",
+                "content": "O you who have believed, when you [wish to] privately consult the Messenger, present before your consultation a charity. That is better for you and purer. But if you find not [the means] - then indeed, Allāh is Forgiving and Merciful.",
+                "is_active": true
+            },
+            {
+                "id": 10232,
+                "language_code": "ku",
+                "content": "ئه‌ی ئه‌وانه‌ی باوه‌ڕتان هێناوه کاتێک ویستتان چپه‌یه‌ک یان قسه‌یه‌کی نهێنی له‌گه‌ڵ پێغه‌مبه‌ردا (صلی الله علیه وسلم) بکه‌ن، پێش ئه‌و کاره خێرێک بکه‌ن (به‌گوێره‌ی توانا شتێک ببه‌خشن به‌هه‌ژاران)، ئه‌وه چاکتره بۆتان و خاوێنتره‌، خۆ ئه‌گه‌ر نه‌تان بوو، ئه‌وه چاک بزانن که خوا لێ خۆشبوو میهره‌بانه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5117,
+        "ayah_number": 13,
+        "text_uthmani": "ءَأَشْفَقْتُمْ أَن تُقَدِّمُوا۟ بَيْنَ يَدَىْ نَجْوَىٰكُمْ صَدَقَـٰتٍ ۚ فَإِذْ لَمْ تَفْعَلُوا۟ وَتَابَ ٱللَّهُ عَلَيْكُمْ فَأَقِيمُوا۟ ٱلصَّلَوٰةَ وَءَاتُوا۟ ٱلزَّكَوٰةَ وَأَطِيعُوا۟ ٱللَّهَ وَرَسُولَهُۥ ۚ وَٱللَّهُ خَبِيرٌۢ بِمَا تَعْمَلُونَ",
+        "text_simple": null,
+        "page_number": 1015,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10233,
+                "language_code": "en",
+                "content": "Have you feared to present before your consultation charities? Then when you do not and Allāh has forgiven you, then [at least] establish prayer and give zakāh and obey Allāh and His Messenger. And Allāh is Aware of what you do.",
+                "is_active": true
+            },
+            {
+                "id": 10234,
+                "language_code": "ku",
+                "content": "ئایا ده‌ترسان له هه‌ژاری پێش ئه‌وه‌ی که به نهێنی قسه بکه‌ن، خێرو چاکه‌یه‌ک ئه‌نجام بده‌ن؟! جا کاتێکیش که نه‌تانکرد خوا هه‌ر لێتان خۆش بوو، ده ئیتر ئێوه نوێژه‌کانتان به‌چاکی ئه‌نجام بده‌ن و زه‌کات بده‌ن و فه‌رمانبه‌رداریی خواو پێغه‌مبه‌ره‌که‌ی بکه‌ن، خوایش زۆر ئاگایه به‌و کاروکرده‌وانه‌ی که ئه‌نجامی ده‌ده‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5118,
+        "ayah_number": 14,
+        "text_uthmani": "۞ أَلَمْ تَرَ إِلَى ٱلَّذِينَ تَوَلَّوْا۟ قَوْمًا غَضِبَ ٱللَّهُ عَلَيْهِم مَّا هُم مِّنكُمْ وَلَا مِنْهُمْ وَيَحْلِفُونَ عَلَى ٱلْكَذِبِ وَهُمْ يَعْلَمُونَ",
+        "text_simple": null,
+        "page_number": 1015,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10235,
+                "language_code": "en",
+                "content": "Have you not considered those who make allies of a people with whom Allāh has become angry? They are neither of you nor of them, and they swear to untruth while they know [they are lying].",
+                "is_active": true
+            },
+            {
+                "id": 10236,
+                "language_code": "ku",
+                "content": "ئایا سه‌رنجی ئه‌وانه‌ت نه‌داوه پشتگیریان له هۆزێك کرد، که خوا خه‌شمی لێ گرتوون و ڕقی لێیانه، ئه‌و دووڕووانه نه سه‌ر به ئێوه‌ن، نه سه‌ر به‌وانیشن، سوێند له‌سه‌ر درۆ ده‌خۆن له کاتێکدا که خۆشیان ده‌زانن...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5119,
+        "ayah_number": 15,
+        "text_uthmani": "أَعَدَّ ٱللَّهُ لَهُمْ عَذَابًا شَدِيدًا ۖ إِنَّهُمْ سَآءَ مَا كَانُوا۟ يَعْمَلُونَ",
+        "text_simple": null,
+        "page_number": 1015,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10237,
+                "language_code": "en",
+                "content": "Allāh has prepared for them a severe punishment. Indeed, it was evil that they were doing.",
+                "is_active": true
+            },
+            {
+                "id": 10238,
+                "language_code": "ku",
+                "content": "خوا سزایه‌کی سه‌خت و به‌تینی بۆ ئاماده کردوون، به‌ڕاستی ئه‌وه‌ی ئه‌وان ده‌یانکرد ڕه‌فتارێکی ناشیرین و کارێکی نابه‌جێ بوو.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5120,
+        "ayah_number": 16,
+        "text_uthmani": "ٱتَّخَذُوٓا۟ أَيْمَـٰنَهُمْ جُنَّةً فَصَدُّوا۟ عَن سَبِيلِ ٱللَّهِ فَلَهُمْ عَذَابٌ مُّهِينٌ",
+        "text_simple": null,
+        "page_number": 1016,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10239,
+                "language_code": "en",
+                "content": "They took their [false] oaths as a cover, so they averted [people] from the way of Allāh, and for them is a humiliating punishment.",
+                "is_active": true
+            },
+            {
+                "id": 10240,
+                "language_code": "ku",
+                "content": "ئه‌وانه سوێنده‌کانیان کردووه به‌قه‌ڵغان بۆ خۆیان تا سه‌روماڵیان سه‌لامه‌ت بێت، به‌و هۆیه‌شه‌وه به‌ربه‌ستیان داناوه له‌به‌رده‌م به‌ره‌و پێش چوونی ڕێبازی خوادا، هه‌ر بۆیه‌ش سزاو ئازارێکی سه‌رشۆرکه‌ر بۆیان ئاماده‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5121,
+        "ayah_number": 17,
+        "text_uthmani": "لَّن تُغْنِىَ عَنْهُمْ أَمْوَٰلُهُمْ وَلَآ أَوْلَـٰدُهُم مِّنَ ٱللَّهِ شَيْـًٔا ۚ أُو۟لَـٰٓئِكَ أَصْحَـٰبُ ٱلنَّارِ ۖ هُمْ فِيهَا خَـٰلِدُونَ",
+        "text_simple": null,
+        "page_number": 1016,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10241,
+                "language_code": "en",
+                "content": "Never will their wealth or their children avail them against Allāh at all. Those are the companions of the Fire; they will abide therein eternally",
+                "is_active": true
+            },
+            {
+                "id": 10242,
+                "language_code": "ku",
+                "content": "نه ماڵ و سامانیان نه ڕۆڵه‌کانیان هه‌رگیز نابنه هۆی ئه‌وه‌ی که له ده‌ست تۆڵه‌ی خوا ڕزگاریان بکات، ئه‌وانه نیشته‌جێی ناو دۆزه‌خن و تیایدا بۆ هه‌میشه به‌زیندوویی ده‌مێننه‌وه.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5122,
+        "ayah_number": 18,
+        "text_uthmani": "يَوْمَ يَبْعَثُهُمُ ٱللَّهُ جَمِيعًا فَيَحْلِفُونَ لَهُۥ كَمَا يَحْلِفُونَ لَكُمْ ۖ وَيَحْسَبُونَ أَنَّهُمْ عَلَىٰ شَىْءٍ ۚ أَلَآ إِنَّهُمْ هُمُ ٱلْكَـٰذِبُونَ",
+        "text_simple": null,
+        "page_number": 1016,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10243,
+                "language_code": "en",
+                "content": "On the Day Allāh will resurrect them all, and they will swear to Him as they swear to you and think that they are [standing] on something.<sup foot_note=197519>1<\/sup> Unquestionably, it is they who are the liars.",
+                "is_active": true
+            },
+            {
+                "id": 10244,
+                "language_code": "ku",
+                "content": "له‌و ڕۆژه‌دا که خوا هه‌موویان زیندوو ده‌کاته‌وه‌، ده‌ست ده‌که‌نه‌وه به سوێند خواردن هه‌روه‌ك بۆ ئێوه سوێندیان ده‌خوارد، له کاتێکدا واده‌زانن که ڕزگاریان ده‌بێت و شتێکیان ده‌ست ده‌که‌وێت!! (خوای گه‌وره له ناو خه‌ڵکیدا ڕیسوایان ده‌کات و ده‌فه‌رموێت): ئاگاداربن که به‌ڕاستی هه‌ر ئه‌وانن درۆزنن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5123,
+        "ayah_number": 19,
+        "text_uthmani": "ٱسْتَحْوَذَ عَلَيْهِمُ ٱلشَّيْطَـٰنُ فَأَنسَىٰهُمْ ذِكْرَ ٱللَّهِ ۚ أُو۟لَـٰٓئِكَ حِزْبُ ٱلشَّيْطَـٰنِ ۚ أَلَآ إِنَّ حِزْبَ ٱلشَّيْطَـٰنِ هُمُ ٱلْخَـٰسِرُونَ",
+        "text_simple": null,
+        "page_number": 1016,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10245,
+                "language_code": "en",
+                "content": "Satan has overcome them and made them forget the remembrance of Allāh. Those are the party of Satan. Unquestionably, the party of Satan - they will be the losers.",
+                "is_active": true
+            },
+            {
+                "id": 10246,
+                "language_code": "ku",
+                "content": "ئه‌وانه شه‌یتان زاڵ بووه به‌سه‌ریانداو داگیری کردوون، به‌و هۆیه‌وه یادی خوای له‌بیر بردوون، ئا ئه‌وانه ده‌سته و تاقم و حزبی شه‌یتانن، ئاگاداربن که بێگومان ده‌سته و تاقم و حزبی شه‌یتان خه‌ساره‌تمه‌ند و زه‌ره‌رمه‌ندن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5124,
+        "ayah_number": 20,
+        "text_uthmani": "إِنَّ ٱلَّذِينَ يُحَآدُّونَ ٱللَّهَ وَرَسُولَهُۥٓ أُو۟لَـٰٓئِكَ فِى ٱلْأَذَلِّينَ",
+        "text_simple": null,
+        "page_number": 1016,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10247,
+                "language_code": "en",
+                "content": "Indeed, the ones who oppose Allāh and His Messenger - those will be among the most humbled.",
+                "is_active": true
+            },
+            {
+                "id": 10248,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ئه‌وانه‌ی دژایه‌تی خواو پێغه‌مبه‌ره‌که‌ی ده‌که‌ن ئا ئه‌وانه له نزمترینترینی خه‌ڵکین له دنیاو قیامه‌تدا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5125,
+        "ayah_number": 21,
+        "text_uthmani": "كَتَبَ ٱللَّهُ لَأَغْلِبَنَّ أَنَا۠ وَرُسُلِىٓ ۚ إِنَّ ٱللَّهَ قَوِىٌّ عَزِيزٌ",
+        "text_simple": null,
+        "page_number": 1017,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10249,
+                "language_code": "en",
+                "content": "Allāh has written [i.e., decreed], \"I will surely overcome, I and My messengers.\" Indeed, Allāh is Powerful and Exalted in Might.",
+                "is_active": true
+            },
+            {
+                "id": 10250,
+                "language_code": "ku",
+                "content": "خوا بڕیاریداوه که‌: بێگومان هه‌ر خۆم و پێغه‌مبه‌ره‌کانم سه‌رکه‌وتوو ده‌بین، چونکه به‌ڕاستی هه‌ر خوا خۆی به‌هێزو باڵاده‌سته‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5126,
+        "ayah_number": 22,
+        "text_uthmani": "لَّا تَجِدُ قَوْمًا يُؤْمِنُونَ بِٱللَّهِ وَٱلْيَوْمِ ٱلْـَٔاخِرِ يُوَآدُّونَ مَنْ حَآدَّ ٱللَّهَ وَرَسُولَهُۥ وَلَوْ كَانُوٓا۟ ءَابَآءَهُمْ أَوْ أَبْنَآءَهُمْ أَوْ إِخْوَٰنَهُمْ أَوْ عَشِيرَتَهُمْ ۚ أُو۟لَـٰٓئِكَ كَتَبَ فِى قُلُوبِهِمُ ٱلْإِيمَـٰنَ وَأَيَّدَهُم بِرُوحٍ مِّنْهُ ۖ وَيُدْخِلُهُمْ جَنَّـٰتٍ تَجْرِى مِن تَحْتِهَا ٱلْأَنْهَـٰرُ خَـٰلِدِينَ فِيهَا ۚ رَضِىَ ٱللَّهُ عَنْهُمْ وَرَضُوا۟ عَنْهُ ۚ أُو۟لَـٰٓئِكَ حِزْبُ ٱللَّهِ ۚ أَلَآ إِنَّ حِزْبَ ٱللَّهِ هُمُ ٱلْمُفْلِحُونَ",
+        "text_simple": null,
+        "page_number": 1017,
+        "juz_number": 28,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 10251,
+                "language_code": "en",
+                "content": "You will not find a people who believe in Allāh and the Last Day having affection for those who oppose Allāh and His Messenger, even if they were their fathers or their sons or their brothers or their kindred. Those - He has decreed within their hearts faith and supported them with spirit<sup foot_note=197520>1<\/sup> from Him. And We will admit them to gardens beneath which rivers flow, wherein they abide eternally. Allāh is pleased with them, and they are pleased with Him - those are the party of Allāh. Unquestionably, the party of Allāh - they are the successful.",
+                "is_active": true
+            },
+            {
+                "id": 10252,
+                "language_code": "ku",
+                "content": "که‌سانێکت ده‌ست ناکه‌وێت باوه‌ڕ بهێنن به خواو به ڕۆژی دوایی، له‌کاتێکدا که‌سانێکیان خۆش بوێت که دژایه‌تی خواو پێغه‌مبه‌ره‌که‌یان کردبێت، ئه‌گه‌رچی ئه‌و دوژمنانه باوو باپیریان بن یان نه‌وه‌یان بن یان برایان بن یان عه‌شیره‌تیان بن، ئه‌وانه‌ی که به‌و شێوه‌یه‌‌ن (ئیمان و باوه‌ڕیان له هه‌موو که‌سێک لا به نرخترو پیرۆزتره‌)، خوا ئیمان و باوه‌ڕی له‌دڵیاندا چه‌سپاندووه‌و جێگیری کردووه‌و له به‌هره‌و میهره‌بانی تایبه‌تی خۆی، وه به هێزو گیانێکی تایبه‌تی له‌لایه‌ن خۆیه‌وه (مه‌به‌ست قورئان و ئیمانه‌) پشتگیری کردوون و یارمه‌تی داون، سه‌رنجامیش ده‌یانخاته باخه‌کانی به‌هه‌شته‌وه که چه‌نده‌ها ڕوبار به‌ژێر دره‌خت و کۆشکه‌کانیدا تێ ده‌په‌ڕێت، هاوڕێ له‌گه‌ڵ ژیانی به‌بڕاوه‌دا، ئه‌وانه خوا لێیان ڕازیه و ئه‌وانیش له خوا ڕازین، ئا ئه‌وانه ده‌سته‌و تاقم و حزب و لایه‌نی خوای گه‌وره‌ن، ئاگاداربن که به‌ڕاستی هه‌ر لایه‌ن و حزب و ده‌سته و تاقمی خوا سه‌رکه‌وتوو و سه‌رفرازن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

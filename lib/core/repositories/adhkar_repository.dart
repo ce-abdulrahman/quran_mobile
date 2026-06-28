@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import '../cache/cache_manager.dart';
 import '../network/api_client.dart';
 import '../network/api_constants.dart';
@@ -37,26 +39,32 @@ class AdhkarRepository {
         await _cacheManager.set(cacheKey, rawList, const Duration(hours: 12));
         return ApiSuccess(categories);
       } else {
-        return const ApiError('هەڵەیەک لە داڕشتەی ئەزکارەکاندا هەیە');
+        return _fallbackToLocalAssets(cacheKey, 'هەڵەیەک لە داڕشتەی ئەزکارەکاندا هەیە');
       }
-    } on ApiException catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<AdhkarCategory>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        try {
-          cachedList = cachedJson.map((e) => AdhkarCategory.fromJson(e as Map<String, dynamic>)).toList();
-        } catch (_) {}
-      }
-      return ApiError(e.message, statusCode: e.statusCode, cachedData: cachedList);
     } catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<AdhkarCategory>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        try {
-          cachedList = cachedJson.map((e) => AdhkarCategory.fromJson(e as Map<String, dynamic>)).toList();
-        } catch (_) {}
-      }
-      return ApiError(e.toString(), cachedData: cachedList);
+      return _fallbackToLocalAssets(cacheKey, e.toString());
+    }
+  }
+
+  Future<ApiResult<List<AdhkarCategory>>> _fallbackToLocalAssets(String cacheKey, String errorMsg) async {
+    // 1. Try local CacheManager cache first
+    final cachedJson = _cacheManager.get(cacheKey);
+    if (cachedJson != null && cachedJson is List) {
+      try {
+        final cachedList = cachedJson.map((e) => AdhkarCategory.fromJson(e as Map<String, dynamic>)).toList();
+        return ApiSuccess(cachedList);
+      } catch (_) {}
+    }
+
+    // 2. Fallback to hardcoded assets/data/adhkars.json
+    try {
+      final jsonString = await rootBundle.loadString('assets/data/adhkars.json');
+      final rawList = jsonDecode(jsonString) as List;
+      final categories = rawList.map((e) => AdhkarCategory.fromJson(e as Map<String, dynamic>)).toList();
+      return ApiSuccess(categories);
+    } catch (e) {
+      return ApiError('$errorMsg | فایلی ناوخۆیی بار نەکرا: $e');
     }
   }
 }
+

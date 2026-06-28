@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'app_providers.dart';
 import '../models/surah_model.dart';
+import '../../features/quran/quran_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Reading History Model
@@ -40,18 +41,30 @@ class LocalReadingHistory {
         'secondsSpent': secondsSpent,
       };
 
+  static int _toInt(dynamic value) {
+    if (value == null) return 0;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString()) ?? 0;
+  }
+
+  static int? _toNullableInt(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString());
+  }
+
   factory LocalReadingHistory.fromJson(Map<String, dynamic> json) =>
       LocalReadingHistory(
-        surahId: json['surahId'] as int? ?? 0,
-        surahName: json['surahName'] as String? ?? '',
-        ayahNumber: json['ayahNumber'] as int? ?? 0,
-        juzNumber: json['juzNumber'] as int?,
-        hizbNumber: json['hizbNumber'] as int?,
-        pageNumber: json['pageNumber'] as int?,
+        surahId: _toInt(json['surahId']),
+        surahName: json['surahName']?.toString() ?? '',
+        ayahNumber: _toInt(json['ayahNumber']),
+        juzNumber: _toNullableInt(json['juzNumber']),
+        hizbNumber: _toNullableInt(json['hizbNumber']),
+        pageNumber: _toNullableInt(json['pageNumber']),
         timestamp: json['timestamp'] != null
-            ? DateTime.parse(json['timestamp'] as String)
+            ? DateTime.tryParse(json['timestamp'].toString()) ?? DateTime.now()
             : DateTime.now(),
-        secondsSpent: json['secondsSpent'] as int? ?? 0,
+        secondsSpent: _toInt(json['secondsSpent']),
       );
 }
 
@@ -86,13 +99,13 @@ class LocalLastRead {
       };
 
   factory LocalLastRead.fromJson(Map<String, dynamic> json) => LocalLastRead(
-        surahId: json['surahId'] as int? ?? 0,
-        surahName: json['surahName'] as String? ?? '',
-        ayahNumber: json['ayahNumber'] as int? ?? 0,
-        mushafPageNumber: json['mushafPageNumber'] as int? ?? 1,
-        readingMode: json['readingMode'] as String? ?? 'list',
+        surahId: LocalReadingHistory._toInt(json['surahId']),
+        surahName: json['surahName']?.toString() ?? '',
+        ayahNumber: LocalReadingHistory._toInt(json['ayahNumber']),
+        mushafPageNumber: LocalReadingHistory._toInt(json['mushafPageNumber'] ?? json['pageNumber'] ?? 1),
+        readingMode: json['readingMode']?.toString() ?? 'list',
         timestamp: json['timestamp'] != null
-            ? DateTime.parse(json['timestamp'] as String)
+            ? DateTime.tryParse(json['timestamp'].toString()) ?? DateTime.now()
             : DateTime.now(),
       );
 }
@@ -128,13 +141,13 @@ class LocalRecentRead {
       };
 
   factory LocalRecentRead.fromJson(Map<String, dynamic> json) => LocalRecentRead(
-        surahId: json['surahId'] as int? ?? 0,
-        surahName: json['surahName'] as String? ?? '',
-        ayahNumber: json['ayahNumber'] as int? ?? 0,
-        pageNumber: json['pageNumber'] as int? ?? 1,
-        readingMode: json['readingMode'] as String? ?? 'list',
+        surahId: LocalReadingHistory._toInt(json['surahId']),
+        surahName: json['surahName']?.toString() ?? '',
+        ayahNumber: LocalReadingHistory._toInt(json['ayahNumber']),
+        pageNumber: LocalReadingHistory._toInt(json['pageNumber']),
+        readingMode: json['readingMode']?.toString() ?? 'list',
         timestamp: json['timestamp'] != null
-            ? DateTime.parse(json['timestamp'] as String)
+            ? DateTime.tryParse(json['timestamp'].toString()) ?? DateTime.now()
             : DateTime.now(),
       );
 }
@@ -338,7 +351,21 @@ class ReadingTrackerNotifier extends StateNotifier<ReadingTrackerState> {
     int? pageNumber,
   }) async {
     final now = DateTime.now();
-    final resolvedPage = pageNumber ?? mushafPageNumber ?? 1;
+    
+    var resolvedJuz = juzNumber;
+    var resolvedHizb = hizbNumber;
+    var resolvedPage = pageNumber ?? mushafPageNumber ?? 1;
+
+    try {
+      final ayahsVal = _ref.read(ayahsProvider(surahId));
+      if (ayahsVal.hasValue && ayahsVal.value != null) {
+        final match = ayahsVal.value!.firstWhere((a) => a.ayahNumber == ayahNumber);
+        resolvedJuz ??= match.juzNumber;
+        resolvedHizb ??= match.hizbNumber;
+        resolvedPage = pageNumber ?? mushafPageNumber ?? match.pageNumber ?? 1;
+      }
+    } catch (_) {}
+
     final resolvedMode = readingMode ?? 'list';
 
     // 1. Update Last Read
@@ -356,8 +383,8 @@ class ReadingTrackerNotifier extends StateNotifier<ReadingTrackerState> {
       surahId: surahId,
       surahName: surahName,
       ayahNumber: ayahNumber,
-      juzNumber: juzNumber,
-      hizbNumber: hizbNumber,
+      juzNumber: resolvedJuz,
+      hizbNumber: resolvedHizb,
       pageNumber: resolvedPage,
       timestamp: now,
       secondsSpent: secondsSpent,

@@ -80,7 +80,7 @@ class BookmarksPage extends ConsumerWidget {
                       const Icon(Icons.bookmark_rounded, color: Colors.white, size: 16),
                       const SizedBox(width: 6),
                       Text(
-                        '${bookmarks.length} ${bookmarks.length == 1 ? 'نیشانەکراو' : 'نیشانەکراوە'}',
+                        l.bookmarkCount(bookmarks.length),
                         style: const TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 13,
@@ -236,11 +236,11 @@ class _BookmarkCard extends ConsumerWidget {
             );
           } catch (_) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
+              SnackBar(
                 content: Text(
-                  'ناتوانرێت سورەتەکە بدۆزرێتەوە لە لیستەکەدا',
+                  context.l10n.bookmarkSurahNotFoundError,
                   textDirection: TextDirection.rtl,
-                  style: TextStyle(fontFamily: 'Cairo'),
+                  style: const TextStyle(fontFamily: 'Cairo'),
                 ),
                 behavior: SnackBarBehavior.floating,
               ),
@@ -296,7 +296,7 @@ class _BookmarkCard extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        'ئایەتی ${bookmark.ayahNumber}',
+                        context.l10n.audioAyahNumber(bookmark.ayahNumber),
                         style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 12,

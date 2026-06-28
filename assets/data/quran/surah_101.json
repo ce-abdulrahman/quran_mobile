@@ -1,0 +1,277 @@
+[
+    {
+        "id": 6158,
+        "ayah_number": 1,
+        "text_uthmani": "ٱلْقَارِعَةُ",
+        "text_simple": null,
+        "page_number": 1243,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12315,
+                "language_code": "en",
+                "content": "The Striking Calamity -",
+                "is_active": true
+            },
+            {
+                "id": 12316,
+                "language_code": "ku",
+                "content": "(یه‌کێکه له ناوه‌کانی ڕۆژی قیامه‌ت) واته‌: ئه‌و گرمه‌یه‌یی دڵان ده‌له‌رزێنێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6159,
+        "ayah_number": 2,
+        "text_uthmani": "مَا ٱلْقَارِعَةُ",
+        "text_simple": null,
+        "page_number": 1243,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12317,
+                "language_code": "en",
+                "content": "What is the Striking Calamity?",
+                "is_active": true
+            },
+            {
+                "id": 12318,
+                "language_code": "ku",
+                "content": "ئاخۆ_القارعه‌_چی بێت؟",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6160,
+        "ayah_number": 3,
+        "text_uthmani": "وَمَآ أَدْرَىٰكَ مَا ٱلْقَارِعَةُ",
+        "text_simple": null,
+        "page_number": 1243,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12319,
+                "language_code": "en",
+                "content": "And what can make you know what is the Striking Calamity?",
+                "is_active": true
+            },
+            {
+                "id": 12320,
+                "language_code": "ku",
+                "content": "(تۆ ئه‌ی ئینسان) چی فێری کردویت که‌_القارعه‌_چی یه‌!!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6161,
+        "ayah_number": 4,
+        "text_uthmani": "يَوْمَ يَكُونُ ٱلنَّاسُ كَٱلْفَرَاشِ ٱلْمَبْثُوثِ",
+        "text_simple": null,
+        "page_number": 1243,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12321,
+                "language_code": "en",
+                "content": "It is the Day when people will be like moths, dispersed,<sup foot_note=197804>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12322,
+                "language_code": "ku",
+                "content": "ئه‌و ڕۆژه خه‌ڵکی وه‌کو په‌پووله‌ی سه‌رگه‌ردان په‌رش و بڵاو ده‌بنه‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6162,
+        "ayah_number": 5,
+        "text_uthmani": "وَتَكُونُ ٱلْجِبَالُ كَٱلْعِهْنِ ٱلْمَنفُوشِ",
+        "text_simple": null,
+        "page_number": 1243,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12323,
+                "language_code": "en",
+                "content": "And the mountains will be like wool, fluffed up.<sup foot_note=197805>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12324,
+                "language_code": "ku",
+                "content": "کێوه‌کانیش وه‌کو خوری شیکراوه‌یان لێ دێت (سووك ده‌بن و چاڵ و چۆڵیان پێ پڕ ده‌کرێته‌وه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6163,
+        "ayah_number": 6,
+        "text_uthmani": "فَأَمَّا مَن ثَقُلَتْ مَوَٰزِينُهُۥ",
+        "text_simple": null,
+        "page_number": 1244,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12325,
+                "language_code": "en",
+                "content": "Then as for one whose scales are heavy [with good deeds],",
+                "is_active": true
+            },
+            {
+                "id": 12326,
+                "language_code": "ku",
+                "content": "جا ئه‌وه‌ی ته‌رازووی خێری سه‌نگین بێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6164,
+        "ayah_number": 7,
+        "text_uthmani": "فَهُوَ فِى عِيشَةٍ رَّاضِيَةٍ",
+        "text_simple": null,
+        "page_number": 1244,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12327,
+                "language_code": "en",
+                "content": "He will be in a pleasant life.",
+                "is_active": true
+            },
+            {
+                "id": 12328,
+                "language_code": "ku",
+                "content": "ئه‌وه له بارودۆخێکی خۆش و ئاسووده‌دا ژیان ده‌باته سه‌رو زۆر پێی ڕازیه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6165,
+        "ayah_number": 8,
+        "text_uthmani": "وَأَمَّا مَنْ خَفَّتْ مَوَٰزِينُهُۥ",
+        "text_simple": null,
+        "page_number": 1244,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12329,
+                "language_code": "en",
+                "content": "But as for one whose scales are light,",
+                "is_active": true
+            },
+            {
+                "id": 12330,
+                "language_code": "ku",
+                "content": "ئه‌وه‌ش ته‌رازووی (خێرو چاکه‌ی) سووك بێت (گوناهی زۆر بێت).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6166,
+        "ayah_number": 9,
+        "text_uthmani": "فَأُمُّهُۥ هَاوِيَةٌ",
+        "text_simple": null,
+        "page_number": 1244,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12331,
+                "language_code": "en",
+                "content": "His refuge<sup foot_note=197806>1<\/sup> will be an abyss.<sup foot_note=197807>2<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12332,
+                "language_code": "ku",
+                "content": "ئه‌وه دایکی ئه‌و دۆزه‌خه (باوه‌شی بۆ کردۆته‌وه‌)",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6167,
+        "ayah_number": 10,
+        "text_uthmani": "وَمَآ أَدْرَىٰكَ مَا هِيَهْ",
+        "text_simple": null,
+        "page_number": 1244,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12333,
+                "language_code": "en",
+                "content": "And what can make you know what that is?",
+                "is_active": true
+            },
+            {
+                "id": 12334,
+                "language_code": "ku",
+                "content": "جا تۆ چووزانی (هاویه‌) چیه‌؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6168,
+        "ayah_number": 11,
+        "text_uthmani": "نَارٌ حَامِيَةٌۢ",
+        "text_simple": null,
+        "page_number": 1245,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12335,
+                "language_code": "en",
+                "content": "It is a Fire, intensely hot.",
+                "is_active": true
+            },
+            {
+                "id": 12336,
+                "language_code": "ku",
+                "content": "ئاگرێکی زۆر سوتێنه‌رو بڵێسه‌داره (هه‌رگیز خامۆش نابێت و تینی که‌م ناکات و له کۆڵی نابێته‌وه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

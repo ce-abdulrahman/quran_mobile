@@ -31,6 +31,13 @@ void main() {
         ReadingHistoryCollectionSchema,
         BookmarkCollectionSchema,
         NoteCollectionSchema,
+        NamesOfAllahCollectionSchema,
+        SeerahCollectionSchema,
+        SahabaCollectionSchema,
+        HadithCollectionSchema,
+        TafsirCollectionSchema,
+        ReciterCollectionSchema,
+        FavoriteCollectionSchema,
       ],
       directory: tempDir.path,
     );

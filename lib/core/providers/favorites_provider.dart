@@ -1,8 +1,10 @@
-import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'app_providers.dart';
+import 'package:isar/isar.dart';
+import '../local_db/isar_service.dart';
+import '../local_db/isar_collections.dart';
 
+// Legacy LocalFavorite model kept for backwards compatibility in old views
 class LocalFavorite {
   final int surahId;
   final String surahName;
@@ -39,50 +41,90 @@ class LocalFavorite {
       );
 }
 
-class FavoritesNotifier extends StateNotifier<List<LocalFavorite>> {
-  final SharedPreferences _prefs;
-  static const _key = 'local_favorites';
-
-  FavoritesNotifier(this._prefs) : super([]) {
+class FavoritesNotifier extends StateNotifier<List<FavoriteCollection>> {
+  FavoritesNotifier() : super([]) {
     _load();
   }
 
   void _load() {
-    final raw = _prefs.getStringList(_key);
-    if (raw != null) {
-      try {
-        state = raw
-            .map((e) => LocalFavorite.fromJson(jsonDecode(e) as Map<String, dynamic>))
-            .toList();
-      } catch (_) {}
-    }
+    if (kIsWeb) return;
+    try {
+      final isar = IsarService.instance.isar;
+      state = isar.favoriteCollections.where().sortByCreatedAtDesc().findAllSync();
+    } catch (_) {}
   }
 
+  // Backward compatible toggle for Ayahs using the old LocalFavorite class
   Future<void> toggle(LocalFavorite favorite) async {
-    final index = state.indexWhere((f) =>
-        f.surahId == favorite.surahId && f.ayahNumber == favorite.ayahNumber);
-    if (index != -1) {
-      state = state.where((f) =>
-          !(f.surahId == favorite.surahId && f.ayahNumber == favorite.ayahNumber))
-          .toList();
-    } else {
-      state = [...state, favorite];
-    }
-    await _save();
+    final idStr = 'ayah_${favorite.surahId}_${favorite.ayahNumber}';
+    final isar = IsarService.instance.isar;
+
+    await isar.writeTxn(() async {
+      final existing = await isar.favoriteCollections.filter().favoriteIdEqualTo(idStr).findFirst();
+      if (existing != null) {
+        await isar.favoriteCollections.delete(existing.id);
+      } else {
+        final newFav = FavoriteCollection(
+          favoriteId: idStr,
+          favoritableType: 'ayah',
+          favoritableId: favorite.surahId * 1000 + favorite.ayahNumber,
+          surahNumber: favorite.surahId,
+          ayahNumber: favorite.ayahNumber,
+          previewText: favorite.textUthmani,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          isSynced: false,
+        );
+        await isar.favoriteCollections.put(newFav);
+      }
+    });
+    _load();
   }
 
-  bool isFavorited(int surahId, int ayahNumber) {
-    return state.any((f) => f.surahId == surahId && f.ayahNumber == ayahNumber);
+  // Unified generic toggle
+  Future<void> toggleGeneric({
+    required String favoritableType,
+    required int favoritableId,
+    int? surahNumber,
+    int? ayahNumber,
+    String? previewText,
+  }) async {
+    final idStr = '${favoritableType}_$favoritableId';
+    final isar = IsarService.instance.isar;
+
+    await isar.writeTxn(() async {
+      final existing = await isar.favoriteCollections.filter().favoriteIdEqualTo(idStr).findFirst();
+      if (existing != null) {
+        await isar.favoriteCollections.delete(existing.id);
+      } else {
+        final newFav = FavoriteCollection(
+          favoriteId: idStr,
+          favoritableType: favoritableType,
+          favoritableId: favoritableId,
+          surahNumber: surahNumber,
+          ayahNumber: ayahNumber,
+          previewText: previewText,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          isSynced: false,
+        );
+        await isar.favoriteCollections.put(newFav);
+      }
+    });
+    _load();
   }
 
-  Future<void> _save() async {
-    final raw = state.map((e) => jsonEncode(e.toJson())).toList();
-    await _prefs.setStringList(_key, raw);
+  bool isFavorited(String favoritableType, int favoritableId) {
+    final idStr = '${favoritableType}_$favoritableId';
+    return state.any((f) => f.favoriteId == idStr);
+  }
+
+  bool isAyahFavorited(int surahNumber, int ayahNumber) {
+    final idStr = 'ayah_${surahNumber}_$ayahNumber';
+    return state.any((f) => f.favoriteId == idStr);
   }
 }
 
-final favoritesProvider =
-    StateNotifierProvider<FavoritesNotifier, List<LocalFavorite>>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return FavoritesNotifier(prefs);
+final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<FavoriteCollection>>((ref) {
+  return FavoritesNotifier();
 });

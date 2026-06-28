@@ -152,11 +152,13 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
       dailyGoalCompleted = false;
       dailyGoalDate = todayStr;
       unsyncedDailyProgress = 0;
+      counts.clear();
       
       await _prefs.setInt('tasbih_daily_progress', 0);
       await _prefs.setBool('tasbih_daily_completed', false);
       await _prefs.setString('tasbih_daily_goal_date', todayStr);
       await _prefs.setInt('tasbih_unsynced_progress', 0);
+      await _prefs.setString(_countsKey, jsonEncode(counts));
     }
 
     state = state.copyWith(
@@ -314,6 +316,9 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
       dailyGoalCompleted = false;
       dailyGoalDate = todayStr;
       unsyncedDailyProgress = 0;
+      
+      updatedCounts.clear();
+      updatedCounts[dhikrId] = 1;
       
       await _prefs.setInt('tasbih_daily_progress', 0);
       await _prefs.setBool('tasbih_daily_completed', false);

@@ -9,7 +9,7 @@ class ApiConstants {
   /// Examples:
   ///   LAN dev:    'http://192.168.1.100/api'
   ///   Production: 'https://api.yourqurandomain.com/api'
-  static const String baseUrl = 'http://127.0.0.1:8000/api/v1';
+  static const String baseUrl = 'http://192.168.1.2:8000/api/v1';
 
   // ── Endpoints ──────────────────────────────────────────────────────────────
   static const String surahs          = '/surahs';

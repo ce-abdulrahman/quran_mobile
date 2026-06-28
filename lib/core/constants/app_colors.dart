@@ -11,7 +11,7 @@ class AppColors {
   static const textDark = Color(0xFF111827);
   static const textLight = Color(0xFFF7F7F7);
 
-  /// ڕەنگە هەڵبژاردەکانی تایبەت
+  /// ڕەنگە هەڵبژاردەکانی تایبەت - flat
   static const accentColorOptions = [
     (Color(0xFF1AB66D), 'سەوز'),       // default green
     (Color(0xFF2196F3), 'شین'),        // blue
@@ -19,6 +19,22 @@ class AppColors {
     (Color(0xFFF57F17), 'زەرد'),       // amber
     (Color(0xFFE53935), 'سووری'),      // red
     (Color(0xFF00695C), 'تیاوی'),      // teal
+  ];
+
+  /// گرادیەنتی تایبەت - (startColor, endColor, primaryColor, label)
+  static const accentGradientOptions = [
+    // Emerald Forest
+    (Color(0xFF1AB66D), Color(0xFF0A7C3E), Color(0xFF1AB66D), 'سەوزی داریستان'),
+    // Ocean Blue
+    (Color(0xFF2196F3), Color(0xFF0D47A1), Color(0xFF1E88E5), 'شینی دەریا'),
+    // Royal Purple
+    (Color(0xFF9C27B0), Color(0xFF4A148C), Color(0xFF8E24AA), 'ئەرغووانی شاهانە'),
+    // Sunset Orange
+    (Color(0xFFFF6F00), Color(0xFFE53935), Color(0xFFF57C00), 'خۆرئاوابوون'),
+    // Rose Gold
+    (Color(0xFFE91E63), Color(0xFF880E4F), Color(0xFFD81B60), 'وردزی ئاڵتون'),
+    // Midnight Teal
+    (Color(0xFF00897B), Color(0xFF004D40), Color(0xFF00796B), 'تیلی شەو'),
   ];
 }
 

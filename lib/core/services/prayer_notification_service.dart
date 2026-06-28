@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:adhan/adhan.dart';
@@ -25,8 +26,8 @@ class PrayerNotificationService {
     required Map<String, bool> toggles,
     required bool isAzanEnabled,
   }) async {
-    if (Platform.environment.containsKey('FLUTTER_TEST')) {
-      debugPrint('Skipping prayer notifications scheduling in test environment.');
+    if (kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) {
+      debugPrint('Skipping prayer notifications scheduling in web/test environment.');
       return;
     }
 

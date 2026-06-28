@@ -30,19 +30,19 @@ class TajweedRuleModel {
   factory TajweedRuleModel.fromJson(Map<String, dynamic> json) {
     return TajweedRuleModel(
       id: json['id'] as int? ?? 0,
-      name: json['name'] as String? ?? '',
-      nameKu: json['name_ku'] as String? ?? json['name'] as String? ?? '',
+      name: json['name'] as String? ?? json['name_en'] as String? ?? '',
+      nameKu: json['name_ku'] as String? ?? json['name'] as String? ?? json['name_en'] as String? ?? '',
       nameAr: json['name_ar'] as String?,
       slug: json['slug'] as String? ?? '',
       category: json['category'] as String?,
       colorCode: json['color_code'] as String?,
-      description: json['description'] as String? ?? '',
-      descriptionKu: json['description_ku'] as String? ?? json['description'] as String? ?? '',
+      description: json['description'] as String? ?? json['description_en'] as String? ?? '',
+      descriptionKu: json['description_ku'] as String? ?? json['description'] as String? ?? json['description_en'] as String? ?? '',
       exampleText: json['example_text'] as String?,
       priority: json['priority'] as int? ?? 0,
       isActive: json['is_active'] is bool 
           ? json['is_active'] as bool 
-          : (json['is_active'] == 1 || json['is_active'] == '1'),
+          : (json['is_active'] == 1 || json['is_active'] == '1' || json['is_active'] == null),
     );
   }
 

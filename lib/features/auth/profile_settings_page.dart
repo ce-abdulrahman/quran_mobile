@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/l10n/app_localizations.dart';
 import 'auth_provider.dart';
 
 class ProfileSettingsPage extends ConsumerStatefulWidget {
@@ -41,6 +42,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         );
 
     if (mounted) {
+      final l = context.l10n;
       setState(() => _isChangingPassword = false);
       result.when(
         success: (_) {
@@ -48,8 +50,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
           _newPasswordController.clear();
           _confirmPasswordController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('وشەی نهێنی بە سەرکەوتوویی نوێکرایەوە', textDirection: TextDirection.rtl, style: TextStyle(fontFamily: 'Cairo')),
+            SnackBar(
+              content: Text(l.msgPasswordChanged, textDirection: TextDirection.rtl, style: const TextStyle(fontFamily: 'Cairo')),
               backgroundColor: Colors.green,
             ),
           );
@@ -67,23 +69,24 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
   }
 
   void _showDeleteAccountDialog(BuildContext context) {
+    final l = context.l10n;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text(
-          'سڕینەوەی ئەکاونت',
+        title: Text(
+          l.authDeleteAccount,
           textAlign: TextAlign.right,
-          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, color: Colors.redAccent),
+          style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, color: Colors.redAccent),
         ),
-        content: const Text(
-          'ئایا دڵنیایت لە سڕینەوەی ئەکاونتەکەت؟ ئەکاونتەکەت دەچێتە ماوەی ٣٠ ڕۆژ چاکبوونەوە. دوای ٣٠ ڕۆژ سەرجەم داتا و کۆپییە یەدەگەکانت بە یەکجاری دەسڕێنەوە.',
+        content: Text(
+          l.authDeleteAccountConfirm,
           textAlign: TextAlign.right,
-          style: TextStyle(fontFamily: 'Cairo', height: 1.5),
+          style: const TextStyle(fontFamily: 'Cairo', height: 1.5),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('پاشگەزبوونەوە', style: TextStyle(fontFamily: 'Cairo', color: Colors.grey)),
+            child: Text(l.actionCancel, style: const TextStyle(fontFamily: 'Cairo', color: Colors.grey)),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -94,8 +97,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('سڕینەوەی ئەکاونت سەرکەوتوو نەبوو', textDirection: TextDirection.rtl, style: TextStyle(fontFamily: 'Cairo')),
+                    SnackBar(
+                      content: Text(context.l10n.authDeleteAccountFailed, textDirection: TextDirection.rtl, style: const TextStyle(fontFamily: 'Cairo')),
                       backgroundColor: Colors.redAccent,
                     ),
                   );
@@ -103,7 +106,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent, foregroundColor: Colors.white),
-            child: const Text('سڕینەوە', style: TextStyle(fontFamily: 'Cairo')),
+            child: Text(l.actionDelete, style: const TextStyle(fontFamily: 'Cairo')),
           ),
         ],
       ),
@@ -113,12 +116,13 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
   @override
   Widget build(BuildContext context) {
     final accentColor = ref.watch(accentColorProvider);
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'ڕێکخستنەکانی ئەکاونت',
-          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+        title: Text(
+          l.authAccountSettings,
+          style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -127,18 +131,18 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Theme setting shortcut if desired
-            const Text(
-              'ڕێکخستنە گشتییەکان',
+            // General settings
+            Text(
+              l.authGeneralSettings,
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
             ),
             const SizedBox(height: 12),
             Card(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               child: ListTile(
                 leading: Icon(Icons.palette_outlined, color: accentColor),
-                title: const Text('ڕەنگی سەرەکی ئەپ', style: TextStyle(fontFamily: 'Cairo')),
+                title: Text(l.authPrimaryColor, style: const TextStyle(fontFamily: 'Cairo')),
                 trailing: Container(
                   width: 24,
                   height: 24,
@@ -156,10 +160,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
             const SizedBox(height: 24),
 
             // Password Reset Section
-            const Text(
-              'گۆڕینی وشەی نهێني', 
+            Text(
+              l.authChangePassword,
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
             ),
             const SizedBox(height: 12),
             Card(
@@ -176,7 +180,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         controller: _currentPasswordController,
                         obscureText: _obscureCurrent,
                         decoration: InputDecoration(
-                          labelText: 'وشەی نهێنی ئێستا',
+                          labelText: l.authCurrentPassword,
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
                             icon: Icon(_obscureCurrent ? Icons.visibility_off_outlined : Icons.visibility_outlined),
@@ -184,7 +188,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                           ),
                         ),
                         textDirection: TextDirection.ltr,
-                        validator: (value) => value == null || value.isEmpty ? 'تکایە وشەی نهێنی ئێستات بنووسە' : null,
+                        validator: (value) => value == null || value.isEmpty ? l.authCurrentPasswordRequired : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -193,7 +197,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         controller: _newPasswordController,
                         obscureText: _obscureNew,
                         decoration: InputDecoration(
-                          labelText: 'وشەی نهێنی نوێ',
+                          labelText: l.authNewPassword,
                           prefixIcon: const Icon(Icons.lock_clock_outlined),
                           suffixIcon: IconButton(
                             icon: Icon(_obscureNew ? Icons.visibility_off_outlined : Icons.visibility_outlined),
@@ -202,8 +206,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         ),
                         textDirection: TextDirection.ltr,
                         validator: (value) {
-                          if (value == null || value.isEmpty) return 'تکایە وشەی نهێنی نوێیەکە دیاری بکە';
-                          if (value.length < 8) return 'وشەی نهێنی دەبێت لانی کەم ٨ پیت یان ژمارە بێت';
+                          if (value == null || value.isEmpty) return l.authNewPasswordRequired;
+                          if (value.length < 8) return l.authPasswordMinLength;
                           return null;
                         },
                       ),
@@ -214,7 +218,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         controller: _confirmPasswordController,
                         obscureText: _obscureConfirm,
                         decoration: InputDecoration(
-                          labelText: 'دووبارەکردنەوەی وشه نوێ',
+                          labelText: l.authRepeatNewPassword,
                           prefixIcon: const Icon(Icons.lock_reset),
                           suffixIcon: IconButton(
                             icon: Icon(_obscureConfirm ? Icons.visibility_off_outlined : Icons.visibility_outlined),
@@ -223,8 +227,8 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         ),
                         textDirection: TextDirection.ltr,
                         validator: (value) {
-                          if (value == null || value.isEmpty) return 'تکایە وشەی نهێنی نوێیەکە دووبارە بکەرەوە';
-                          if (value != _newPasswordController.text) return 'وشەکان وەک یەک نین';
+                          if (value == null || value.isEmpty) return l.authRepeatNewPasswordRequired;
+                          if (value != _newPasswordController.text) return l.authPasswordsDontMatch;
                           return null;
                         },
                       ),
@@ -240,7 +244,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                         ),
                         child: _isChangingPassword
                             ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text('وشەی نهێنی بگۆڕە', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+                            : Text(l.authChangePassword, style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -250,10 +254,10 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
             const SizedBox(height: 32),
 
             // Danger Zone
-            const Text(
-              'ناوچەی مەترسی',
+            Text(
+              l.authDangerZone,
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.redAccent, fontFamily: 'Cairo'),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.redAccent, fontFamily: 'Cairo'),
             ),
             const SizedBox(height: 12),
             Card(
@@ -266,7 +270,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     // Logout
                     ListTile(
                       leading: const Icon(Icons.logout, color: Colors.redAccent),
-                      title: const Text('چوونەدەرەوە لەم ئامێرە', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+                      title: Text(l.authLogoutThisDevice, style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
                       onTap: () async {
                         await ref.read(authProvider.notifier).logout(deviceIdentifier: 'device_mobile_uuid');
                         if (mounted) {
@@ -278,7 +282,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     // Logout all devices
                     ListTile(
                       leading: const Icon(Icons.power_settings_new_outlined, color: Colors.redAccent),
-                      title: const Text('چوونەدەرەوە لە سەرجەم ئامێرەکان', style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
+                      title: Text(l.authLogoutAllDevices, style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold)),
                       onTap: () async {
                         final repo = ref.read(authRepositoryProvider);
                         final result = await repo.logoutAll();
@@ -299,7 +303,7 @@ class _ProfileSettingsPageState extends ConsumerState<ProfileSettingsPage> {
                     // Soft Delete Account
                     ListTile(
                       leading: const Icon(Icons.delete_forever_outlined, color: Colors.redAccent),
-                      title: const Text('سڕینەوەی ئەکاونت', style: TextStyle(fontFamily: 'Cairo', color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                      title: Text(l.authDeleteAccount, style: const TextStyle(fontFamily: 'Cairo', color: Colors.redAccent, fontWeight: FontWeight.bold)),
                       onTap: () => _showDeleteAccountDialog(context),
                     ),
                   ],

@@ -1,0 +1,202 @@
+[
+    {
+        "id": 6169,
+        "ayah_number": 1,
+        "text_uthmani": "أَلْهَىٰكُمُ ٱلتَّكَاثُرُ",
+        "text_simple": null,
+        "page_number": 1246,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12337,
+                "language_code": "en",
+                "content": "Competition in [worldly] increase diverts you",
+                "is_active": true
+            },
+            {
+                "id": 12338,
+                "language_code": "ku",
+                "content": "(خه‌ڵکینه‌!!) هه‌ڵپه‌کردن و پێشبڕکێتان بۆ زۆر کردنی (ماڵ و منداڵ و سامان و کۆشك و ته‌لارو... هتد) ئێوه‌ی سه‌رگه‌رم و سه‌رگه‌ردان و بێ ئاگا کردووه له خواناسی و دینداری.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6170,
+        "ayah_number": 2,
+        "text_uthmani": "حَتَّىٰ زُرْتُمُ ٱلْمَقَابِرَ",
+        "text_simple": null,
+        "page_number": 1246,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12339,
+                "language_code": "en",
+                "content": "Until you visit the graveyards.<sup foot_note=197808>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12340,
+                "language_code": "ku",
+                "content": "تا ئه‌و کاته‌ی که ده‌مرن و ده‌برێنه گۆڕستان (ده‌خرێنه ناو گۆڕێکی ته‌نگ و ته‌سك و تاریکه‌وه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6171,
+        "ayah_number": 3,
+        "text_uthmani": "كَلَّا سَوْفَ تَعْلَمُونَ",
+        "text_simple": null,
+        "page_number": 1246,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12341,
+                "language_code": "en",
+                "content": "No! You are going to know.",
+                "is_active": true
+            },
+            {
+                "id": 12342,
+                "language_code": "ku",
+                "content": "واز بهێنن، له‌مه‌ودوا ده‌زانن چ (قوڕێکتان بۆ خۆتان گرتۆته‌وه‌، چ به‌ڵایه‌کتان به‌سه‌ر خۆتان هێناوه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6172,
+        "ayah_number": 4,
+        "text_uthmani": "ثُمَّ كَلَّا سَوْفَ تَعْلَمُونَ",
+        "text_simple": null,
+        "page_number": 1246,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12343,
+                "language_code": "en",
+                "content": "Then, no! You are going to know.",
+                "is_active": true
+            },
+            {
+                "id": 12344,
+                "language_code": "ku",
+                "content": "دیسانه‌وه ده‌ڵێم: واز بهێنن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6173,
+        "ayah_number": 5,
+        "text_uthmani": "كَلَّا لَوْ تَعْلَمُونَ عِلْمَ ٱلْيَقِينِ",
+        "text_simple": null,
+        "page_number": 1246,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12345,
+                "language_code": "en",
+                "content": "No! If you only knew with knowledge of certainty...<sup foot_note=197809>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12346,
+                "language_code": "ku",
+                "content": "واز بهێنن، ئه‌گه‌ر ئێوه ده‌تانزانی، به‌زانین و دڵنیایه‌کی ته‌واوه‌وه (وا بێ ئاگا نه‌ده‌بوون له خواناسی).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6174,
+        "ayah_number": 6,
+        "text_uthmani": "لَتَرَوُنَّ ٱلْجَحِيمَ",
+        "text_simple": null,
+        "page_number": 1247,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12347,
+                "language_code": "en",
+                "content": "You will surely see the Hellfire.",
+                "is_active": true
+            },
+            {
+                "id": 12348,
+                "language_code": "ku",
+                "content": "سوێند به‌خوا بێگومان دۆزه‌خ ده‌بینن (دۆزه‌خێکی تۆقێنه‌رو پڕ له ئازارو ناسۆره‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6175,
+        "ayah_number": 7,
+        "text_uthmani": "ثُمَّ لَتَرَوُنَّهَا عَيْنَ ٱلْيَقِينِ",
+        "text_simple": null,
+        "page_number": 1247,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12349,
+                "language_code": "en",
+                "content": "Then you will surely see it with the eye of certainty.<sup foot_note=197810>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12350,
+                "language_code": "ku",
+                "content": "دووباره سوێند به‌خوا دۆزه‌خ به‌چاوی سه‌رتان ده‌یبینن به ئاشکراو دڵنیا ده‌بن (که چه‌نده سامناکه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6176,
+        "ayah_number": 8,
+        "text_uthmani": "ثُمَّ لَتُسْـَٔلُنَّ يَوْمَئِذٍ عَنِ ٱلنَّعِيمِ",
+        "text_simple": null,
+        "page_number": 1247,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12351,
+                "language_code": "en",
+                "content": "Then you will surely be asked that Day about pleasure.<sup foot_note=197811>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12352,
+                "language_code": "ku",
+                "content": "پاشان سوێند به‌خوا له‌و ڕۆژه‌دا پرسیارتان لێ ده‌کرێت ده‌رباره‌ی هه‌موو نازو نیعمه‌ته‌کانی دنیا (چۆنتان په‌یدا کردووه‌و له چیدا به‌کارتان هێناوه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

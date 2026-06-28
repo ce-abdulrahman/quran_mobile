@@ -1,0 +1,202 @@
+[
+    {
+        "id": 6131,
+        "ayah_number": 1,
+        "text_uthmani": "لَمْ يَكُنِ ٱلَّذِينَ كَفَرُوا۟ مِنْ أَهْلِ ٱلْكِتَـٰبِ وَٱلْمُشْرِكِينَ مُنفَكِّينَ حَتَّىٰ تَأْتِيَهُمُ ٱلْبَيِّنَةُ",
+        "text_simple": null,
+        "page_number": 1236,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12261,
+                "language_code": "en",
+                "content": "Those who disbelieved among the People of the Scripture and the polytheists were not to be parted [from misbelief]<sup foot_note=197790>1<\/sup> until there came to them clear evidence",
+                "is_active": true
+            },
+            {
+                "id": 12262,
+                "language_code": "ku",
+                "content": "ئه‌وانه‌ی بێ باوه‌ڕ بوون له خاوه‌نی کتێبه‌کان له‌گه‌ڵ موشریك و هاوه‌ڵگه‌ران، وازیان له بیرو باوه‌ڕی خۆیان هێنا، هه‌تا به‌ڵگه‌و نیشانه‌ی ڕوون و ئاشکرایان بۆ نه‌هات (ده‌رباره‌ی دواهه‌مین پێغه‌مبه‌ر).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6132,
+        "ayah_number": 2,
+        "text_uthmani": "رَسُولٌ مِّنَ ٱللَّهِ يَتْلُوا۟ صُحُفًا مُّطَهَّرَةً",
+        "text_simple": null,
+        "page_number": 1236,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12263,
+                "language_code": "en",
+                "content": "A Messenger from Allāh, reciting purified<sup foot_note=197791>1<\/sup> scriptures",
+                "is_active": true
+            },
+            {
+                "id": 12264,
+                "language_code": "ku",
+                "content": "(ئه‌ویش) پێغه‌مبه‌رێکه له‌لایه‌ن خواوه کتێب و نامه‌ی پاك و بێگه‌ردیان به‌سه‌ردا ده‌خوێنێته‌وه (که قورئانه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6133,
+        "ayah_number": 3,
+        "text_uthmani": "فِيهَا كُتُبٌ قَيِّمَةٌ",
+        "text_simple": null,
+        "page_number": 1236,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12265,
+                "language_code": "en",
+                "content": "Within which are correct writings [i.e., rulings and laws].",
+                "is_active": true
+            },
+            {
+                "id": 12266,
+                "language_code": "ku",
+                "content": "چه‌نده‌ها په‌یامی پڕ له ڕێنموویی به نرخی له توێدا هه‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6134,
+        "ayah_number": 4,
+        "text_uthmani": "وَمَا تَفَرَّقَ ٱلَّذِينَ أُوتُوا۟ ٱلْكِتَـٰبَ إِلَّا مِنۢ بَعْدِ مَا جَآءَتْهُمُ ٱلْبَيِّنَةُ",
+        "text_simple": null,
+        "page_number": 1236,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12267,
+                "language_code": "en",
+                "content": "Nor did those who were given the Scripture become divided<sup foot_note=197792>1<\/sup> until after there had come to them clear evidence.",
+                "is_active": true
+            },
+            {
+                "id": 12268,
+                "language_code": "ku",
+                "content": "جا خاوه‌ن کتێبه‌کان ده‌سته ده‌سته‌و پارچه پارچه نه‌بوون، دوای ئه‌وه نه‌بێت که به‌ڵگه‌و نیشانه‌ی ئاشکرایان بۆ هات (ده‌رباره‌ی پێغه‌مبه‌رو قورئان).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6135,
+        "ayah_number": 5,
+        "text_uthmani": "وَمَآ أُمِرُوٓا۟ إِلَّا لِيَعْبُدُوا۟ ٱللَّهَ مُخْلِصِينَ لَهُ ٱلدِّينَ حُنَفَآءَ وَيُقِيمُوا۟ ٱلصَّلَوٰةَ وَيُؤْتُوا۟ ٱلزَّكَوٰةَ ۚ وَذَٰلِكَ دِينُ ٱلْقَيِّمَةِ",
+        "text_simple": null,
+        "page_number": 1236,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12269,
+                "language_code": "en",
+                "content": "And they were not commanded except to worship Allāh, [being] sincere to Him in religion, inclining to truth, and to establish prayer and to give zakāh. And that is the correct religion.",
+                "is_active": true
+            },
+            {
+                "id": 12270,
+                "language_code": "ku",
+                "content": "فه‌رمانیشیان پێنه‌درابوو جگه به‌وه‌ی که خواپه‌رستی بکه‌ن و به‌پاکی و دڵسۆزی و ملکه‌چی فه‌رمانبه‌رداری ئاین و به‌رنامه‌که بن و لابده‌ن له هه‌موو ئایینێك و ته‌نها پابه‌ندی ئایینی ئیسلام بن، نوێژیش به‌ڕێك و پێکی ئه‌نجام بده‌ن، زه‌کاتیش له ماڵ و سامانیان ده‌ربکه‌ن، ئه‌وه‌یه ئاینی نامه ڕاست و به‌نرخه‌کانی خوا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6136,
+        "ayah_number": 6,
+        "text_uthmani": "إِنَّ ٱلَّذِينَ كَفَرُوا۟ مِنْ أَهْلِ ٱلْكِتَـٰبِ وَٱلْمُشْرِكِينَ فِى نَارِ جَهَنَّمَ خَـٰلِدِينَ فِيهَآ ۚ أُو۟لَـٰٓئِكَ هُمْ شَرُّ ٱلْبَرِيَّةِ",
+        "text_simple": null,
+        "page_number": 1237,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12271,
+                "language_code": "en",
+                "content": "Indeed, they who disbelieved among the People of the Scripture and the polytheists will be in the fire of Hell, abiding eternally therein. Those are the worst of creatures.",
+                "is_active": true
+            },
+            {
+                "id": 12272,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ئه‌وانه‌ی بێ باوه‌ڕ بوون له خاوه‌ن کتێبه‌کان و موشریك و هاوه‌ڵگه‌ران ده‌خرێنه ناو ئاگری دۆزه‌خه‌وه‌و به نه‌مری تیایدا بۆ هه‌میشه ده‌مێننه‌وه‌، هه‌ر ئه‌وانه‌ن تاوانبارترین و خراپترینی خه‌ڵکانی سه‌رزه‌وی.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6137,
+        "ayah_number": 7,
+        "text_uthmani": "إِنَّ ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ أُو۟لَـٰٓئِكَ هُمْ خَيْرُ ٱلْبَرِيَّةِ",
+        "text_simple": null,
+        "page_number": 1237,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12273,
+                "language_code": "en",
+                "content": "Indeed, they who have believed and done righteous deeds - those are the best of creatures.",
+                "is_active": true
+            },
+            {
+                "id": 12274,
+                "language_code": "ku",
+                "content": "بێگومان ئه‌وانه‌ی ئیمان و باوه‌ڕیان هێناوه‌و کارو کرده‌وه چاکه‌کانیان ئه‌نجامداوه‌، هه‌ر ئه‌وانه‌ن چاکترین و پاکترینی خه‌ڵکانی سه‌ر زه‌وی.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6138,
+        "ayah_number": 8,
+        "text_uthmani": "جَزَآؤُهُمْ عِندَ رَبِّهِمْ جَنَّـٰتُ عَدْنٍ تَجْرِى مِن تَحْتِهَا ٱلْأَنْهَـٰرُ خَـٰلِدِينَ فِيهَآ أَبَدًا ۖ رَّضِىَ ٱللَّهُ عَنْهُمْ وَرَضُوا۟ عَنْهُ ۚ ذَٰلِكَ لِمَنْ خَشِىَ رَبَّهُۥ",
+        "text_simple": null,
+        "page_number": 1237,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12275,
+                "language_code": "en",
+                "content": "Their reward with their Lord will be gardens of perpetual residence beneath which rivers flow, wherein they will abide forever, Allāh being pleased with them and they with Him. That is for whoever has feared his Lord.",
+                "is_active": true
+            },
+            {
+                "id": 12276,
+                "language_code": "ku",
+                "content": "پاداشتیان لای په‌روه‌ردگاریان به‌هه‌شتی پڕ له باخی چڕه (که کۆشك و ته‌لاره‌کان تیایدا ون بوون)، چه‌نده‌ها ڕووباریش به‌ژێر دره‌خت و به‌به‌رده‌م کۆشکه‌کانیدا ده‌ڕوات و له‌وێ ژیانی هه‌میشه‌یی و به‌رده‌وام بۆ هه‌تا هه‌تایی ده‌به‌نه سه‌ر، ئه‌وانه خوا ڕازیه لێیان، ئه‌وانیش له‌و ڕازین (چۆن ڕازی نابن ئه‌ی په‌روه‌ردگاری ئازیز، به‌ڕاستی نازانین به‌چ زمانێك سوپاسگوزارت بین) بێگومان ئه‌و ڕێزو قه‌دره بۆ ئه‌و که‌سه‌یه که له په‌روه‌ردگاری ترساوه‌و فه‌رمانه‌کانی به‌جێ هێناوه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

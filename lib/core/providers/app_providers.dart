@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive/hive.dart';
+import 'package:isar/isar.dart';
+import '../local_db/isar_service.dart';
+import '../local_db/isar_collections.dart';
 import '../cache/cache_manager.dart';
 import '../network/api_client.dart';
 import '../repositories/surah_repository.dart';
@@ -17,6 +21,7 @@ import '../models/ayah_model.dart';
 import '../models/banner_model.dart';
 import '../models/tajweed_rule_model.dart';
 import '../models/tajweed_category_model.dart';
+import '../services/reciter_history_sync_queue.dart';
 
 import '../models/app_settings_model.dart';
 import '../constants/app_colors.dart';
@@ -42,7 +47,9 @@ final hiveCacheBoxProvider = Provider<Box>((ref) {
 });
 
 final prayerTimesHiveBoxProvider = Provider<Box>((ref) {
-  throw UnimplementedError('Initialize Prayer Times Hive box in main.dart first');
+  throw UnimplementedError(
+    'Initialize Prayer Times Hive box in main.dart first',
+  );
 });
 
 final cacheManagerProvider = Provider<CacheManager>((ref) {
@@ -52,9 +59,15 @@ final cacheManagerProvider = Provider<CacheManager>((ref) {
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
-  return ApiClient(
-    tokenProvider: () => prefs.getString('auth_token') ?? '',
-  );
+  return ApiClient(tokenProvider: () => prefs.getString('auth_token') ?? '');
+});
+
+final reciterHistorySyncQueueProvider = Provider<ReciterHistorySyncQueue>((
+  ref,
+) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  final client = ref.watch(apiClientProvider);
+  return ReciterHistorySyncQueue(prefs: prefs, apiClient: client);
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
@@ -92,26 +105,34 @@ final appSettingsProvider = FutureProvider<AppSettingsModel>((ref) async {
 });
 
 final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>(
-  (ref) => ThemeModeNotifier(),
+  (ref) {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return ThemeModeNotifier(prefs);
+  },
 );
 
 class ThemeModeNotifier extends StateNotifier<ThemeMode> {
-  ThemeModeNotifier() : super(ThemeMode.system);
+  final SharedPreferences _prefs;
+  static const _key = 'app_theme_mode';
 
-  /// Cycles: system → light → dark → system
-  void cycle() {
-    state = switch (state) {
-      ThemeMode.system => ThemeMode.light,
-      ThemeMode.light => ThemeMode.dark,
-      ThemeMode.dark => ThemeMode.system,
+  ThemeModeNotifier(this._prefs) : super(_load(_prefs));
+
+  static ThemeMode _load(SharedPreferences p) {
+    final saved = p.getString(_key);
+    return switch (saved) {
+      'dark' => ThemeMode.dark,
+      _ => ThemeMode.light, // default to light, not system
     };
   }
 
-  /// For settings page direct set
-  void setMode(ThemeMode mode) => state = mode;
+  Future<void> setMode(ThemeMode mode) async {
+    state = mode;
+    await _prefs.setString(_key, mode == ThemeMode.dark ? 'dark' : 'light');
+  }
 
-  // Keep backward compat with home_page.dart toggle()
-  void toggle() => cycle();
+  /// Toggles between light and dark only
+  void toggle() => setMode(state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light);
+  void cycle() => toggle();
 }
 
 class ReaderSettings {
@@ -122,6 +143,12 @@ class ReaderSettings {
   final bool showTajweed;
   final double lineHeight;
   final String bgMode; // 'light' | 'dark' | 'cream' | 'khaki'
+  /// Font family for UI labels: 'Cairo' | 'NotoNaskhArabic' | 'Scheherazade'
+  final String uiFontFamily;
+  /// Font family for Quran Arabic text: 'UthmanicHafs' | 'Amiri' | 'ScheherazadeNew'
+  final String quranFontFamily;
+  /// Where font settings apply: 'ui' | 'reader' | 'both'
+  final String fontTarget;
 
   const ReaderSettings({
     required this.fontSize,
@@ -131,6 +158,9 @@ class ReaderSettings {
     required this.showTajweed,
     required this.lineHeight,
     required this.bgMode,
+    this.uiFontFamily = 'Cairo',
+    this.quranFontFamily = 'UthmanicHafs',
+    this.fontTarget = 'both',
   });
 
   ReaderSettings copyWith({
@@ -141,6 +171,9 @@ class ReaderSettings {
     bool? showTajweed,
     double? lineHeight,
     String? bgMode,
+    String? uiFontFamily,
+    String? quranFontFamily,
+    String? fontTarget,
   }) {
     return ReaderSettings(
       fontSize: fontSize ?? this.fontSize,
@@ -150,6 +183,9 @@ class ReaderSettings {
       showTajweed: showTajweed ?? this.showTajweed,
       lineHeight: lineHeight ?? this.lineHeight,
       bgMode: bgMode ?? this.bgMode,
+      uiFontFamily: uiFontFamily ?? this.uiFontFamily,
+      quranFontFamily: quranFontFamily ?? this.quranFontFamily,
+      fontTarget: fontTarget ?? this.fontTarget,
     );
   }
 }
@@ -163,9 +199,13 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
   static const _showTajweedKey = 'reader_show_tajweed';
   static const _lineHeightKey = 'reader_line_height';
   static const _bgModeKey = 'reader_bg_mode';
+  static const _uiFontFamilyKey = 'reader_ui_font_family';
+  static const _quranFontFamilyKey = 'reader_quran_font_family';
+  static const _fontTargetKey = 'reader_font_target';
 
   ReaderSettingsNotifier(this._prefs)
-      : super(ReaderSettings(
+    : super(
+        ReaderSettings(
           fontSize: _prefs.getDouble(_fontSizeKey) ?? 18.0,
           showKurdish: _prefs.getBool(_showKuKey) ?? true,
           showEnglish: _prefs.getBool(_showEnKey) ?? true,
@@ -173,7 +213,12 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
           showTajweed: _prefs.getBool(_showTajweedKey) ?? true,
           lineHeight: _prefs.getDouble(_lineHeightKey) ?? 2.0,
           bgMode: _prefs.getString(_bgModeKey) ?? 'cream',
-        ));
+          uiFontFamily: _prefs.getString(_uiFontFamilyKey) ?? 'Cairo',
+          quranFontFamily:
+              _prefs.getString(_quranFontFamilyKey) ?? 'UthmanicHafs',
+          fontTarget: _prefs.getString(_fontTargetKey) ?? 'both',
+        ),
+      );
 
   Future<void> setFontSize(double size) async {
     state = state.copyWith(fontSize: size);
@@ -209,39 +254,103 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
     state = state.copyWith(bgMode: mode);
     await _prefs.setString(_bgModeKey, mode);
   }
+
+  Future<void> setUiFontFamily(String font) async {
+    state = state.copyWith(uiFontFamily: font);
+    await _prefs.setString(_uiFontFamilyKey, font);
+  }
+
+  Future<void> setQuranFontFamily(String font) async {
+    state = state.copyWith(quranFontFamily: font);
+    await _prefs.setString(_quranFontFamilyKey, font);
+  }
+
+  Future<void> setFontTarget(String target) async {
+    state = state.copyWith(fontTarget: target);
+    await _prefs.setString(_fontTargetKey, target);
+  }
 }
 
-final readerSettingsProvider = StateNotifierProvider<ReaderSettingsNotifier, ReaderSettings>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return ReaderSettingsNotifier(prefs);
-});
+final readerSettingsProvider =
+    StateNotifierProvider<ReaderSettingsNotifier, ReaderSettings>((ref) {
+      final prefs = ref.watch(sharedPreferencesProvider);
+      return ReaderSettingsNotifier(prefs);
+    });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Accent Color Provider
+// Accent Gradient State
 // ─────────────────────────────────────────────────────────────────────────────
 
-class AccentColorNotifier extends StateNotifier<Color> {
+class AccentGradient extends Color {
+  final Color start;
+  final Color end;
+  final Color primary;
+
+  AccentGradient({
+    required this.start,
+    required this.end,
+    required this.primary,
+  }) : super(primary.value);
+
+  // Default: Emerald Forest
+  static final AccentGradient defaultGradient = AccentGradient(
+    start: const Color(0xFF1AB66D),
+    end: const Color(0xFF0A7C3E),
+    primary: const Color(0xFF1AB66D),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Accent Color Provider (keeps backward compat via .primary)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class AccentColorNotifier extends StateNotifier<AccentGradient> {
   final SharedPreferences _prefs;
-  static const _key = 'accent_color_value';
+  static const _keyStart = 'accent_gradient_start';
+  static const _keyEnd = 'accent_gradient_end';
+  static const _keyPrimary = 'accent_color_value'; // kept for compat
 
-  AccentColorNotifier(this._prefs)
-      : super(Color(_prefs.getInt(_key) ?? const Color(0xFF1AB66D).toARGB32()));
+  AccentColorNotifier(this._prefs) : super(_load(_prefs));
+
+  static AccentGradient _load(SharedPreferences p) {
+    final startVal = p.getInt(_keyStart);
+    final endVal = p.getInt(_keyEnd);
+    final primaryVal = p.getInt(_keyPrimary);
+    if (startVal == null) return AccentGradient.defaultGradient;
+    return AccentGradient(
+      start: Color(startVal),
+      end: endVal != null ? Color(endVal) : Color(startVal),
+      primary: primaryVal != null ? Color(primaryVal) : Color(startVal),
+    );
+  }
 
   Future<void> setColor(Color color) async {
-    state = color;
-    await _prefs.setInt(_key, color.toARGB32());
+    state = AccentGradient(start: color, end: color, primary: color);
+    await _prefs.setInt(_keyStart, color.toARGB32());
+    await _prefs.setInt(_keyEnd, color.toARGB32());
+    await _prefs.setInt(_keyPrimary, color.toARGB32());
+  }
+
+  Future<void> setGradient(Color start, Color end, Color primary) async {
+    state = AccentGradient(start: start, end: end, primary: primary);
+    await _prefs.setInt(_keyStart, start.toARGB32());
+    await _prefs.setInt(_keyEnd, end.toARGB32());
+    await _prefs.setInt(_keyPrimary, primary.toARGB32());
   }
 
   Future<void> cycle() async {
-    final colors = AppColors.accentColorOptions.map((entry) => entry.$1).toList();
-    final currentIndex = colors.indexWhere((c) => c.toARGB32() == state.toARGB32());
-    final nextIndex = (currentIndex + 1) % colors.length;
-    await setColor(colors[nextIndex]);
+    final opts = AppColors.accentGradientOptions;
+    final currentIndex = opts.indexWhere(
+      (o) => o.$1.toARGB32() == state.start.toARGB32(),
+    );
+    final nextIndex = (currentIndex + 1) % opts.length;
+    final next = opts[nextIndex];
+    await setGradient(next.$1, next.$2, next.$3);
   }
 }
 
 final accentColorProvider =
-    StateNotifierProvider<AccentColorNotifier, Color>((ref) {
+    StateNotifierProvider<AccentColorNotifier, AccentGradient>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return AccentColorNotifier(prefs);
 });
@@ -276,7 +385,9 @@ final adhkarRepositoryProvider = Provider<AdhkarRepository>((ref) {
   return AdhkarRepository(client, cache);
 });
 
-final adhkarCategoriesFutureProvider = FutureProvider<List<AdhkarCategory>>((ref) async {
+final adhkarCategoriesFutureProvider = FutureProvider<List<AdhkarCategory>>((
+  ref,
+) async {
   final repo = ref.watch(adhkarRepositoryProvider);
   final result = await repo.getAdhkars();
   return result.when(
@@ -294,7 +405,9 @@ final tasbihRepositoryProvider = Provider<TasbihRepository>((ref) {
   return TasbihRepository(client, cache);
 });
 
-final tasbihProvider = StateNotifierProvider<TasbihNotifier, TasbihState>((ref) {
+final tasbihProvider = StateNotifierProvider<TasbihNotifier, TasbihState>((
+  ref,
+) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return TasbihNotifier(prefs, ref);
 });
@@ -305,7 +418,9 @@ final hadithRepositoryProvider = Provider<HadithRepository>((ref) {
   return HadithRepository(client, cache);
 });
 
-final hadithCategoriesFutureProvider = FutureProvider<List<HadithCategory>>((ref) async {
+final hadithCategoriesFutureProvider = FutureProvider<List<HadithCategory>>((
+  ref,
+) async {
   final repo = ref.watch(hadithRepositoryProvider);
   final result = await repo.getHadiths();
   return result.when(
@@ -323,7 +438,9 @@ final tajweedRepositoryProvider = Provider<TajweedRepository>((ref) {
   return TajweedRepository(client, cache);
 });
 
-final tajweedRulesFutureProvider = FutureProvider<List<TajweedRuleModel>>((ref) async {
+final tajweedRulesFutureProvider = FutureProvider<List<TajweedRuleModel>>((
+  ref,
+) async {
   final repo = ref.watch(tajweedRepositoryProvider);
   final result = await repo.getTajweedRules();
   return result.when(
@@ -335,7 +452,9 @@ final tajweedRulesFutureProvider = FutureProvider<List<TajweedRuleModel>>((ref) 
   );
 });
 
-final tajweedCategoriesProvider = FutureProvider<List<TajweedCategoryModel>>((ref) async {
+final tajweedCategoriesProvider = FutureProvider<List<TajweedCategoryModel>>((
+  ref,
+) async {
   final repo = ref.watch(tajweedRepositoryProvider);
   final result = await repo.getTajweedCategories();
   return result.when(
@@ -377,16 +496,18 @@ class InactiveTajweedRulesNotifier extends StateNotifier<Set<String>> {
 
 final inactiveTajweedRulesProvider =
     StateNotifierProvider<InactiveTajweedRulesNotifier, Set<String>>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return InactiveTajweedRulesNotifier(prefs);
-});
+      final prefs = ref.watch(sharedPreferencesProvider);
+      return InactiveTajweedRulesNotifier(prefs);
+    });
 
 final backupRepositoryProvider = Provider<BackupRepository>((ref) {
   final client = ref.watch(apiClientProvider);
   return BackupRepository(client);
 });
 
-final appLocaleProvider = StateNotifierProvider<AppLocaleNotifier, Locale>((ref) {
+final appLocaleProvider = StateNotifierProvider<AppLocaleNotifier, Locale>((
+  ref,
+) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return AppLocaleNotifier(prefs);
 });
@@ -396,7 +517,7 @@ class AppLocaleNotifier extends StateNotifier<Locale> {
   static const _key = 'app_language_code';
 
   AppLocaleNotifier(this._prefs)
-      : super(Locale(_prefs.getString(_key) ?? 'ku'));
+    : super(Locale(_prefs.getString(_key) ?? 'ku'));
 
   Future<void> setLocale(String languageCode) async {
     state = Locale(languageCode);
@@ -404,5 +525,26 @@ class AppLocaleNotifier extends StateNotifier<Locale> {
   }
 }
 
+final tajweedRuleSegmentsCountProvider = FutureProvider.family<int, String>((ref, ruleSlug) async {
+  if (kIsWeb) return 0;
+  final isar = IsarService.instance.isar;
+  final count = await isar.ayahCollections
+      .filter()
+      .tajweedSegmentsJsonContains('"$ruleSlug"')
+      .count();
+  return count;
+});
 
-
+final tajweedCategorySegmentsCountProvider = FutureProvider.family<int, TajweedCategoryModel>((ref, category) async {
+  if (kIsWeb) return 0;
+  final isar = IsarService.instance.isar;
+  int total = 0;
+  for (final rule in category.rules) {
+    final count = await isar.ayahCollections
+        .filter()
+        .tajweedSegmentsJsonContains('"${rule.slug}"')
+        .count();
+    total += count;
+  }
+  return total;
+});

@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import '../cache/cache_manager.dart';
 import '../models/tasbih_model.dart';
 import '../models/daily_goal_model.dart';
@@ -39,26 +41,31 @@ class TasbihRepository {
         await _cacheManager.set(cacheKey, rawList, const Duration(hours: 12));
         return ApiSuccess(tasbihs);
       } else {
-        return const ApiError('هەڵەیەک لە داڕشتەی تەسبیحەکاندا هەیە');
+        return _fallbackToLocalAssets(cacheKey, 'هەڵەیەک لە داڕشتەی تەسبیحەکاندا هەیە');
       }
-    } on ApiException catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<TasbihModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        try {
-          cachedList = cachedJson.map((e) => TasbihModel.fromJson(e as Map<String, dynamic>)).toList();
-        } catch (_) {}
-      }
-      return ApiError(e.message, statusCode: e.statusCode, cachedData: cachedList);
     } catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<TasbihModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        try {
-          cachedList = cachedJson.map((e) => TasbihModel.fromJson(e as Map<String, dynamic>)).toList();
-        } catch (_) {}
-      }
-      return ApiError(e.toString(), cachedData: cachedList);
+      return _fallbackToLocalAssets(cacheKey, e.toString());
+    }
+  }
+
+  Future<ApiResult<List<TasbihModel>>> _fallbackToLocalAssets(String cacheKey, String errorMsg) async {
+    // 1. Try local cache first
+    final cachedJson = _cacheManager.get(cacheKey);
+    if (cachedJson != null && cachedJson is List) {
+      try {
+        final cachedList = cachedJson.map((e) => TasbihModel.fromJson(e as Map<String, dynamic>)).toList();
+        return ApiSuccess(cachedList);
+      } catch (_) {}
+    }
+
+    // 2. Fallback to hardcoded assets/data/tasbihs.json
+    try {
+      final jsonString = await rootBundle.loadString('assets/data/tasbihs.json');
+      final rawList = jsonDecode(jsonString) as List;
+      final tasbihs = rawList.map((e) => TasbihModel.fromJson(e as Map<String, dynamic>)).toList();
+      return ApiSuccess(tasbihs);
+    } catch (e) {
+      return ApiError('$errorMsg | فایلی ناوخۆیی بار نەکرا: $e');
     }
   }
 

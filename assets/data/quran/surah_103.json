@@ -1,0 +1,77 @@
+[
+    {
+        "id": 6177,
+        "ayah_number": 1,
+        "text_uthmani": "وَٱلْعَصْرِ",
+        "text_simple": null,
+        "page_number": 1248,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12353,
+                "language_code": "en",
+                "content": "By time,<sup foot_note=197812>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12354,
+                "language_code": "ku",
+                "content": "سوێند به زه‌مانه‌، سوێند به‌کاتی عه‌سر.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6178,
+        "ayah_number": 2,
+        "text_uthmani": "إِنَّ ٱلْإِنسَـٰنَ لَفِى خُسْرٍ",
+        "text_simple": null,
+        "page_number": 1248,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12355,
+                "language_code": "en",
+                "content": "Indeed, mankind is in loss,",
+                "is_active": true
+            },
+            {
+                "id": 12356,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ئاده‌میزاد له زه‌ره‌رمه‌ندی و خه‌ساره‌تمه‌ندیدایه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6179,
+        "ayah_number": 3,
+        "text_uthmani": "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ وَتَوَاصَوْا۟ بِٱلْحَقِّ وَتَوَاصَوْا۟ بِٱلصَّبْرِ",
+        "text_simple": null,
+        "page_number": 1248,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12357,
+                "language_code": "en",
+                "content": "Except for those who have believed and done righteous deeds and advised each other to truth and advised each other to patience.",
+                "is_active": true
+            },
+            {
+                "id": 12358,
+                "language_code": "ku",
+                "content": "بێجگه له‌وانه‌ی که باوه‌ڕیان هێناوه‌و کارو کرده‌وه چاکه‌کانیان ئه‌نجامداوه‌و ئامۆژگاری یه‌کتریشیان کردووه که هه‌میشه پابه‌ندی حه‌ق بن (پابه‌ندی حه‌قیش پێویستی به خۆگری هه‌یه‌)، له‌به‌ر ئه‌وه به‌رده‌وام ئامۆژگاری یه‌کتریان کردووه تا هه‌میشه و به‌رده‌وام، خۆگرو ئارامگریش بن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

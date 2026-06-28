@@ -7,7 +7,8 @@ import 'app_providers.dart';
 
 final achievementRepositoryProvider = Provider<AchievementRepository>((ref) {
   final apiClient = ref.watch(apiClientProvider);
-  return AchievementRepository(apiClient);
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return AchievementRepository(apiClient, prefs);
 });
 
 // ── State ────────────────────────────────────────────────────────────────────

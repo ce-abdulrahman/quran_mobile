@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import '../cache/cache_manager.dart';
 import '../models/surah_model.dart';
 import '../models/ayah_model.dart';
@@ -94,25 +96,34 @@ class SurahRepository {
           await _cacheManager.set(cacheKey, rawList, ApiConstants.ayahsTtl);
           return ApiSuccess(ayahs);
         } else {
-          return const ApiError('هەڵەیەک لە داڕشتەی ئایەتەکاندا هەیە');
+          return _fallbackToLocalAssets(surahId, cacheKey, 'هەڵەیەک لە داڕشتەی ئایەتەکاندا هەیە');
         }
       } else {
-        return const ApiError('سەرکەوتوو نەبوو لە بارکردنی ئایەتەکان');
+        return _fallbackToLocalAssets(surahId, cacheKey, 'سەرکەوتوو نەبوو لە بارکردنی ئایەتەکان');
       }
-    } on ApiException catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<AyahModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        cachedList = cachedJson.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-      return ApiError(e.message, statusCode: e.statusCode, cachedData: cachedList);
     } catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<AyahModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        cachedList = cachedJson.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-      return ApiError(e.toString(), cachedData: cachedList);
+      return _fallbackToLocalAssets(surahId, cacheKey, e.toString());
+    }
+  }
+
+  Future<ApiResult<List<AyahModel>>> _fallbackToLocalAssets(int surahId, String cacheKey, String errorMsg) async {
+    // 1. Try local cache first
+    final cachedJson = _cacheManager.get(cacheKey);
+    if (cachedJson != null && cachedJson is List) {
+      try {
+        final cachedList = cachedJson.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
+        return ApiSuccess(cachedList);
+      } catch (_) {}
+    }
+
+    // 2. Fallback to local assets/data/quran/surah_$surahId.json
+    try {
+      final jsonString = await rootBundle.loadString('assets/data/quran/surah_$surahId.json');
+      final rawList = jsonDecode(jsonString) as List;
+      final ayahs = rawList.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
+      return ApiSuccess(ayahs);
+    } catch (e) {
+      return ApiError('$errorMsg | فایلی ناوخۆیی بار نەکرا: $e');
     }
   }
 

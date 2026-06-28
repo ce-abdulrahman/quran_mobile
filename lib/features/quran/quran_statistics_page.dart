@@ -154,28 +154,31 @@ class QuranStatisticsPage extends ConsumerWidget {
                             strokeCap: StrokeCap.round,
                           ),
                         ),
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '$ayahsReadToday / $dailyGoal',
-                              style: const TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 24,
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '$ayahsReadToday / $dailyGoal',
+                                style: const TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            Text(
-                              l.quranAyahs,
-                              style: const TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 11,
-                                color: Colors.white70,
-                                fontWeight: FontWeight.bold,
+                              Text(
+                                l.quranAyahs,
+                                style: const TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontSize: 11,
+                                  color: Colors.white70,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -501,15 +504,18 @@ class QuranStatisticsPage extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 12.5,
-                fontWeight: FontWeight.bold,
-                color: cs.textPrimary,
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.bold,
+                  color: cs.textPrimary,
+                ),
               ),
             ),
+            const SizedBox(width: 8),
             Text(
               '$current / $total ($pctText)',
               style: TextStyle(

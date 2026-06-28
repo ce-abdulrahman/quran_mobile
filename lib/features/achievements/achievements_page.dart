@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../core/models/achievement_model.dart';
 import '../../core/providers/achievement_provider.dart';
 import 'widgets/achievement_card.dart';
@@ -44,6 +45,7 @@ class _AchievementsPageState extends ConsumerState<AchievementsPage>
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final state = ref.watch(achievementProvider);
     final newlyUnlocked = state.newlyUnlocked;
 
@@ -56,9 +58,9 @@ class _AchievementsPageState extends ConsumerState<AchievementsPage>
       appBar: AppBar(
         backgroundColor: const Color(0xFF0F0E1A),
         elevation: 0,
-        title: const Text(
-          '🏆 دەستکەوتەکان',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Text(
+          l.achievementsTitle,
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         bottom: state.isLoading || _categories.isEmpty
@@ -70,7 +72,7 @@ class _AchievementsPageState extends ConsumerState<AchievementsPage>
                 unselectedLabelColor: Colors.white54,
                 indicatorColor: const Color(0xFFFFD700),
                 tabs: [
-                  const Tab(text: 'هەمووی'),
+                  Tab(text: l.achievementsAll),
                   ..._categories.map((c) => Tab(text: '${c.icon} ${c.name}')),
                 ],
               ),
@@ -123,7 +125,7 @@ class _AchievementsPageState extends ConsumerState<AchievementsPage>
             ElevatedButton(
               onPressed: () =>
                   ref.read(achievementProvider.notifier).loadAchievements(),
-              child: const Text('دووبارە هەوڵ بدەرەوە'),
+              child: Text(context.l10n.achievementsRetry),
             ),
           ],
         ),
@@ -131,8 +133,8 @@ class _AchievementsPageState extends ConsumerState<AchievementsPage>
     }
 
     if (state.achievements.isEmpty) {
-      return const Center(
-        child: Text('هیچ دەستکەوتەیەک نییە', style: TextStyle(color: Colors.white60)),
+      return Center(
+        child: Text(context.l10n.achievementsEmpty, style: const TextStyle(color: Colors.white60)),
       );
     }
 
@@ -172,8 +174,8 @@ class _AchievementsPageState extends ConsumerState<AchievementsPage>
 
   Widget _buildGrid(List<AchievementModel> achievements) {
     if (achievements.isEmpty) {
-      return const Center(
-        child: Text('هیچ دەستکەوتەیەک نییە', style: TextStyle(color: Colors.white38)),
+      return Center(
+        child: Text(context.l10n.achievementsEmpty, style: const TextStyle(color: Colors.white38)),
       );
     }
 

@@ -1,22 +1,23 @@
 import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:isar/isar.dart';
+import 'package:adhan/adhan.dart' as adhan;
 import '../../../core/network/api_client.dart';
-import '../../../core/network/api_constants.dart';
 import '../../../core/local_db/isar_service.dart';
 import '../../../core/local_db/isar_collections.dart';
+import '../../../core/providers/prayer_times_provider.dart';
 import '../models/prayer_times_model.dart';
 
 /// Repository for the Prayer Times Calendar system.
 ///
 /// Priority chain:
 ///   1. Isar location-hashed coordinate cache (offline-first, per locationHash+date key)
-///   2. API fetch with ETag/304 (only loads if data changed)
-///   3. adhan calculation engine (offline-first calculations)
+///   2. Local CSV timetable lookup (accurate calendar schedules for 21 cities)
+///   3. adhan calculation engine (fallback calculation for future dates or other coordinates)
 class PrayerTimesRepository {
-  final ApiClient _api;
   final Isar _isar = IsarService.instance.isar;
 
-  PrayerTimesRepository(this._api);
+  PrayerTimesRepository(ApiClient api);
 
   String _generateLocationHash(double lat, double lng) {
     return '${lat.toStringAsFixed(2)}_${lng.toStringAsFixed(2)}';
@@ -36,20 +37,14 @@ class PrayerTimesRepository {
     required int cityId,
     required String date, // "YYYY-MM-DD"
   }) async {
-    // 1. Get coordinates for city
-    final double lat;
-    final double lng;
-    if (cityId == 2) {
-      lat = 35.5619; lng = 45.4375; // Sulaymaniyah
-    } else if (cityId == 3) {
-      lat = 36.8601; lng = 42.9961; // Duhok
-    } else if (cityId == 4) {
-      lat = 35.4681; lng = 44.3922; // Kirkuk
-    } else if (cityId == 5) {
-      lat = 35.1778; lng = 45.9861; // Halabja
-    } else {
-      lat = 36.1912; lng = 44.0091; // Erbil (Default)
-    }
+    // 1. Get coordinates and name for city from 21 registered cities list
+    final city = kurdishCities.firstWhere(
+      (c) => c.id == cityId,
+      orElse: () => kurdishCities.first,
+    );
+    final cityName = city.nameEn;
+    final lat = city.latitude;
+    final lng = city.longitude;
 
     final key = _cacheKey(lat, lng, date);
 
@@ -62,69 +57,156 @@ class PrayerTimesRepository {
       } catch (_) {}
     }
 
-    // 3. Fallback to API year fetch and populate Isar for the date
-    final year = int.tryParse(date.split('-').first) ?? DateTime.now().year;
-    final yearResponse = await fetchYear(cityId: cityId, year: year);
+    // 3. Try parsing from local CSV timetable asset
+    try {
+      final parsedDate = DateTime.parse(date);
+      final day = parsedDate.day;
+      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      final month = months[parsedDate.month - 1];
+      final csvDateStr = '$day-$month';
 
-    if (yearResponse != null) {
-      try {
-        final matched = yearResponse.data.firstWhere((e) => e.date == date);
-        // Cache this date specifically in Isar
-        await _isar.writeTxn(() async {
-          await _isar.prayerTimesCollections.put(PrayerTimesCollection(
-            cacheKey: key,
-            latitude: lat,
-            longitude: lng,
-            locationHash: _generateLocationHash(lat, lng),
-            date: date,
-            prayerTimesJson: jsonEncode(matched.toJson()),
-          ));
-        });
-        return matched;
-      } catch (_) {}
-    }
+      final csvData = await rootBundle.loadString('assets/data/prayer_times.csv');
+      final lines = const LineSplitter().convert(csvData);
 
-    return null; // Caller handles offline engine fallback
+      for (final line in lines) {
+        final parts = line.split(',');
+        if (parts.length >= 8) {
+          final cName = parts[0].trim();
+          final cDate = parts[1].trim();
+          if (cName.toLowerCase() == cityName.toLowerCase() && cDate.toLowerCase() == csvDateStr.toLowerCase()) {
+            final entry = PrayerTimeEntry(
+              date: date,
+              fajr: parts[2].trim(),
+              sunrise: parts[3].trim(),
+              dhuhr: parts[4].trim(),
+              asr: parts[5].trim(),
+              maghrib: parts[6].trim(),
+              isha: parts[7].trim(),
+              source: 'csv',
+            );
+
+            // Cache in Isar
+            await _isar.writeTxn(() async {
+              await _isar.prayerTimesCollections.put(PrayerTimesCollection(
+                cacheKey: key,
+                latitude: lat,
+                longitude: lng,
+                locationHash: _generateLocationHash(lat, lng),
+                date: date,
+                prayerTimesJson: jsonEncode(entry.toJson()),
+              ));
+            });
+
+            return entry;
+          }
+        }
+      }
+    } catch (_) {}
+
+    // 4. Fallback: Dynamic Adhan calculation
+    try {
+      final parsedDate = DateTime.parse(date);
+      final coordinates = adhan.Coordinates(lat, lng);
+      final params = adhan.CalculationMethod.muslim_world_league.getParameters();
+      params.madhab = adhan.Madhab.shafi;
+
+      final prayerTimes = adhan.PrayerTimes(
+        coordinates,
+        adhan.DateComponents(parsedDate.year, parsedDate.month, parsedDate.day),
+        params,
+      );
+
+      String formatTime(DateTime? dt) {
+        if (dt == null) return '--:--';
+        final local = dt.toLocal();
+        final hour = local.hour.toString().padLeft(2, '0');
+        final minute = local.minute.toString().padLeft(2, '0');
+        return '$hour:$minute';
+      }
+
+      final entry = PrayerTimeEntry(
+        date: date,
+        fajr: formatTime(prayerTimes.fajr),
+        sunrise: formatTime(prayerTimes.sunrise),
+        dhuhr: formatTime(prayerTimes.dhuhr),
+        asr: formatTime(prayerTimes.asr),
+        maghrib: formatTime(prayerTimes.maghrib),
+        isha: formatTime(prayerTimes.isha),
+        source: 'calculated',
+      );
+
+      // Cache in Isar
+      await _isar.writeTxn(() async {
+        await _isar.prayerTimesCollections.put(PrayerTimesCollection(
+          cacheKey: key,
+          latitude: lat,
+          longitude: lng,
+          locationHash: _generateLocationHash(lat, lng),
+          date: date,
+          prayerTimesJson: jsonEncode(entry.toJson()),
+        ));
+      });
+
+      return entry;
+    } catch (_) {}
+
+    return null;
   }
 
-  /// Fetch prayer times for [cityId] and [year] from the Laravel API.
+  /// Fetch prayer times for [cityId] and [year] from the local CSV (fallback structure).
   Future<PrayerTimesResponse?> fetchYear({
     required int cityId,
     required int year,
     bool forceRefresh = false,
   }) async {
+    // Return mock response based on CSV parsing if a year is requested
     try {
-      final response = await _api.get(
-        ApiConstants.prayerTimes,
-        queryParameters: {
-          'city_id': cityId,
-          'year': year,
-        },
+      final city = kurdishCities.firstWhere(
+        (c) => c.id == cityId,
+        orElse: () => kurdishCities.first,
       );
+      final List<PrayerTimeEntry> yearEntries = [];
+      
+      // Let's populate the yearEntries for this city by calling getForDate for each day
+      final startDate = DateTime(year, 1, 1);
+      final daysInYear = DateTime(year, 12, 31).difference(startDate).inDays + 1;
+      
+      for (int i = 0; i < daysInYear; i++) {
+        final current = startDate.add(Duration(days: i));
+        final dateStr = "${current.year}-${current.month.toString().padLeft(2, '0')}-${current.day.toString().padLeft(2, '0')}";
+        final entry = await getForDate(cityId: cityId, date: dateStr);
+        if (entry != null) {
+          yearEntries.add(entry);
+        }
+      }
 
-      if (response.statusCode == 200 && response.data != null) {
-        final resData = response.data as Map<String, dynamic>;
-        return PrayerTimesResponse.fromJson(resData);
+      if (yearEntries.isNotEmpty) {
+        return PrayerTimesResponse(
+          city: city.nameEn,
+          cityId: cityId,
+          timezone: 'Asia/Baghdad',
+          year: year,
+          total: yearEntries.length,
+          data: yearEntries,
+          versionHash: 'local_v1',
+        );
       }
     } catch (_) {}
 
     return null;
   }
 
-  /// Fetch available cities that have prayer time data.
+  /// Return all available cities locally.
   Future<List<PrayerTimeCity>> fetchCities({bool forceRefresh = false}) async {
-    try {
-      final response = await _api.get(ApiConstants.prayerTimesCities);
-      if (response.statusCode == 200 && response.data != null) {
-        final resData = response.data as Map<String, dynamic>;
-        final rawList = resData['data'] as List<dynamic>? ?? [];
-        return rawList
-            .map((e) => PrayerTimeCity.fromJson(e as Map<String, dynamic>))
-            .toList();
-      }
-    } catch (_) {}
-
-    return [];
+    return kurdishCities.map((c) => PrayerTimeCity(
+      id: c.id ?? 0,
+      name: c.nameEn,
+      lat: c.latitude,
+      lng: c.longitude,
+      timezone: 'Asia/Baghdad',
+      availableYears: [DateTime.now().year],
+      totalEntries: 365,
+    )).toList();
   }
 
   /// Clear all prayer times cache in Isar.

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../core/constants/app_colors.dart';
-import '../../core/providers/hadith_provider.dart';
+import '../../core/l10n/app_localizations.dart';
+import '../../core/providers/app_providers.dart';
 
 class HadithCategoryPage extends StatelessWidget {
   final HadithCategory category;
@@ -13,6 +15,7 @@ class HadithCategoryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = AppColorScheme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = context.l10n;
 
     return Scaffold(
       backgroundColor: cs.bg,
@@ -36,7 +39,7 @@ class HadithCategoryPage extends StatelessWidget {
       body: category.hadiths.isEmpty
           ? Center(
               child: Text(
-                'هیچ فەرموودەیەک لەم هاوپۆلەدا نییە',
+                l.hadithNoHadithsInCategory,
                 style: TextStyle(
                   fontFamily: 'Cairo',
                   color: cs.textSecondary,
@@ -74,18 +77,19 @@ class HadithCardState extends State<HadithCard> {
   bool _isExpanded = false;
 
   void _copyToClipboard() {
+    final l = context.l10n;
     final textToCopy = '${widget.hadith.narrator != null ? "${widget.hadith.narrator}\n" : ""}'
         '${widget.hadith.arabicText}\n\n'
-        'وەرگێڕان:\n${widget.hadith.translationKu}'
-        '${widget.hadith.source != null ? "\n\nسەرچاوە: ${widget.hadith.source}" : ""}';
+        '${l.hadithTranslationHeader}\n${widget.hadith.translationKu}'
+        '${widget.hadith.source != null ? "\n\n${l.hadithSourceHeader} ${widget.hadith.source}" : ""}';
 
     Clipboard.setData(ClipboardData(text: textToCopy));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text(
-          'فەرموودەکە بە سەرکەوتوویی کۆپیکرا',
+        content: Text(
+          l.hadithCopiedSuccess,
           textDirection: TextDirection.rtl,
-          style: TextStyle(fontFamily: 'Cairo'),
+          style: const TextStyle(fontFamily: 'Cairo'),
         ),
         backgroundColor: widget.cs.primary,
         behavior: SnackBarBehavior.floating,
@@ -95,10 +99,11 @@ class HadithCardState extends State<HadithCard> {
   }
 
   void _shareHadith() {
+    final l = context.l10n;
     final textToShare = '${widget.hadith.narrator != null ? "${widget.hadith.narrator}\n" : ""}'
         '${widget.hadith.arabicText}\n\n'
-        'وەرگێڕان:\n${widget.hadith.translationKu}'
-        '${widget.hadith.source != null ? "\n\nسەرچاوە: ${widget.hadith.source}" : ""}';
+        '${l.hadithTranslationHeader}\n${widget.hadith.translationKu}'
+        '${widget.hadith.source != null ? "\n\n${l.hadithSourceHeader} ${widget.hadith.source}" : ""}';
 
     Share.share(textToShare);
   }
@@ -188,20 +193,24 @@ class HadithCardState extends State<HadithCard> {
               children: [
                 // Source
                 if (widget.hadith.source != null && widget.hadith.source!.isNotEmpty)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: widget.cs.textSecondary.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: widget.cs.cardBorder),
-                    ),
-                    child: Text(
-                      widget.hadith.source!,
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: widget.cs.textSecondary,
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: widget.cs.textSecondary.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: widget.cs.cardBorder),
+                      ),
+                      child: Text(
+                        widget.hadith.source!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: widget.cs.textSecondary,
+                        ),
                       ),
                     ),
                   )
@@ -215,7 +224,7 @@ class HadithCardState extends State<HadithCard> {
                     IconButton(
                       icon: Icon(Icons.copy_all_rounded, color: widget.cs.textSecondary, size: 20),
                       onPressed: _copyToClipboard,
-                      tooltip: 'کۆپیکردن',
+                      tooltip: context.l10n.hadithCopyTooltip,
                       constraints: const BoxConstraints(),
                       padding: const EdgeInsets.all(6),
                     ),
@@ -225,9 +234,34 @@ class HadithCardState extends State<HadithCard> {
                     IconButton(
                       icon: Icon(Icons.share_rounded, color: widget.cs.textSecondary, size: 20),
                       onPressed: _shareHadith,
-                      tooltip: 'بڵاوکردنەوە',
+                      tooltip: context.l10n.hadithShareTooltip,
                       constraints: const BoxConstraints(),
                       padding: const EdgeInsets.all(6),
+                    ),
+                    const SizedBox(width: 8),
+
+                    // Favorite (Star) button
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final isFav = ref.watch(favoritesProvider.notifier).isFavorited('hadith', widget.hadith.id);
+                        return IconButton(
+                          icon: Icon(
+                            isFav ? Icons.star_rounded : Icons.star_border_rounded,
+                            color: isFav ? const Color(0xFFE6A23C) : widget.cs.textSecondary,
+                            size: 22,
+                          ),
+                          onPressed: () async {
+                            await ref.read(favoritesProvider.notifier).toggleGeneric(
+                              favoritableType: 'hadith',
+                              favoritableId: widget.hadith.id,
+                              previewText: widget.hadith.translationKu,
+                            );
+                          },
+                          tooltip: context.l10n.hadithBookmarkTooltip,
+                          constraints: const BoxConstraints(),
+                          padding: const EdgeInsets.all(6),
+                        );
+                      },
                     ),
 
                     if (hasExplanation) ...[
@@ -250,7 +284,7 @@ class HadithCardState extends State<HadithCard> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'شیکردنەوە',
+                                context.l10n.hadithExplanation,
                                 style: TextStyle(
                                   fontFamily: 'Cairo',
                                   fontSize: 10,
@@ -295,7 +329,7 @@ class HadithCardState extends State<HadithCard> {
                         Icon(Icons.info_outline_rounded, color: widget.cs.primary, size: 16),
                         const SizedBox(width: 6),
                         Text(
-                          'شیکردنەوە و وانەکان',
+                          context.l10n.hadithExplanationAndLessons,
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 12,

@@ -1,0 +1,477 @@
+[
+    {
+        "id": 6107,
+        "ayah_number": 1,
+        "text_uthmani": "ٱقْرَأْ بِٱسْمِ رَبِّكَ ٱلَّذِى خَلَقَ",
+        "text_simple": null,
+        "page_number": 1230,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12213,
+                "language_code": "en",
+                "content": "Recite in the name of your Lord who created",
+                "is_active": true
+            },
+            {
+                "id": 12214,
+                "language_code": "ku",
+                "content": "(ئه‌ی محمد صلی الله علیه وسلم) بخوێنه به‌ناوی ئه‌و په‌روه‌ردگاره‌ته‌وه که هه‌موو شتێکی دروست کردووه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6108,
+        "ayah_number": 2,
+        "text_uthmani": "خَلَقَ ٱلْإِنسَـٰنَ مِنْ عَلَقٍ",
+        "text_simple": null,
+        "page_number": 1230,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12215,
+                "language_code": "en",
+                "content": "Created man from a clinging substance.",
+                "is_active": true
+            },
+            {
+                "id": 12216,
+                "language_code": "ku",
+                "content": "ئاده‌میزادی له چه‌ند خانه‌یه‌کی هه‌ڵواسراو (له‌ناو منداڵداندا) دروست کردووه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6109,
+        "ayah_number": 3,
+        "text_uthmani": "ٱقْرَأْ وَرَبُّكَ ٱلْأَكْرَمُ",
+        "text_simple": null,
+        "page_number": 1230,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12217,
+                "language_code": "en",
+                "content": "Recite, and your Lord is the most Generous -",
+                "is_active": true
+            },
+            {
+                "id": 12218,
+                "language_code": "ku",
+                "content": "بخوێنه‌، له‌کاتێکدا هه‌ر په‌روه‌ردگاری تۆ به‌خشنده‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6110,
+        "ayah_number": 4,
+        "text_uthmani": "ٱلَّذِى عَلَّمَ بِٱلْقَلَمِ",
+        "text_simple": null,
+        "page_number": 1230,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12219,
+                "language_code": "en",
+                "content": "Who taught by the pen",
+                "is_active": true
+            },
+            {
+                "id": 12220,
+                "language_code": "ku",
+                "content": "ئه‌و زاته‌یه که به‌هۆی قه‌ڵه‌مه‌وه زانستی و زانیاری فێر کردووه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6111,
+        "ayah_number": 5,
+        "text_uthmani": "عَلَّمَ ٱلْإِنسَـٰنَ مَا لَمْ يَعْلَمْ",
+        "text_simple": null,
+        "page_number": 1230,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12221,
+                "language_code": "en",
+                "content": "Taught man that which he knew not.",
+                "is_active": true
+            },
+            {
+                "id": 12222,
+                "language_code": "ku",
+                "content": "ئاده‌میزادی فێری ئه‌و شتانه کردووه که نه‌یزانیوون.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6112,
+        "ayah_number": 6,
+        "text_uthmani": "كَلَّآ إِنَّ ٱلْإِنسَـٰنَ لَيَطْغَىٰٓ",
+        "text_simple": null,
+        "page_number": 1231,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12223,
+                "language_code": "en",
+                "content": "No! [But] indeed, man transgresses",
+                "is_active": true
+            },
+            {
+                "id": 12224,
+                "language_code": "ku",
+                "content": "نه‌خێر (له‌گه‌ڵ ئه‌و هه‌موو چاکه‌و ڕێزه‌دا که خوا به‌خشیویه‌تی به ئینسان) به‌ڕاستی خه‌ڵکی سه‌رکه‌شی ده‌که‌ن، یاخی ده‌بن، سته‌م ده‌که‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6113,
+        "ayah_number": 7,
+        "text_uthmani": "أَن رَّءَاهُ ٱسْتَغْنَىٰٓ",
+        "text_simple": null,
+        "page_number": 1231,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12225,
+                "language_code": "en",
+                "content": "Because he sees himself self-sufficient.",
+                "is_active": true
+            },
+            {
+                "id": 12226,
+                "language_code": "ku",
+                "content": "له‌به‌ر ئه‌وه‌ی هه‌ر ئاده‌میزاد هه‌ستی کرد ده‌وڵه‌مه‌ندو بێ نیازه (له‌ڕووی ئابووری، یان ته‌ندروستی، یان زانستی... هتد)یه‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6114,
+        "ayah_number": 8,
+        "text_uthmani": "إِنَّ إِلَىٰ رَبِّكَ ٱلرُّجْعَىٰٓ",
+        "text_simple": null,
+        "page_number": 1231,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12227,
+                "language_code": "en",
+                "content": "Indeed, to your Lord is the return.",
+                "is_active": true
+            },
+            {
+                "id": 12228,
+                "language_code": "ku",
+                "content": "(ئه‌وه فه‌رامۆش ده‌کات که‌): بێگومان سه‌ره‌نجام گه‌ڕانه‌وه هه‌ر بۆ لای په‌روه‌ردگارته‌و (له‌سه‌ر که‌ش و یاخیه‌کان ده‌پرسێته‌وه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6115,
+        "ayah_number": 9,
+        "text_uthmani": "أَرَءَيْتَ ٱلَّذِى يَنْهَىٰ",
+        "text_simple": null,
+        "page_number": 1231,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12229,
+                "language_code": "en",
+                "content": "Have you seen the one who forbids",
+                "is_active": true
+            },
+            {
+                "id": 12230,
+                "language_code": "ku",
+                "content": "باشه‌، پێم بڵێ ئایا ئه‌و که‌سه‌ی که فه‌رمان ده‌دات و ڕێگری ده‌کات؟!...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6116,
+        "ayah_number": 10,
+        "text_uthmani": "عَبْدًا إِذَا صَلَّىٰٓ",
+        "text_simple": null,
+        "page_number": 1231,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12231,
+                "language_code": "en",
+                "content": "A servant when he prays?",
+                "is_active": true
+            },
+            {
+                "id": 12232,
+                "language_code": "ku",
+                "content": "له به‌نده‌یه‌کی خوا کاتێك نوێژ ده‌کات!!...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6117,
+        "ayah_number": 11,
+        "text_uthmani": "أَرَءَيْتَ إِن كَانَ عَلَى ٱلْهُدَىٰٓ",
+        "text_simple": null,
+        "page_number": 1232,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12233,
+                "language_code": "en",
+                "content": "Have you seen if he is upon guidance",
+                "is_active": true
+            },
+            {
+                "id": 12234,
+                "language_code": "ku",
+                "content": "ئه‌ی ئه‌گه‌ر ئه‌و که‌سه‌ی قه‌ده‌غه‌ی لێده‌کرێت له‌سه‌ر ڕێبازی هیدایه‌ت و چاکه بێت!!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6118,
+        "ayah_number": 12,
+        "text_uthmani": "أَوْ أَمَرَ بِٱلتَّقْوَىٰٓ",
+        "text_simple": null,
+        "page_number": 1232,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12235,
+                "language_code": "en",
+                "content": "Or enjoins righteousness?",
+                "is_active": true
+            },
+            {
+                "id": 12236,
+                "language_code": "ku",
+                "content": "یان فه‌رمان به خواناسی بکات!!...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6119,
+        "ayah_number": 13,
+        "text_uthmani": "أَرَءَيْتَ إِن كَذَّبَ وَتَوَلَّىٰٓ",
+        "text_simple": null,
+        "page_number": 1232,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12237,
+                "language_code": "en",
+                "content": "Have you seen if he denies and turns away -",
+                "is_active": true
+            },
+            {
+                "id": 12238,
+                "language_code": "ku",
+                "content": "ئه‌ی ئه‌گه‌ر (کابرای خوانه‌ناس) به‌رنامه‌ی خوا به‌درۆ بزانێت و پشتی تێ بکات.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6120,
+        "ayah_number": 14,
+        "text_uthmani": "أَلَمْ يَعْلَم بِأَنَّ ٱللَّهَ يَرَىٰ",
+        "text_simple": null,
+        "page_number": 1232,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12239,
+                "language_code": "en",
+                "content": "Does he not know that Allāh sees?",
+                "is_active": true
+            },
+            {
+                "id": 12240,
+                "language_code": "ku",
+                "content": "ئایا نه‌یزانیووه که خوا ده‌یبینێت و ئاگای (له گوفتارو کرداریه‌تی)؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6121,
+        "ayah_number": 15,
+        "text_uthmani": "كَلَّا لَئِن لَّمْ يَنتَهِ لَنَسْفَعًۢا بِٱلنَّاصِيَةِ",
+        "text_simple": null,
+        "page_number": 1232,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12241,
+                "language_code": "en",
+                "content": "No! If he does not desist, We will surely drag him by the forelock<sup foot_note=197786>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12242,
+                "language_code": "ku",
+                "content": "نه‌خێر.. سوێند به‌خوا ئه‌گه‌ر کۆڵ نه‌دات و کۆتایی (به دوژمنکاری نه‌هێنێت)، ئێمه پێشه سه‌ری ده‌گرین (بۆ دۆزه‌خ کێشی ده‌که‌ین).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6122,
+        "ayah_number": 16,
+        "text_uthmani": "نَاصِيَةٍ كَـٰذِبَةٍ خَاطِئَةٍ",
+        "text_simple": null,
+        "page_number": 1233,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12243,
+                "language_code": "en",
+                "content": "A lying, sinning forelock.",
+                "is_active": true
+            },
+            {
+                "id": 12244,
+                "language_code": "ku",
+                "content": "ئه‌و پێشه سه‌ره درۆزنه تاوانکاره (پێشه سه‌ر: جێگه‌ی بیر کردنه‌وه‌و تێفکرانه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6123,
+        "ayah_number": 17,
+        "text_uthmani": "فَلْيَدْعُ نَادِيَهُۥ",
+        "text_simple": null,
+        "page_number": 1233,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12245,
+                "language_code": "en",
+                "content": "Then let him call his associates;",
+                "is_active": true
+            },
+            {
+                "id": 12246,
+                "language_code": "ku",
+                "content": "ئینجا وازی لێبهێنه‌، با هاوه‌ڵ و هاوبیرو باوه‌ڕانی بانگ بکات و (کۆیان بکاته‌وه بۆ دژایه‌تی ئیمانداران).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6124,
+        "ayah_number": 18,
+        "text_uthmani": "سَنَدْعُ ٱلزَّبَانِيَةَ",
+        "text_simple": null,
+        "page_number": 1233,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12247,
+                "language_code": "en",
+                "content": "We will call the angels of Hell.<sup foot_note=197787>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12248,
+                "language_code": "ku",
+                "content": "ئێمه‌ش فریشته‌کانی کاربه‌ده‌ستی دۆزه‌خی بۆ بانگ ده‌که‌ین (تا تۆڵه‌ی لێ بسێنن و له دۆزه‌خ توندی بکه‌ن).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6125,
+        "ayah_number": 19,
+        "text_uthmani": "كَلَّا لَا تُطِعْهُ وَٱسْجُدْ وَٱقْتَرِب ۩",
+        "text_simple": null,
+        "page_number": 1233,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12249,
+                "language_code": "en",
+                "content": "No! Do not obey him. But prostrate and draw near [to Allāh].",
+                "is_active": true
+            },
+            {
+                "id": 12250,
+                "language_code": "ku",
+                "content": "نه‌خێر به‌گوێی ئه‌و جۆره که‌سانه مه‌که‌، تۆ هه‌ر سه‌رگه‌رمی نوێژو سوژده ببه‌و به به‌ندایه‌تی خۆت له په‌روه‌ردگارت نزیك بکه‌ره‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

@@ -1,0 +1,927 @@
+[
+    {
+        "id": 4474,
+        "ayah_number": 1,
+        "text_uthmani": "حمٓ",
+        "text_simple": null,
+        "page_number": 882,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8947,
+                "language_code": "en",
+                "content": "Ḥā, Meem.<sup foot_note=197353>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 8948,
+                "language_code": "ku",
+                "content": "سه‌رنجی ئایه‌تی1 (الشوری) لاپه‌ڕه‌483بده‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4475,
+        "ayah_number": 2,
+        "text_uthmani": "تَنزِيلُ ٱلْكِتَـٰبِ مِنَ ٱللَّهِ ٱلْعَزِيزِ ٱلْحَكِيمِ",
+        "text_simple": null,
+        "page_number": 882,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8949,
+                "language_code": "en",
+                "content": "The revelation of the Book is from Allāh, the Exalted in Might, the Wise.",
+                "is_active": true
+            },
+            {
+                "id": 8950,
+                "language_code": "ku",
+                "content": "ئه‌م قورئانه له‌لایه‌ن خوای باڵاده‌ست و داناوه‌، هاتووه‌ته خواره‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4476,
+        "ayah_number": 3,
+        "text_uthmani": "إِنَّ فِى ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ لَـَٔايَـٰتٍ لِّلْمُؤْمِنِينَ",
+        "text_simple": null,
+        "page_number": 882,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8951,
+                "language_code": "en",
+                "content": "Indeed, within the heavens and earth are signs for the believers.",
+                "is_active": true
+            },
+            {
+                "id": 8952,
+                "language_code": "ku",
+                "content": "به‌ڕاستی له ئاسمانه‌کان و زه‌ویدا به‌ڵگه‌و نیشانه‌ی زۆر هه‌ن ده‌رباره‌ی گه‌وره‌یی و ده‌سه‌ڵاتی په‌روه‌ردگار بۆ که‌سانێك که بڕوادارن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4477,
+        "ayah_number": 4,
+        "text_uthmani": "وَفِى خَلْقِكُمْ وَمَا يَبُثُّ مِن دَآبَّةٍ ءَايَـٰتٌ لِّقَوْمٍ يُوقِنُونَ",
+        "text_simple": null,
+        "page_number": 882,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8953,
+                "language_code": "en",
+                "content": "And in the creation of yourselves and what He disperses of moving creatures are signs for people who are certain [in faith].",
+                "is_active": true
+            },
+            {
+                "id": 8954,
+                "language_code": "ku",
+                "content": "هه‌روه‌ها له دروستکردنی ئێوه‌دا (له ئه‌ندامه‌کانی له‌شتاندا، له قوناغه‌کانی گه‌وره بوونتاندا، له جیاوازی نێرو مێتاندا... هتد)، هه‌روه‌ها له‌و هه‌موو زینده‌وه‌ره جۆراو جۆرانه‌ی که له‌سه‌ر زه‌وی و ژێر زه‌وی و ناو ئاودا هه‌ن و بڵاویان ده‌کاته‌وه‌، (له چوار پێ و باڵنده‌کان، له خشۆك و شه‌ش پێکان، له گیاندارانی هه‌مه‌جۆر له قه‌باره‌و ڕه‌نگ و شێوازدا، له ده‌وریان له خزمه‌تکردنی ئاده‌میزادا، هه‌موو ئه‌وانه‌) به‌ڵگه و نیشانه‌ن له‌سه‌ر ده‌سه‌ڵاتی خوا بۆ که‌سانێك که دڵنیان و باوه‌ڕی دامه‌زراویان هه‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4478,
+        "ayah_number": 5,
+        "text_uthmani": "وَٱخْتِلَـٰفِ ٱلَّيْلِ وَٱلنَّهَارِ وَمَآ أَنزَلَ ٱللَّهُ مِنَ ٱلسَّمَآءِ مِن رِّزْقٍ فَأَحْيَا بِهِ ٱلْأَرْضَ بَعْدَ مَوْتِهَا وَتَصْرِيفِ ٱلرِّيَـٰحِ ءَايَـٰتٌ لِّقَوْمٍ يَعْقِلُونَ",
+        "text_simple": null,
+        "page_number": 882,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8955,
+                "language_code": "en",
+                "content": "And [in] the alternation of night and day and [in] what Allāh sends down from the sky of provision [i.e., rain] and gives life thereby to the earth after its lifelessness and [in His] directing of the winds are signs for a people who reason.",
+                "is_active": true
+            },
+            {
+                "id": 8956,
+                "language_code": "ku",
+                "content": "هه‌روه‌ها له جیاوازی شه‌وو ڕۆژدا، له‌و ڕزق و ڕۆزیه‌ی که‌له ئاسمانه‌وه خوا باراندوویه‌تی (وه‌ك باران و تیشکی خۆرو گازه‌کان و... هتد، که سه‌رچاوه‌ی گه‌شه‌کردن و پێگه‌شتنی ڕوه‌ك و هه‌موو زینده‌وه‌رانه‌)، به‌و هۆیه‌وه زه‌وی زیندوو کرده‌وه دوای وشكبوون و مردنی، هه‌روه‌ها له هاتوچۆو گۆڕان و جوڵه‌ی هه‌وادا، له هه‌ر هه‌موو ئه‌وانه‌دا به‌ڵگه ونیشانه‌ی زۆر هه‌ن بۆ که‌سانێك عه‌قڵ و بیرو هۆشیان ده‌خه‌نه کار.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4479,
+        "ayah_number": 6,
+        "text_uthmani": "تِلْكَ ءَايَـٰتُ ٱللَّهِ نَتْلُوهَا عَلَيْكَ بِٱلْحَقِّ ۖ فَبِأَىِّ حَدِيثٍۭ بَعْدَ ٱللَّهِ وَءَايَـٰتِهِۦ يُؤْمِنُونَ",
+        "text_simple": null,
+        "page_number": 883,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8957,
+                "language_code": "en",
+                "content": "These are the verses of Allāh which We recite to you in truth. Then in what statement after Allāh and His verses will they believe?",
+                "is_active": true
+            },
+            {
+                "id": 8958,
+                "language_code": "ku",
+                "content": "ئه‌ی محمد صلی الله علیه وسلم ئا ئه‌وانه به‌ڵگه و نیشانه‌ی ده‌سه‌ڵاته‌کانی خوان، ده‌یخوێنینه‌وه به‌سه‌ر تۆدا سه‌رتاپای حه‌ق و ڕاسته‌قینه‌یه‌، جا دوای خواو فه‌رمانه‌کانی به چ گوتار و باسێکی تر باوه‌ڕ ده‌که‌ن و ئیمان ده‌هێنن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4480,
+        "ayah_number": 7,
+        "text_uthmani": "وَيْلٌ لِّكُلِّ أَفَّاكٍ أَثِيمٍ",
+        "text_simple": null,
+        "page_number": 883,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8959,
+                "language_code": "en",
+                "content": "Woe to every sinful liar",
+                "is_active": true
+            },
+            {
+                "id": 8960,
+                "language_code": "ku",
+                "content": "هاوار و قوربه‌سه‌ری و ڕه‌نجه‌ڕۆیی ته‌نها بۆ هه‌موو ئه‌و که‌سانه‌ی که زۆر درۆزن و بوختانچی و تاوانبارن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4481,
+        "ayah_number": 8,
+        "text_uthmani": "يَسْمَعُ ءَايَـٰتِ ٱللَّهِ تُتْلَىٰ عَلَيْهِ ثُمَّ يُصِرُّ مُسْتَكْبِرًا كَأَن لَّمْ يَسْمَعْهَا ۖ فَبَشِّرْهُ بِعَذَابٍ أَلِيمٍ",
+        "text_simple": null,
+        "page_number": 883,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8961,
+                "language_code": "en",
+                "content": "Who hears the verses of Allāh recited to him, then persists arrogantly as if he had not heard them. So give him tidings of a painful punishment.",
+                "is_active": true
+            },
+            {
+                "id": 8962,
+                "language_code": "ku",
+                "content": "هه‌یانه گوێ ده‌گرێت بۆ ئایه‌ته‌کانی خوا کاتێك به‌سه‌ریدا ده‌خوێنرێته‌وه‌، له‌وه‌ودوا سوور ده‌بێت له‌سه‌ر بێ باوه‌ڕی و خۆی به‌زل ده‌زانێت، هه‌روه‌ك نه‌یبیستبێت، جا مژده‌ی سزاو ئازارێکی به‌ئێش بده به‌و جۆره که‌سانه‌!!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4482,
+        "ayah_number": 9,
+        "text_uthmani": "وَإِذَا عَلِمَ مِنْ ءَايَـٰتِنَا شَيْـًٔا ٱتَّخَذَهَا هُزُوًا ۚ أُو۟لَـٰٓئِكَ لَهُمْ عَذَابٌ مُّهِينٌ",
+        "text_simple": null,
+        "page_number": 883,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8963,
+                "language_code": "en",
+                "content": "And when he knows anything of Our verses, he takes them in ridicule. Those will have a humiliating punishment.",
+                "is_active": true
+            },
+            {
+                "id": 8964,
+                "language_code": "ku",
+                "content": "کاتێك شتێك له ئایه‌ت و فه‌رمانه‌کانی ئێمه‌ی پێ بگات و بیزانێت، ئه‌وه ده‌یکاته هۆی گاڵته‌و گه‌مه‌جاڕ، ئا ئه‌وانه سزای خه‌جاڵه‌ت ئاوه‌رو شه‌رمه‌زاری چاوه‌ڕێیانه هه‌ر له‌م دنیادا....",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4483,
+        "ayah_number": 10,
+        "text_uthmani": "مِّن وَرَآئِهِمْ جَهَنَّمُ ۖ وَلَا يُغْنِى عَنْهُم مَّا كَسَبُوا۟ شَيْـًٔا وَلَا مَا ٱتَّخَذُوا۟ مِن دُونِ ٱللَّهِ أَوْلِيَآءَ ۖ وَلَهُمْ عَذَابٌ عَظِيمٌ",
+        "text_simple": null,
+        "page_number": 883,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8965,
+                "language_code": "en",
+                "content": "Before them<sup foot_note=197354>1<\/sup> is Hell, and what they had earned will not avail them at all nor what they had taken besides Allāh as allies. And they will have a great punishment.",
+                "is_active": true
+            },
+            {
+                "id": 8966,
+                "language_code": "ku",
+                "content": "له قیامه‌تیشدا، دۆزه‌خ به‌دوایانه‌وه‌یه و لێی قوتارنابن، هه‌رچیه‌کیان کردبوو فریایان ناکه‌وێت (له ماڵ و هێزو ده‌سه‌ڵات)، هه‌موو ئه‌وانه‌ش که‌له جیاتی خوا کردبوویان به‌پاڵپشتی خۆیان، جا سزایه‌کی زۆر گه‌وره و سامناك بۆیان ئاماده‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4484,
+        "ayah_number": 11,
+        "text_uthmani": "هَـٰذَا هُدًى ۖ وَٱلَّذِينَ كَفَرُوا۟ بِـَٔايَـٰتِ رَبِّهِمْ لَهُمْ عَذَابٌ مِّن رِّجْزٍ أَلِيمٌ",
+        "text_simple": null,
+        "page_number": 884,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8967,
+                "language_code": "en",
+                "content": "This [Qur’ān] is guidance. And those who have disbelieved in the verses of their Lord will have a painful punishment of foul nature.",
+                "is_active": true
+            },
+            {
+                "id": 8968,
+                "language_code": "ku",
+                "content": "ئه‌م قورئانه ڕێنموویی به‌خشه‌، به‌رچاو ڕوونکه‌ره‌وه‌یه‌، ڕێ نیشانده‌ره، ئه‌وانه‌ش که باوه‌ڕیان نه‌بوو به ئایه‌ت و فه‌رمووده‌کانی په‌روه‌ردگاریان سزایه‌کی زۆر سه‌خت و به ئێش چاوه‌ڕێیانه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4485,
+        "ayah_number": 12,
+        "text_uthmani": "۞ ٱللَّهُ ٱلَّذِى سَخَّرَ لَكُمُ ٱلْبَحْرَ لِتَجْرِىَ ٱلْفُلْكُ فِيهِ بِأَمْرِهِۦ وَلِتَبْتَغُوا۟ مِن فَضْلِهِۦ وَلَعَلَّكُمْ تَشْكُرُونَ",
+        "text_simple": null,
+        "page_number": 884,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8969,
+                "language_code": "en",
+                "content": "It is Allāh who subjected to you the sea so that ships may sail upon it by His command and that you may seek of His bounty; and perhaps you will be grateful.",
+                "is_active": true
+            },
+            {
+                "id": 8970,
+                "language_code": "ku",
+                "content": "خوا ئه‌و زاته‌یه که ده‌ریای بۆ ڕام کردوون تا که‌شتی به فه‌رمانی ئه‌و هاتووچۆی پیادا بکات، تا بچن به‌ده‌م به‌خشش و به‌هره‌کانیه‌وه و ده‌ستان که‌وێت (له بازرگانی و ڕاوه ماسی و ده‌رهێنانی گه‌وهه‌ر و مرواری و... هتد) بۆ ئه‌وه‌ی سوپاسگوزاری خوا بکه‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4486,
+        "ayah_number": 13,
+        "text_uthmani": "وَسَخَّرَ لَكُم مَّا فِى ٱلسَّمَـٰوَٰتِ وَمَا فِى ٱلْأَرْضِ جَمِيعًا مِّنْهُ ۚ إِنَّ فِى ذَٰلِكَ لَـَٔايَـٰتٍ لِّقَوْمٍ يَتَفَكَّرُونَ",
+        "text_simple": null,
+        "page_number": 884,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8971,
+                "language_code": "en",
+                "content": "And He has subjected to you whatever is in the heavens and whatever is on the earth - all from Him. Indeed in that are signs for a people who give thought.",
+                "is_active": true
+            },
+            {
+                "id": 8972,
+                "language_code": "ku",
+                "content": "هه‌رچی له ئاسمانه‌کان و زه‌ویدا هه‌یه بۆ ئێوه‌ی ڕام هێناوه‌، بۆ خزمه‌تگوزاری ئێوه فه‌راهه‌می هێناوه‌، هه‌موویشی تێکڕا به‌خششن له‌لایه‌ن ئه‌و زاته‌وه‌، به‌ڕاستی ئا له‌و به‌خشش و دیاردانه‌دا به‌ڵگه و نیشانه‌ی زۆرهه‌ن بۆ که‌سانێك که بیربکه‌نه‌وه و تێفکرن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4487,
+        "ayah_number": 14,
+        "text_uthmani": "قُل لِّلَّذِينَ ءَامَنُوا۟ يَغْفِرُوا۟ لِلَّذِينَ لَا يَرْجُونَ أَيَّامَ ٱللَّهِ لِيَجْزِىَ قَوْمًۢا بِمَا كَانُوا۟ يَكْسِبُونَ",
+        "text_simple": null,
+        "page_number": 884,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8973,
+                "language_code": "en",
+                "content": "Say, [O Muḥammad], to those who have believed that they [should] forgive those who expect not the days of Allāh [i.e., of His retribution] so that He may recompense a people<sup foot_note=197355>1<\/sup> for what they used to earn.",
+                "is_active": true
+            },
+            {
+                "id": 8974,
+                "language_code": "ku",
+                "content": "ئه‌ی پێغه‌مبه‌ر صلی الله علیه وسلم بڵێ به‌وانه‌ی که ئیمانیان هێناوه‌: چاوپۆشی بکه‌ن له‌وانه‌ی به‌ته‌مای ڕۆژه سه‌خته‌کان نین که خوا پێشی ده‌هێنێت بۆ لێپرسینه‌وه‌یان، تا پاداشتی قه‌ومی نا‌له‌بار بداته‌وه به‌گوێره‌ی ئه‌و کاروکرده‌وه‌یه‌ی که ئه‌نجامی ده‌ده‌ن...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4488,
+        "ayah_number": 15,
+        "text_uthmani": "مَنْ عَمِلَ صَـٰلِحًا فَلِنَفْسِهِۦ ۖ وَمَنْ أَسَآءَ فَعَلَيْهَا ۖ ثُمَّ إِلَىٰ رَبِّكُمْ تُرْجَعُونَ",
+        "text_simple": null,
+        "page_number": 884,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8975,
+                "language_code": "en",
+                "content": "Whoever does a good deed - it is for himself; and whoever does evil - it is against it [i.e., the self or soul]. Then to your Lord you will be returned.",
+                "is_active": true
+            },
+            {
+                "id": 8976,
+                "language_code": "ku",
+                "content": "هه‌ر که‌سێك کاروکرده‌وه‌ی چاکی ئه‌نجام دابێت ئه‌وه سوود و قازانجه‌که‌ی بۆ خۆیه‌تی، هه‌روه‌ها ئه‌وه‌ش کاروکرده‌وه‌ی خراپی کردبێت ئه‌ویش له‌سه‌ر خۆی ده‌که‌وێت، له‌وه‌ودواش بۆ لای په‌روه‌ردگارتان ده‌گه‌ڕێنه‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4489,
+        "ayah_number": 16,
+        "text_uthmani": "وَلَقَدْ ءَاتَيْنَا بَنِىٓ إِسْرَٰٓءِيلَ ٱلْكِتَـٰبَ وَٱلْحُكْمَ وَٱلنُّبُوَّةَ وَرَزَقْنَـٰهُم مِّنَ ٱلطَّيِّبَـٰتِ وَفَضَّلْنَـٰهُمْ عَلَى ٱلْعَـٰلَمِينَ",
+        "text_simple": null,
+        "page_number": 885,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8977,
+                "language_code": "en",
+                "content": "And We did certainly give the Children of Israel the Scripture and judgement<sup foot_note=197356>1<\/sup> and prophethood, and We provided them with good things and preferred them over the worlds.",
+                "is_active": true
+            },
+            {
+                "id": 8978,
+                "language_code": "ku",
+                "content": "سوێند به خوا بێگومان ئێمه ته‌وراتمان به‌خشی به نه‌وه‌ی ئیسرائیل هاوڕێ له‌گه‌ڵ ده‌سه‌ڵاتداری بۆ چاره‌سه‌رکردنی کێشه‌ی خه‌ڵکی، له‌گه‌ڵ پێغه‌مبه‌رایه‌تیشدا له چه‌نده‌ها ڕزق و ڕۆزی چاك و پاکیش به‌هه‌روه‌رمان کردن، زیاده ڕێزیشمان دان به‌سه‌ر هه‌موو خه‌ڵکی سه‌رده‌می خۆیاندا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4490,
+        "ayah_number": 17,
+        "text_uthmani": "وَءَاتَيْنَـٰهُم بَيِّنَـٰتٍ مِّنَ ٱلْأَمْرِ ۖ فَمَا ٱخْتَلَفُوٓا۟ إِلَّا مِنۢ بَعْدِ مَا جَآءَهُمُ ٱلْعِلْمُ بَغْيًۢا بَيْنَهُمْ ۚ إِنَّ رَبَّكَ يَقْضِى بَيْنَهُمْ يَوْمَ ٱلْقِيَـٰمَةِ فِيمَا كَانُوا۟ فِيهِ يَخْتَلِفُونَ",
+        "text_simple": null,
+        "page_number": 885,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8979,
+                "language_code": "en",
+                "content": "And We gave them clear proofs of the matter [of religion]. And they did not differ except after knowledge had come to them - out of jealous animosity between themselves. Indeed, your Lord will judge between them on the Day of Resurrection concerning that over which they used to differ.",
+                "is_active": true
+            },
+            {
+                "id": 8980,
+                "language_code": "ku",
+                "content": "هه‌روه‌ها ئێمه چاره‌سه‌ری هه‌موو کارێکی گرنگمان بۆ ڕوونکردنه‌وه و پێمان به‌خشین (ده‌رباره‌ی عه‌قیده‌و شه‌ریعه‌ت و حه‌ڵاڵ و حه‌رام)، جا ناکۆکی و دووبه‌ره‌کیان له نێواندا به‌رپا نه‌بوو مه‌گه‌ر دوای ئه‌وه‌ی که هه‌موو شت ڕوون بۆوه و زانستیان بۆ هات، ئه‌وه‌ش به‌هۆی سته‌م و ناکۆکی و حه‌سوودی نێوان خۆیانه‌وه‌، به‌ڕاستی په‌روه‌ردگاری تۆ ئه‌ی محمد صلی الله علیه وسلم له ڕۆژی قیامه‌تدا داوه‌ری ده‌کات له نێوانیاندا ده‌رباره‌ی ئه‌و شتانه‌ی که ناکۆکیان له‌سه‌ری هه‌یه و ڕای جیاوازیان هه‌یه ده‌رباره‌ی.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4491,
+        "ayah_number": 18,
+        "text_uthmani": "ثُمَّ جَعَلْنَـٰكَ عَلَىٰ شَرِيعَةٍ مِّنَ ٱلْأَمْرِ فَٱتَّبِعْهَا وَلَا تَتَّبِعْ أَهْوَآءَ ٱلَّذِينَ لَا يَعْلَمُونَ",
+        "text_simple": null,
+        "page_number": 885,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8981,
+                "language_code": "en",
+                "content": "Then We put you, [O Muḥammad], on an ordained way concerning the matter [of religion]; so follow it and do not follow the inclinations of those who do not know.",
+                "is_active": true
+            },
+            {
+                "id": 8982,
+                "language_code": "ku",
+                "content": "له‌وه‌ودوا ئێمه تۆمان ئه‌ی محمد صلی الله علیه وسلم خستۆته سه‌ر به‌رنامه‌یه‌کی ڕاست و ڕه‌وان له هه‌موو کارو بارێکی ئه‌م ئاینه‌دا، که‌واته شوێنی بکه‌وه و لێی لامه‌ده‌، نه‌که‌ی شوێنی هه‌واو ئاره‌زووی ئه‌وان بکه‌ویت که نازانن و نافامن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4492,
+        "ayah_number": 19,
+        "text_uthmani": "إِنَّهُمْ لَن يُغْنُوا۟ عَنكَ مِنَ ٱللَّهِ شَيْـًٔا ۚ وَإِنَّ ٱلظَّـٰلِمِينَ بَعْضُهُمْ أَوْلِيَآءُ بَعْضٍ ۖ وَٱللَّهُ وَلِىُّ ٱلْمُتَّقِينَ",
+        "text_simple": null,
+        "page_number": 885,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8983,
+                "language_code": "en",
+                "content": "Indeed, they will never avail you against Allāh at all. And indeed, the wrongdoers are allies of one another; but Allāh is the protector of the righteous.",
+                "is_active": true
+            },
+            {
+                "id": 8984,
+                "language_code": "ku",
+                "content": "بێگومان ئه‌وانه هیچ کات فریات ناکه‌ون و له‌ده‌ستی خوا ڕزگارت ناکه‌ن (ئه‌گه‌ر خوا له‌خۆت بڕه‌نجێنیت و نافه‌رمانی بکه‌یت)، به‌ڕاستی سته‌م کاران یار و یاوه‌ری هه‌ندێکیانن، خوایش پشت و په‌نای خۆشه‌ویستی دیندارو چاکانه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4493,
+        "ayah_number": 20,
+        "text_uthmani": "هَـٰذَا بَصَـٰٓئِرُ لِلنَّاسِ وَهُدًى وَرَحْمَةٌ لِّقَوْمٍ يُوقِنُونَ",
+        "text_simple": null,
+        "page_number": 885,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8985,
+                "language_code": "en",
+                "content": "This [Qur’ān] is enlightenment for mankind and guidance and mercy for a people who are certain [in faith].",
+                "is_active": true
+            },
+            {
+                "id": 8986,
+                "language_code": "ku",
+                "content": "ئه‌م قورئان و به‌رنامه‌یه چه‌نده‌ها چاو ڕۆشنیه بۆ خه‌ڵکی و هیدایه‌ت و ڕێنمونی و ڕه‌حمه‌ته بۆ قه‌وم و که‌سانێك که باوه‌ڕ بهێنن و پێی دڵنیاو دڵئارام ببن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4494,
+        "ayah_number": 21,
+        "text_uthmani": "أَمْ حَسِبَ ٱلَّذِينَ ٱجْتَرَحُوا۟ ٱلسَّيِّـَٔاتِ أَن نَّجْعَلَهُمْ كَٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ سَوَآءً مَّحْيَاهُمْ وَمَمَاتُهُمْ ۚ سَآءَ مَا يَحْكُمُونَ",
+        "text_simple": null,
+        "page_number": 886,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8987,
+                "language_code": "en",
+                "content": "Or do those who commit evils think We will make them like those who have believed and done righteous deeds - [make them] equal in their life and their death?<sup foot_note=197357>1<\/sup> Evil is that which they judge [i.e., assume].",
+                "is_active": true
+            },
+            {
+                "id": 8988,
+                "language_code": "ku",
+                "content": "ئایا ئه‌وانه‌ی که گوناهو تاوانه‌کانیان ئه‌نجام داوه‌، وایان زانیووه هه‌ر وه‌ك ئه‌وانه حسابیان بۆ ده‌که‌ین که ئیمانیان هێناوه و کاروکرده‌وه‌و چاکه‌کانیان ئه‌نجام داوه‌؟! ژیانی دنیاو مردن و دوای مردنیان وه‌ك یه‌ك ده‌بێت؟! ئای که بڕیاری خراپ بڕیار ده‌ده‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4495,
+        "ayah_number": 22,
+        "text_uthmani": "وَخَلَقَ ٱللَّهُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضَ بِٱلْحَقِّ وَلِتُجْزَىٰ كُلُّ نَفْسٍۭ بِمَا كَسَبَتْ وَهُمْ لَا يُظْلَمُونَ",
+        "text_simple": null,
+        "page_number": 886,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8989,
+                "language_code": "en",
+                "content": "And Allāh created the heavens and earth in truth and so that every soul may be recompensed for what it has earned, and they will not be wronged.",
+                "is_active": true
+            },
+            {
+                "id": 8990,
+                "language_code": "ku",
+                "content": "خوا ئاسمانه‌کان و زه‌وی له‌سه‌ر بنه‌مای حه‌ق و ڕاستی داناوه‌، بۆ ئه‌وه‌ی سه‌رئه‌نجام پاداشتی هه‌موو که‌سێك به‌گوێره‌ی کاروکرده‌وه‌کانی بداته‌وه و هیچ جۆره سته‌مێکیشیان لێ ناکرێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4496,
+        "ayah_number": 23,
+        "text_uthmani": "أَفَرَءَيْتَ مَنِ ٱتَّخَذَ إِلَـٰهَهُۥ هَوَىٰهُ وَأَضَلَّهُ ٱللَّهُ عَلَىٰ عِلْمٍ وَخَتَمَ عَلَىٰ سَمْعِهِۦ وَقَلْبِهِۦ وَجَعَلَ عَلَىٰ بَصَرِهِۦ غِشَـٰوَةً فَمَن يَهْدِيهِ مِنۢ بَعْدِ ٱللَّهِ ۚ أَفَلَا تَذَكَّرُونَ",
+        "text_simple": null,
+        "page_number": 886,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8991,
+                "language_code": "en",
+                "content": "Have you seen he who has taken as his god his [own] desire, and Allāh has sent him astray due to knowledge<sup foot_note=197358>1<\/sup> and has set a seal upon his hearing and his heart and put over his vision a veil? So who will guide him after Allāh? Then will you not be reminded?",
+                "is_active": true
+            },
+            {
+                "id": 8992,
+                "language_code": "ku",
+                "content": "هه‌واڵم بده‌رێ ئایا ئه‌وکه‌سه‌ی که ویست و ئاره‌زووی خۆی کردۆته خوای خۆی؟! به‌هۆی ئه‌وه‌وه خوایش گومڕای کردووه که زانیوێتی شایه‌نی ئه‌وه‌یه‌، له ئه‌نجامی به‌د هه‌ڵوێستی خۆیدا و مۆری ناوه به ده‌زگای بیستن و دڵ و ده‌روونیدا و په‌رده‌شی هێناوه به‌سه‌ر چاوو ده‌زگای بینینیدا، جا ئیتر کێ هه‌یه جگه له خوا هیدایه‌ت و ڕێنمووی بکات، ئایا بیر ناکانه‌وه و ئامۆژگاری وه‌رناگرن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4497,
+        "ayah_number": 24,
+        "text_uthmani": "وَقَالُوا۟ مَا هِىَ إِلَّا حَيَاتُنَا ٱلدُّنْيَا نَمُوتُ وَنَحْيَا وَمَا يُهْلِكُنَآ إِلَّا ٱلدَّهْرُ ۚ وَمَا لَهُم بِذَٰلِكَ مِنْ عِلْمٍ ۖ إِنْ هُمْ إِلَّا يَظُنُّونَ",
+        "text_simple": null,
+        "page_number": 886,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8993,
+                "language_code": "en",
+                "content": "And they say, \"There is not but our worldly life; we die and live,<sup foot_note=197359>1<\/sup> and nothing destroys us except time.\" And they have of that no knowledge; they are only assuming.",
+                "is_active": true
+            },
+            {
+                "id": 8994,
+                "language_code": "ku",
+                "content": "خوانه‌ناسان ده‌یانوت: ژیان ته‌نها ئه‌م ژیانی دنیایه‌یه‌، ده‌مرین و ده‌ژین به نۆره‌، هه‌ر ڕۆژگارو زه‌مانه کایگه‌رن تیاماندا و ده‌مان مرێنن و هیچی تر! جا ئه‌وانه وه‌نه‌بێت له‌سه‌ر بنچینه‌ی هیچ جۆره زانستی و زانیاریه‌ك ئه‌وه بڵێن به‌ڵکو ته‌نها پشت به‌گومان و دوودڵی ده‌به‌ستن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4498,
+        "ayah_number": 25,
+        "text_uthmani": "وَإِذَا تُتْلَىٰ عَلَيْهِمْ ءَايَـٰتُنَا بَيِّنَـٰتٍ مَّا كَانَ حُجَّتَهُمْ إِلَّآ أَن قَالُوا۟ ٱئْتُوا۟ بِـَٔابَآئِنَآ إِن كُنتُمْ صَـٰدِقِينَ",
+        "text_simple": null,
+        "page_number": 886,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8995,
+                "language_code": "en",
+                "content": "And when Our verses are recited to them as clear evidences, their argument is only that they say, \"Bring [back] our forefathers, if you should be truthful.\"",
+                "is_active": true
+            },
+            {
+                "id": 8996,
+                "language_code": "ku",
+                "content": "کاتێکیش ئایه‌ته‌کانی قورئانی ئێمه‌یان به‌سه‌ردا ده‌خوێنرێته‌وه (که به‌ڵگه‌ی زۆر به‌هێز و ڕوونی تێدایه له‌سه‌ر زیندووبوونه‌وه‌، هه‌موو به‌ڵگه‌یه‌کیان هاتۆته سه‌ر ئه‌وه‌ی) که ده‌ڵێن: ده‌باشه باوو باپیرانی مردوومان بۆ زیندوو بکه‌نه‌وه ئه‌گه‌ر ڕاست ده‌که‌ن؟! (شایه‌نی باسه که حه‌زره‌تی عیسا ئه‌و کاره‌ی بۆ خه‌ڵکی ئه‌نجام دا به ویستی خوا، که‌چی وتراوه‌: ئه‌مه سحروو جادووه‌)؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4499,
+        "ayah_number": 26,
+        "text_uthmani": "قُلِ ٱللَّهُ يُحْيِيكُمْ ثُمَّ يُمِيتُكُمْ ثُمَّ يَجْمَعُكُمْ إِلَىٰ يَوْمِ ٱلْقِيَـٰمَةِ لَا رَيْبَ فِيهِ وَلَـٰكِنَّ أَكْثَرَ ٱلنَّاسِ لَا يَعْلَمُونَ",
+        "text_simple": null,
+        "page_number": 887,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8997,
+                "language_code": "en",
+                "content": "Say, \"Allāh causes you to live, then causes you to die; then He will assemble you for the Day of Resurrection, about which there is no doubt, but most of the people do not know.\"",
+                "is_active": true
+            },
+            {
+                "id": 8998,
+                "language_code": "ku",
+                "content": "ئه‌ی پێغه‌مبه‌ر صلی الله علیه وسلم پێیان بڵێ: (ئه‌و شتانه به‌ده‌ست ئێمه نیه‌) ئه‌وه هه‌ر خوایه ژیانتان پێ ده‌به‌خشێت و پاشان ده‌تان مرێنێت و دوای ئه‌وه کۆتان ده‌کاته‌وه له ڕۆژی قیامه‌تدا که هیچ گومانی تیادانیه‌، به‌ڵام زۆربه‌ی خه‌ڵکی ئه‌مه نازانن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4500,
+        "ayah_number": 27,
+        "text_uthmani": "وَلِلَّهِ مُلْكُ ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۚ وَيَوْمَ تَقُومُ ٱلسَّاعَةُ يَوْمَئِذٍ يَخْسَرُ ٱلْمُبْطِلُونَ",
+        "text_simple": null,
+        "page_number": 887,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 8999,
+                "language_code": "en",
+                "content": "And to Allāh belongs the dominion of the heavens and the earth. And the Day the Hour appears - that Day the falsifiers will lose.",
+                "is_active": true
+            },
+            {
+                "id": 9000,
+                "language_code": "ku",
+                "content": "هه‌ر خوا خاوه‌نی ئاسمانه‌کان و زه‌ویه‌، ئه‌و ڕۆژه‌ی که قیامه‌ت پێش دێت، هه‌ر ئه‌و ڕۆژه هه‌رچی به‌تاڵپه‌رست و ناحه‌ق په‌رستانه له زه‌ره‌رمه‌ندیه‌کی زۆر گه‌وره‌دا ده‌بن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4501,
+        "ayah_number": 28,
+        "text_uthmani": "وَتَرَىٰ كُلَّ أُمَّةٍ جَاثِيَةً ۚ كُلُّ أُمَّةٍ تُدْعَىٰٓ إِلَىٰ كِتَـٰبِهَا ٱلْيَوْمَ تُجْزَوْنَ مَا كُنتُمْ تَعْمَلُونَ",
+        "text_simple": null,
+        "page_number": 887,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9001,
+                "language_code": "en",
+                "content": "And you will see every nation kneeling [from fear]. Every nation will be called to its record [and told], \"Today you will be recompensed for what you used to do.",
+                "is_active": true
+            },
+            {
+                "id": 9002,
+                "language_code": "ku",
+                "content": "ئه‌و ڕۆژه ده‌بینیت هه‌موو خه‌ڵکی به چۆكدا هاتوون و له‌سه‌ر ئه‌ژنۆو په‌نجه‌کانیان ئاماده‌ن (هه‌ر که‌س چاوه‌ڕێ بانگ کردنه بۆ لێپرسینه‌وه‌، ئاماده‌یه ده‌ست به‌جێ ڕاپه‌ڕێت و ڕا بکات بۆ به‌رده‌م دادگای پڕ له دادی په‌روه‌ردگار) هه‌ر قه‌وم و هۆزێك بانگ ده‌کرێت بۆ لای ئه‌و کتێبه‌ی که بۆی ڕه‌وانه کراوه‌، یاخود بانگ ده‌کرێت بۆ لای نامه‌ی کرده‌وه‌کانی، ئه‌وسا پێیان ده‌وترێت: ئه‌مڕۆ ئیتر پاداشتی ئه‌و کاروکرده‌وانه‌ی که ده‌تان کرد ده‌درێته‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4502,
+        "ayah_number": 29,
+        "text_uthmani": "هَـٰذَا كِتَـٰبُنَا يَنطِقُ عَلَيْكُم بِٱلْحَقِّ ۚ إِنَّا كُنَّا نَسْتَنسِخُ مَا كُنتُمْ تَعْمَلُونَ",
+        "text_simple": null,
+        "page_number": 887,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9003,
+                "language_code": "en",
+                "content": "This, Our record, speaks about you in truth. Indeed, We were having transcribed<sup foot_note=197360>1<\/sup> whatever you used to do.\"",
+                "is_active": true
+            },
+            {
+                "id": 9004,
+                "language_code": "ku",
+                "content": "ئه‌مه ئێتر نامه‌ی کرده‌وه‌کانتانه که تۆمارمان کردووه له‌سه‌رتان، خۆی گوایه قسه ده‌کات و حه‌ق وێژه (دیاره کرده‌وه‌کانمان تۆمار کراوه له‌سه‌ر ده‌زگای زۆر پێشکه‌وتوو) چونکه به‌ڕاستی ئێمه کاتی خۆی ئه‌وه‌ی ئێوه ده‌تان کرد له‌به‌رمان ده‌گرته‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4503,
+        "ayah_number": 30,
+        "text_uthmani": "فَأَمَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ فَيُدْخِلُهُمْ رَبُّهُمْ فِى رَحْمَتِهِۦ ۚ ذَٰلِكَ هُوَ ٱلْفَوْزُ ٱلْمُبِينُ",
+        "text_simple": null,
+        "page_number": 887,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9005,
+                "language_code": "en",
+                "content": "So as for those who believed and did righteous deeds, their Lord will admit them into His mercy. That is what is the clear attainment.",
+                "is_active": true
+            },
+            {
+                "id": 9006,
+                "language_code": "ku",
+                "content": "جا ئه‌و کاته ئه‌وانه‌ی باوه‌ڕیان هێناوه وه کاروکرده‌وه چاکه‌کانیان ئه‌نجام داوه‌، ئه‌وه په‌روه‌ردگاریان ده‌یانخاته ژێر سایه‌ی ڕه‌حمه‌ت و میهره‌بانی خۆیه‌وه‌، ته‌نها ئه‌وه سه‌رکه‌وتن و سه‌رفرازیه‌کی ئاشکرایه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4504,
+        "ayah_number": 31,
+        "text_uthmani": "وَأَمَّا ٱلَّذِينَ كَفَرُوٓا۟ أَفَلَمْ تَكُنْ ءَايَـٰتِى تُتْلَىٰ عَلَيْكُمْ فَٱسْتَكْبَرْتُمْ وَكُنتُمْ قَوْمًا مُّجْرِمِينَ",
+        "text_simple": null,
+        "page_number": 888,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9007,
+                "language_code": "en",
+                "content": "But as for those who disbelieved, [it will be said], \"Were not Our verses recited to you, but you were arrogant and became a criminal people?",
+                "is_active": true
+            },
+            {
+                "id": 9008,
+                "language_code": "ku",
+                "content": "به‌ڵام ئه‌وانه‌ی که بێ بڕواو کافر بوون پێیان ده‌وترێت: باشه‌، ئێوه ئایه‌ته‌کانی منتان به‌سه‌ردا ده‌خوێنرایه‌وه‌؟! که‌چی خۆتان به‌گه‌وره‌و زل ده‌زانی، به‌ڕاستی ئێوه هۆزێکی تاوانبارو تاوانکار بوون.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4505,
+        "ayah_number": 32,
+        "text_uthmani": "وَإِذَا قِيلَ إِنَّ وَعْدَ ٱللَّهِ حَقٌّ وَٱلسَّاعَةُ لَا رَيْبَ فِيهَا قُلْتُم مَّا نَدْرِى مَا ٱلسَّاعَةُ إِن نَّظُنُّ إِلَّا ظَنًّا وَمَا نَحْنُ بِمُسْتَيْقِنِينَ",
+        "text_simple": null,
+        "page_number": 888,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9009,
+                "language_code": "en",
+                "content": "And when it was said, 'Indeed, the promise of Allāh is truth and the Hour [is coming] - no doubt about it,' you said, 'We know not what is the Hour. We assume only assumption, and we are not convinced.'\"",
+                "is_active": true
+            },
+            {
+                "id": 9010,
+                "language_code": "ku",
+                "content": "کاتیکیش بوترایه‌: بێگومان به‌ڵێنی خوا ڕاسته و ڕۆژی قیامه‌ت هه‌ر دێت و گومانی تیادا نیه‌، ئێوه له وه‌ڵامدا ده‌تانوت: ئێمه هه‌ر نازانین ڕۆژی قیامه‌ت چیه‌؟! ئێمه هه‌ر گومان ده‌به‌ین و دڵنیا نین!!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4506,
+        "ayah_number": 33,
+        "text_uthmani": "وَبَدَا لَهُمْ سَيِّـَٔاتُ مَا عَمِلُوا۟ وَحَاقَ بِهِم مَّا كَانُوا۟ بِهِۦ يَسْتَهْزِءُونَ",
+        "text_simple": null,
+        "page_number": 888,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9011,
+                "language_code": "en",
+                "content": "And the evil consequences of what they did will appear to them, and they will be enveloped by what they used to ridicule.",
+                "is_active": true
+            },
+            {
+                "id": 9012,
+                "language_code": "ku",
+                "content": "ئه‌و کاته له قیامه‌تدا ئه‌و کاروکرده‌وه ناشرینیانه‌ی که کردوویانه بۆیان ده‌رده‌که‌وێت و ئاشکرا ده‌بێت، ئه‌وه‌ش که گاڵته‌یان پێده‌کرد و بڕوایان پێی نه‌بوو (که سزاو ئازاری دۆزه‌خه‌) له هه‌موو لایه‌که‌وه ده‌وریان ده‌دات و ڕێگه‌ی ڕزگارییان لێ ده‌بڕێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4507,
+        "ayah_number": 34,
+        "text_uthmani": "وَقِيلَ ٱلْيَوْمَ نَنسَىٰكُمْ كَمَا نَسِيتُمْ لِقَآءَ يَوْمِكُمْ هَـٰذَا وَمَأْوَىٰكُمُ ٱلنَّارُ وَمَا لَكُم مِّن نَّـٰصِرِينَ",
+        "text_simple": null,
+        "page_number": 888,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9013,
+                "language_code": "en",
+                "content": "And it will be said, \"Today We will forget you as you forgot the meeting of this Day of yours, and your refuge is the Fire, and for you there are no helpers.",
+                "is_active": true
+            },
+            {
+                "id": 9014,
+                "language_code": "ku",
+                "content": "پێیان ده‌وترێت: له‌مڕۆ به‌دواوه ئیتر ئێوه فه‌رامۆش ده‌که‌ین و پشت گوێتان ده‌خه‌ین، هه‌روه‌ك چۆن ئێوه بڕوا بوونتان به‌م ڕۆژه فه‌رامۆش کرد، شوێنی نیشته‌جێ و حه‌وانه‌وه‌شتان ناو ئاگری دۆزه‌خه‌، که‌سیشتان ده‌ست ناکه‌وێت پشتیوانی و پشتگیریتان لێ بکات.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4508,
+        "ayah_number": 35,
+        "text_uthmani": "ذَٰلِكُم بِأَنَّكُمُ ٱتَّخَذْتُمْ ءَايَـٰتِ ٱللَّهِ هُزُوًا وَغَرَّتْكُمُ ٱلْحَيَوٰةُ ٱلدُّنْيَا ۚ فَٱلْيَوْمَ لَا يُخْرَجُونَ مِنْهَا وَلَا هُمْ يُسْتَعْتَبُونَ",
+        "text_simple": null,
+        "page_number": 888,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9015,
+                "language_code": "en",
+                "content": "That is because you took the verses of Allāh in ridicule, and worldly life deluded you.\" So that Day they will not be removed from it, nor will they be asked to appease [Allāh].",
+                "is_active": true
+            },
+            {
+                "id": 9016,
+                "language_code": "ku",
+                "content": "ئه‌م سه‌رئه‌نجامه‌ش بۆیه یه‌خه‌ی پێگرتن چونکه به‌ڕاستی کاتی خۆی گاڵته‌تان به ئایه‌ت و فه‌رمانه‌کانی خوا ده‌هات، ژیانی دنیاش غه‌ڕاو گومڕای کردبوون، ئه‌مڕۆ ئیتر ڕزگاربوونیان ئه‌سته‌مه له‌و ئاگری دۆزه‌خه لێی ده‌رناهێنرێن، داوای ئه‌وه‌شیان لێناکرێت خوا له‌خۆیان ڕازی بکه‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4509,
+        "ayah_number": 36,
+        "text_uthmani": "فَلِلَّهِ ٱلْحَمْدُ رَبِّ ٱلسَّمَـٰوَٰتِ وَرَبِّ ٱلْأَرْضِ رَبِّ ٱلْعَـٰلَمِينَ",
+        "text_simple": null,
+        "page_number": 889,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9017,
+                "language_code": "en",
+                "content": "Then, to Allāh belongs [all] praise - Lord of the heavens and Lord of the earth, Lord of the worlds.",
+                "is_active": true
+            },
+            {
+                "id": 9018,
+                "language_code": "ku",
+                "content": "جا هه‌ر له بۆ خوایه سوپاس و ستایش، که په‌روه‌ردگاری ئاسمانه‌کانه‌، په‌روه‌ردگاری زه‌ویشه‌، په‌روه‌ردگاری هه‌موو جیهانیان.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 4510,
+        "ayah_number": 37,
+        "text_uthmani": "وَلَهُ ٱلْكِبْرِيَآءُ فِى ٱلسَّمَـٰوَٰتِ وَٱلْأَرْضِ ۖ وَهُوَ ٱلْعَزِيزُ ٱلْحَكِيمُ",
+        "text_simple": null,
+        "page_number": 889,
+        "juz_number": 25,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 9019,
+                "language_code": "en",
+                "content": "And to Him belongs [all] grandeur within the heavens and the earth, and He is the Exalted in Might, the Wise.",
+                "is_active": true
+            },
+            {
+                "id": 9020,
+                "language_code": "ku",
+                "content": "هه‌رچی گه‌وره‌یی و شکۆمه‌ندی هه‌یه له ئاسمانه‌کان و زه‌ویدا هه‌ر شایسته‌ی ئه‌وه‌، به‌ڕاستی ئه‌و زاته باڵا ده‌ست و دانایه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

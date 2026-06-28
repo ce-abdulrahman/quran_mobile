@@ -1,0 +1,982 @@
+[
+    {
+        "id": 1,
+        "icon": "📿",
+        "sort_order": 1,
+        "translations": {
+            "ar": "إنجازات التسبيح",
+            "en": "Tasbih Milestones",
+            "ku": "مایلستۆنی تەسبیح"
+        },
+        "achievements": [
+            {
+                "id": 1,
+                "key": "first_tasbih",
+                "icon": "🌱",
+                "condition_type": "TOTAL_DHIKR",
+                "condition_value": 1,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 10,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 1,
+                "translations": {
+                    "ar": {
+                        "name": "أول تسبيحة",
+                        "description": "أكملت أول ذكر لك"
+                    },
+                    "en": {
+                        "name": "First Tasbih",
+                        "description": "You completed your very first dhikr"
+                    },
+                    "ku": {
+                        "name": "یەکەم تەسبیح",
+                        "description": "یەکەم دانەی تەسبیحت کرد"
+                    }
+                }
+            },
+            {
+                "id": 2,
+                "key": "beginner_worshipper",
+                "icon": "🌿",
+                "condition_type": "TOTAL_DHIKR",
+                "condition_value": 100,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 25,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 2,
+                "translations": {
+                    "ar": {
+                        "name": "مبتدئ العبادة",
+                        "description": "وصلت إلى ١٠٠ تسبيحة"
+                    },
+                    "en": {
+                        "name": "Beginner Worshipper",
+                        "description": "Reached 100 total dhikr"
+                    },
+                    "ku": {
+                        "name": "سەرەتاوانی ئیبادەت",
+                        "description": "گەیشتیت بە ١٠٠ تەسبیح"
+                    }
+                }
+            },
+            {
+                "id": 3,
+                "key": "dedicated_worshipper",
+                "icon": "🌳",
+                "condition_type": "TOTAL_DHIKR",
+                "condition_value": 1000,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 75,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 3,
+                "translations": {
+                    "ar": {
+                        "name": "المتعبد المخلص",
+                        "description": "وصلت إلى ١٠٠٠ تسبيحة"
+                    },
+                    "en": {
+                        "name": "Dedicated Worshipper",
+                        "description": "Reached 1,000 total dhikr"
+                    },
+                    "ku": {
+                        "name": "پابەندی ئیبادەت",
+                        "description": "گەیشتیت بە ١٠٠٠ تەسبیح"
+                    }
+                }
+            },
+            {
+                "id": 4,
+                "key": "advanced_worshipper",
+                "icon": "⭐",
+                "condition_type": "TOTAL_DHIKR",
+                "condition_value": 10000,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 200,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 4,
+                "translations": {
+                    "ar": {
+                        "name": "المتعبد المتقدم",
+                        "description": "وصلت إلى ١٠٠٠٠ تسبيحة"
+                    },
+                    "en": {
+                        "name": "Advanced Worshipper",
+                        "description": "Reached 10,000 total dhikr"
+                    },
+                    "ku": {
+                        "name": "پێشکەوتووی ئیبادەت",
+                        "description": "گەیشتیت بە ١٠٠٠٠ تەسبیح"
+                    }
+                }
+            },
+            {
+                "id": 5,
+                "key": "master_of_dhikr",
+                "icon": "👑",
+                "condition_type": "TOTAL_DHIKR",
+                "condition_value": 100000,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 1000,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 5,
+                "translations": {
+                    "ar": {
+                        "name": "سيد الذكر",
+                        "description": "وصلت إلى ١٠٠٠٠٠ تسبيحة"
+                    },
+                    "en": {
+                        "name": "Master of Dhikr",
+                        "description": "Reached 100,000 total dhikr"
+                    },
+                    "ku": {
+                        "name": "مامۆستای ذکر",
+                        "description": "گەیشتیت بە ١٠٠٠٠٠ تەسبیح"
+                    }
+                }
+            },
+            {
+                "id": 6,
+                "key": "dhikr_legend",
+                "icon": "🌌",
+                "condition_type": "TOTAL_DHIKR",
+                "condition_value": 1000000,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 5000,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 6,
+                "translations": {
+                    "ar": {
+                        "name": "أسطورة الذكر",
+                        "description": "وصلت إلى مليون تسبيحة"
+                    },
+                    "en": {
+                        "name": "Dhikr Legend",
+                        "description": "Reached 1,000,000 total dhikr"
+                    },
+                    "ku": {
+                        "name": "ئەفسانەی ذکر",
+                        "description": "ملیۆن تەسبیح کردووە"
+                    }
+                }
+            },
+            {
+                "id": 28,
+                "key": "fingerprint_100_counts",
+                "icon": "📈",
+                "condition_type": "FINGERPRINT_TOTAL_COUNTS",
+                "condition_value": 100,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 30,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 50,
+                "translations": {
+                    "ar": {
+                        "name": "١٠٠ تسبيحة بالبصمة",
+                        "description": "أكملت ١٠٠ تسبيحة إجمالاً في وضع البصمة."
+                    },
+                    "en": {
+                        "name": "100 Fingerprint Counts",
+                        "description": "Completed 100 total counts in Fingerprint Mode."
+                    },
+                    "ku": {
+                        "name": "١٠٠ تەسبیحی پەنجەمۆر",
+                        "description": "١٠٠ تەسبیحت بە مۆدی پەنجەمۆر ئەنجامدا."
+                    }
+                }
+            },
+            {
+                "id": 29,
+                "key": "fingerprint_1000_counts",
+                "icon": "🚀",
+                "condition_type": "FINGERPRINT_TOTAL_COUNTS",
+                "condition_value": 1000,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 100,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 50,
+                "translations": {
+                    "ar": {
+                        "name": "١٠٠٠ تسبيحة بالبصمة",
+                        "description": "أكملت ١٠٠٠ تسبيحة إجمالاً في وضع البصمة."
+                    },
+                    "en": {
+                        "name": "1000 Fingerprint Counts",
+                        "description": "Completed 1,000 total counts in Fingerprint Mode."
+                    },
+                    "ku": {
+                        "name": "١٠٠٠ تەسبیحی پەنجەمۆر",
+                        "description": "١٠٠٠ تەسبیحت بە مۆدی پەنجەمۆر ئەنجامدا."
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "icon": "🔥",
+        "sort_order": 2,
+        "translations": {
+            "ar": "إنجازات السلاسل",
+            "en": "Streak Achievements",
+            "ku": "دەستکەوتەکانی ستریک"
+        },
+        "achievements": [
+            {
+                "id": 7,
+                "key": "streak_3",
+                "icon": "🔥",
+                "condition_type": "CURRENT_STREAK",
+                "condition_value": 3,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 15,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 1,
+                "translations": {
+                    "ar": {
+                        "name": "سلسلة ٣ أيام",
+                        "description": "حافظت على التسبيح ٣ أيام متتالية"
+                    },
+                    "en": {
+                        "name": "3 Day Streak",
+                        "description": "3 consecutive days of dhikr"
+                    },
+                    "ku": {
+                        "name": "٣ ڕۆژ ستریک",
+                        "description": "٣ ڕۆژ بەردەوام بوویت"
+                    }
+                }
+            },
+            {
+                "id": 8,
+                "key": "streak_7",
+                "icon": "🌟",
+                "condition_type": "CURRENT_STREAK",
+                "condition_value": 7,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 50,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 2,
+                "translations": {
+                    "ar": {
+                        "name": "سلسلة أسبوع",
+                        "description": "حافظت على التسبيح أسبوعاً كاملاً"
+                    },
+                    "en": {
+                        "name": "7 Day Streak",
+                        "description": "A full week of daily dhikr"
+                    },
+                    "ku": {
+                        "name": "٧ ڕۆژ ستریک",
+                        "description": "هەفتەیەک بەردەوام بوویت"
+                    }
+                }
+            },
+            {
+                "id": 9,
+                "key": "streak_30",
+                "icon": "🏆",
+                "condition_type": "CURRENT_STREAK",
+                "condition_value": 30,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 200,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 3,
+                "translations": {
+                    "ar": {
+                        "name": "سلسلة شهر",
+                        "description": "حافظت على التسبيح شهراً كاملاً"
+                    },
+                    "en": {
+                        "name": "30 Day Streak",
+                        "description": "A full month of daily dhikr"
+                    },
+                    "ku": {
+                        "name": "٣٠ ڕۆژ ستریک",
+                        "description": "مانگێک بەردەوام بوویت"
+                    }
+                }
+            },
+            {
+                "id": 10,
+                "key": "streak_100",
+                "icon": "💯",
+                "condition_type": "CURRENT_STREAK",
+                "condition_value": 100,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 750,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 4,
+                "translations": {
+                    "ar": {
+                        "name": "سلسلة ١٠٠ يوم",
+                        "description": "حافظت على التسبيح ١٠٠ يوم متتالي"
+                    },
+                    "en": {
+                        "name": "100 Day Streak",
+                        "description": "100 consecutive days of dhikr"
+                    },
+                    "ku": {
+                        "name": "١٠٠ ڕۆژ ستریک",
+                        "description": "١٠٠ ڕۆژ بەردەوام بوویت"
+                    }
+                }
+            },
+            {
+                "id": 11,
+                "key": "streak_365",
+                "icon": "🌈",
+                "condition_type": "CURRENT_STREAK",
+                "condition_value": 365,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 5000,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 5,
+                "translations": {
+                    "ar": {
+                        "name": "سلسلة سنة كاملة",
+                        "description": "حافظت على التسبيح لسنة كاملة"
+                    },
+                    "en": {
+                        "name": "365 Day Streak",
+                        "description": "A full year of unbroken daily dhikr"
+                    },
+                    "ku": {
+                        "name": "ساڵ ستریک",
+                        "description": "ساڵێک بەشێوەیەکی بەردەوام تەسبیح کردووە"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "icon": "🎯",
+        "sort_order": 3,
+        "translations": {
+            "ar": "إنجازات الأهداف",
+            "en": "Daily Goal Achievements",
+            "ku": "دەستکەوتەکانی ئامانج"
+        },
+        "achievements": [
+            {
+                "id": 12,
+                "key": "first_goal",
+                "icon": "🎯",
+                "condition_type": "GOALS_COMPLETED",
+                "condition_value": 1,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 20,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 1,
+                "translations": {
+                    "ar": {
+                        "name": "أول هدف",
+                        "description": "أكملت هدفك اليومي لأول مرة"
+                    },
+                    "en": {
+                        "name": "First Goal Completed",
+                        "description": "Completed your first daily goal"
+                    },
+                    "ku": {
+                        "name": "یەکەم ئامانج",
+                        "description": "یەکەم ئامانجی ڕۆژانەت تەواو کرد"
+                    }
+                }
+            },
+            {
+                "id": 13,
+                "key": "goals_10",
+                "icon": "✅",
+                "condition_type": "GOALS_COMPLETED",
+                "condition_value": 10,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 60,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 2,
+                "translations": {
+                    "ar": {
+                        "name": "١٠ أهداف",
+                        "description": "أكملت ١٠ أهداف يومية"
+                    },
+                    "en": {
+                        "name": "10 Goals Completed",
+                        "description": "Completed 10 daily goals"
+                    },
+                    "ku": {
+                        "name": "١٠ ئامانج",
+                        "description": "١٠ ئامانجی ڕۆژانەت تەواو کرد"
+                    }
+                }
+            },
+            {
+                "id": 14,
+                "key": "goals_50",
+                "icon": "🌙",
+                "condition_type": "GOALS_COMPLETED",
+                "condition_value": 50,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 250,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 3,
+                "translations": {
+                    "ar": {
+                        "name": "٥٠ هدفاً",
+                        "description": "أكملت ٥٠ هدفاً يومياً"
+                    },
+                    "en": {
+                        "name": "50 Goals Completed",
+                        "description": "Completed 50 daily goals"
+                    },
+                    "ku": {
+                        "name": "٥٠ ئامانج",
+                        "description": "٥٠ ئامانجی ڕۆژانەت تەواو کرد"
+                    }
+                }
+            },
+            {
+                "id": 15,
+                "key": "goals_100",
+                "icon": "💎",
+                "condition_type": "GOALS_COMPLETED",
+                "condition_value": 100,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 500,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 4,
+                "translations": {
+                    "ar": {
+                        "name": "١٠٠ هدف",
+                        "description": "أكملت ١٠٠ هدف يومي"
+                    },
+                    "en": {
+                        "name": "100 Goals Completed",
+                        "description": "Completed 100 daily goals"
+                    },
+                    "ku": {
+                        "name": "١٠٠ ئامانج",
+                        "description": "١٠٠ ئامانجی ڕۆژانەت تەواو کرد"
+                    }
+                }
+            },
+            {
+                "id": 16,
+                "key": "goals_365",
+                "icon": "🌟",
+                "condition_type": "GOALS_COMPLETED",
+                "condition_value": 365,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 2000,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 5,
+                "translations": {
+                    "ar": {
+                        "name": "٣٦٥ هدفاً",
+                        "description": "أكملت أهدافك اليومية لمدة سنة"
+                    },
+                    "en": {
+                        "name": "365 Goals Completed",
+                        "description": "Completed a goal every day for a year"
+                    },
+                    "ku": {
+                        "name": "٣٦٥ ئامانج",
+                        "description": "ساڵێک ئامانجەکانت پڕ کردووە"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "icon": "⚡",
+        "sort_order": 4,
+        "translations": {
+            "ar": "إنجازات الجلسات",
+            "en": "Session Achievements",
+            "ku": "دەستکەوتەکانی سێشن"
+        },
+        "achievements": [
+            {
+                "id": 17,
+                "key": "session_100",
+                "icon": "⚡",
+                "condition_type": "SESSION_DHIKR_COUNT",
+                "condition_value": 100,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 30,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 1,
+                "translations": {
+                    "ar": {
+                        "name": "١٠٠ تسبيحة في جلسة",
+                        "description": "أكملت ١٠٠ تسبيحة في جلسة واحدة"
+                    },
+                    "en": {
+                        "name": "100 Dhikr In One Session",
+                        "description": "100 dhikr in a single session"
+                    },
+                    "ku": {
+                        "name": "١٠٠ تەسبیح لە سێشنێکدا",
+                        "description": "١٠٠ تەسبیح لە سێشنێکی تەکدا کردووە"
+                    }
+                }
+            },
+            {
+                "id": 18,
+                "key": "session_500",
+                "icon": "🌊",
+                "condition_type": "SESSION_DHIKR_COUNT",
+                "condition_value": 500,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 100,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 2,
+                "translations": {
+                    "ar": {
+                        "name": "٥٠٠ تسبيحة في جلسة",
+                        "description": "أكملت ٥٠٠ تسبيحة في جلسة واحدة"
+                    },
+                    "en": {
+                        "name": "500 Dhikr In One Session",
+                        "description": "500 dhikr in a single session"
+                    },
+                    "ku": {
+                        "name": "٥٠٠ تەسبیح لە سێشنێکدا",
+                        "description": "٥٠٠ تەسبیح لە سێشنێکی تەکدا کردووە"
+                    }
+                }
+            },
+            {
+                "id": 19,
+                "key": "session_1000",
+                "icon": "🔱",
+                "condition_type": "SESSION_DHIKR_COUNT",
+                "condition_value": 1000,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 300,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 3,
+                "translations": {
+                    "ar": {
+                        "name": "١٠٠٠ تسبيحة في جلسة",
+                        "description": "أكملت ١٠٠٠ تسبيحة في جلسة واحدة"
+                    },
+                    "en": {
+                        "name": "1000 Dhikr In One Session",
+                        "description": "1000 dhikr in a single session"
+                    },
+                    "ku": {
+                        "name": "١٠٠٠ تەسبیح لە سێشنێکدا",
+                        "description": "١٠٠٠ تەسبیح لە سێشنێکی تەکدا کردووە"
+                    }
+                }
+            },
+            {
+                "id": 27,
+                "key": "fingerprint_first_session",
+                "icon": "👆",
+                "condition_type": "FINGERPRINT_TOTAL_SESSIONS",
+                "condition_value": 1,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 20,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 50,
+                "translations": {
+                    "ar": {
+                        "name": "أول جلسة بصمة",
+                        "description": "أكملت أول جلسة لك باستخدام وضع عداد البصمة."
+                    },
+                    "en": {
+                        "name": "First Fingerprint Session",
+                        "description": "Completed your first session using Fingerprint Counter Mode."
+                    },
+                    "ku": {
+                        "name": "یەکەم سێشنی پەنجەمۆر",
+                        "description": "یەکەم سێشنت بە بەکارهێنانی مۆدی پەنجەمۆر تەواو کرد."
+                    }
+                }
+            },
+            {
+                "id": 30,
+                "key": "fingerprint_10_sessions",
+                "icon": "🔥",
+                "condition_type": "FINGERPRINT_TOTAL_SESSIONS",
+                "condition_value": 10,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 50,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 50,
+                "translations": {
+                    "ar": {
+                        "name": "١٠ جلسات بصمة",
+                        "description": "أكملت ١٠ جلسات باستخدام وضع عداد البصمة."
+                    },
+                    "en": {
+                        "name": "10 Fingerprint Sessions",
+                        "description": "Completed 10 sessions using Fingerprint Counter Mode."
+                    },
+                    "ku": {
+                        "name": "١٠ سێشنی پەنجەمۆر",
+                        "description": "١٠ سێشنت بە بەکارهێنانی مۆدی پەنجەمۆر تەواو کرد."
+                    }
+                }
+            },
+            {
+                "id": 31,
+                "key": "fingerprint_100_sessions",
+                "icon": "👑",
+                "condition_type": "FINGERPRINT_TOTAL_SESSIONS",
+                "condition_value": 100,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 250,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 50,
+                "translations": {
+                    "ar": {
+                        "name": "١٠٠ جلسة بصمة",
+                        "description": "أكملت ١٠٠ جلسة باستخدام وضع عداد البصمة."
+                    },
+                    "en": {
+                        "name": "100 Fingerprint Sessions",
+                        "description": "Completed 100 sessions using Fingerprint Counter Mode."
+                    },
+                    "ku": {
+                        "name": "١٠٠ سێشنی پەنجەمۆر",
+                        "description": "١٠٠ سێشنت بە بەکارهێنانی مۆدی پەنجەمۆر تەواو کرد."
+                    }
+                }
+            },
+            {
+                "id": 32,
+                "key": "fingerprint_blind_master",
+                "icon": "🕶️",
+                "condition_type": "FINGERPRINT_BLIND_SESSIONS",
+                "condition_value": 10,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 100,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 50,
+                "translations": {
+                    "ar": {
+                        "name": "سيد الوضع الأعمى",
+                        "description": "أكملت ١٠ جلسات بصمة في الوضع المغلق (الأعمى)."
+                    },
+                    "en": {
+                        "name": "Blind Mode Master",
+                        "description": "Completed 10 fingerprint sessions in Blind Mode."
+                    },
+                    "ku": {
+                        "name": "شارەزای مۆدی کوێر",
+                        "description": "١٠ سێشنی مۆدی پەنجەمۆرت بە مۆدی کوێر (بێ بینین) تەواو کرد."
+                    }
+                }
+            },
+            {
+                "id": 33,
+                "key": "fingerprint_focus_master",
+                "icon": "🎯",
+                "condition_type": "FINGERPRINT_FOCUS_SESSIONS",
+                "condition_value": 10,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 100,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 50,
+                "translations": {
+                    "ar": {
+                        "name": "سيد وضع التركيز",
+                        "description": "أكملت ١٠ جلسات بصمة في وضع التركيز الكامل."
+                    },
+                    "en": {
+                        "name": "Focus Mode Master",
+                        "description": "Completed 10 fingerprint sessions in Focus Mode."
+                    },
+                    "ku": {
+                        "name": "شارەزای مۆدی سەرنجدان",
+                        "description": "١٠ سێشنی مۆدی پەنجەمۆرت بە مۆدی سەرنجدان تەواو کرد."
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "icon": "📅",
+        "sort_order": 5,
+        "translations": {
+            "ar": "إنجازات الاتساق",
+            "en": "Consistency Achievements",
+            "ku": "دەستکەوتەکانی بەردەوامی"
+        },
+        "achievements": [
+            {
+                "id": 20,
+                "key": "consistent_7",
+                "icon": "📅",
+                "condition_type": "CONSECUTIVE_DAYS",
+                "condition_value": 7,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 50,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 1,
+                "translations": {
+                    "ar": {
+                        "name": "أسبوع منتظم",
+                        "description": "نشطت ٧ أيام متتالية"
+                    },
+                    "en": {
+                        "name": "Active Every Day For 7 Days",
+                        "description": "Active every day for a week"
+                    },
+                    "ku": {
+                        "name": "هەفتەی بەردەوام",
+                        "description": "٧ ڕۆژ بەردەوام چالاک بوویت"
+                    }
+                }
+            },
+            {
+                "id": 21,
+                "key": "consistent_30",
+                "icon": "🗓️",
+                "condition_type": "CONSECUTIVE_DAYS",
+                "condition_value": 30,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 200,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 2,
+                "translations": {
+                    "ar": {
+                        "name": "شهر منتظم",
+                        "description": "نشطت ٣٠ يوماً متتالياً"
+                    },
+                    "en": {
+                        "name": "Active Every Day For 30 Days",
+                        "description": "Active every day for a month"
+                    },
+                    "ku": {
+                        "name": "مانگی بەردەوام",
+                        "description": "٣٠ ڕۆژ بەردەوام چالاک بوویت"
+                    }
+                }
+            },
+            {
+                "id": 22,
+                "key": "consistent_90",
+                "icon": "⏱️",
+                "condition_type": "CONSECUTIVE_DAYS",
+                "condition_value": 90,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 750,
+                "reward_value": null,
+                "is_hidden": false,
+                "sort_order": 3,
+                "translations": {
+                    "ar": {
+                        "name": "٩٠ يوماً منتظماً",
+                        "description": "نشطت ٩٠ يوماً متتالياً"
+                    },
+                    "en": {
+                        "name": "Active Every Day For 90 Days",
+                        "description": "Active every day for 90 days"
+                    },
+                    "ku": {
+                        "name": "٩٠ ڕۆژ بەردەوام",
+                        "description": "٩٠ ڕۆژ بەردەوام چالاک بوویت"
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "icon": "🌟",
+        "sort_order": 6,
+        "translations": {
+            "ar": "إنجازات خاصة",
+            "en": "Special Achievements",
+            "ku": "دەستکەوتەکانی تایبەت"
+        },
+        "achievements": []
+    },
+    {
+        "id": 7,
+        "icon": "🔮",
+        "sort_order": 7,
+        "translations": {
+            "ar": "إنجازات مخفية",
+            "en": "Hidden Achievements",
+            "ku": "دەستکەوتەی نهێنی"
+        },
+        "achievements": [
+            {
+                "id": 23,
+                "key": "midnight_worshipper",
+                "icon": "🌙",
+                "condition_type": "SPECIAL_EVENT",
+                "condition_value": 1,
+                "condition_meta": {
+                    "hour_start": 0,
+                    "hour_end": 3
+                },
+                "reward_type": "POINTS",
+                "reward_points": 100,
+                "reward_value": null,
+                "is_hidden": true,
+                "sort_order": 1,
+                "translations": {
+                    "ar": {
+                        "name": "عابد منتصف الليل",
+                        "description": "ذكرت الله بين منتصف الليل والفجر"
+                    },
+                    "en": {
+                        "name": "Midnight Worshipper",
+                        "description": "Performed dhikr between midnight and 3am"
+                    },
+                    "ku": {
+                        "name": "ئیبادەتکاری نیوەشەو",
+                        "description": "لە نێوان ١٢ شەو و ٣ بەیانی تەسبیح کردووە"
+                    }
+                }
+            },
+            {
+                "id": 24,
+                "key": "early_bird",
+                "icon": "🌅",
+                "condition_type": "SPECIAL_EVENT",
+                "condition_value": 1,
+                "condition_meta": {
+                    "hour_start": 3,
+                    "hour_end": 5
+                },
+                "reward_type": "POINTS",
+                "reward_points": 75,
+                "reward_value": null,
+                "is_hidden": true,
+                "sort_order": 2,
+                "translations": {
+                    "ar": {
+                        "name": "الباكر",
+                        "description": "ذكرت الله قبل الفجر"
+                    },
+                    "en": {
+                        "name": "Early Bird",
+                        "description": "Performed dhikr before dawn"
+                    },
+                    "ku": {
+                        "name": "پێشتر خستەر",
+                        "description": "پێش ڕووناکبوونی ئەسمان تەسبیح کردووە"
+                    }
+                }
+            },
+            {
+                "id": 25,
+                "key": "marathon_session",
+                "icon": "🏃",
+                "condition_type": "SESSION_DHIKR_COUNT",
+                "condition_value": 5000,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 500,
+                "reward_value": null,
+                "is_hidden": true,
+                "sort_order": 3,
+                "translations": {
+                    "ar": {
+                        "name": "ماراثون التسبيح",
+                        "description": "٥٠٠٠ تسبيحة في جلسة واحدة"
+                    },
+                    "en": {
+                        "name": "Dhikr Marathon",
+                        "description": "5000 dhikr in a single session"
+                    },
+                    "ku": {
+                        "name": "ماراتۆنی تەسبیح",
+                        "description": "٥٠٠٠ تەسبیح لە سێشنێکی تەکدا"
+                    }
+                }
+            },
+            {
+                "id": 26,
+                "key": "devoted",
+                "icon": "❤️",
+                "condition_type": "LONGEST_STREAK",
+                "condition_value": 365,
+                "condition_meta": null,
+                "reward_type": "POINTS",
+                "reward_points": 10000,
+                "reward_value": null,
+                "is_hidden": true,
+                "sort_order": 4,
+                "translations": {
+                    "ar": {
+                        "name": "المخلص",
+                        "description": "أطول سلسلة لك بلغت سنة كاملة"
+                    },
+                    "en": {
+                        "name": "Devoted",
+                        "description": "Your longest streak reached a full year"
+                    },
+                    "ku": {
+                        "name": "پابەند",
+                        "description": "درێژترین ستریکت بەرز بوو بۆ ساڵێک"
+                    }
+                }
+            }
+        ]
+    }
+]

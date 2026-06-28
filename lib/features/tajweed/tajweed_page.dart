@@ -5,6 +5,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/models/tajweed_rule_model.dart';
 import '../../core/models/tajweed_category_model.dart';
+import '../../core/l10n/app_localizations.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Tajweed Page — Category-first drill-down, sorted by rule priority from API
@@ -58,16 +59,24 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
   @override
   Widget build(BuildContext context) {
     final cs = AppColorScheme.of(context);
+    final l = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final catsAsync = ref.watch(tajweedCategoriesProvider);
     final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
+
+    String getCatName(TajweedCategoryModel cat) {
+      final code = l.localeCode;
+      if (code == 'ar') return cat.nameAr ?? cat.nameKu;
+      if (code == 'en') return cat.name;
+      return cat.nameKu;
+    }
 
     // Resolve selected category name for app bar
     String? selectedName;
     if (_selectedCategoryIndex != null) {
       catsAsync.whenData((cats) {
         if (_selectedCategoryIndex! < cats.length) {
-          selectedName = cats[_selectedCategoryIndex!].nameKu;
+          selectedName = getCatName(cats[_selectedCategoryIndex!]);
         }
       });
     }
@@ -88,10 +97,10 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
         title: AnimatedSwitcher(
           duration: 250.ms,
           child: _selectedCategoryIndex == null
-              ? const Text(
-                  'فێربوونی یاساکانی تەجوید',
-                  key: ValueKey('main'),
-                  style: TextStyle(
+              ? Text(
+                  l.tajweedPageTitle,
+                  key: const ValueKey('main'),
+                  style: const TextStyle(
                     fontFamily: 'Cairo',
                     fontWeight: FontWeight.w700,
                     fontSize: 17,
@@ -99,7 +108,7 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
                   ),
                 )
               : Text(
-                  selectedName ?? 'یاساکان',
+                  selectedName ?? l.tajweedRulesFallback,
                   key: ValueKey('cat_$_selectedCategoryIndex'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
@@ -164,6 +173,7 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
   }
 
   Widget _buildError(String msg, AppColorScheme cs) {
+    final l = context.l10n;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -173,7 +183,7 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
             const Icon(Icons.wifi_off_rounded, size: 56, color: Colors.redAccent),
             const SizedBox(height: 16),
             Text(
-              'هێڵی ئینتەرنێت نییە یان سێرڤەر کار ناکات',
+              l.tajweedNetworkError,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Cairo',
@@ -192,7 +202,7 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
             ElevatedButton.icon(
               onPressed: () => ref.refresh(tajweedCategoriesProvider),
               icon: const Icon(Icons.refresh_rounded),
-              label: const Text('دووبارە هەوڵبدەرەوە', style: TextStyle(fontFamily: 'Cairo')),
+              label: Text(l.hadithRetry, style: const TextStyle(fontFamily: 'Cairo')),
             ),
           ],
         ),
@@ -203,7 +213,7 @@ class _TajweedPageState extends ConsumerState<TajweedPage> {
   Widget _buildEmpty(AppColorScheme cs) {
     return Center(
       child: Text(
-        'هیچ جۆرێک بەردەست نییە',
+        context.l10n.tajweedNoCategories,
         style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
       ),
     );
@@ -234,6 +244,14 @@ class _CategoryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
+    String getCatName(TajweedCategoryModel cat) {
+      final code = l.localeCode;
+      if (code == 'ar') return cat.nameAr ?? cat.nameKu;
+      if (code == 'en') return cat.name;
+      return cat.nameKu;
+    }
+
     return CustomScrollView(
       physics: const BouncingScrollPhysics(),
       slivers: [
@@ -241,7 +259,7 @@ class _CategoryGrid extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
           sliver: SliverToBoxAdapter(
             child: Text(
-              'هەڵبژاردنی باب',
+              l.tajweedSelectTopic,
               textDirection: TextDirection.rtl,
               style: TextStyle(
                 fontFamily: 'Cairo',
@@ -284,7 +302,7 @@ class _CategoryGrid extends StatelessWidget {
                         ),
                       ],
                     ),
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -311,7 +329,7 @@ class _CategoryGrid extends StatelessWidget {
                               ),
                               child: Text(
                                 activeCount == totalRules
-                                    ? 'هەموو چالاکن'
+                                    ? l.tajweedAllActive
                                     : '$activeCount/$totalRules',
                                 style: const TextStyle(
                                   fontFamily: 'Cairo',
@@ -324,8 +342,39 @@ class _CategoryGrid extends StatelessWidget {
                           ],
                         ),
                         const Spacer(),
+                        Consumer(
+                          builder: (context, ref, child) {
+                            final countAsync = ref.watch(tajweedCategorySegmentsCountProvider(cat));
+                            return countAsync.when(
+                              data: (count) {
+                                if (count == 0) return const SizedBox.shrink();
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 6),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(alpha: 0.15),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      formatSegments(count, l.localeCode),
+                                      style: const TextStyle(
+                                        fontFamily: 'Cairo',
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                              loading: () => const SizedBox.shrink(),
+                              error: (_, __) => const SizedBox.shrink(),
+                            );
+                          },
+                        ),
                         Text(
-                          cat.nameKu,
+                          getCatName(cat),
                           textDirection: TextDirection.rtl,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -337,7 +386,7 @@ class _CategoryGrid extends StatelessWidget {
                             height: 1.4,
                           ),
                         ),
-                        if (cat.nameAr != null && cat.nameAr!.isNotEmpty) ...[
+                        if (l.localeCode != 'ar' && cat.nameAr != null && cat.nameAr!.isNotEmpty) ...[
                           const SizedBox(height: 3),
                           Text(
                             cat.nameAr!,
@@ -351,7 +400,7 @@ class _CategoryGrid extends StatelessWidget {
                             ),
                           ),
                         ],
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         Row(
                           children: [
                             Container(
@@ -362,7 +411,7 @@ class _CategoryGrid extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
-                                '$totalRules یاسا',
+                                l.tajweedRulesCount(totalRules),
                                 style: const TextStyle(
                                   fontFamily: 'Cairo',
                                   fontSize: 10,
@@ -392,7 +441,7 @@ class _CategoryGrid extends StatelessWidget {
               crossAxisCount: 2,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: 1.05,
+              childAspectRatio: 0.98,
             ),
           ),
         ),
@@ -434,6 +483,14 @@ class _RulesListState extends State<_RulesList> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
+    String getCatName(TajweedCategoryModel cat) {
+      final code = l.localeCode;
+      if (code == 'ar') return cat.nameAr ?? cat.nameKu;
+      if (code == 'en') return cat.name;
+      return cat.nameKu;
+    }
+
     // Sort by priority (ascending) — mirrors orderBy('priority') in API
     final rules = List<TajweedRuleModel>.from(widget.category.rules)
       ..sort((a, b) => a.priority.compareTo(b.priority));
@@ -470,7 +527,7 @@ class _RulesListState extends State<_RulesList> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      widget.category.nameKu,
+                      getCatName(widget.category),
                       textDirection: TextDirection.rtl,
                       style: const TextStyle(
                         fontFamily: 'Cairo',
@@ -479,7 +536,7 @@ class _RulesListState extends State<_RulesList> {
                         color: Colors.white,
                       ),
                     ),
-                    if (widget.category.nameAr != null &&
+                    if (l.localeCode != 'ar' && widget.category.nameAr != null &&
                         widget.category.nameAr!.isNotEmpty)
                       Text(
                         widget.category.nameAr!,
@@ -492,7 +549,7 @@ class _RulesListState extends State<_RulesList> {
                       ),
                     const SizedBox(height: 2),
                     Text(
-                      '$activeCount / ${rules.length} یاسا چالاکە',
+                      l.tajweedActiveRulesCount(activeCount, rules.length),
                       textDirection: TextDirection.rtl,
                       style: TextStyle(
                         fontFamily: 'Cairo',
@@ -574,7 +631,7 @@ class _RulesListState extends State<_RulesList> {
 // Single Rule Card (expandable)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _RuleCard extends StatelessWidget {
+class _RuleCard extends ConsumerWidget {
   final TajweedRuleModel rule;
   final int index;
   final bool isActive;
@@ -596,7 +653,10 @@ class _RuleCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final segmentCountAsync = ref.watch(tajweedRuleSegmentsCountProvider(rule.slug));
+    final showActiveBtn = segmentCountAsync.valueOrNull != null && (segmentCountAsync.valueOrNull ?? 0) > 0;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -704,21 +764,48 @@ class _RuleCard extends StatelessWidget {
                                     color: cs.textSecondary,
                                   ),
                                 ),
+                              const SizedBox(height: 4),
+                              segmentCountAsync.when(
+                                data: (count) {
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: isActive
+                                          ? accentColor.withValues(alpha: 0.1)
+                                          : cs.cardBorder.withValues(alpha: 0.5),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      formatSegments(count, l.localeCode),
+                                      style: TextStyle(
+                                        fontFamily: 'Cairo',
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                        color: isActive ? accentColor : cs.textSecondary,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                loading: () => const SizedBox.shrink(),
+                                error: (_, __) => const SizedBox.shrink(),
+                              ),
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Switch(
-                    value: isActive,
-                    activeThumbColor: accentColor,
-                    activeTrackColor: accentColor.withValues(alpha: 0.25),
-                    inactiveThumbColor: cs.textSecondary.withValues(alpha: 0.4),
-                    inactiveTrackColor: cs.cardBorder,
-                    onChanged: (_) => onToggle(),
-                  ),
+                  if (showActiveBtn) ...[
+                    const SizedBox(width: 8),
+                    Switch(
+                      value: isActive,
+                      activeThumbColor: accentColor,
+                      activeTrackColor: accentColor.withValues(alpha: 0.25),
+                      inactiveThumbColor: cs.textSecondary.withValues(alpha: 0.4),
+                      inactiveTrackColor: cs.cardBorder,
+                      onChanged: (_) => onToggle(),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -798,16 +885,16 @@ class _RuleCard extends StatelessWidget {
                           border: Border.all(
                               color: Colors.orange.withValues(alpha: 0.3)),
                         ),
-                        child: const Row(
+                        child: Row(
                           textDirection: TextDirection.rtl,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.info_outline_rounded,
+                            const Icon(Icons.info_outline_rounded,
                                 size: 14, color: Colors.orange),
-                            SizedBox(width: 6),
+                            const SizedBox(width: 6),
                             Text(
-                              'ئەم یاسایە لە خوێندنەوەی تەجوید ناچالاکە',
-                              style: TextStyle(
+                              context.l10n.tajweedRuleDisabled,
+                              style: const TextStyle(
                                 fontFamily: 'Cairo',
                                 fontSize: 11,
                                 color: Colors.orange,
@@ -830,4 +917,10 @@ class _RuleCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String formatSegments(int count, String locale) {
+  if (locale == 'ar') return '$count حكم';
+  if (locale == 'en') return '$count segments';
+  return '$count سێگمێنت';
 }

@@ -165,8 +165,9 @@ class _QuranJumpDialogState extends ConsumerState<QuranJumpDialog> {
 
   List<_JumpResult> _search(List<SurahModel> surahs) {
     final q = _query.trim().toLowerCase();
+    final isKu = Localizations.localeOf(context).languageCode == 'ku';
     if (q.isEmpty) {
-      return surahs.take(5).map((s) => _JumpResult.fromSurah(s)).toList();
+      return surahs.take(5).map((s) => _JumpResult.fromSurah(s, isKu: isKu)).toList();
     }
 
     // 1. Parse Surah:Ayah pattern (e.g. "2:255" or "2 : 255")
@@ -178,7 +179,7 @@ class _QuranJumpDialogState extends ConsumerState<QuranJumpDialog> {
         if (surahNum != null && ayahNum != null) {
           final surah = surahs.firstWhere((s) => s.number == surahNum, orElse: () => surahs.first);
           if (surah.number == surahNum && ayahNum >= 1 && ayahNum <= surah.totalAyahs) {
-            return [_JumpResult.fromAyah(surah, ayahNum)];
+            return [_JumpResult.fromAyah(surah, ayahNum, isKu: isKu)];
           }
         }
       }
@@ -212,7 +213,7 @@ class _QuranJumpDialogState extends ConsumerState<QuranJumpDialog> {
           s.nameAr.contains(q) ||
           s.nameKu.contains(q) ||
           s.number.toString() == q;
-    }).map((s) => _JumpResult.fromSurah(s)).toList();
+    }).map((s) => _JumpResult.fromSurah(s, isKu: isKu)).toList();
 
     return matches;
   }
@@ -235,10 +236,11 @@ class _JumpResult {
     this.ayahNumber,
   });
 
-  factory _JumpResult.fromSurah(SurahModel surah) {
+  factory _JumpResult.fromSurah(SurahModel surah, {required bool isKu}) {
+    final name = isKu ? surah.nameKu : surah.nameEn;
     return _JumpResult(
       title: surah.nameAr,
-      subtitle: '${surah.nameEn} — ${surah.number} | ${surah.totalAyahs} ئایەت',
+      subtitle: '$name — ${surah.number} | ${surah.totalAyahs} ئایەت',
       isPage: false,
       pageNumber: surah.pageStart ?? 1,
       surah: surah,
@@ -254,10 +256,11 @@ class _JumpResult {
     );
   }
 
-  factory _JumpResult.fromAyah(SurahModel surah, int ayahNum) {
+  factory _JumpResult.fromAyah(SurahModel surah, int ayahNum, {required bool isKu}) {
+    final name = isKu ? surah.nameKu : surah.nameEn;
     return _JumpResult(
       title: '${surah.nameAr} ($ayahNum)',
-      subtitle: '${surah.nameEn} — ئایەتی $ayahNum',
+      subtitle: '$name — ئایەتی $ayahNum',
       isPage: false,
       pageNumber: surah.pageStart ?? 1,
       surah: surah,

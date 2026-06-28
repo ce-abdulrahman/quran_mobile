@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/l10n/app_localizations.dart';
 import 'auth_provider.dart';
 import 'login_page.dart';
 import 'register_page.dart';
@@ -14,6 +15,7 @@ class WelcomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final accentColor = ref.watch(accentColorProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = context.l10n;
 
     return Scaffold(
       body: Container(
@@ -63,10 +65,10 @@ class WelcomePage extends ConsumerWidget {
                 const SizedBox(height: 24),
                 
                 // Welcome Title
-                const Text(
-                  'بەخێربێیت بۆ قورئانەکەم',
+                Text(
+                  l.authWelcomeTitle,
                   textDirection: TextDirection.rtl,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w800,
                     color: Colors.white,
@@ -78,7 +80,7 @@ class WelcomePage extends ConsumerWidget {
                 
                 // Subtitle
                 Text(
-                  'ئەپلیکەیشنی تایبەت بە خوێندنەوەی قورئان و ژماردنی تەسبیحەکانت بە شێوازێکی هاوچەرخ',
+                  l.authWelcomeSub,
                   textAlign: TextAlign.center,
                   textDirection: TextDirection.rtl,
                   style: TextStyle(
@@ -107,9 +109,9 @@ class WelcomePage extends ConsumerWidget {
                     ),
                     elevation: 4,
                   ),
-                  child: const Text(
-                    'چوونەژوورەوە (Login)',
-                    style: TextStyle(
+                  child: Text(
+                    l.authLoginButton,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Cairo',
@@ -134,9 +136,9 @@ class WelcomePage extends ConsumerWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text(
-                    'خۆتۆمارکردن (Register)',
-                    style: TextStyle(
+                  child: Text(
+                    l.authRegisterButton,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Cairo',
@@ -152,7 +154,7 @@ class WelcomePage extends ConsumerWidget {
                     ref.read(authProvider.notifier).continueAsGuest();
                   },
                   child: Text(
-                    'بەردەوامبوون وەک مێوان (Continue as Guest) ➔',
+                    l.authGuestButton,
                     style: TextStyle(
                       color: Colors.white.withValues(alpha: 0.9),
                       fontSize: 14,

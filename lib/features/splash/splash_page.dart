@@ -60,7 +60,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final accentColor = ref.watch(accentColorProvider);
+    final accentGradient = ref.watch(accentColorProvider);
+    final accentColor = accentGradient.primary;
     final accentColorDeep = AppColorScheme.darken(accentColor, 0.12);
     final accentColorLight = AppColorScheme.darken(accentColor, -0.06);
 

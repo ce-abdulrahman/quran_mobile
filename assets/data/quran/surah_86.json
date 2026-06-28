@@ -1,0 +1,427 @@
+[
+    {
+        "id": 5932,
+        "ayah_number": 1,
+        "text_uthmani": "وَٱلسَّمَآءِ وَٱلطَّارِقِ",
+        "text_simple": null,
+        "page_number": 1187,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11863,
+                "language_code": "en",
+                "content": "By the sky and the night comer",
+                "is_active": true
+            },
+            {
+                "id": 11864,
+                "language_code": "ku",
+                "content": "سوێند به ئاسمان و ئه‌و ئه‌ستێرانه‌ی به‌شه‌ودا ده‌رده‌که‌ون.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5933,
+        "ayah_number": 2,
+        "text_uthmani": "وَمَآ أَدْرَىٰكَ مَا ٱلطَّارِقُ",
+        "text_simple": null,
+        "page_number": 1187,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11865,
+                "language_code": "en",
+                "content": "And what can make you know what is the night comer?",
+                "is_active": true
+            },
+            {
+                "id": 11866,
+                "language_code": "ku",
+                "content": "جا تۆ چووزانی (طارق) چیه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5934,
+        "ayah_number": 3,
+        "text_uthmani": "ٱلنَّجْمُ ٱلثَّاقِبُ",
+        "text_simple": null,
+        "page_number": 1187,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11867,
+                "language_code": "en",
+                "content": "It is the piercing star<sup foot_note=197745>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 11868,
+                "language_code": "ku",
+                "content": "ئه‌ستێره‌یه‌که به ڕووناکیه‌که‌ی تاریکی ده‌بڕێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5935,
+        "ayah_number": 4,
+        "text_uthmani": "إِن كُلُّ نَفْسٍ لَّمَّا عَلَيْهَا حَافِظٌ",
+        "text_simple": null,
+        "page_number": 1187,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11869,
+                "language_code": "en",
+                "content": "There is no soul but that it has over it a protector.",
+                "is_active": true
+            },
+            {
+                "id": 11870,
+                "language_code": "ku",
+                "content": "(سوێند به‌وانه‌) هیچ که‌س نیه چاودێری نه‌بێت، (سه‌ره‌تا خوا چاودێری هه‌مووانه‌، فریشته‌کانیشی کردووه به چاودێرو پارێزه‌رمان).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5936,
+        "ayah_number": 5,
+        "text_uthmani": "فَلْيَنظُرِ ٱلْإِنسَـٰنُ مِمَّ خُلِقَ",
+        "text_simple": null,
+        "page_number": 1187,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11871,
+                "language_code": "en",
+                "content": "So let man observe from what he was created.",
+                "is_active": true
+            },
+            {
+                "id": 11872,
+                "language_code": "ku",
+                "content": "که‌واته با ئاده‌میزاد ته‌ماشا بکات و سه‌رنج بدات که له چی دروستکراوه‌؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5937,
+        "ayah_number": 6,
+        "text_uthmani": "خُلِقَ مِن مَّآءٍ دَافِقٍ",
+        "text_simple": null,
+        "page_number": 1188,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11873,
+                "language_code": "en",
+                "content": "He was created from a fluid, ejected,",
+                "is_active": true
+            },
+            {
+                "id": 11874,
+                "language_code": "ku",
+                "content": "دروستکراوه له ئاوێکی هه‌ڵقوڵاو (که مه‌نی پیاوه و هێلکۆکه‌ی ئافره‌ته‌، هه‌ردوولایان هه‌ڵده‌قوڵێن بۆ پێکهاتنی ئاده‌میزاد، به‌ویستی خوا).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5938,
+        "ayah_number": 7,
+        "text_uthmani": "يَخْرُجُ مِنۢ بَيْنِ ٱلصُّلْبِ وَٱلتَّرَآئِبِ",
+        "text_simple": null,
+        "page_number": 1188,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11875,
+                "language_code": "en",
+                "content": "Emerging from between the backbone and the ribs.",
+                "is_active": true
+            },
+            {
+                "id": 11876,
+                "language_code": "ku",
+                "content": "له نێوان بڕبڕه‌کانی پشت و ئێسکه‌کانی سینه‌دا ده‌رده‌چێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5939,
+        "ayah_number": 8,
+        "text_uthmani": "إِنَّهُۥ عَلَىٰ رَجْعِهِۦ لَقَادِرٌ",
+        "text_simple": null,
+        "page_number": 1188,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11877,
+                "language_code": "en",
+                "content": "Indeed, He [i.e., Allāh], to return him [to life], is Able.",
+                "is_active": true
+            },
+            {
+                "id": 11878,
+                "language_code": "ku",
+                "content": "بێگومان ئه‌و زاته دووباره (دروستکردنه‌وه‌ی ئاده‌میزادی) زۆر لائاسانه و توانای ته‌واوی هه‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5940,
+        "ayah_number": 9,
+        "text_uthmani": "يَوْمَ تُبْلَى ٱلسَّرَآئِرُ",
+        "text_simple": null,
+        "page_number": 1188,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11879,
+                "language_code": "en",
+                "content": "The Day when secrets will be put on trial,<sup foot_note=197746>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 11880,
+                "language_code": "ku",
+                "content": "ئه‌و ڕۆژه‌ی که هه‌موو نهێنیه‌کان ده‌رده‌که‌وێت و ئاشکرا ده‌کرێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5941,
+        "ayah_number": 10,
+        "text_uthmani": "فَمَا لَهُۥ مِن قُوَّةٍ وَلَا نَاصِرٍ",
+        "text_simple": null,
+        "page_number": 1188,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11881,
+                "language_code": "en",
+                "content": "Then he [i.e., man] will have no power or any helper.",
+                "is_active": true
+            },
+            {
+                "id": 11882,
+                "language_code": "ku",
+                "content": "ئاده‌میزاد هیچ هێزو پشتیوانیه‌کی نیه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5942,
+        "ayah_number": 11,
+        "text_uthmani": "وَٱلسَّمَآءِ ذَاتِ ٱلرَّجْعِ",
+        "text_simple": null,
+        "page_number": 1189,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11883,
+                "language_code": "en",
+                "content": "By the sky which sends back<sup foot_note=197747>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 11884,
+                "language_code": "ku",
+                "content": "سوێند به ئاسمانێك که خاوه‌نی گێڕانه‌وه‌یه (سوڕی ئاو له سروشتدا، شه‌پۆله‌کانی ته‌له‌فون و ڕادیۆ و ته‌له‌فیزیۆن... هتد).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5943,
+        "ayah_number": 12,
+        "text_uthmani": "وَٱلْأَرْضِ ذَاتِ ٱلصَّدْعِ",
+        "text_simple": null,
+        "page_number": 1189,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11885,
+                "language_code": "en",
+                "content": "And [by] the earth which splits,<sup foot_note=197748>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 11886,
+                "language_code": "ku",
+                "content": "هه‌روه‌ها سوێند به زه‌وی که درزی تێ ده‌بێت به‌هۆی ڕووه‌که‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5944,
+        "ayah_number": 13,
+        "text_uthmani": "إِنَّهُۥ لَقَوْلٌ فَصْلٌ",
+        "text_simple": null,
+        "page_number": 1189,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11887,
+                "language_code": "en",
+                "content": "Indeed, it [i.e., the Qur’ān] is a decisive statement,",
+                "is_active": true
+            },
+            {
+                "id": 11888,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ئه‌م قورئانه گوفتارێکی جیاکه‌ره‌وه‌یه (جیاکه‌ره‌وه‌ی حه‌ق و ناحه‌ق، ڕاست و درۆ، چاك و خراپ و،... هتد).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5945,
+        "ayah_number": 14,
+        "text_uthmani": "وَمَا هُوَ بِٱلْهَزْلِ",
+        "text_simple": null,
+        "page_number": 1189,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11889,
+                "language_code": "en",
+                "content": "And it is not amusement.",
+                "is_active": true
+            },
+            {
+                "id": 11890,
+                "language_code": "ku",
+                "content": "ئه‌م قورئانه گوفتارێکی گه‌ڵته نیه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5946,
+        "ayah_number": 15,
+        "text_uthmani": "إِنَّهُمْ يَكِيدُونَ كَيْدًا",
+        "text_simple": null,
+        "page_number": 1189,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11891,
+                "language_code": "en",
+                "content": "Indeed, they are planning a plan,",
+                "is_active": true
+            },
+            {
+                "id": 11892,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ئه‌وانه سه‌رگه‌رمی پیلانن و خه‌ریکی داونانه‌وه‌ن (بۆ ئیمانداران).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5947,
+        "ayah_number": 16,
+        "text_uthmani": "وَأَكِيدُ كَيْدًا",
+        "text_simple": null,
+        "page_number": 1189,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11893,
+                "language_code": "en",
+                "content": "But I am planning a plan.",
+                "is_active": true
+            },
+            {
+                "id": 11894,
+                "language_code": "ku",
+                "content": "(به‌ڵام خوا ده‌فه‌رموێت): منیش پلان و نه‌خشه‌ی خۆم ده‌خه‌مه‌کار.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5948,
+        "ayah_number": 17,
+        "text_uthmani": "فَمَهِّلِ ٱلْكَـٰفِرِينَ أَمْهِلْهُمْ رُوَيْدًۢا",
+        "text_simple": null,
+        "page_number": 1190,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11895,
+                "language_code": "en",
+                "content": "So allow time for the disbelievers. Leave them awhile.<sup foot_note=197749>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 11896,
+                "language_code": "ku",
+                "content": "که‌واته تۆیش تاوێك مۆڵه‌تی بێ باوه‌ڕان بده‌، که‌مێك لێیان بوه‌سته (بزانه چیان به‌سه‌ر ده‌هێنم).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

@@ -1,0 +1,93 @@
+[
+  {
+    "reciterId": 1,
+    "name_ku": "میشاری ڕەشید ئەلعەفاسی",
+    "name_ar": "مشاري راشد العفاسي",
+    "type": "arabic",
+    "bio_ku": "قورئانخوێنێکی کوێتی ناسراوە، خاوەن دەنگێکی زوڵاڵ و کاریگەرە و پێشنوێژی مزگەوتی گەورەی کوێتە.",
+    "image_asset": "assets/reciters/alafasy.webp",
+    "sample_audio_url": "https://download.quranicaudio.com/quran/mishari_alafasy/001.mp3",
+    "download_base_url": "https://download.quranicaudio.com/quran/mishari_alafasy/",
+    "slug": "mishary-alafasy",
+    "version": 1,
+    "updated_at": "2026-06-25T15:30:00Z"
+  },
+  {
+    "reciterId": 2,
+    "name_ku": "ماهر ئەلموعەیقلی",
+    "name_ar": "ماهر المعيقلي",
+    "type": "arabic",
+    "bio_ku": "پێشنوێژ و وتاربێژی مزگەوتی حەرام لە مەککەی پیرۆز، خاوەنی خوێندنەوەیەکی ئارام و خەشوعە.",
+    "image_asset": "assets/reciters/maher.webp",
+    "sample_audio_url": "https://download.quranicaudio.com/quran/maher_almuaiqly/001.mp3",
+    "download_base_url": "https://download.quranicaudio.com/quran/maher_almuaiqly/",
+    "slug": "maher-almuaiqly",
+    "version": 1,
+    "updated_at": "2026-06-25T15:30:00Z"
+  },
+  {
+    "reciterId": 3,
+    "name_ku": "عەبدولباست عەبدولسەمەد",
+    "name_ar": "عبد الباسط عبد الصمد",
+    "type": "arabic",
+    "bio_ku": "یەکێک لە ناودارترین قورئانخوێنەکانی جیهانی ئیسلامی خەڵکی میسرە، بە دەنگە ئەفسوناوی و ناوازەکەی ناسراوە.",
+    "image_asset": "assets/reciters/abdulbasit.webp",
+    "sample_audio_url": "https://download.quranicaudio.com/quran/abdul_basit_murattal/001.mp3",
+    "download_base_url": "https://download.quranicaudio.com/quran/abdul_basit_murattal/",
+    "slug": "abdul-basit",
+    "version": 1,
+    "updated_at": "2026-06-25T15:30:00Z"
+  },
+  {
+    "reciterId": 4,
+    "name_ku": "سعوود ئەلشورەیم",
+    "name_ar": "سعود الشريم",
+    "type": "arabic",
+    "bio_ku": "پێشنوێژ و وتاربێژی پێشووی مزگەوتی حەرام، خاوەن شێوازێکی خێرا و متمانەبەخۆیە لە خوێندنەوەدا.",
+    "image_asset": "assets/reciters/shuraim.webp",
+    "sample_audio_url": "https://download.quranicaudio.com/quran/sa3ood_ash_shuraym/001.mp3",
+    "download_base_url": "https://download.quranicaudio.com/quran/sa3ood_ash_shuraym/",
+    "slug": "saud-shuraim",
+    "version": 1,
+    "updated_at": "2026-06-25T15:30:00Z"
+  },
+  {
+    "reciterId": 5,
+    "name_ku": "یاسر ئەلدۆسەری",
+    "name_ar": "ياسر الدوسري",
+    "type": "arabic",
+    "bio_ku": "پێشنوێژ و وتاربێژی مزگەوتی حەرام، بە خوێندنەوە دڵنشین و پڕ جۆش و خرۆشەکەی سەرنجی ملیۆنان کەسی ڕاکێشاوە.",
+    "image_asset": "assets/reciters/dosari.webp",
+    "sample_audio_url": "https://download.quranicaudio.com/quran/yasser_ad-dussary/001.mp3",
+    "download_base_url": "https://download.quranicaudio.com/quran/yasser_ad-dussary/",
+    "slug": "yasser-dosari",
+    "version": 1,
+    "updated_at": "2026-06-25T15:30:00Z"
+  },
+  {
+    "reciterId": 6,
+    "name_ku": "پێشەوا قادر کوردی",
+    "name_ar": "بيشوا قادر الكردي",
+    "type": "kurdish",
+    "bio_ku": "قورئانخوێنێکی لاوی کوردی باشووری کوردستانە، خاوەن دەنگێکی بێوێنە و کاریگەرە کە لە جیهاندا ناسراوە.",
+    "image_asset": "assets/reciters/peshawa.webp",
+    "sample_audio_url": "https://server14.mp3quran.net/peshawa/001.mp3",
+    "download_base_url": "https://server14.mp3quran.net/peshawa/",
+    "slug": "peshawa-kurdi",
+    "version": 1,
+    "updated_at": "2026-06-25T15:30:00Z"
+  },
+  {
+    "reciterId": 7,
+    "name_ku": "ڕەعد محەممەد ئەلکوردی",
+    "name_ar": "رعد محمد الكردي",
+    "type": "kurdish",
+    "bio_ku": "قورئانخوێنێکی کوردی باشووری کوردستانە، بە دەنگە پڕ سۆز و خەشوعەکەی لە ناوخۆ و دەرەوەی کوردستان ناوبانگێکی زۆری هەیە.",
+    "image_asset": "assets/reciters/raad.webp",
+    "sample_audio_url": "https://server12.mp3quran.net/kurd/001.mp3",
+    "download_base_url": "https://server12.mp3quran.net/kurd/",
+    "slug": "raad-kurdi",
+    "version": 1,
+    "updated_at": "2026-06-25T15:30:00Z"
+  }
+]

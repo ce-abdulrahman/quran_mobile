@@ -1,0 +1,527 @@
+[
+    {
+        "id": 6059,
+        "ayah_number": 1,
+        "text_uthmani": "وَٱلَّيْلِ إِذَا يَغْشَىٰ",
+        "text_simple": null,
+        "page_number": 1218,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12117,
+                "language_code": "en",
+                "content": "By the night when it covers<sup foot_note=197775>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12118,
+                "language_code": "ku",
+                "content": "سوێند به شه‌و کاتێک دنیا داده‌گرێت...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6060,
+        "ayah_number": 2,
+        "text_uthmani": "وَٱلنَّهَارِ إِذَا تَجَلَّىٰ",
+        "text_simple": null,
+        "page_number": 1218,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12119,
+                "language_code": "en",
+                "content": "And [by] the day when it appears",
+                "is_active": true
+            },
+            {
+                "id": 12120,
+                "language_code": "ku",
+                "content": "به ڕۆژ کاتێک دنیا ڕووناک ده‌بێت و تاریکی ده‌ڕه‌وێنێته‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6061,
+        "ayah_number": 3,
+        "text_uthmani": "وَمَا خَلَقَ ٱلذَّكَرَ وَٱلْأُنثَىٰٓ",
+        "text_simple": null,
+        "page_number": 1218,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12121,
+                "language_code": "en",
+                "content": "And [by] He who created the male and female,",
+                "is_active": true
+            },
+            {
+                "id": 12122,
+                "language_code": "ku",
+                "content": "سوێند به‌و زاته‌ی که نێر و مێی دروست کردووه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6062,
+        "ayah_number": 4,
+        "text_uthmani": "إِنَّ سَعْيَكُمْ لَشَتَّىٰ",
+        "text_simple": null,
+        "page_number": 1218,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12123,
+                "language_code": "en",
+                "content": "Indeed, your efforts are diverse.",
+                "is_active": true
+            },
+            {
+                "id": 12124,
+                "language_code": "ku",
+                "content": "به‌ڕاستی هه‌وڵ و کۆششی ئێوه جۆراو جۆره (هه‌تانه هه‌وڵ و کۆششی بۆ به‌ده‌ستهێنانی به‌هه‌شته‌، هه‌تانه به پێچه‌وانه‌وه به ده‌ست و برده بۆ ئه‌نجامدانی تاوان و خراپکاری، هه‌تانه گوێڕایه‌ڵ و هه‌تانه یاخی... هتد).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6063,
+        "ayah_number": 5,
+        "text_uthmani": "فَأَمَّا مَنْ أَعْطَىٰ وَٱتَّقَىٰ",
+        "text_simple": null,
+        "page_number": 1218,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12125,
+                "language_code": "en",
+                "content": "As for he who gives and fears Allāh",
+                "is_active": true
+            },
+            {
+                "id": 12126,
+                "language_code": "ku",
+                "content": "جا ئه‌وه‌ی (ماڵ و سامان و زانستی و... هتد) ده‌به‌خشێت و پارێزکار و له خوانرسه‌...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6064,
+        "ayah_number": 6,
+        "text_uthmani": "وَصَدَّقَ بِٱلْحُسْنَىٰ",
+        "text_simple": null,
+        "page_number": 1219,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12127,
+                "language_code": "en",
+                "content": "And believes in the best [reward],",
+                "is_active": true
+            },
+            {
+                "id": 12128,
+                "language_code": "ku",
+                "content": "بڕوای بته‌وی به پاداشتی چاک و به‌نرخی خوایی هه‌یه‌...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6065,
+        "ayah_number": 7,
+        "text_uthmani": "فَسَنُيَسِّرُهُۥ لِلْيُسْرَىٰ",
+        "text_simple": null,
+        "page_number": 1219,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12129,
+                "language_code": "en",
+                "content": "We will ease him toward ease.",
+                "is_active": true
+            },
+            {
+                "id": 12130,
+                "language_code": "ku",
+                "content": "ئه‌وه ڕێگه‌ی چاکه و چاکه‌کاری بۆ ئاسان ده‌که‌ین و سه‌رئه‌نجام ده‌یخه‌ینه خێر و خۆشیه‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6066,
+        "ayah_number": 8,
+        "text_uthmani": "وَأَمَّا مَنۢ بَخِلَ وَٱسْتَغْنَىٰ",
+        "text_simple": null,
+        "page_number": 1219,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12131,
+                "language_code": "en",
+                "content": "But as for he who withholds and considers himself free of need",
+                "is_active": true
+            },
+            {
+                "id": 12132,
+                "language_code": "ku",
+                "content": "به‌ڵام ئه‌وه‌ی ڕه‌زیل و ده‌ست نوقاو بێت و خۆی بێ نیاز بزانێت (ره‌زامه‌ندی خوایی مه‌به‌ست نه‌بێت)...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6067,
+        "ayah_number": 9,
+        "text_uthmani": "وَكَذَّبَ بِٱلْحُسْنَىٰ",
+        "text_simple": null,
+        "page_number": 1219,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12133,
+                "language_code": "en",
+                "content": "And denies the best [reward],",
+                "is_active": true
+            },
+            {
+                "id": 12134,
+                "language_code": "ku",
+                "content": "بڕوای نه‌بێت به پاداشت و به‌هره‌ی چاکی خوایی و به‌درۆی بزانێت...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6068,
+        "ayah_number": 10,
+        "text_uthmani": "فَسَنُيَسِّرُهُۥ لِلْعُسْرَىٰ",
+        "text_simple": null,
+        "page_number": 1219,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12135,
+                "language_code": "en",
+                "content": "We will ease him toward difficulty.",
+                "is_active": true
+            },
+            {
+                "id": 12136,
+                "language_code": "ku",
+                "content": "ئه‌وه ئێمه ڕێبازی ته‌نگانه و ناخۆشی بۆ ئاسان ده‌که‌ین و سه‌رئه‌نجام به دۆزه‌خی ده‌گه‌یه‌نین.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6069,
+        "ayah_number": 11,
+        "text_uthmani": "وَمَا يُغْنِى عَنْهُ مَالُهُۥٓ إِذَا تَرَدَّىٰٓ",
+        "text_simple": null,
+        "page_number": 1220,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12137,
+                "language_code": "en",
+                "content": "And what will his wealth avail him when he falls?<sup foot_note=197776>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12138,
+                "language_code": "ku",
+                "content": "ئه‌و کاته‌ی که ده‌مرێت و له گۆڕ ده‌نرێت، ئه‌و کاته‌ش که فڕێ ده‌درێته دۆزه‌خه‌وه ماڵ و سامان هیچ فریای ناکه‌وێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6070,
+        "ayah_number": 12,
+        "text_uthmani": "إِنَّ عَلَيْنَا لَلْهُدَىٰ",
+        "text_simple": null,
+        "page_number": 1220,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12139,
+                "language_code": "en",
+                "content": "Indeed, [incumbent] upon Us is guidance.",
+                "is_active": true
+            },
+            {
+                "id": 12140,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ڕوون کردنه‌وه‌ی ڕێبازی هیدایه‌ت و دیاریکردنی بۆ خه‌ڵکی له‌سه‌ر ئێمه‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6071,
+        "ayah_number": 13,
+        "text_uthmani": "وَإِنَّ لَنَا لَلْـَٔاخِرَةَ وَٱلْأُولَىٰ",
+        "text_simple": null,
+        "page_number": 1220,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12141,
+                "language_code": "en",
+                "content": "And indeed, to us belongs the Hereafter and the first [life].",
+                "is_active": true
+            },
+            {
+                "id": 12142,
+                "language_code": "ku",
+                "content": "بێگومان ده‌سه‌ڵاتی بێ سنورمان هه‌یه به‌سه‌ر پاشه‌ڕۆژ و قیامه‌تدا، هه‌روه‌ها به‌سه‌ر دنیادا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6072,
+        "ayah_number": 14,
+        "text_uthmani": "فَأَنذَرْتُكُمْ نَارًا تَلَظَّىٰ",
+        "text_simple": null,
+        "page_number": 1220,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12143,
+                "language_code": "en",
+                "content": "So I have warned you of a Fire which is blazing.",
+                "is_active": true
+            },
+            {
+                "id": 12144,
+                "language_code": "ku",
+                "content": "جا من ئه‌وه‌ته ئاگادارتان ده‌که‌م و ده‌تانترسێنم له ئاگرێک که زۆر بڵێسه ده‌سێنێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6073,
+        "ayah_number": 15,
+        "text_uthmani": "لَا يَصْلَىٰهَآ إِلَّا ٱلْأَشْقَى",
+        "text_simple": null,
+        "page_number": 1220,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12145,
+                "language_code": "en",
+                "content": "None will [enter to] burn therein except the most wretched one",
+                "is_active": true
+            },
+            {
+                "id": 12146,
+                "language_code": "ku",
+                "content": "ناچێته ناوی مه‌گه‌ر که‌سانی ناپوخت و دڕنده و خوانه‌ناس نه‌بێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6074,
+        "ayah_number": 16,
+        "text_uthmani": "ٱلَّذِى كَذَّبَ وَتَوَلَّىٰ",
+        "text_simple": null,
+        "page_number": 1221,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12147,
+                "language_code": "en",
+                "content": "Who had denied and turned away.",
+                "is_active": true
+            },
+            {
+                "id": 12148,
+                "language_code": "ku",
+                "content": "ئه‌وه‌ی حه‌قیقه‌ت و ڕاستی به درۆ داناوه و پشتی هه‌ڵکردووه (له به‌رنامه‌ی خوا).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6075,
+        "ayah_number": 17,
+        "text_uthmani": "وَسَيُجَنَّبُهَا ٱلْأَتْقَى",
+        "text_simple": null,
+        "page_number": 1221,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12149,
+                "language_code": "en",
+                "content": "But the righteous one will avoid it",
+                "is_active": true
+            },
+            {
+                "id": 12150,
+                "language_code": "ku",
+                "content": "جا خواناس و پارێزکاران له‌و سزاو ناگرو ناخۆشیه دوور ده‌خرێنه‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6076,
+        "ayah_number": 18,
+        "text_uthmani": "ٱلَّذِى يُؤْتِى مَالَهُۥ يَتَزَكَّىٰ",
+        "text_simple": null,
+        "page_number": 1221,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12151,
+                "language_code": "en",
+                "content": "[He] who gives [from] his wealth to purify himself",
+                "is_active": true
+            },
+            {
+                "id": 12152,
+                "language_code": "ku",
+                "content": "ئه‌و جۆره که‌سه‌ی ماڵ و سامانی ده‌به‌خشێت به‌وه دڵ و ده‌روونی خۆی خاوێن ڕاده‌گرێت...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6077,
+        "ayah_number": 19,
+        "text_uthmani": "وَمَا لِأَحَدٍ عِندَهُۥ مِن نِّعْمَةٍ تُجْزَىٰٓ",
+        "text_simple": null,
+        "page_number": 1221,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12153,
+                "language_code": "en",
+                "content": "And not [giving] for anyone who has [done him] a favor to be rewarded<sup foot_note=197777>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12154,
+                "language_code": "ku",
+                "content": "له کاتێکدا که‌که‌س چاکه‌یه‌کی وای به‌سه‌ریه‌وه نی یه که پاداشت بدرێته‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6078,
+        "ayah_number": 20,
+        "text_uthmani": "إِلَّا ٱبْتِغَآءَ وَجْهِ رَبِّهِ ٱلْأَعْلَىٰ",
+        "text_simple": null,
+        "page_number": 1221,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12155,
+                "language_code": "en",
+                "content": "But only seeking the face [i.e., acceptance] of his Lord, Most High.",
+                "is_active": true
+            },
+            {
+                "id": 12156,
+                "language_code": "ku",
+                "content": "(چونکه‌) ته‌نها مه‌به‌ستی به‌ده‌ستهێنانی ڕه‌زامه‌ندیی په‌روه‌ردگاری به‌رزو بڵنده‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6079,
+        "ayah_number": 21,
+        "text_uthmani": "وَلَسَوْفَ يَرْضَىٰ",
+        "text_simple": null,
+        "page_number": 1222,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12157,
+                "language_code": "en",
+                "content": "And he is going to be satisfied.",
+                "is_active": true
+            },
+            {
+                "id": 12158,
+                "language_code": "ku",
+                "content": "سوێند به‌خوا ڕازی و خۆشنوود ده‌بێت پێی.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

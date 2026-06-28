@@ -1,0 +1,227 @@
+[
+    {
+        "id": 6180,
+        "ayah_number": 1,
+        "text_uthmani": "وَيْلٌ لِّكُلِّ هُمَزَةٍ لُّمَزَةٍ",
+        "text_simple": null,
+        "page_number": 1249,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12359,
+                "language_code": "en",
+                "content": "Woe to every scorner and mocker",
+                "is_active": true
+            },
+            {
+                "id": 12360,
+                "language_code": "ku",
+                "content": "هاوارو ئاهو ناڵه بۆ هه‌ر که‌سێك که به شوێن که‌م و کووڕیدا ده‌گه‌ڕێت و له عه‌یب و عاری خه‌ڵکی ده‌دوێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6181,
+        "ayah_number": 2,
+        "text_uthmani": "ٱلَّذِى جَمَعَ مَالًا وَعَدَّدَهُۥ",
+        "text_simple": null,
+        "page_number": 1249,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12361,
+                "language_code": "en",
+                "content": "Who collects wealth and [continuously] counts it.<sup foot_note=197813>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12362,
+                "language_code": "ku",
+                "content": "ئه‌و که‌سه‌ی ماڵ و سامانی زۆری کۆ کردۆته‌وه‌و هه‌ر خه‌ریکی ژماردنێتی و (دڵی پێی خۆشه‌، ڕه‌زیله‌و به‌خشنده نیه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6182,
+        "ayah_number": 3,
+        "text_uthmani": "يَحْسَبُ أَنَّ مَالَهُۥٓ أَخْلَدَهُۥ",
+        "text_simple": null,
+        "page_number": 1249,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12363,
+                "language_code": "en",
+                "content": "He thinks that his wealth will make him immortal.",
+                "is_active": true
+            },
+            {
+                "id": 12364,
+                "language_code": "ku",
+                "content": "واده‌زانێت به‌ڕاستی که ماڵ و سامانه‌که‌ی ده‌بێته هۆی ته‌مه‌ن درێژی و نه‌مریی بۆی؟",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6183,
+        "ayah_number": 4,
+        "text_uthmani": "كَلَّا ۖ لَيُنۢبَذَنَّ فِى ٱلْحُطَمَةِ",
+        "text_simple": null,
+        "page_number": 1249,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12365,
+                "language_code": "en",
+                "content": "No! He will surely be thrown into the Crusher.<sup foot_note=197814>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12366,
+                "language_code": "ku",
+                "content": "نه‌خێر سوێند به‌خوا به سووکی و ڕیسوایی فڕێ ده‌درێته ناو (حطمة) وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6184,
+        "ayah_number": 5,
+        "text_uthmani": "وَمَآ أَدْرَىٰكَ مَا ٱلْحُطَمَةُ",
+        "text_simple": null,
+        "page_number": 1249,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12367,
+                "language_code": "en",
+                "content": "And what can make you know what is the Crusher?",
+                "is_active": true
+            },
+            {
+                "id": 12368,
+                "language_code": "ku",
+                "content": "جا تۆ چووزانی (حطمة) چیه‌؟",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6185,
+        "ayah_number": 6,
+        "text_uthmani": "نَارُ ٱللَّهِ ٱلْمُوقَدَةُ",
+        "text_simple": null,
+        "page_number": 1250,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12369,
+                "language_code": "en",
+                "content": "It is the fire of Allāh, [eternally] fueled,",
+                "is_active": true
+            },
+            {
+                "id": 12370,
+                "language_code": "ku",
+                "content": "بریتی یه له ئاگری داگیرساوو بڵێسه‌داری خوا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6186,
+        "ayah_number": 7,
+        "text_uthmani": "ٱلَّتِى تَطَّلِعُ عَلَى ٱلْأَفْـِٔدَةِ",
+        "text_simple": null,
+        "page_number": 1250,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12371,
+                "language_code": "en",
+                "content": "Which mounts directed at the hearts.<sup foot_note=197815>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12372,
+                "language_code": "ku",
+                "content": "ئه‌و ئاگره‌ی ڕوو ده‌کاته ناو جه‌رگه‌ی دڵ و ده‌روونه‌کان (که مه‌ڵبه‌ندی کوفرو خوانه‌ناسی و ڕه‌زیلی یه‌)",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6187,
+        "ayah_number": 8,
+        "text_uthmani": "إِنَّهَا عَلَيْهِم مُّؤْصَدَةٌ",
+        "text_simple": null,
+        "page_number": 1250,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12373,
+                "language_code": "en",
+                "content": "Indeed, it [i.e., Hellfire] will be closed down upon them",
+                "is_active": true
+            },
+            {
+                "id": 12374,
+                "language_code": "ku",
+                "content": "بێگومان ئه‌و ئاگرو دۆزه‌خه له شوێنێکدایه که سه‌رگیراوو ده‌رگا داخراوه له‌سه‌ریان (ڕێگه‌ی قوتار بوونی نیه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6188,
+        "ayah_number": 9,
+        "text_uthmani": "فِى عَمَدٍ مُّمَدَّدَةٍۭ",
+        "text_simple": null,
+        "page_number": 1250,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12375,
+                "language_code": "en",
+                "content": "In extended columns.<sup foot_note=197816>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12376,
+                "language_code": "ku",
+                "content": "(خوا نه‌ناسان له‌وێ) له‌ناو چه‌ند ستوونێکی ئاگرینی درێژدان (هیچ جم و جوڵێکیان بۆ ناکرێت).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

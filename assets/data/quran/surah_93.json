@@ -1,0 +1,277 @@
+[
+    {
+        "id": 6080,
+        "ayah_number": 1,
+        "text_uthmani": "وَٱلضُّحَىٰ",
+        "text_simple": null,
+        "page_number": 1223,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12159,
+                "language_code": "en",
+                "content": "By the morning brightness",
+                "is_active": true
+            },
+            {
+                "id": 12160,
+                "language_code": "ku",
+                "content": "سوێند به چێشته‌نگاو (کاتێك خۆر به‌رز ده‌بێته‌وه‌و کاتی جوڵه‌و چالاکیه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6081,
+        "ayah_number": 2,
+        "text_uthmani": "وَٱلَّيْلِ إِذَا سَجَىٰ",
+        "text_simple": null,
+        "page_number": 1223,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12161,
+                "language_code": "en",
+                "content": "And [by] the night when it covers with darkness,<sup foot_note=197778>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12162,
+                "language_code": "ku",
+                "content": "سوێند به شه‌و کاتێك به‌تاریکیه‌که‌ی زه‌وی داده‌پۆشێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6082,
+        "ayah_number": 3,
+        "text_uthmani": "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ",
+        "text_simple": null,
+        "page_number": 1223,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12163,
+                "language_code": "en",
+                "content": "Your Lord has not taken leave of you, [O Muḥammad], nor has He detested [you].",
+                "is_active": true
+            },
+            {
+                "id": 12164,
+                "language_code": "ku",
+                "content": "په‌روه‌ردگارت ده‌ستبه‌رداری تۆ نه‌بووه‌و وازی له تۆ نه‌هێناوه‌و خه‌شمی لێ نه‌گرتوویت (ماوه‌یه‌ك وه‌حی نه‌هات بۆ پێغه‌مبه‌ر صلی الله علیه وسلم کافرانی قوڕه‌یش وتیان، په‌روه‌ردگاری محمد وازی لێ هێناوه‌، ئیتر خوای گه‌وره به‌درۆی خسته‌وه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6083,
+        "ayah_number": 4,
+        "text_uthmani": "وَلَلْـَٔاخِرَةُ خَيْرٌ لَّكَ مِنَ ٱلْأُولَىٰ",
+        "text_simple": null,
+        "page_number": 1223,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12165,
+                "language_code": "en",
+                "content": "And the Hereafter is better for you than the first [life].",
+                "is_active": true
+            },
+            {
+                "id": 12166,
+                "language_code": "ku",
+                "content": "بێگومان قیامه‌ت و دواڕۆژ چاکتره بۆ تۆ له دنیا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6084,
+        "ayah_number": 5,
+        "text_uthmani": "وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰٓ",
+        "text_simple": null,
+        "page_number": 1223,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12167,
+                "language_code": "en",
+                "content": "And your Lord is going to give you, and you will be satisfied.",
+                "is_active": true
+            },
+            {
+                "id": 12168,
+                "language_code": "ku",
+                "content": "له ئاینده‌دا په‌روه‌ردگارت ئه‌وه‌نده نازو نیعمه‌تت پێده‌به‌خشێت که زۆر پێی ڕازی و خۆشنوود ده‌بیت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6085,
+        "ayah_number": 6,
+        "text_uthmani": "أَلَمْ يَجِدْكَ يَتِيمًا فَـَٔاوَىٰ",
+        "text_simple": null,
+        "page_number": 1224,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12169,
+                "language_code": "en",
+                "content": "Did He not find you an orphan and give [you] refuge?",
+                "is_active": true
+            },
+            {
+                "id": 12170,
+                "language_code": "ku",
+                "content": "ئایا په‌روه‌ردگارت نه‌یبینیت به هه‌تیوی و خێرا ده‌رووی لێکردیته‌وه و لانه‌ی بۆ سازاندیت و حه‌واندیتیه‌وه‌؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6086,
+        "ayah_number": 7,
+        "text_uthmani": "وَوَجَدَكَ ضَآلًّا فَهَدَىٰ",
+        "text_simple": null,
+        "page_number": 1224,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12171,
+                "language_code": "en",
+                "content": "And He found you lost and guided [you],",
+                "is_active": true
+            },
+            {
+                "id": 12172,
+                "language_code": "ku",
+                "content": "ئه‌ی سه‌رگه‌ردان نه‌بوویت و نه‌ت ده‌زانی چی بکه‌یت، هیدایه‌تی دایت و ڕێنموویی کردیت؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6087,
+        "ayah_number": 8,
+        "text_uthmani": "وَوَجَدَكَ عَآئِلًا فَأَغْنَىٰ",
+        "text_simple": null,
+        "page_number": 1224,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12173,
+                "language_code": "en",
+                "content": "And He found you poor and made [you] self-sufficient.",
+                "is_active": true
+            },
+            {
+                "id": 12174,
+                "language_code": "ku",
+                "content": "ئه‌ی نه‌یبینیت که هه‌ژارو نه‌داریت، جا ماڵ و سامانی پێبه‌خشیت و ده‌وڵه‌مه‌ندی کردیت و بێ نیازی کردیت؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6088,
+        "ayah_number": 9,
+        "text_uthmani": "فَأَمَّا ٱلْيَتِيمَ فَلَا تَقْهَرْ",
+        "text_simple": null,
+        "page_number": 1224,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12175,
+                "language_code": "en",
+                "content": "So as for the orphan, do not oppress [him].",
+                "is_active": true
+            },
+            {
+                "id": 12176,
+                "language_code": "ku",
+                "content": "که‌واته تۆش (ئه‌ی پێغه‌مبه‌ر صلی الله علیه وسلم، ئه‌ی ئیماندار) هه‌تیو مه‌چه‌وسێنه‌ره‌وه‌و دڵی مه‌ڕه‌نجێنه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6089,
+        "ayah_number": 10,
+        "text_uthmani": "وَأَمَّا ٱلسَّآئِلَ فَلَا تَنْهَرْ",
+        "text_simple": null,
+        "page_number": 1224,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12177,
+                "language_code": "en",
+                "content": "And as for the petitioner,<sup foot_note=197779>1<\/sup> do not repel [him].",
+                "is_active": true
+            },
+            {
+                "id": 12178,
+                "language_code": "ku",
+                "content": "هه‌ڵمه‌شاخێ به هه‌ژارو داماوو سواڵکه‌راندا.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6090,
+        "ayah_number": 11,
+        "text_uthmani": "وَأَمَّا بِنِعْمَةِ رَبِّكَ فَحَدِّثْ",
+        "text_simple": null,
+        "page_number": 1225,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12179,
+                "language_code": "en",
+                "content": "But as for the favor of your Lord, report [it].",
+                "is_active": true
+            },
+            {
+                "id": 12180,
+                "language_code": "ku",
+                "content": "(به‌ڵکو) ده‌رباره‌ی نازو نیعمه‌ته‌کانی په‌روه‌ردگارت هه‌میشه بدوێ و باسیان بکه له جێی خۆیاندا به‌کاریان بهێنه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

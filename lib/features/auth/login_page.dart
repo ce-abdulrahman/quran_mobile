@@ -4,6 +4,7 @@ import '../../core/providers/app_providers.dart';
 import 'auth_provider.dart';
 import 'forgot_password_page.dart';
 import 'register_page.dart';
+import '../../core/l10n/app_localizations.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -41,7 +42,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         // Pop login views back to the app shell/home
         Navigator.of(context).popUntil((route) => route.isFirst);
       } else {
-        final error = ref.read(authProvider).errorMessage ?? 'هەڵەیەک لە چوونەژوورەوەدا ڕوویدا';
+        final error = ref.read(authProvider).errorMessage ?? context.l10n.authLoginError;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -61,12 +62,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final accentColor = ref.watch(accentColorProvider);
     final authState = ref.watch(authProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'چوونەژوورەوە',
-          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+        title: Text(
+          l.authLogin,
+          style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
@@ -82,10 +84,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'بەخێربێیەوە',
+                  Text(
+                    l.authWelcomeBack,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                       fontFamily: 'Cairo',
@@ -93,7 +95,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'زانیارییەکانت بنووسە بۆ چوونەژوورەوە بۆ ئەکاونتەکەت',
+                    l.authLoginSub,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
@@ -107,7 +109,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   TextFormField(
                     controller: _loginController,
                     decoration: InputDecoration(
-                      labelText: 'ناو یان ئیمەیڵ',
+                      labelText: l.authUsernameOrEmail,
                       hintText: 'Username or Email',
                       prefixIcon: const Icon(Icons.person_outline),
                       border: OutlineInputBorder(
@@ -118,7 +120,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     textDirection: TextDirection.ltr,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'تکایە ناو یان ئیمەیڵەکەت بنووسە';
+                        return l.authUsernameOrEmailRequired;
                       }
                       return null;
                     },
@@ -130,7 +132,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     controller: _passwordController,
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
-                      labelText: 'وشەیی نهێنی',
+                      labelText: l.authPassword,
                       hintText: '••••••••',
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
@@ -147,7 +149,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     textDirection: TextDirection.ltr,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'تکایە وشەیی نهێنيت بنووسە';
+                        return l.authPasswordRequired;
                       }
                       return null;
                     },
@@ -163,7 +165,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         );
                       },
                       child: Text(
-                        'وشەی نهێنی لە بیرچووە؟',
+                        l.authForgotPassword,
                         style: TextStyle(
                           color: accentColor,
                           fontWeight: FontWeight.w600,
@@ -188,9 +190,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                     child: authState.status == AuthStatus.loading
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text(
-                            'چوونەژوورەوە',
-                            style: TextStyle(
+                        : Text(
+                            l.authLogin,
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               fontFamily: 'Cairo',
@@ -210,7 +212,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           );
                         },
                         child: Text(
-                          'ئەکاونت دروستبکە',
+                          l.authCreateAccount,
                           style: TextStyle(
                             color: accentColor,
                             fontWeight: FontWeight.bold,
@@ -218,9 +220,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           ),
                         ),
                       ),
-                      const Text(
-                        'ئەگەر ئەکاونتت نییە؟',
-                        style: TextStyle(fontFamily: 'Cairo'),
+                      Text(
+                        l.authNoAccount,
+                        style: const TextStyle(fontFamily: 'Cairo'),
                       ),
                     ],
                   ),

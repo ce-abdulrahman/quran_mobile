@@ -1,0 +1,202 @@
+[
+    {
+        "id": 6099,
+        "ayah_number": 1,
+        "text_uthmani": "بِّسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ وَٱلتِّينِ وَٱلزَّيْتُونِ",
+        "text_simple": null,
+        "page_number": 1228,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12197,
+                "language_code": "en",
+                "content": "By the fig and the olive<sup foot_note=197782>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12198,
+                "language_code": "ku",
+                "content": "سوێند به هه‌نجیرو زه‌یتوون (که دوو میوه‌ی به‌سوودو به‌که‌ڵکن، سوێند خواردنی خوا به دروستکراوانی بۆ سه‌رنج ڕاکێشانمانه‌، به‌ڵام سوێند خواردنی ئێمه گه‌وره‌یی و گرنگی سوێند پێ خۆراوه‌که ده‌گه‌یه‌نێت).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6100,
+        "ayah_number": 2,
+        "text_uthmani": "وَطُورِ سِينِينَ",
+        "text_simple": null,
+        "page_number": 1228,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12199,
+                "language_code": "en",
+                "content": "And [by] Mount Sinai",
+                "is_active": true
+            },
+            {
+                "id": 12200,
+                "language_code": "ku",
+                "content": "به‌کێوی طوری سینا (که خوا گفتوگۆی له‌گه‌ڵ حه‌زره‌تی موسا، له‌وێدا کرد).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6101,
+        "ayah_number": 3,
+        "text_uthmani": "وَهَـٰذَا ٱلْبَلَدِ ٱلْأَمِينِ",
+        "text_simple": null,
+        "page_number": 1228,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12201,
+                "language_code": "en",
+                "content": "And [by] this secure city [i.e., Makkah],",
+                "is_active": true
+            },
+            {
+                "id": 12202,
+                "language_code": "ku",
+                "content": "سوێند به‌م شاره ئه‌مینه‌، که (مه‌ککه‌) یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6102,
+        "ayah_number": 4,
+        "text_uthmani": "لَقَدْ خَلَقْنَا ٱلْإِنسَـٰنَ فِىٓ أَحْسَنِ تَقْوِيمٍ",
+        "text_simple": null,
+        "page_number": 1228,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12203,
+                "language_code": "en",
+                "content": "We have certainly created man in the best of stature;<sup foot_note=197783>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12204,
+                "language_code": "ku",
+                "content": "به‌ڕاستی ئێمه ئینسانمان له جوانترین شێوه و ڕێکوپێکترین شێوازدا دروست کردووه له هه‌موو ڕوویه‌که‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6103,
+        "ayah_number": 5,
+        "text_uthmani": "ثُمَّ رَدَدْنَـٰهُ أَسْفَلَ سَـٰفِلِينَ",
+        "text_simple": null,
+        "page_number": 1228,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12205,
+                "language_code": "en",
+                "content": "Then We return him to the lowest of the low,<sup foot_note=197784>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12206,
+                "language_code": "ku",
+                "content": "(ئه‌گه‌ر ڕێبازی خواناسی نه‌گرێت) سه‌ره‌نجام ده‌یخه‌ینه نزمترینی شوێنه نزمه‌کانه‌وه (له دۆزه‌خدا).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6104,
+        "ayah_number": 6,
+        "text_uthmani": "إِلَّا ٱلَّذِينَ ءَامَنُوا۟ وَعَمِلُوا۟ ٱلصَّـٰلِحَـٰتِ فَلَهُمْ أَجْرٌ غَيْرُ مَمْنُونٍ",
+        "text_simple": null,
+        "page_number": 1229,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12207,
+                "language_code": "en",
+                "content": "Except for those who believe and do righteous deeds, for they will have a reward uninterrupted.",
+                "is_active": true
+            },
+            {
+                "id": 12208,
+                "language_code": "ku",
+                "content": "جگه له‌وانه‌ی که باوه‌ڕیان هێناوه‌و کارو کرده‌وه چاکه‌کانیان ئه‌نجامداوه‌، پاداشتی هه‌میشه‌و نه‌بڕاوه بۆیان ئاماده‌یه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6105,
+        "ayah_number": 7,
+        "text_uthmani": "فَمَا يُكَذِّبُكَ بَعْدُ بِٱلدِّينِ",
+        "text_simple": null,
+        "page_number": 1229,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12209,
+                "language_code": "en",
+                "content": "So what yet causes you to deny the Recompense?<sup foot_note=197785>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12210,
+                "language_code": "ku",
+                "content": "جا ئیتر (ئه‌ی ئینسانی سه‌ر که‌ش) چی وای لێکردوویت باوه‌ڕت به‌ڕۆژی قیامه‌ت و لێپرسینه‌وه نه‌بێت دوای ئه‌و هه‌موو نازو نیعمه‌ته‌؟",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6106,
+        "ayah_number": 8,
+        "text_uthmani": "أَلَيْسَ ٱللَّهُ بِأَحْكَمِ ٱلْحَـٰكِمِينَ",
+        "text_simple": null,
+        "page_number": 1229,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12211,
+                "language_code": "en",
+                "content": "Is not Allāh the most just of judges?",
+                "is_active": true
+            },
+            {
+                "id": 12212,
+                "language_code": "ku",
+                "content": "ئایا خوا چاکترین فه‌رمانڕه‌وا نیه‌؟ دادپه‌روه‌رترین فه‌رمانڕه‌وا نیه‌؟ (که‌چی تۆی سه‌ر که‌ش پێی ڕازیی نیت!!).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

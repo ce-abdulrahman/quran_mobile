@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
 import 'hadith_category_page.dart';
 
@@ -77,6 +78,7 @@ class _HadithPageState extends ConsumerState<HadithPage> {
     final cs = AppColorScheme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final categoriesAsync = ref.watch(hadithCategoriesFutureProvider);
+    final l = context.l10n;
 
     return Scaffold(
       backgroundColor: cs.bg,
@@ -94,9 +96,9 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                 textDirection: TextDirection.rtl,
                 autofocus: true,
                 style: const TextStyle(color: Colors.white, fontFamily: 'Cairo', fontSize: 16),
-                decoration: const InputDecoration(
-                  hintText: 'بگەڕێ لە فەرموودەکان...',
-                  hintStyle: TextStyle(color: Colors.white70, fontSize: 13),
+                decoration: InputDecoration(
+                  hintText: l.hadithSearchHint,
+                  hintStyle: const TextStyle(color: Colors.white70, fontSize: 13),
                   hintTextDirection: TextDirection.rtl,
                   border: InputBorder.none,
                 ),
@@ -106,9 +108,9 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                   });
                 },
               )
-            : const Text(
-                'فەرموودەکانی پێغەمبەر',
-                style: TextStyle(
+            : Text(
+                l.hadithPageTitle,
+                style: const TextStyle(
                   fontFamily: 'Cairo',
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
@@ -133,7 +135,7 @@ class _HadithPageState extends ConsumerState<HadithPage> {
             IconButton(
               icon: const Icon(Icons.refresh_rounded, color: Colors.white),
               onPressed: () => ref.refresh(hadithCategoriesFutureProvider),
-              tooltip: 'تازەکردنەوە',
+              tooltip: l.hadithRefresh,
             ),
         ],
       ),
@@ -196,10 +198,10 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                         ),
                       ),
                       const SizedBox(height: 18),
-                      const Text(
-                        'مَنْ يُطِعِ الرَّسُولَ فَقَدْ أَطَاعَ اللَّهَ',
+                      Text(
+                        l.hadithHeaderQuote,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: 'UthmanicHafs',
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -208,7 +210,7 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        'فەرموودە ڕاستەکانی پێغەمبەری خودا (د.خ)',
+                        l.hadithHeaderSub,
                         style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 12,
@@ -238,9 +240,9 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                         children: [
                           const Icon(Icons.error_outline_rounded, color: Color(0xFFE53935), size: 48),
                           const SizedBox(height: 16),
-                          const Text(
-                            'سەرکەوتوو نەبوو لە بارکردنی فەرموودەکان',
-                            style: TextStyle(
+                          Text(
+                            l.hadithLoadError,
+                            style: const TextStyle(
                               fontFamily: 'Cairo',
                               fontSize: 14,
                               color: Color(0xFFE53935),
@@ -249,7 +251,7 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'دڵنیابەوە لە هێڵی ئینتەرنێتەکەت یان سێرڤەر',
+                            l.hadithNetworkError,
                             style: TextStyle(
                               fontFamily: 'Cairo',
                               fontSize: 11,
@@ -264,9 +266,9 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                               foregroundColor: Colors.white,
                             ),
                             icon: const Icon(Icons.refresh_rounded, size: 18),
-                            label: const Text(
-                              'دووبارە هەوڵبدەرەوە',
-                              style: TextStyle(fontFamily: 'Cairo', fontSize: 12),
+                            label: Text(
+                              l.hadithRetry,
+                              style: const TextStyle(fontFamily: 'Cairo', fontSize: 12),
                             ),
                           ),
                         ],
@@ -279,7 +281,7 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(vertical: 60),
                           child: Text(
-                            'هیچ هاوپۆلێک نەدۆزرایەوە',
+                            l.hadithNoCategoryFound,
                             style: TextStyle(
                               fontFamily: 'Cairo',
                               fontSize: 14,
@@ -313,7 +315,7 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                                 const Icon(Icons.search_off_rounded, size: 48, color: Colors.redAccent),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'هیچ ئەنجامێک نەدۆزرایەوە بۆ "$_query"',
+                                  '${l.hadithNoResults} "$_query"',
                                   style: TextStyle(
                                     fontFamily: 'Cairo',
                                     fontSize: 14,
@@ -443,13 +445,13 @@ class _HadithPageState extends ConsumerState<HadithPage> {
                                             borderRadius: BorderRadius.circular(12),
                                           ),
                                           child: Text(
-                                            '${cat.hadiths.length} فەرموودە',
-                                            style: TextStyle(
-                                              fontFamily: 'Cairo',
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold,
-                                              color: cs.primary,
-                                            ),
+                                          l.hadithCount(cat.hadiths.length),
+                                          style: TextStyle(
+                                            fontFamily: 'Cairo',
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: cs.primary,
+                                          ),
                                           ),
                                         ),
                                         const SizedBox(width: 8),

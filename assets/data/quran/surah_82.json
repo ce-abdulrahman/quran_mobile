@@ -1,0 +1,477 @@
+[
+    {
+        "id": 5830,
+        "ayah_number": 1,
+        "text_uthmani": "إِذَا ٱلسَّمَآءُ ٱنفَطَرَتْ",
+        "text_simple": null,
+        "page_number": 1163,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11659,
+                "language_code": "en",
+                "content": "When the sky breaks apart",
+                "is_active": true
+            },
+            {
+                "id": 11660,
+                "language_code": "ku",
+                "content": "کاتێك ئاسمان له‌ت له‌ت و پارچه پارچه ده‌بێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5831,
+        "ayah_number": 2,
+        "text_uthmani": "وَإِذَا ٱلْكَوَاكِبُ ٱنتَثَرَتْ",
+        "text_simple": null,
+        "page_number": 1163,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11661,
+                "language_code": "en",
+                "content": "And when the stars fall, scattering,",
+                "is_active": true
+            },
+            {
+                "id": 11662,
+                "language_code": "ku",
+                "content": "کاتێك ئه‌ستێره و هه‌ساره‌کان په‌رش و بلاو ده‌بنه‌وه و ورد و خاش ده‌بن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5832,
+        "ayah_number": 3,
+        "text_uthmani": "وَإِذَا ٱلْبِحَارُ فُجِّرَتْ",
+        "text_simple": null,
+        "page_number": 1163,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11663,
+                "language_code": "en",
+                "content": "And when the seas are erupted",
+                "is_active": true
+            },
+            {
+                "id": 11664,
+                "language_code": "ku",
+                "content": "کاتێك ده‌ریاکان ده‌ته‌قێنرێنه‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5833,
+        "ayah_number": 4,
+        "text_uthmani": "وَإِذَا ٱلْقُبُورُ بُعْثِرَتْ",
+        "text_simple": null,
+        "page_number": 1163,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11665,
+                "language_code": "en",
+                "content": "And when the [contents of] graves are scattered [i.e., exposed],",
+                "is_active": true
+            },
+            {
+                "id": 11666,
+                "language_code": "ku",
+                "content": "کاتێك که گۆره‌کان ژێره و ژوور ده‌کرێن (مردووه‌کانی ناویان ده‌هێنرێنه ده‌ره‌وه و زیندوو ده‌کرێنه‌وه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5834,
+        "ayah_number": 5,
+        "text_uthmani": "عَلِمَتْ نَفْسٌ مَّا قَدَّمَتْ وَأَخَّرَتْ",
+        "text_simple": null,
+        "page_number": 1163,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11667,
+                "language_code": "en",
+                "content": "A soul will [then] know what it has put forth and kept back.",
+                "is_active": true
+            },
+            {
+                "id": 11668,
+                "language_code": "ku",
+                "content": "ئه‌وسا هه‌رکه‌س ده‌زانێت چی پێشخستووه و چی دواخستووه‌، چی ده‌ستپێشکه‌ری کردووه و چیشی هێشتۆته‌وه (له کارو کرده‌وه‌ی چاك، یان خراپ که خه‌ڵکی دوای خۆی چاویان لێ کردووه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5835,
+        "ayah_number": 6,
+        "text_uthmani": "يَـٰٓأَيُّهَا ٱلْإِنسَـٰنُ مَا غَرَّكَ بِرَبِّكَ ٱلْكَرِيمِ",
+        "text_simple": null,
+        "page_number": 1164,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11669,
+                "language_code": "en",
+                "content": "O mankind, what has deceived you concerning your Lord, the Generous,",
+                "is_active": true
+            },
+            {
+                "id": 11670,
+                "language_code": "ku",
+                "content": "ئه‌ی ئینسان!! تۆ چی وای لێکردویت که سه‌رکه‌ش بیت به‌رامبه‌ر په‌روه‌ردگاری میهره‌بان و به‌ڕێزت؟ چی وای لێکردویت که وه‌کو پێویست قه‌دری نه‌زانیت؟ (نافه‌رمان و یاخی بیت؟).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5836,
+        "ayah_number": 7,
+        "text_uthmani": "ٱلَّذِى خَلَقَكَ فَسَوَّىٰكَ فَعَدَلَكَ",
+        "text_simple": null,
+        "page_number": 1164,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11671,
+                "language_code": "en",
+                "content": "Who created you, proportioned you, and balanced you?",
+                "is_active": true
+            },
+            {
+                "id": 11672,
+                "language_code": "ku",
+                "content": "(به‌مه‌رجێك) ئه‌و په‌روه‌ردگاره تۆی دروست کردووه‌، به ڕێكوپێکترین شێوه‌، به‌جوانترین شێواز (ئه‌ندامه‌کان هه‌موو له‌شوێنی تایبه‌تی خۆیاندا دانراون که بتوانن کارو فرنانی خۆیان به‌چاکی ئه‌نجام بده‌ن و ئه‌و ئه‌ندامانه‌ش که جووتن قه‌باره و درێژی و شێوه‌یان چوونیه‌که‌، جگه له‌وه‌ی که یارمه‌تی و ته‌باییه‌کی ته‌واو هه‌یه له‌نێوانیاندا و هه‌مووان هاوکارن).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5837,
+        "ayah_number": 8,
+        "text_uthmani": "فِىٓ أَىِّ صُورَةٍ مَّا شَآءَ رَكَّبَكَ",
+        "text_simple": null,
+        "page_number": 1164,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11673,
+                "language_code": "en",
+                "content": "In whatever form He willed has He assembled you.",
+                "is_active": true
+            },
+            {
+                "id": 11674,
+                "language_code": "ku",
+                "content": "له‌هه‌ر شێوه و شێوازێكدا که ویستوویه‌تی تۆی ڕێکخستووه و ئه‌ندامه‌کانتی به‌یه‌که‌وه لکاندووه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5838,
+        "ayah_number": 9,
+        "text_uthmani": "كَلَّا بَلْ تُكَذِّبُونَ بِٱلدِّينِ",
+        "text_simple": null,
+        "page_number": 1164,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11675,
+                "language_code": "en",
+                "content": "No! But you deny the Recompense.",
+                "is_active": true
+            },
+            {
+                "id": 11676,
+                "language_code": "ku",
+                "content": "واز بهێنن له بێ ئاگایی، (نه‌ده‌بوو وابێت به‌رامبه‌ر ئه‌و په‌روه‌ردگاره جوانکاره‌ت، سه‌ره‌ڕای ئه‌و هه‌موو ڕوون کردنه‌وانه‌) به‌ڵکو بڕوا به‌ڕۆژی پاداشت ناکه‌ن!!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5839,
+        "ayah_number": 10,
+        "text_uthmani": "وَإِنَّ عَلَيْكُمْ لَحَـٰفِظِينَ",
+        "text_simple": null,
+        "page_number": 1164,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11677,
+                "language_code": "en",
+                "content": "And indeed, [appointed] over you are keepers,<sup foot_note=197724>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 11678,
+                "language_code": "ku",
+                "content": "بێگومان ئێوه چاودێرتان له‌سه‌ر دانراوه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5840,
+        "ayah_number": 11,
+        "text_uthmani": "كِرَامًا كَـٰتِبِينَ",
+        "text_simple": null,
+        "page_number": 1165,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11679,
+                "language_code": "en",
+                "content": "Noble and recording;",
+                "is_active": true
+            },
+            {
+                "id": 11680,
+                "language_code": "ku",
+                "content": "له فریشته به‌ڕێزه تۆمارکاره‌کان.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5841,
+        "ayah_number": 12,
+        "text_uthmani": "يَعْلَمُونَ مَا تَفْعَلُونَ",
+        "text_simple": null,
+        "page_number": 1165,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11681,
+                "language_code": "en",
+                "content": "They know whatever you do.",
+                "is_active": true
+            },
+            {
+                "id": 11682,
+                "language_code": "ku",
+                "content": "که ئاگاو زانان به‌هه‌وو ئه‌و کرده‌وه و ڕه‌فتارانه‌ی که ئه‌نجامی ده‌ده‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5842,
+        "ayah_number": 13,
+        "text_uthmani": "إِنَّ ٱلْأَبْرَارَ لَفِى نَعِيمٍ",
+        "text_simple": null,
+        "page_number": 1165,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11683,
+                "language_code": "en",
+                "content": "Indeed, the righteous will be in pleasure,",
+                "is_active": true
+            },
+            {
+                "id": 11684,
+                "language_code": "ku",
+                "content": "(سه‌رئه‌نجام) به‌ڕاستی چاکان، خواناسان له‌ناو نازو نیعمه‌تدا ژیانی پڕ له شادی و خۆشی ده‌به‌نه‌سه‌ر.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5843,
+        "ayah_number": 14,
+        "text_uthmani": "وَإِنَّ ٱلْفُجَّارَ لَفِى جَحِيمٍ",
+        "text_simple": null,
+        "page_number": 1165,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11685,
+                "language_code": "en",
+                "content": "And indeed, the wicked will be in Hellfire.",
+                "is_active": true
+            },
+            {
+                "id": 11686,
+                "language_code": "ku",
+                "content": "بێگومان تاوانبارو تاوانکاره‌کانیش له‌ناو دۆزه‌خدا ژیانی پڕ له ئێش و ئازار ده‌به‌نه‌سه‌ر.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5844,
+        "ayah_number": 15,
+        "text_uthmani": "يَصْلَوْنَهَا يَوْمَ ٱلدِّينِ",
+        "text_simple": null,
+        "page_number": 1165,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11687,
+                "language_code": "en",
+                "content": "They will [enter to] burn therein on the Day of Recompense,",
+                "is_active": true
+            },
+            {
+                "id": 11688,
+                "language_code": "ku",
+                "content": "که له ڕۆژی قیامه‌تدا ده‌خرێنه ناوی و دووچاری ده‌بن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5845,
+        "ayah_number": 16,
+        "text_uthmani": "وَمَا هُمْ عَنْهَا بِغَآئِبِينَ",
+        "text_simple": null,
+        "page_number": 1166,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11689,
+                "language_code": "en",
+                "content": "And never therefrom will they be absent.",
+                "is_active": true
+            },
+            {
+                "id": 11690,
+                "language_code": "ku",
+                "content": "له‌ناویدا ئه‌وان به‌هیچ شێوه‌یه‌ك ڕزگاریان نابێت و ناتوانن لێی دووربکه‌نه‌وه و خۆیانی لێ بشارنه‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5846,
+        "ayah_number": 17,
+        "text_uthmani": "وَمَآ أَدْرَىٰكَ مَا يَوْمُ ٱلدِّينِ",
+        "text_simple": null,
+        "page_number": 1166,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11691,
+                "language_code": "en",
+                "content": "And what can make you know what is the Day of Recompense?",
+                "is_active": true
+            },
+            {
+                "id": 11692,
+                "language_code": "ku",
+                "content": "جا تۆ ئه‌ی ئینسان چووزانیت ڕۆژی قیامه‌ت چیه و چۆنه‌؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5847,
+        "ayah_number": 18,
+        "text_uthmani": "ثُمَّ مَآ أَدْرَىٰكَ مَا يَوْمُ ٱلدِّينِ",
+        "text_simple": null,
+        "page_number": 1166,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11693,
+                "language_code": "en",
+                "content": "Then, what can make you know what is the Day of Recompense?",
+                "is_active": true
+            },
+            {
+                "id": 11694,
+                "language_code": "ku",
+                "content": "پاشان تۆ چووزانیت ئه‌و ڕۆژه چۆن ڕۆژێکه‌، (چه‌ند سه‌خته‌، چه‌ند سامناکه‌، چه‌نده پڕ له مه‌ینه‌ته‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 5848,
+        "ayah_number": 19,
+        "text_uthmani": "يَوْمَ لَا تَمْلِكُ نَفْسٌ لِّنَفْسٍ شَيْـًٔا ۖ وَٱلْأَمْرُ يَوْمَئِذٍ لِّلَّهِ",
+        "text_simple": null,
+        "page_number": 1167,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 11695,
+                "language_code": "en",
+                "content": "It is the Day when a soul will not possess for another soul [power to do] a thing; and the command, that Day, is [entirely] with Allāh.",
+                "is_active": true
+            },
+            {
+                "id": 11696,
+                "language_code": "ku",
+                "content": "ئه‌و ڕۆژه که‌س فریای که‌س ناکه‌وێت، که‌س هیچ شتێکی له ده‌ست نایه‌ت بۆ که‌سانی تر، ئه‌و ڕۆژه هه‌موو شتێك به‌ده‌ست خوایه‌، فه‌رمان ته‌نها فه‌رمانی په‌روه‌ردگاری دادپه‌روه‌ره‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

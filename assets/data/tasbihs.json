@@ -1,0 +1,30 @@
+[
+    {
+        "id": 1,
+        "arabic_text": null,
+        "translation_ku": null,
+        "count_limit": null,
+        "is_active": true
+    },
+    {
+        "id": 2,
+        "arabic_text": null,
+        "translation_ku": null,
+        "count_limit": null,
+        "is_active": true
+    },
+    {
+        "id": 3,
+        "arabic_text": null,
+        "translation_ku": null,
+        "count_limit": null,
+        "is_active": true
+    },
+    {
+        "id": 4,
+        "arabic_text": null,
+        "translation_ku": null,
+        "count_limit": null,
+        "is_active": true
+    }
+]

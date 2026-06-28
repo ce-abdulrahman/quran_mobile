@@ -27,11 +27,15 @@ class AudioRepository {
   }
 
   /// Fetch audio stream URL and timings for a specific surah and reciter
-  Future<ApiResult<SurahAudioResponse>> getSurahAudio(int surahId, int reciterId) async {
+  Future<ApiResult<SurahAudioResponse>> getSurahAudio(int surahId, int reciterId, {String? quality}) async {
     try {
+      final queryParams = <String, dynamic>{'reciter_id': reciterId};
+      if (quality != null && quality != 'offline_only') {
+        queryParams['quality'] = quality;
+      }
       final response = await _apiClient.get(
         '/surahs/$surahId/audio',
-        queryParameters: {'reciter_id': reciterId},
+        queryParameters: queryParams,
       );
       final responseData = response.data;
       if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {

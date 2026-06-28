@@ -1,0 +1,177 @@
+[
+    {
+        "id": 6198,
+        "ayah_number": 1,
+        "text_uthmani": "أَرَءَيْتَ ٱلَّذِى يُكَذِّبُ بِٱلدِّينِ",
+        "text_simple": null,
+        "page_number": 1255,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12395,
+                "language_code": "en",
+                "content": "Have you seen the one who denies the Recompense?",
+                "is_active": true
+            },
+            {
+                "id": 12396,
+                "language_code": "ku",
+                "content": "ئایا سه‌رنجت نه‌داوه له‌و که‌سه‌ی ئاینی خوا به درۆ ده‌زانێت؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6199,
+        "ayah_number": 2,
+        "text_uthmani": "فَذَٰلِكَ ٱلَّذِى يَدُعُّ ٱلْيَتِيمَ",
+        "text_simple": null,
+        "page_number": 1255,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12397,
+                "language_code": "en",
+                "content": "For that is the one who drives away the orphan",
+                "is_active": true
+            },
+            {
+                "id": 12398,
+                "language_code": "ku",
+                "content": "که‌وابوو ئه‌و جۆره که‌سه ئه‌وه‌یه که پاڵ به هه‌تیوه‌وه ده‌نێت و پیایدا هه‌ڵده‌شاخێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6200,
+        "ayah_number": 3,
+        "text_uthmani": "وَلَا يَحُضُّ عَلَىٰ طَعَامِ ٱلْمِسْكِينِ",
+        "text_simple": null,
+        "page_number": 1255,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12399,
+                "language_code": "en",
+                "content": "And does not encourage the feeding of the poor.",
+                "is_active": true
+            },
+            {
+                "id": 12400,
+                "language_code": "ku",
+                "content": "هانی که‌سیش نادات تا خواردن و خۆراك ببه‌خشێت به هه‌ژارو نه‌داران.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6201,
+        "ayah_number": 4,
+        "text_uthmani": "فَوَيْلٌ لِّلْمُصَلِّينَ",
+        "text_simple": null,
+        "page_number": 1255,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12401,
+                "language_code": "en",
+                "content": "So woe to those who pray",
+                "is_active": true
+            },
+            {
+                "id": 12402,
+                "language_code": "ku",
+                "content": "جا هاوارو واوه‌یلا بۆ نوێژگه‌رانێك...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6202,
+        "ayah_number": 5,
+        "text_uthmani": "ٱلَّذِينَ هُمْ عَن صَلَاتِهِمْ سَاهُونَ",
+        "text_simple": null,
+        "page_number": 1255,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12403,
+                "language_code": "en",
+                "content": "[But] who are heedless of their prayer<sup foot_note=197823>1<\/sup> -",
+                "is_active": true
+            },
+            {
+                "id": 12404,
+                "language_code": "ku",
+                "content": "ئه‌و نوێژگه‌رانه‌ی گوێ ناده‌ن به نوێژه‌کانیان و کارکردی نیه له‌سه‌ریان و دڵی ناده‌نێ و لێی غافڵن...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6203,
+        "ayah_number": 6,
+        "text_uthmani": "ٱلَّذِينَ هُمْ يُرَآءُونَ",
+        "text_simple": null,
+        "page_number": 1255,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12405,
+                "language_code": "en",
+                "content": "Those who make show [of their deeds]",
+                "is_active": true
+            },
+            {
+                "id": 12406,
+                "language_code": "ku",
+                "content": "ئه‌وانه‌ی که ڕیا بازن و به ڕووکه‌ش نوێژ ده‌که‌ن و ده‌یانه‌وێت خۆیان ده‌ربخه‌ن و (ئیمانداران بخه‌ڵه‌تێنن).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6204,
+        "ayah_number": 7,
+        "text_uthmani": "وَيَمْنَعُونَ ٱلْمَاعُونَ",
+        "text_simple": null,
+        "page_number": 1256,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12407,
+                "language_code": "en",
+                "content": "And withhold [simple] assistance.",
+                "is_active": true
+            },
+            {
+                "id": 12408,
+                "language_code": "ku",
+                "content": "(هه‌میشه‌ش هه‌وڵ ده‌ده‌ن بۆ) قه‌ده‌غه کردنی هه‌موو چاکه‌‌و یارمه‌تی و کۆمه‌کی و هاوکاریه‌ك.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

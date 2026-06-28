@@ -5,6 +5,7 @@ import 'package:intl/intl.dart' hide TextDirection;
 import '../../core/models/statistics_model.dart';
 import '../../core/providers/statistics_provider.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/l10n/app_localizations.dart';
 
 class StatisticsPage extends ConsumerStatefulWidget {
   const StatisticsPage({super.key});
@@ -61,7 +62,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
         backgroundColor: cs.card,
         elevation: 0,
         title: Text(
-          'ئامار و زانیارییەکان',
+          context.l10n.statsTitle,
           style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, color: cs.textPrimary),
         ),
         actions: [
@@ -147,13 +148,14 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
   // ── Summary Cards ────────────────────────────────────────────────────────────
 
   Widget _buildSummaryCards(StatisticsDashboard d, AppColorScheme cs) {
+    final l = context.l10n;
     final cards = [
-      _SummaryCard(icon: '📿', label: 'کۆی زیکرەکان',    value: _fmt(d.totalDhikr),    color: const Color(0xFF6366F1)),
-      _SummaryCard(icon: '🔥', label: 'بەردەوامی ئێستا', value: '${d.currentStreak} ڕۆژ', color: const Color(0xFFEF4444)),
-      _SummaryCard(icon: '🏆', label: 'باشترین بەردەوامی',    value: '${d.longestStreak} ڕۆژ', color: const Color(0xFFF59E0B)),
-      _SummaryCard(icon: '🎯', label: 'ئامانجی تەواوبوو',     value: _fmt(d.totalGoalsCompleted), color: const Color(0xFF10B981)),
-      _SummaryCard(icon: '⭐', label: 'دەستکەوتەکان',   value: '${d.totalAchievements}', color: const Color(0xFF8B5CF6)),
-      _SummaryCard(icon: '📊', label: 'خولەکان',       value: _fmt(d.totalSessions),  color: const Color(0xFF3B82F6)),
+      _SummaryCard(icon: '📿', label: l.statsTotalDhikr,    value: _fmt(d.totalDhikr),    color: const Color(0xFF6366F1)),
+      _SummaryCard(icon: '🔥', label: l.statsCurrentStreak, value: l.homeStreakCurrentDays(d.currentStreak), color: const Color(0xFFEF4444)),
+      _SummaryCard(icon: '🏆', label: l.statsBestStreak,    value: l.homeStreakCurrentDays(d.longestStreak), color: const Color(0xFFF59E0B)),
+      _SummaryCard(icon: '🎯', label: l.statsGoalsCompleted,     value: _fmt(d.totalGoalsCompleted), color: const Color(0xFF10B981)),
+      _SummaryCard(icon: '⭐', label: l.statsAchievements,   value: '${d.totalAchievements}', color: const Color(0xFF8B5CF6)),
+      _SummaryCard(icon: '📊', label: l.statsSessions,       value: _fmt(d.totalSessions),  color: const Color(0xFF3B82F6)),
     ];
 
     return SizedBox(
@@ -237,21 +239,21 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('نمرەی بەرهەمداری ڕۆحی', style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary)),
+                  Text(context.l10n.statsSpiritualProductivity, style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary)),
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
                     child: Text(
-                      d.productivityLabel == 'master' ? 'مامۆستا' :
-                      d.productivityLabel == 'advanced' ? 'پێشکەوتوو' :
-                      d.productivityLabel == 'dedicated' ? 'پابەندبوو' :
-                      d.productivityLabel == 'active' ? 'چالاک' : 'سەرەتا',
+                      d.productivityLabel == 'master' ? context.l10n.statsLabelMaster :
+                      d.productivityLabel == 'advanced' ? context.l10n.statsLabelAdvanced :
+                      d.productivityLabel == 'dedicated' ? context.l10n.statsLabelDedicated :
+                      d.productivityLabel == 'active' ? context.l10n.statsLabelActive : context.l10n.statsLabelBeginner,
                       style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text('ئامانج: ${d.goalCompletionRate.toStringAsFixed(1)}%  •  بەردەوامی: ${d.currentStreak} ڕۆژ', style: TextStyle(fontFamily: 'Cairo', fontSize: 11, color: cs.textSecondary)),
+                  Text(context.l10n.statsGoalAndStreak(d.goalCompletionRate.toStringAsFixed(1), '${d.currentStreak}'), style: TextStyle(fontFamily: 'Cairo', fontSize: 11, color: cs.textSecondary)),
                 ],
               ),
             ),
@@ -272,7 +274,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: 'چالاکی ڕۆژانەی زیکر',
+        title: context.l10n.statsDhikrActivityChart,
         child: SizedBox(
           height: 180,
           child: LineChart(
@@ -328,7 +330,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
       child: Row(
         children: [
           Expanded(child: _TrendTile(
-            label: 'بەراوردی زیکر بە پێشوو',
+            label: context.l10n.statsDhikrTrendVsPrev,
             current: dhikr.totalCurrent,
             previous: dhikr.totalPrevious,
             trendPct: dhikr.trendPct,
@@ -336,7 +338,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
           )),
           const SizedBox(width: 10),
           Expanded(child: _TrendTile(
-            label: 'بەراوردی خول بە پێشوو',
+            label: context.l10n.statsSessionsTrendVsPrev,
             current: sessions.totalSessions,
             previous: sessions.totalSessions,
             trendPct: sessions.sessionsTrendPct,
@@ -367,8 +369,12 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: '🔥 نەخشەی بەردەوامی',
-        subtitle: 'ئێستا: ${streaks.currentStreak}ڕ  •  باشترین: ${streaks.longestStreak}ڕ  •  ڕێژەی سەرکەوتن: ${streaks.successRate.toStringAsFixed(0)}%',
+        title: context.l10n.statsStreakHeatmap,
+        subtitle: context.l10n.statsStreakSummary(
+          '${streaks.currentStreak}',
+          '${streaks.longestStreak}',
+          streaks.successRate.toStringAsFixed(0),
+        ),
         child: SizedBox(
           height: 90,
           child: GridView.builder(
@@ -405,7 +411,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: 'زۆرترین زیکری بەکارهاتوو',
+        title: context.l10n.statsMostUsedDhikr,
         child: Column(
           children: dhikr.breakdown.asMap().entries.map((e) {
             final item = e.value;
@@ -443,31 +449,32 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
   // ── Session Cards ────────────────────────────────────────────────────────────
 
   Widget _buildSessionCards(SessionAnalytics s, AppColorScheme cs) {
+    final l = context.l10n;
     String hourLabel(int? h) {
       if (h == null) return '—';
-      if (h >= 4 && h < 8)   return 'بەیانی ($hک)';
-      if (h >= 12 && h < 14) return 'نیوەڕۆ ($hک)';
-      if (h >= 15 && h < 17) return 'عەسڕ ($hک)';
-      if (h >= 18 && h < 20) return 'مەغریب ($hک)';
-      if (h >= 20 && h < 23) return 'عیشا ($hک)';
-      return 'کاتژمێر $h:00';
+      if (h >= 4 && h < 8)   return l.statsPrayerHour(l.statsFajr, h);
+      if (h >= 12 && h < 14) return l.statsPrayerHour(l.statsDhuhr, h);
+      if (h >= 15 && h < 17) return l.statsPrayerHour(l.statsAsr, h);
+      if (h >= 18 && h < 20) return l.statsPrayerHour(l.statsMaghrib, h);
+      if (h >= 20 && h < 23) return l.statsPrayerHour(l.statsIsha, h);
+      return l.statsHourLabel(h);
     }
 
     String durLabel(int secs) {
-      if (secs < 60) return '$secs چرکە';
-      return '${(secs ~/ 60)} خولەک و ${secs % 60} چرکە';
+      if (secs < 60) return l.statsDurationSecs(secs);
+      return l.statsDurationMinsAndSecs(secs ~/ 60, secs % 60);
     }
 
     String dayLabel(String? d) {
       if (d == null) return '—';
       switch (d.toLowerCase()) {
-        case 'monday': return 'دووشەممە';
-        case 'tuesday': return 'سێشەممە';
-        case 'wednesday': return 'چوارشەممە';
-        case 'thursday': return 'پێنجشەممە';
-        case 'friday': return 'هەینی';
-        case 'saturday': return 'شەممە';
-        case 'sunday': return 'یەکشەممە';
+        case 'monday': return l.statsDayMonday;
+        case 'tuesday': return l.statsDayTuesday;
+        case 'wednesday': return l.statsDayWednesday;
+        case 'thursday': return l.statsDayThursday;
+        case 'friday': return l.statsDayFriday;
+        case 'saturday': return l.statsDaySaturday;
+        case 'sunday': return l.statsDaySunday;
         default: return d;
       }
     }
@@ -475,7 +482,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: 'شیکاریی خولەکان',
+        title: l.statsSessionAnalysis,
         child: GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -484,12 +491,12 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
           mainAxisSpacing: 8,
           crossAxisSpacing: 8,
           children: [
-            _StatTile('کۆی خولەکان',     '${s.totalSessions}',                cs),
-            _StatTile('تێکڕای ماوە',        durLabel(s.avgDurationSeconds),      cs),
-            _StatTile('درێژترین خول',     durLabel(s.longestSessionSecs),      cs),
-            _StatTile('تێکڕای زیکر/خولەک',       '${s.avgDhikrPerMinute.toStringAsFixed(1)}', cs),
-            _StatTile('کاتژمێری لوتکە',           hourLabel(s.mostProductiveHour),     cs),
-            _StatTile('ڕۆژی لوتکە',            dayLabel(s.mostProductiveDay),          cs),
+            _StatTile(l.statsTotalSessions,     '${s.totalSessions}',                cs),
+            _StatTile(l.statsAvgDuration,        durLabel(s.avgDurationSeconds),      cs),
+            _StatTile(l.statsLongestSession,     durLabel(s.longestSessionSecs),      cs),
+            _StatTile(l.statsAvgDhikrPerMin,       '${s.avgDhikrPerMinute.toStringAsFixed(1)}', cs),
+            _StatTile(l.statsPeakHour,           hourLabel(s.mostProductiveHour),     cs),
+            _StatTile(l.statsPeakDay,            dayLabel(s.mostProductiveDay),          cs),
           ],
         ),
       ),
@@ -505,7 +512,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: '🎯 ئامانجەکانی داهاتوو',
+        title: context.l10n.statsUpcomingGoals,
         child: Column(
           children: pending.map((m) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
@@ -529,7 +536,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text('${m.progressPct.toStringAsFixed(1)}% تەواو بووە', style: TextStyle(fontFamily: 'Cairo', fontSize: 10, color: cs.textSecondary)),
+                Text(context.l10n.statsCompletedPct(m.progressPct.toStringAsFixed(1)), style: TextStyle(fontFamily: 'Cairo', fontSize: 10, color: cs.textSecondary)),
               ],
             ),
           )).toList(),
@@ -546,7 +553,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: _Card(
-        title: '💡 تێڕوانینەکان',
+        title: context.l10n.statsInsights,
         child: Column(
           children: insights.map((i) => Container(
             margin: const EdgeInsets.only(bottom: 10),

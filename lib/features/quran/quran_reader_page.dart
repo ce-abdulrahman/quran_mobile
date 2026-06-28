@@ -14,13 +14,13 @@ import '../../core/providers/app_providers.dart';
 import '../../core/providers/bookmarks_provider.dart';
 import '../../core/providers/notes_provider.dart';
 import '../../core/utils/responsive.dart';
-import '../../core/utils/quran_utils.dart';
 import 'quran_providers.dart';
 import 'widgets/audio_player_panel.dart';
 import 'providers/audio_player_provider.dart';
 import 'widgets/share_card_sheet.dart';
 import 'mushaf_reader_page.dart';
 import 'widgets/quran_settings_sheet.dart';
+import '../../core/widgets/feature_not_available_dialog.dart';
 
 class QuranReaderPage extends ConsumerStatefulWidget {
   final SurahModel surah;
@@ -344,7 +344,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     final favorites = ref.read(favoritesProvider);
     final notes = ref.read(notesProvider);
     final isBookmarked = bookmarks.any((b) => b.surahId == widget.surah.id && b.ayahNumber == ayah.ayahNumber);
-    final isFavorited = favorites.any((f) => f.surahId == widget.surah.id && f.ayahNumber == ayah.ayahNumber);
+    final isFavorited = favorites.any((f) => f.favoriteId == 'ayah_${widget.surah.id}_${ayah.ayahNumber}');
     final hasNote = notes.any((n) => n.surahNumber == widget.surah.id && n.ayahNumber == ayah.ayahNumber);
 
     showModalBottomSheet(
@@ -404,7 +404,12 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                       color: cs.primary,
                       onTap: () {
                         Navigator.pop(ctx);
-                        ref.read(audioPlayerProvider.notifier).playAyah(widget.surah.id, ayah.ayahNumber);
+                        showFeatureUnderDevelopmentDialog(
+                          context,
+                          messageKu: 'ئەم تایبەتمەندییە (خوێندنەوەی دەنگی قورئانخوێنەکان) لە ئێستادا کاری لەسەر دەکرێت بۆیە بەردەست نییە. سوپاس بۆ ئارامگریت.',
+                          messageAr: 'هذه الميزة (أصوات القراء) قيد التطوير حالياً وليست متوفرة. شكراً لصبركم.',
+                          messageEn: 'This feature (reciters audio) is currently under development and is not available. Thank you for your patience.',
+                        );
                       },
                     ),
                     _buildActionButton(
@@ -533,7 +538,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'ئایەتی ${ayah.ayahNumber} لە سورەتی ${widget.surah.nameEn}',
+                'ئایەتی ${ayah.ayahNumber} لە سورەتی ${Localizations.localeOf(context).languageCode == 'ku' ? widget.surah.nameKu : widget.surah.nameEn}',
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontFamily: 'Cairo',
@@ -678,6 +683,14 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     AsyncValue<List<AyahModel>> ayahsAsync,
     double height,
   ) {
+    final surahs = ref.watch(surahListProvider).valueOrNull ?? [];
+    final prevSurah = widget.surah.number > 1
+        ? surahs.firstWhere((s) => s.number == widget.surah.number - 1, orElse: () => widget.surah)
+        : null;
+    final nextSurah = widget.surah.number < 114
+        ? surahs.firstWhere((s) => s.number == widget.surah.number + 1, orElse: () => widget.surah)
+        : null;
+
     return Container(
       decoration: BoxDecoration(
         color: cs.bg.withValues(alpha: isDark ? 0.82 : 0.88),
@@ -716,18 +729,70 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                       icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.textPrimary),
                       onPressed: () => Navigator.pop(context),
                     ),
-                    Text(
-                      widget.surah.nameEn,
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: cs.textPrimary,
-                      ),
-                    ),
+                    
+                    // Surah title with Prev/Next buttons
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        if (prevSurah != null)
+                          IconButton(
+                            icon: Icon(Icons.chevron_left_rounded, color: cs.textPrimary),
+                            tooltip: 'سورەتی پێشوو',
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => QuranReaderPage(surah: prevSurah),
+                                ),
+                              );
+                            },
+                          )
+                        else
+                          const SizedBox(width: 48),
+                        Text(
+                          Localizations.localeOf(context).languageCode == 'ku' ? widget.surah.nameKu : widget.surah.nameEn,
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: cs.textPrimary,
+                          ),
+                        ),
+                        if (nextSurah != null)
+                          IconButton(
+                            icon: Icon(Icons.chevron_right_rounded, color: cs.textPrimary),
+                            tooltip: 'سورەتی داهاتوو',
+                            onPressed: () {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => QuranReaderPage(surah: nextSurah),
+                                ),
+                              );
+                            },
+                          )
+                        else
+                          const SizedBox(width: 48),
+                      ],
+                    ),
+
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Tooltip(
+                          message: 'قورئانخوێنەکان',
+                          child: IconButton(
+                            icon: Icon(Icons.mic_rounded, color: cs.textPrimary),
+                            onPressed: () {
+                              showFeatureUnderDevelopmentDialog(
+                                context,
+                                messageKu: 'ئەم تایبەتمەندییە (خوێندنەوەی دەنگی قورئانخوێنەکان) لە ئێستادا کاری لەسەر دەکرێت بۆیە بەردەست نییە. سوپاس بۆ ئارامگریت.',
+                                messageAr: 'هذه الميزة (أصوات القراء) قيد التطوير حالياً وليست متوفرة. شكراً لصبركم.',
+                                messageEn: 'This feature (reciters audio) is currently under development and is not available. Thank you for your patience.',
+                              );
+                            },
+                          ),
+                        ),
                         Tooltip(
                           message: 'مۆدی موسحەف',
                           child: IconButton(
@@ -755,91 +820,74 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                     ),
                   ],
                 ),
-                // ── Surah Info Banner ──
-                Padding(
-                  padding: EdgeInsets.fromLTRB(p, 4, p, 16),
-                  child: Column(
-                    children: [
-                      Center(
-                        child: Text(
-                          getSurahHeaderCharacter(widget.surah.number),
-                          style: TextStyle(
-                            fontFamily: 'SurahHeader',
-                            fontFamilyFallback: const ['UthmanicHafs', 'Amiri', 'Cairo'],
-                            fontSize: (MediaQuery.of(context).size.width * 0.22).clamp(70.0, 140.0),
-                            color: cs.primary,
-                          ),
+                // ── Surah Info Banner (Search) ──
+                if (widget.surah.totalAyahs > 30)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 4, p, 16),
+                    child: Container(
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: cs.bg.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: cs.cardBorder,
+                          width: 1,
                         ),
                       ),
-                      if (widget.surah.totalAyahs > 30) ...[
-                        const SizedBox(height: 10),
-                        Container(
-                          height: 42,
-                          decoration: BoxDecoration(
-                            color: cs.bg.withValues(alpha: 0.5),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: cs.cardBorder,
-                              width: 1,
-                            ),
-                          ),
-                          child: TextField(
-                            controller: _searchController,
-                            onChanged: (v) {
-                              setState(() {
-                                _searchQuery = v;
-                              });
-                              _debounceTimer?.cancel();
-                              _debounceTimer = Timer(const Duration(milliseconds: 500), () {
-                                ayahsAsync.whenData((list) => _scrollToMatch(v, list));
-                              });
-                            },
-                            onSubmitted: (v) {
-                              _debounceTimer?.cancel();
-                              ayahsAsync.whenData((list) => _scrollToMatch(v, list));
-                            },
-                            textDirection: TextDirection.rtl,
-                            style: TextStyle(
-                              fontFamily: 'Cairo',
-                              fontSize: 13,
-                              color: cs.textPrimary,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'گەڕان بەپێی دەق یان ژمارەی ئایەت...',
-                              hintStyle: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 12,
-                                color: cs.textSecondary.withValues(alpha: 0.6),
-                              ),
-                              prefixIcon: Icon(
-                                Icons.search_rounded,
-                                color: cs.textSecondary.withValues(alpha: 0.7),
-                                size: 18,
-                              ),
-                              suffixIcon: _searchQuery.isNotEmpty
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        _searchController.clear();
-                                        setState(() {
-                                          _searchQuery = '';
-                                        });
-                                      },
-                                      child: Icon(
-                                        Icons.close_rounded,
-                                        color: cs.textSecondary,
-                                        size: 16,
-                                      ),
-                                    )
-                                  : null,
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                            ),
-                          ),
+                      child: TextField(
+                        controller: _searchController,
+                        onChanged: (v) {
+                          setState(() {
+                            _searchQuery = v;
+                          });
+                          _debounceTimer?.cancel();
+                          _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+                            ayahsAsync.whenData((list) => _scrollToMatch(v, list));
+                          });
+                        },
+                        onSubmitted: (v) {
+                          _debounceTimer?.cancel();
+                          ayahsAsync.whenData((list) => _scrollToMatch(v, list));
+                        },
+                        textDirection: TextDirection.rtl,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 13,
+                          color: cs.textPrimary,
                         ),
-                      ],
-                    ],
+                        decoration: InputDecoration(
+                          hintText: 'گەڕان بەپێی دەق یان ژمارەی ئایەت...',
+                          hintStyle: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 12,
+                            color: cs.textSecondary.withValues(alpha: 0.6),
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search_rounded,
+                            color: cs.textSecondary.withValues(alpha: 0.7),
+                            size: 18,
+                          ),
+                          suffixIcon: _searchQuery.isNotEmpty
+                              ? GestureDetector(
+                                  onTap: () {
+                                    _searchController.clear();
+                                    setState(() {
+                                      _searchQuery = '';
+                                    });
+                                  },
+                                  child: Icon(
+                                    Icons.close_rounded,
+                                    color: cs.textSecondary,
+                                    size: 16,
+                                  ),
+                                )
+                              : null,
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -935,8 +983,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                           b.ayahNumber == ayah.ayahNumber);
 
                       final isFavorited = favorites.any((f) =>
-                          f.surahId == widget.surah.id &&
-                          f.ayahNumber == ayah.ayahNumber);
+                          f.favoriteId == 'ayah_${widget.surah.id}_${ayah.ayahNumber}');
 
                       final isHighlighted = _searchQuery.trim().isNotEmpty &&
                         ayah.ayahNumber.toString() == _searchQuery.trim();
@@ -987,7 +1034,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            bottom: _isHeaderVisible ? 0 : -140,
+            bottom: (playerState.currentAyahNumber != null || playerState.isPlaying || playerState.isLoading) && _isHeaderVisible ? 0 : -140,
             left: 0,
             right: 0,
             child: SafeArea(
@@ -1004,20 +1051,25 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
   }
 }
 
-class _BismillahBanner extends StatelessWidget {
+class _BismillahBanner extends ConsumerWidget {
   const _BismillahBanner();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = AppColorScheme.of(context);
+    final readerSettings = ref.watch(readerSettingsProvider);
+    final quranFont = (readerSettings.fontTarget == 'reader' || readerSettings.fontTarget == 'both')
+        ? readerSettings.quranFontFamily
+        : 'UthmanicHafs';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 24, top: 8),
       alignment: Alignment.center,
       child: Text(
         'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
         style: TextStyle(
-          fontFamily: 'UthmanicHafs',
+          fontFamily: quranFont,
           fontSize: 24,
           color: isDark ? cs.primary : cs.primaryDeep,
         ),
@@ -1059,6 +1111,10 @@ class _AyahRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final readerSettings = ref.watch(readerSettingsProvider);
+    final quranFont = (readerSettings.fontTarget == 'reader' || readerSettings.fontTarget == 'both')
+        ? readerSettings.quranFontFamily
+        : 'UthmanicHafs';
     final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sajdah = SajdahModel.list.cast<SajdahModel?>().firstWhere(
@@ -1192,7 +1248,7 @@ class _AyahRow extends ConsumerWidget {
                     textDirection: TextDirection.rtl,
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      fontFamily: 'UthmanicHafs',
+                      fontFamily: quranFont,
                       fontSize: fontSize + 4,
                       height: 2.2,
                       color: cs.textPrimary,

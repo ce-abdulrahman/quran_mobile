@@ -304,6 +304,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
   }
 
   void _showAddDhikrDialog() {
+    final l = context.l10n;
     final nameCtrl = TextEditingController();
     final targetCtrl = TextEditingController(text: '33');
     final formKey = GlobalKey<FormState>();
@@ -315,11 +316,11 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
         return AlertDialog(
           backgroundColor: cs.card,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: const Text(
-            'زیادکردنی زیکری نوێ',
+          title: Text(
+            l.tasbihAddNewDhikr,
             textDirection: TextDirection.rtl,
             textAlign: TextAlign.center,
-            style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+            style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
           ),
           content: Form(
             key: formKey,
@@ -330,14 +331,14 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                   controller: nameCtrl,
                   textAlign: TextAlign.right,
                   textDirection: TextDirection.rtl,
-                  decoration: const InputDecoration(
-                    labelText: 'ناوی زیکر',
+                  decoration: InputDecoration(
+                    labelText: l.tasbihDhikrName,
                     alignLabelWithHint: true,
-                    hintText: 'سُبْحَانَ اللهِ',
+                    hintText: l.tasbihSubhanAllah,
                   ),
                   validator: (val) {
                     if (val == null || val.trim().isEmpty) {
-                      return 'تکایە ناوی زیکر بنووسە';
+                      return l.tasbihEnterDhikrName;
                     }
                     return null;
                   },
@@ -348,14 +349,14 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                   keyboardType: TextInputType.number,
                   textAlign: TextAlign.right,
                   textDirection: TextDirection.rtl,
-                  decoration: const InputDecoration(
-                    labelText: 'ئامانج (ژمارەی دووبارەکردنەوە)',
+                  decoration: InputDecoration(
+                    labelText: l.tasbihGoalLabel,
                     alignLabelWithHint: true,
                     hintText: '33',
                   ),
                   validator: (val) {
                     if (val == null || int.tryParse(val) == null || int.parse(val) <= 0) {
-                      return 'تکایە ژمارەیەکی دروست بنووسە';
+                      return l.tasbihEnterValidGoal;
                     }
                     return null;
                   },
@@ -366,7 +367,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('پاشگەزبوونەوە', style: TextStyle(fontFamily: 'Cairo')),
+              child: Text(l.homeCancel, style: const TextStyle(fontFamily: 'Cairo')),
             ),
             ElevatedButton(
               onPressed: () {
@@ -378,7 +379,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                        'زیکری "$name" بە سەرکەوتوویی زیادکرا',
+                        l.tasbihDhikrAdded(name),
                         textDirection: TextDirection.rtl,
                         style: const TextStyle(fontFamily: 'Cairo'),
                       ),
@@ -393,7 +394,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                 backgroundColor: cs.primary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('زیادکردن', style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(l.tasbihAddButton, style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -402,28 +403,29 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
   }
 
   void _onDeleteDhikr(String dhikrId, String name) async {
+    final l = context.l10n;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text(
-          'سڕینەوەی زیکر',
+        title: Text(
+          l.tasbihDeleteDhikr,
           textDirection: TextDirection.rtl,
-          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+          style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
         ),
         content: Text(
-          'دڵنیایت لە سڕینەوەی زیکری "$name"؟',
+          l.tasbihDeleteConfirm(name),
           textDirection: TextDirection.rtl,
           style: const TextStyle(fontFamily: 'Cairo'),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('پاشگەزبوونەوە', style: TextStyle(fontFamily: 'Cairo')),
+            child: Text(l.homeCancel, style: const TextStyle(fontFamily: 'Cairo')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('بەڵێ، بسڕەوە', style: TextStyle(fontFamily: 'Cairo', color: Colors.red)),
+            child: Text(l.tasbihDeleteYes, style: const TextStyle(fontFamily: 'Cairo', color: Colors.red)),
           ),
         ],
       ),
@@ -439,7 +441,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'زیکری "$name" سڕایەوە',
+            l.tasbihDhikrDeleted(name),
             textDirection: TextDirection.rtl,
             style: const TextStyle(fontFamily: 'Cairo'),
           ),
@@ -549,7 +551,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     decoration: InputDecoration(
-                      hintText: 'نموونە: 250',
+                      hintText: l.tasbihExampleGoal,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(color: cs.cardBorder),
@@ -572,7 +574,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('پاشگەزبوونەوە', style: TextStyle(fontFamily: 'Cairo')),
+                  child: Text(l.homeCancel, style: const TextStyle(fontFamily: 'Cairo')),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -593,7 +595,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            'ئامانجی ڕۆژانە گۆڕدرا بۆ $finalVal زیکر',
+                            l.homeDailyGoalChanged(finalVal.toString()),
                             textDirection: TextDirection.rtl,
                             style: const TextStyle(fontFamily: 'Cairo'),
                           ),
@@ -621,7 +623,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                     backgroundColor: cs.primary,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: const Text('سەپاندن', style: TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text(l.homeApply, style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ],
             );
@@ -915,23 +917,23 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
             return AlertDialog(
               backgroundColor: cs.card,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-              title: const Text(
-                'ڕێکخستنی ژمارەکەر',
+              title: Text(
+                context.l10n.tasbihSettingsTitle,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 18),
+                style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 18),
               ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SwitchListTile(
-                    title: const Text(
-                      'دەنگ',
-                      style: TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
+                    title: Text(
+                      context.l10n.tasbihSound,
+                      style: const TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
                     ),
-                    subtitle: const Text(
-                      'چالاککردنی دەنگ لە کاتی زیکرکردندا',
-                      style: TextStyle(fontFamily: 'Cairo', fontSize: 11),
+                    subtitle: Text(
+                      context.l10n.tasbihSoundDesc,
+                      style: const TextStyle(fontFamily: 'Cairo', fontSize: 11),
                     ),
                     value: prefs.soundEnabled,
                     activeThumbColor: cs.primary,
@@ -943,13 +945,13 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                   ),
                   const Divider(),
                   SwitchListTile(
-                    title: const Text(
-                      'لەرینەوە (Haptics)',
-                      style: TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
+                    title: Text(
+                      context.l10n.tasbihHaptics,
+                      style: const TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
                     ),
-                    subtitle: const Text(
-                      'چالاککردنی لەرینەوە لەگەڵ هەر کلیکێک',
-                      style: TextStyle(fontFamily: 'Cairo', fontSize: 11),
+                    subtitle: Text(
+                      context.l10n.tasbihHapticsDesc,
+                      style: const TextStyle(fontFamily: 'Cairo', fontSize: 11),
                     ),
                     value: prefs.hapticEnabled,
                     activeThumbColor: cs.primary,
@@ -968,9 +970,9 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
-                              'قەبارەی فۆنت',
-                              style: TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
+                            Text(
+                              context.l10n.settingsFontSize,
+                              style: const TextStyle(fontFamily: 'Cairo', fontSize: 14, fontWeight: FontWeight.w600),
                             ),
                             Text(
                               '${(prefs.customFontScale * 100).toStringAsFixed(0)}%',
@@ -999,7 +1001,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: const Text('داخستن', style: TextStyle(fontFamily: 'Cairo')),
+                  child: Text(context.l10n.tasbihClose, style: const TextStyle(fontFamily: 'Cairo')),
                 ),
               ],
             );
@@ -1042,7 +1044,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'هیچ زیکرێک بەردەست نییە',
+                l.tasbihNoDhikrAvailable,
                 style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
               ),
               const SizedBox(height: 12),
@@ -1050,7 +1052,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                 onPressed: _showAddDhikrDialog,
                 style: ElevatedButton.styleFrom(backgroundColor: cs.primary),
                 icon: const Icon(Icons.add_rounded, color: Colors.white),
-                label: const Text('زیادکردنی زیکر', style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
+                label: Text(l.tasbihAddDhikrButton, style: const TextStyle(fontFamily: 'Cairo', color: Colors.white)),
               ),
             ],
           ),
@@ -1092,7 +1094,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_rounded, color: Colors.white),
-            tooltip: 'ڕێکخستنەکان',
+            tooltip: l.tasbihSettingsTooltip,
             onPressed: () => _showSettingsBottomSheet(context),
           ),
           const SizedBox(width: 8),
@@ -1221,11 +1223,11 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                          .scale(begin: const Offset(0.3, 0.3), end: const Offset(1.3, 1.3), duration: 600.ms, curve: Curves.elasticOut)
                          .shake(hz: 3, duration: 800.ms),
                         const SizedBox(height: 16),
-                        const Text(
-                          'بەردەوامییەکەت نوێکرایەوە!',
+                        Text(
+                          l.tasbihStreakUpdated,
                           textDirection: TextDirection.rtl,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 20,
                             fontWeight: FontWeight.w900,
@@ -1234,7 +1236,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'پیرۆزە! گەیشتیتە $_celebratedStreak ڕۆژ بەردەوامی',
+                          l.tasbihStreakCongrats(_celebratedStreak),
                           textDirection: TextDirection.rtl,
                           textAlign: TextAlign.center,
                           style: TextStyle(
@@ -1283,11 +1285,11 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                          .then(delay: 200.ms)
                          .shake(hz: 4, duration: 600.ms),
                         const SizedBox(height: 16),
-                        const Text(
-                          'ئامانجی ڕۆژانە بەدەستھات!',
+                        Text(
+                          l.tasbihGoalAchieved,
                           textDirection: TextDirection.rtl,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
@@ -1332,20 +1334,20 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
   }
 
   void _showStartSessionDialog(BuildContext context, AppColorScheme cs, TasbihState tasbihState) {
+    final l = context.l10n;
     final nameCtrl = TextEditingController();
     int? selectedPredefinedIndex;
 
     showDialog(
       context: context,
       builder: (ctx) {
-        final locale = Localizations.localeOf(context).languageCode;
         return StatefulBuilder(
           builder: (dialogCtx, setDialogState) {
             return AlertDialog(
               backgroundColor: cs.card,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
               title: Text(
-                locale == 'ku' ? 'دەستپێکردنی خولی زیکر' : (locale == 'ar' ? 'بدء جلسة ذكر' : 'Start Dhikr Session'),
+                l.homeStartDhikrSession,
                 textDirection: TextDirection.rtl,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 18),
@@ -1356,9 +1358,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                   shrinkWrap: true,
                   children: [
                     Text(
-                      locale == 'ku'
-                          ? 'زیکرێک هەڵبژێرە بۆ دەستپێکردن:'
-                          : (locale == 'ar' ? 'اختر ذكراً للبدء:' : 'Select a dhikr to begin:'),
+                      l.homeSelectDhikrToBegin,
                       textDirection: TextDirection.rtl,
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary),
                     ),
@@ -1401,7 +1401,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      locale == 'ku' ? 'یاخود ناوێکی تایبەت بنووسە:' : (locale == 'ar' ? 'أو اكتب اسماً مخصصاً:' : 'Or enter a custom name:'),
+                      l.tasbihOrCustomName,
                       textDirection: TextDirection.rtl,
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary),
                     ),
@@ -1411,7 +1411,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                       textAlign: TextAlign.right,
                       textDirection: TextDirection.rtl,
                       decoration: InputDecoration(
-                        hintText: locale == 'ku' ? 'نموونە: صلوات' : (locale == 'ar' ? 'مثال: الصلاة على النبي' : 'e.g. Salawat'),
+                        hintText: l.tasbihExampleSalawat,
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       ),
@@ -1429,7 +1429,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: Text(locale == 'ku' ? 'پاشگەزبوونەوە' : (locale == 'ar' ? 'إلغاء' : 'Cancel'), style: const TextStyle(fontFamily: 'Cairo')),
+                  child: Text(l.homeCancel, style: const TextStyle(fontFamily: 'Cairo')),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -1454,7 +1454,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            locale == 'ku' ? 'تکایە زیکرێک هەڵبژێرە یان ناوێک بنووسە' : (locale == 'ar' ? 'يرجى اختيار ذكر أو كتابة اسم' : 'Please select a dhikr or enter a name'),
+                            l.tasbihSelectOrEnterName,
                             style: const TextStyle(fontFamily: 'Cairo'),
                           ),
                           backgroundColor: Colors.red,
@@ -1505,7 +1505,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text(
-                    locale == 'ku' ? 'دەستپێکردن' : (locale == 'ar' ? 'بدء' : 'Start'),
+                    l.homeStartButton,
                     style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 ),

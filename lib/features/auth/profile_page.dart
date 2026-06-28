@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/l10n/app_localizations.dart';
 import 'auth_provider.dart';
 import 'profile_settings_page.dart';
 
@@ -63,6 +64,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     );
     
     if (mounted) {
+      final l = context.l10n;
       setState(() {
         _isSaving = false;
         if (success) _isEditing = false;
@@ -71,7 +73,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            success ? 'پرۆفایلەکەت بە سەرکەوتوویی نوێکرایەوە' : 'نوێکردنەوەی پرۆفایل سەرکەوتوو نەبوو',
+            success ? l.authProfileUpdated : l.authProfileUpdateFailed,
             textDirection: TextDirection.rtl,
             style: const TextStyle(fontFamily: 'Cairo'),
           ),
@@ -87,13 +89,14 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final user = authState.user;
     final stats = authState.stats ?? {};
     final accentColor = ref.watch(accentColorProvider);
+    final l = context.l10n;
 
     if (user == null) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
           child: Text(
-            'تکایە سەرەتا بچۆ ژوورەوە',
-            style: TextStyle(fontFamily: 'Cairo', fontSize: 16),
+            l.authPleaseLoginFirst,
+            style: const TextStyle(fontFamily: 'Cairo', fontSize: 16),
           ),
         ),
       );
@@ -106,9 +109,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'پرۆفایلی من',
-          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+        title: Text(
+          l.authMyProfile,
+          style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         actions: [
@@ -192,9 +195,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                                 '${user.profileCompletionPercentage}%',
                                 style: TextStyle(fontWeight: FontWeight.bold, color: accentColor, fontFamily: 'Cairo'),
                               ),
-                              const Text(
-                                'ڕێژەی تەواوبوونی پرۆفایل',
-                                style: TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'Cairo'),
+                              Text(
+                                l.authProfileCompletion,
+                                style: const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'Cairo'),
                               ),
                             ],
                           ),
@@ -217,10 +220,10 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
               const SizedBox(height: 20),
 
               // Statistics Section
-              const Text(
-                'ئامارەکانی من',
+              Text(
+                l.authMyStats,
                 textAlign: TextAlign.right,
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
               const SizedBox(height: 12),
               
@@ -234,28 +237,28 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                 children: [
                   _buildStatCard(
                     context,
-                    title: 'زیکرەکان',
+                    title: l.authDhikrs,
                     value: totalDhikrs.toString(),
                     icon: Icons.fingerprint,
                     color: Colors.blueAccent,
                   ),
                   _buildStatCard(
                     context,
-                    title: 'ڕێژەی ئامانجەکان',
+                    title: l.authGoalsRate,
                     value: '$goalCompletionRate%',
                     icon: Icons.track_changes_outlined,
                     color: Colors.green,
                   ),
                   _buildStatCard(
                     context,
-                    title: 'خولەکان',
+                    title: l.authSessions,
                     value: totalSessions.toString(),
                     icon: Icons.hourglass_empty_outlined,
                     color: Colors.orange,
                   ),
                   _buildStatCard(
                     context,
-                    title: 'دەستکەوتەکان',
+                    title: l.authAchievements,
                     value: achievementsCount.toString(),
                     icon: Icons.emoji_events_outlined,
                     color: Colors.amber,
@@ -273,7 +276,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       children: [
                         TextButton(
                           onPressed: () => setState(() => _isEditing = false),
-                          child: const Text('پاشگەزبوونەوە', style: TextStyle(color: Colors.grey, fontFamily: 'Cairo')),
+                          child: Text(l.actionCancel, style: const TextStyle(color: Colors.grey, fontFamily: 'Cairo')),
                         ),
                         const SizedBox(width: 8),
                         ElevatedButton(
@@ -281,7 +284,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           style: ElevatedButton.styleFrom(backgroundColor: accentColor, foregroundColor: Colors.white),
                           child: _isSaving
                               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                              : const Text('پاشەکەوت', style: TextStyle(fontFamily: 'Cairo')),
+                              : Text(l.actionSave, style: const TextStyle(fontFamily: 'Cairo')),
                         ),
                       ],
                     )
@@ -289,12 +292,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     OutlinedButton.icon(
                       onPressed: () => setState(() => _isEditing = true),
                       icon: const Icon(Icons.edit_outlined, size: 16),
-                      label: const Text('دەستکاریکردن', style: TextStyle(fontFamily: 'Cairo')),
+                      label: Text(l.actionEdit, style: const TextStyle(fontFamily: 'Cairo')),
                       style: OutlinedButton.styleFrom(foregroundColor: accentColor, side: BorderSide(color: accentColor)),
                     ),
-                  const Text(
-                    'زانیارییە کەسییەکان',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                  Text(
+                    l.authPersonalDetails,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
                   ),
                 ],
               ),
@@ -311,11 +314,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       TextFormField(
                         controller: _nameController,
                         enabled: _isEditing,
-                        decoration: const InputDecoration(
-                          labelText: 'ناو',
-                          prefixIcon: Icon(Icons.person_outline),
+                        decoration: InputDecoration(
+                          labelText: l.authName,
+                          prefixIcon: const Icon(Icons.person_outline),
                         ),
-                        validator: (value) => value == null || value.isEmpty ? 'تکایە ناو بنووسە' : null,
+                        validator: (value) => value == null || value.isEmpty ? l.authNameRequired : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -323,11 +326,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       TextFormField(
                         controller: _usernameController,
                         enabled: _isEditing,
-                        decoration: const InputDecoration(
-                          labelText: 'ناوی بەکارهێنەر',
-                          prefixIcon: Icon(Icons.alternate_email),
+                        decoration: InputDecoration(
+                          labelText: l.authUsername,
+                          prefixIcon: const Icon(Icons.alternate_email),
                         ),
-                        validator: (value) => value == null || value.isEmpty ? 'تکایە ناوی بەکارهێنەر بنووسە' : null,
+                        validator: (value) => value == null || value.isEmpty ? l.authUsernameRequired : null,
                       ),
                       const SizedBox(height: 16),
 
@@ -336,9 +339,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         controller: _bioController,
                         enabled: _isEditing,
                         maxLines: 3,
-                        decoration: const InputDecoration(
-                          labelText: 'دەربارە (Bio)',
-                          prefixIcon: Icon(Icons.info_outline),
+                        decoration: InputDecoration(
+                          labelText: l.authBio,
+                          prefixIcon: const Icon(Icons.info_outline),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -347,9 +350,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       TextFormField(
                         controller: _nicknameController,
                         enabled: _isEditing,
-                        decoration: const InputDecoration(
-                          labelText: 'نازناو (Nickname)',
-                          prefixIcon: Icon(Icons.face_outlined),
+                        decoration: InputDecoration(
+                          labelText: l.authNickname,
+                          prefixIcon: const Icon(Icons.face_outlined),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -358,9 +361,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       TextFormField(
                         controller: _titleController,
                         enabled: _isEditing,
-                        decoration: const InputDecoration(
-                          labelText: 'ناونیشانی گشتی',
-                          prefixIcon: Icon(Icons.military_tech_outlined),
+                        decoration: InputDecoration(
+                          labelText: l.authPublicTitle,
+                          prefixIcon: const Icon(Icons.military_tech_outlined),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -369,9 +372,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       TextFormField(
                         controller: _quoteController,
                         enabled: _isEditing,
-                        decoration: const InputDecoration(
-                          labelText: 'وتەی پرۆفایل',
-                          prefixIcon: Icon(Icons.format_quote_outlined),
+                        decoration: InputDecoration(
+                          labelText: l.authProfileQuote,
+                          prefixIcon: const Icon(Icons.format_quote_outlined),
                         ),
                       ),
                     ],

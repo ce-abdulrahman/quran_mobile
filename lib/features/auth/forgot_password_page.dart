@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/l10n/app_localizations.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -28,16 +29,17 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
     // Simulate sending email (would request Laravel password reset endpoint)
     await Future.delayed(const Duration(seconds: 1500));
     
+    final l = context.l10n;
     if (mounted) {
       setState(() => _isLoading = false);
       showDialog(
         context: context,
         builder: (_) => AlertDialog(
-          title: const Text('پەیوەندی ناردرا', textAlign: TextAlign.right, style: TextStyle(fontFamily: 'Cairo')),
-          content: const Text(
-            'بەستەری نوێکردنەوەی شیکارە ناردرا بۆ ئیمەیڵەکەت. تکایە سندوقی نامەکانت بپشکنە.',
+          title: Text(l.authLinkSentTitle, textAlign: TextAlign.right, style: const TextStyle(fontFamily: 'Cairo')),
+          content: Text(
+            l.authLinkSent,
             textAlign: TextAlign.right,
-            style: TextStyle(fontFamily: 'Cairo'),
+            style: const TextStyle(fontFamily: 'Cairo'),
           ),
           actions: [
             TextButton(
@@ -45,7 +47,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 Navigator.of(context).pop(); // pop dialog
                 Navigator.of(context).pop(); // pop forgot password page
               },
-              child: const Text('باشە', style: TextStyle(fontFamily: 'Cairo')),
+              child: Text(l.actionOk, style: const TextStyle(fontFamily: 'Cairo')),
             )
           ],
         ),
@@ -56,12 +58,13 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     final accentColor = ref.watch(accentColorProvider);
+    final l = context.l10n;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'نوێکردنەوەی شیکارە',
-          style: TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+        title: Text(
+          l.authResetPassword,
+          style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -80,20 +83,20 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   color: Colors.grey,
                 ),
                 const SizedBox(height: 24),
-                const Text(
-                  'شیکارەکەت بیرچووە؟',
+                Text(
+                  l.authForgotPasswordQ,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'Cairo',
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  'ئیمەیڵەکەت بنووسە و ئێمە بەستەری گۆڕینی شیکارەت بۆ دەنێرین',
+                Text(
+                  l.authForgotPasswordSub,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14,
                     color: Colors.grey,
                     fontFamily: 'Cairo',
@@ -105,7 +108,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'ئیمەیڵ (Email)',
+                    labelText: l.authEmailWithLabel,
                     hintText: 'example@email.com',
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
@@ -117,10 +120,10 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'تکایە ئیمەیڵەکەت بنووسە';
+                      return l.authEmailRequired;
                     }
                     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                      return 'تکایە ئیمەیڵێکی دروست بنووسە';
+                      return l.authEmailInvalid;
                     }
                     return null;
                   },
@@ -140,9 +143,9 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'ناردنی بەستەری گۆڕین',
-                          style: TextStyle(
+                      : Text(
+                          l.authSendResetLink,
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Cairo',

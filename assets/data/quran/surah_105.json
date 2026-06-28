@@ -1,0 +1,127 @@
+[
+    {
+        "id": 6189,
+        "ayah_number": 1,
+        "text_uthmani": "أَلَمْ تَرَ كَيْفَ فَعَلَ رَبُّكَ بِأَصْحَـٰبِ ٱلْفِيلِ",
+        "text_simple": null,
+        "page_number": 1251,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12377,
+                "language_code": "en",
+                "content": "Have you not considered, [O Muḥammad], how your Lord dealt with the companions of the elephant?<sup foot_note=197817>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12378,
+                "language_code": "ku",
+                "content": "ئایا نه‌تزانیووه (ئه‌ی پێغه‌مبه‌ر صلی الله علیه وسلم) په‌روه‌ردگارت چی کرد به‌خاوه‌ن فیله‌کان؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6190,
+        "ayah_number": 2,
+        "text_uthmani": "أَلَمْ يَجْعَلْ كَيْدَهُمْ فِى تَضْلِيلٍ",
+        "text_simple": null,
+        "page_number": 1251,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12379,
+                "language_code": "en",
+                "content": "Did He not make their plan into misguidance?<sup foot_note=197818>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12380,
+                "language_code": "ku",
+                "content": "ئایا سه‌ری لێ نه‌شێواندن و پیلان و نه‌خشه‌کانیانی پووچ نه‌کرده‌وه‌؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6191,
+        "ayah_number": 3,
+        "text_uthmani": "وَأَرْسَلَ عَلَيْهِمْ طَيْرًا أَبَابِيلَ",
+        "text_simple": null,
+        "page_number": 1251,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12381,
+                "language_code": "en",
+                "content": "And He sent against them birds in flocks,",
+                "is_active": true
+            },
+            {
+                "id": 12382,
+                "language_code": "ku",
+                "content": "پۆل پۆل باڵنده‌ی نه‌نارده سه‌ریان؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6192,
+        "ayah_number": 4,
+        "text_uthmani": "تَرْمِيهِم بِحِجَارَةٍ مِّن سِجِّيلٍ",
+        "text_simple": null,
+        "page_number": 1251,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12383,
+                "language_code": "en",
+                "content": "Striking them with stones of hard clay,",
+                "is_active": true
+            },
+            {
+                "id": 12384,
+                "language_code": "ku",
+                "content": "تا به‌به‌ردی سه‌نگگڵ (وه‌ك خشتی سووره‌وه کراو)، به‌رد بارانیان بکه‌ن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6193,
+        "ayah_number": 5,
+        "text_uthmani": "فَجَعَلَهُمْ كَعَصْفٍ مَّأْكُولٍۭ",
+        "text_simple": null,
+        "page_number": 1252,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12385,
+                "language_code": "en",
+                "content": "And He made them like eaten straw.<sup foot_note=197819>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12386,
+                "language_code": "ku",
+                "content": "سه‌ره‌نجام وه‌کو پووش و په‌ڵاش و کاری خوراوی لێکردن، (درێژه‌ی ئه‌م به‌سه‌رهاته له { ژیان نامه‌ی پێغه‌مبه‌ری مه‌زندا} له نووسینی مامۆستا عبدالعزیز پاڕه‌زانی دا ته‌ماشا بکه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

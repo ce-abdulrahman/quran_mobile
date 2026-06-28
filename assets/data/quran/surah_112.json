@@ -1,0 +1,102 @@
+[
+    {
+        "id": 6222,
+        "ayah_number": 1,
+        "text_uthmani": "قُلْ هُوَ ٱللَّهُ أَحَدٌ",
+        "text_simple": null,
+        "page_number": 1265,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12442,
+                "language_code": "en",
+                "content": "Say, \"He is Allāh, [who is] One,<sup foot_note=197829>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12443,
+                "language_code": "ku",
+                "content": "(ئه‌ی محمد (صلی الله علیه وسلم) ئه‌ی ئیماندار) بڵێ: ئه‌و خوای که ناوی _ الله‌_ خوایه‌کی تاک و ته‌نهایه (بێ هاوه‌ڵ و هاوتایه‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6223,
+        "ayah_number": 2,
+        "text_uthmani": "ٱللَّهُ ٱلصَّمَدُ",
+        "text_simple": null,
+        "page_number": 1265,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12444,
+                "language_code": "en",
+                "content": "Allāh, the Eternal Refuge.<sup foot_note=197830>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12445,
+                "language_code": "ku",
+                "content": "خوا زاتێکی پایه‌دار و ده‌سه‌ڵاتداره‌، نیازی به که‌س نییه‌و هه‌موویان ئاتاجی ئه‌ون، هه‌ر ئه‌و ده‌توانێ به‌ڵاو و ناخۆشی لابه‌رێت و پێویستی و داخوازیه‌کانمان جێ به جێ بکات.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6224,
+        "ayah_number": 3,
+        "text_uthmani": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+        "text_simple": null,
+        "page_number": 1265,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12446,
+                "language_code": "en",
+                "content": "He neither begets nor is born,",
+                "is_active": true
+            },
+            {
+                "id": 12447,
+                "language_code": "ku",
+                "content": "هیچ که‌سی لێ نه‌بووه و خۆشی له که‌س نه‌بووه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6225,
+        "ayah_number": 4,
+        "text_uthmani": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
+        "text_simple": null,
+        "page_number": 1266,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12448,
+                "language_code": "en",
+                "content": "Nor is there to Him any equivalent.\"",
+                "is_active": true
+            },
+            {
+                "id": 12449,
+                "language_code": "ku",
+                "content": "هه‌رگیز هاوتاو هاوشێوه و ده‌سه‌ڵاتدارێکی تر نییه که له‌به‌رامبه‌ریه‌وه به‌وه‌ستێت و هاوشانی بێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

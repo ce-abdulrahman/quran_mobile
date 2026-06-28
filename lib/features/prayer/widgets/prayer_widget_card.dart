@@ -33,11 +33,25 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
     if (nextPrayerTime.isEmpty) return;
     
     final now = DateTime.now();
-    final parts = nextPrayerTime.split(':');
-    if (parts.length != 2) return;
+    int hour = 0;
+    int minute = 0;
 
-    final hour = int.parse(parts[0]);
-    final minute = int.parse(parts[1]);
+    final normalized = nextPrayerTime.trim().toUpperCase();
+    final isPM = normalized.contains('PM');
+    final isAM = normalized.contains('AM');
+
+    // Remove AM/PM and non-digit/colon characters
+    final cleanTime = normalized.replaceAll(RegExp(r'[^0-9:]'), '').trim();
+    final parts = cleanTime.split(':');
+    if (parts.length >= 2) {
+      hour = int.tryParse(parts[0]) ?? 0;
+      minute = int.tryParse(parts[1]) ?? 0;
+      if (isPM && hour < 12) {
+        hour += 12;
+      } else if (isAM && hour == 12) {
+        hour = 0;
+      }
+    }
 
     var target = DateTime(now.year, now.month, now.day, hour, minute);
     
@@ -126,6 +140,11 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
     }
   }
 
+  String _stripAmPm(String timeStr) {
+    return timeStr.replaceAll(RegExp(r'\s?[APap][Mm]'), '').trim();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final asyncWidgetData = ref.watch(prayerWidgetProvider);
@@ -151,7 +170,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
         // Initialize ticking timer for next prayer
         _initTimer(data.nextPrayerTime, data.nextPrayer);
 
-        final accentColor = ref.watch(accentColorProvider);
+        final accentColor = ref.watch(accentColorProvider).primary;
         final gradient = _getPrayerGradient(accentColor);
 
         return Container(
@@ -265,7 +284,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                '${l.prayerTimesTitle}: ${data.nextPrayerTime}',
+                                '${l.prayerTimesTitle}: ${_stripAmPm(data.nextPrayerTime)}',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.white.withValues(alpha: 0.8),
@@ -313,53 +332,56 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                           color: Colors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: data.prayerTimes.entries.map((entry) {
-                            final isNext = entry.key.toLowerCase() == data.nextPrayer.toLowerCase();
-                            return AnimatedContainer(
-                              duration: 300.ms,
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                              decoration: isNext
-                                  ? BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.15),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.white.withValues(alpha: 0.35),
-                                        width: 1.5,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.white.withValues(alpha: 0.1),
-                                          blurRadius: 6,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: data.prayerTimes.entries.map((entry) {
+                              final isNext = entry.key.toLowerCase() == data.nextPrayer.toLowerCase();
+                              return AnimatedContainer(
+                                duration: 300.ms,
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                decoration: isNext
+                                    ? BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.white.withValues(alpha: 0.35),
+                                          width: 1.5,
                                         ),
-                                      ],
-                                    )
-                                  : null,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    _getPrayerName(entry.key, l),
-                                    style: TextStyle(
-                                      fontFamily: 'Cairo',
-                                      fontSize: 10,
-                                      fontWeight: isNext ? FontWeight.bold : FontWeight.normal,
-                                      color: isNext ? Colors.white : Colors.white.withValues(alpha: 0.7),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.white.withValues(alpha: 0.1),
+                                            blurRadius: 6,
+                                          ),
+                                        ],
+                                      )
+                                    : null,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      _getPrayerName(entry.key, l),
+                                      style: TextStyle(
+                                        fontFamily: 'Cairo',
+                                        fontSize: 10,
+                                        fontWeight: isNext ? FontWeight.bold : FontWeight.normal,
+                                        color: isNext ? Colors.white : Colors.white.withValues(alpha: 0.7),
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    entry.value,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: isNext ? FontWeight.bold : FontWeight.w600,
-                                      color: isNext ? Colors.white : Colors.white.withValues(alpha: 0.95),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _stripAmPm(entry.value),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: isNext ? FontWeight.bold : FontWeight.w600,
+                                        color: isNext ? Colors.white : Colors.white.withValues(alpha: 0.95),
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16),

@@ -9,11 +9,11 @@ import '../../core/providers/app_providers.dart';
 import '../../core/services/notification_service.dart';
 import 'reminders_page.dart';
 import 'prayer_method_settings_page.dart';
-import '../../core/providers/auth_provider.dart';
 import '../../core/providers/backup_provider.dart';
 import '../../core/local_db/content_package.dart';
 import '../../core/providers/package_manager_provider.dart';
 import '../../core/services/audio_download_manager.dart';
+import 'download_manager_page.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Settings Page
@@ -39,19 +39,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   void initState() {
     super.initState();
     _loadAudioStorage();
-    Future.microtask(() async {
-      try {
-        final settings = await ref.read(appSettingsProvider.future);
-        if (mounted) {
-          final mode = switch (settings.themeMode.toLowerCase()) {
-            'light' => ThemeMode.light,
-            'dark' => ThemeMode.dark,
-            _ => ThemeMode.system,
-          };
-          ref.read(themeModeProvider.notifier).setMode(mode);
-        }
-      } catch (_) {}
-    });
     // Load notification settings from storage
     NotificationService.loadSettings().then((s) {
       if (mounted) {
@@ -84,14 +71,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   Future<void> _pickNotificationTime() async {
+    final l = context.l10n;
     final picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(hour: _notifHour, minute: _notifMinute),
-      helpText: 'کاتی ئاگادارکردنەوە هەڵبژێرە',
-      builder: (context, child) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: child!,
-      ),
+      helpText: l.settingsHelpText,
+      builder: (context, child) =>
+          Directionality(textDirection: TextDirection.rtl, child: child!),
     );
     if (picked == null) return;
     setState(() {
@@ -121,25 +107,29 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _showExportPasswordDialog(BuildContext context) {
+    final l = context.l10n;
     final passwordController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('هەناردەکردنی داتا', style: TextStyle(fontFamily: 'Cairo')),
+        title: Text(
+          l.settingsExportData,
+          style: const TextStyle(fontFamily: 'Cairo'),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'تکایە تێپەڕەوشەیەک بنووسە ئەگەر دەتەوێت فایلەکە تەشفیر (سڕ) بکەیت بۆ پاراستنی زیاتر. دەتوانیت بە بەتاڵی جێی بهێڵیت.',
-              style: TextStyle(fontFamily: 'Cairo', fontSize: 13),
+            Text(
+              l.settingsExportNote,
+              style: const TextStyle(fontFamily: 'Cairo', fontSize: 13),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'تێپەڕەوشە (ئارەزوومەندانە)',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l.settingsPasswordOptional,
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
@@ -147,15 +137,20 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('پاشگەزبوونەوە', style: TextStyle(fontFamily: 'Cairo')),
+            child: Text(
+              l.actionCancel,
+              style: const TextStyle(fontFamily: 'Cairo'),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
               final pw = passwordController.text;
-              await ref.read(backupStateProvider.notifier).exportLocalBackup(pw.isNotEmpty ? pw : null);
+              await ref
+                  .read(backupStateProvider.notifier)
+                  .exportLocalBackup(pw.isNotEmpty ? pw : null);
             },
-            child: const Text('ناردن', style: TextStyle(fontFamily: 'Cairo')),
+            child: Text(l.actionSend, style: const TextStyle(fontFamily: 'Cairo')),
           ),
         ],
       ),
@@ -175,25 +170,29 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _showImportPasswordDialog(BuildContext context, File file) {
+    final l = context.l10n;
     final passwordController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('هێنانە ناوەوەی داتا', style: TextStyle(fontFamily: 'Cairo')),
+        title: Text(
+          l.settingsImportData,
+          style: const TextStyle(fontFamily: 'Cairo'),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'ئەگەر فایلەکە بە تێپەڕەوشە پارێزراوە، تکایە تێپەڕەوشەکەی بنووسە. ئەگەر نا، بە بەتاڵی جێی بهێڵە.',
-              style: TextStyle(fontFamily: 'Cairo', fontSize: 13),
+            Text(
+              l.settingsImportNote,
+              style: const TextStyle(fontFamily: 'Cairo', fontSize: 13),
             ),
             const SizedBox(height: 12),
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: const InputDecoration(
-                labelText: 'تێپەڕەوشە',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: l.settingsPassword,
+                border: const OutlineInputBorder(),
               ),
             ),
           ],
@@ -201,26 +200,34 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('پاشگەزبوونەوە', style: TextStyle(fontFamily: 'Cairo')),
+            child: Text(
+              l.actionCancel,
+              style: const TextStyle(fontFamily: 'Cairo'),
+            ),
           ),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
               final pw = passwordController.text;
-              final success = await ref.read(backupStateProvider.notifier).importLocalBackup(
-                file,
-                password: pw.isNotEmpty ? pw : null,
-              );
+              final success = await ref
+                  .read(backupStateProvider.notifier)
+                  .importLocalBackup(file, password: pw.isNotEmpty ? pw : null);
               if (success && context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('داتاکان بە سەرکەوتوویی هێنرانە ناوەوە', style: TextStyle(fontFamily: 'Cairo')),
+                  SnackBar(
+                    content: Text(
+                      l.settingsImportSuccess,
+                      style: const TextStyle(fontFamily: 'Cairo'),
+                    ),
                     backgroundColor: Colors.green,
                   ),
                 );
               }
             },
-            child: const Text('هێنانە ناوەوە', style: TextStyle(fontFamily: 'Cairo')),
+            child: Text(
+              l.settingsImportData,
+              style: const TextStyle(fontFamily: 'Cairo'),
+            ),
           ),
         ],
       ),
@@ -239,23 +246,38 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                LinearProgressIndicator(value: event.progress, color: cs.primary),
+                LinearProgressIndicator(
+                  value: event.progress,
+                  color: cs.primary,
+                ),
                 const SizedBox(height: 4),
                 Text(
                   '${(event.progress * 100).toStringAsFixed(0)}%',
-                  style: TextStyle(fontSize: 10, color: cs.primary, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: cs.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
           );
         }
         return IconButton(
-          icon: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 20),
+          icon: const Icon(
+            Icons.check_circle_rounded,
+            color: Colors.green,
+            size: 20,
+          ),
           onPressed: () => _downloadAllOfflineContent(context),
         );
       },
       error: (e, s) => IconButton(
-        icon: const Icon(Icons.error_outline_rounded, color: Colors.red, size: 20),
+        icon: const Icon(
+          Icons.error_outline_rounded,
+          color: Colors.red,
+          size: 20,
+        ),
         onPressed: () => _downloadAllOfflineContent(context),
       ),
       loading: () => const SizedBox(
@@ -267,9 +289,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   Future<void> _downloadAllOfflineContent(BuildContext context) async {
+    final l = context.l10n;
     final manager = ref.read(packageManagerProvider);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('دەستکرا بە داگرتنی ناوەڕۆکەکان لە پاشبنەما...', style: TextStyle(fontFamily: 'Cairo'))),
+      SnackBar(
+        content: Text(
+          l.settingsDownloadBackground,
+          style: const TextStyle(fontFamily: 'Cairo'),
+        ),
+      ),
     );
     try {
       await manager.downloadPackage(ContentPackage.quran);
@@ -281,68 +309,29 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     } catch (_) {}
   }
 
-  Widget _buildAudioStorageRow(BuildContext context) {
-    final cs = AppColorScheme.of(context);
-    final mb = _audioStorageBytes / (1024 * 1024);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          '${mb.toStringAsFixed(1)} MB',
-          style: TextStyle(
-            fontFamily: 'Cairo',
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: cs.textSecondary,
-          ),
-        ),
-        const SizedBox(width: 8),
-        IconButton(
-          icon: const Icon(Icons.delete_sweep_rounded, color: Colors.red, size: 20),
-          onPressed: () async {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('پاککردنەوەی فایلە دەنگییەکان', style: TextStyle(fontFamily: 'Cairo')),
-                content: const Text('ئایا دڵنیایت لە سڕینەوەی هەموو فایلە دەنگییە داگیراوەکانی قورئان؟', style: TextStyle(fontFamily: 'Cairo')),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('نا', style: TextStyle(fontFamily: 'Cairo')),
-                  ),
-                  ElevatedButton(
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await AudioDownloadManager().enforceSizeLimit(0);
-                      await _loadAudioStorage();
-                    },
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                    child: const Text('بەڵێ، بسڕەوە', style: TextStyle(fontFamily: 'Cairo', color: Colors.white)),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.listen<BackupState>(backupStateProvider, (previous, next) {
-      if (next.successMessage != null && next.successMessage != previous?.successMessage) {
+      if (next.successMessage != null &&
+          next.successMessage != previous?.successMessage) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next.successMessage!, style: const TextStyle(fontFamily: 'Cairo')),
+            content: Text(
+              next.successMessage!,
+              style: const TextStyle(fontFamily: 'Cairo'),
+            ),
             backgroundColor: Colors.green,
           ),
         );
       }
-      if (next.errorMessage != null && next.errorMessage != previous?.errorMessage) {
+      if (next.errorMessage != null &&
+          next.errorMessage != previous?.errorMessage) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(next.errorMessage!, style: const TextStyle(fontFamily: 'Cairo')),
+            content: Text(
+              next.errorMessage!,
+              style: const TextStyle(fontFamily: 'Cairo'),
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -359,12 +348,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return Scaffold(
       backgroundColor: cs.bg,
       appBar: AppBar(
-        backgroundColor: isDark ? AppColorScheme.darken(cs.primary, 0.35) : cs.primary,
+        backgroundColor: isDark
+            ? AppColorScheme.darken(cs.primary, 0.35)
+            : cs.primary,
         elevation: 0,
         centerTitle: true,
         leading: widget.showBackButton
             ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  color: Colors.white,
+                ),
                 onPressed: () => Navigator.pop(context),
               )
             : null,
@@ -386,7 +380,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: isDark
-                    ? [AppColorScheme.darken(cs.primary, 0.35), AppColorScheme.darken(cs.primary, 0.42)]
+                    ? [
+                        AppColorScheme.darken(cs.primary, 0.35),
+                        AppColorScheme.darken(cs.primary, 0.42),
+                      ]
                     : [cs.primary, cs.primaryDeep],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -400,20 +397,25 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.tune_rounded, color: Colors.white, size: 16),
-                      SizedBox(width: 6),
+                      const Icon(Icons.tune_rounded, color: Colors.white, size: 16),
+                      const SizedBox(width: 6),
                       Text(
-                        'ڕێکخستنی جۆر',
-                        style: TextStyle(
+                        l.settingsTitle,
+                        style: const TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -475,12 +477,15 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                   color: cs.primary.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Icon(Icons.color_lens_rounded,
-                                    size: 18, color: cs.primary),
+                                child: Icon(
+                                  Icons.color_lens_rounded,
+                                  size: 18,
+                                  color: cs.primary,
+                                ),
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                'ڕەنگی تایبەت',
+                                l.settingsCustomColor,
                                 textDirection: TextDirection.rtl,
                                 style: TextStyle(
                                   fontFamily: 'Cairo',
@@ -493,9 +498,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           ),
                           const SizedBox(height: 14),
                           _ColorPickerSection(
-                            currentColor: ref.watch(accentColorProvider),
-                            onColorSelected: (c) =>
-                                ref.read(accentColorProvider.notifier).setColor(c),
+                            currentGradient: ref.watch(accentColorProvider),
+                            onGradientSelected: (start, end, primary) => ref
+                                .read(accentColorProvider.notifier)
+                                .setGradient(start, end, primary),
                           ),
                         ],
                       ),
@@ -529,9 +535,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       max: 40,
                       divisions: 28,
                       activeColor: cs.primary,
-                      inactiveColor:
-                          cs.primary.withValues(alpha: 0.2),
-                      onChanged: (v) => ref.read(readerSettingsProvider.notifier).setFontSize(v),
+                      inactiveColor: cs.primary.withValues(alpha: 0.2),
+                      onChanged: (v) => ref
+                          .read(readerSettingsProvider.notifier)
+                          .setFontSize(v),
                     ),
 
                     // Preview
@@ -558,31 +565,134 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
                 const SizedBox(height: 16),
 
+                // ── Font Family card ──────────────────────────────
+                _SectionLabel(label: l.settingsFontFamily, cs: cs),
+                const SizedBox(height: 10),
+                _SettingsCard(
+                  cs: cs,
+                  children: [
+                    // UI Font Family
+                    _SettingRow(
+                      icon: Icons.font_download_rounded,
+                      label: l.settingsFontUi,
+                      subLabel: l.settingsFontUiSub,
+                      cs: cs,
+                      trailing: _FontDropdown(
+                        cs: cs,
+                        current: readerSettings.uiFontFamily,
+                        options: const [
+                          ('Cairo', 'Cairo'),
+                          ('NotoNaskhArabic', 'Noto Naskh'),
+                          ('Scheherazade', 'Scheherazade'),
+                        ],
+                        onChanged: (f) => ref
+                            .read(readerSettingsProvider.notifier)
+                            .setUiFontFamily(f),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    // Quran Font Family
+                    _SettingRow(
+                      icon: Icons.menu_book_rounded,
+                      label: l.settingsFontQuran,
+                      subLabel: l.settingsFontQuranSub,
+                      cs: cs,
+                      trailing: _FontDropdown(
+                        cs: cs,
+                        current: readerSettings.quranFontFamily,
+                        options: const [
+                          ('UthmanicHafs', 'Uthmanic Hafs'),
+                          ('Amiri', 'Amiri'),
+                          ('ScheherazadeNew', 'Scheherazade New'),
+                        ],
+                        onChanged: (f) => ref
+                            .read(readerSettingsProvider.notifier)
+                            .setQuranFontFamily(f),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    // Font Target
+                    _SettingRow(
+                      icon: Icons.tune_rounded,
+                      label: l.settingsFontTarget,
+                      subLabel: l.settingsFontTargetSub,
+                      cs: cs,
+                      trailing: _FontTargetSelector(
+                        cs: cs,
+                        current: readerSettings.fontTarget,
+                        onChanged: (t) => ref
+                            .read(readerSettingsProvider.notifier)
+                            .setFontTarget(t),
+                      ),
+                    ),
+                    // Live preview
+                    Container(
+                      margin: const EdgeInsets.only(top: 4, bottom: 8),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: cs.bg,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+                            textDirection: TextDirection.rtl,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: readerSettings.quranFontFamily,
+                              fontSize: readerSettings.fontSize,
+                              color: cs.textPrimary,
+                              height: 1.8,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            l.settingsFontUiSample,
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                              fontFamily: readerSettings.uiFontFamily,
+                              fontSize: 13,
+                              color: cs.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ).animate().fadeIn(duration: 300.ms, delay: 110.ms),
+
+                const SizedBox(height: 16),
+
                 // Translations card
-                _SectionLabel(label: 'وەرگێڕانەکان', cs: cs),
+                _SectionLabel(label: l.settingsTranslations, cs: cs),
                 const SizedBox(height: 10),
                 _SettingsCard(
                   cs: cs,
                   children: [
                     _SettingRow(
                       icon: Icons.translate_rounded,
-                      label: 'پیشاندانی وەرگێڕانی کوردی',
+                      label: l.settingsShowKurdish,
                       cs: cs,
                       trailing: Switch(
                         value: readerSettings.showKurdish == true,
-                      activeThumbColor: cs.primary,
-                        onChanged: (v) => ref.read(readerSettingsProvider.notifier).toggleKurdish(v),
+                        activeThumbColor: cs.primary,
+                        onChanged: (v) => ref
+                            .read(readerSettingsProvider.notifier)
+                            .toggleKurdish(v),
                       ),
                     ),
                     const Divider(height: 1),
                     _SettingRow(
                       icon: Icons.language_rounded,
-                      label: 'پیشاندانی وەرگێڕانی ئینگلیزی',
+                      label: l.settingsShowEnglish,
                       cs: cs,
                       trailing: Switch(
                         value: readerSettings.showEnglish == true,
-                      activeThumbColor: cs.primary,
-                        onChanged: (v) => ref.read(readerSettingsProvider.notifier).toggleEnglish(v),
+                        activeThumbColor: cs.primary,
+                        onChanged: (v) => ref
+                            .read(readerSettingsProvider.notifier)
+                            .toggleEnglish(v),
                       ),
                     ),
                   ],
@@ -603,7 +713,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           context: context,
                           builder: (context) => Consumer(
                             builder: (context, ref, _) {
-                              final currentLocale = ref.watch(appLocaleProvider);
+                              final currentLocale = ref.watch(
+                                appLocaleProvider,
+                              );
                               final localL10n = context.l10n;
                               return AlertDialog(
                                 title: Text(
@@ -616,27 +728,36 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                     _LanguageOption(
                                       label: 'کوردی',
                                       code: 'ku',
-                                      active: currentLocale.languageCode == 'ku',
+                                      active:
+                                          currentLocale.languageCode == 'ku',
                                       onTap: () {
-                                        ref.read(appLocaleProvider.notifier).setLocale('ku');
+                                        ref
+                                            .read(appLocaleProvider.notifier)
+                                            .setLocale('ku');
                                         Navigator.pop(context);
                                       },
                                     ),
                                     _LanguageOption(
                                       label: 'العربية',
                                       code: 'ar',
-                                      active: currentLocale.languageCode == 'ar',
+                                      active:
+                                          currentLocale.languageCode == 'ar',
                                       onTap: () {
-                                        ref.read(appLocaleProvider.notifier).setLocale('ar');
+                                        ref
+                                            .read(appLocaleProvider.notifier)
+                                            .setLocale('ar');
                                         Navigator.pop(context);
                                       },
                                     ),
                                     _LanguageOption(
                                       label: 'English',
                                       code: 'en',
-                                      active: currentLocale.languageCode == 'en',
+                                      active:
+                                          currentLocale.languageCode == 'en',
                                       onTap: () {
-                                        ref.read(appLocaleProvider.notifier).setLocale('en');
+                                        ref
+                                            .read(appLocaleProvider.notifier)
+                                            .setLocale('en');
                                         Navigator.pop(context);
                                       },
                                     ),
@@ -653,7 +774,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         cs: cs,
                         trailing: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: cs.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
@@ -661,7 +784,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           child: Text(
                             ref.watch(appLocaleProvider).languageCode == 'ku'
                                 ? 'کوردی'
-                                : (ref.watch(appLocaleProvider).languageCode == 'ar' ? 'العربية' : 'English'),
+                                : (ref.watch(appLocaleProvider).languageCode ==
+                                          'ar'
+                                      ? 'العربية'
+                                      : 'English'),
                             style: TextStyle(
                               fontFamily: 'Cairo',
                               fontSize: 12,
@@ -713,7 +839,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                               onTap: _pickNotificationTime,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 6),
+                                  horizontal: 14,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: cs.primary.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(12),
@@ -724,8 +852,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.access_time_rounded,
-                                        size: 14, color: cs.primary),
+                                    Icon(
+                                      Icons.access_time_rounded,
+                                      size: 14,
+                                      color: cs.primary,
+                                    ),
                                     const SizedBox(width: 6),
                                     Text(
                                       '${_notifHour.toString().padLeft(2, '0')}:${_notifMinute.toString().padLeft(2, '0')}',
@@ -748,34 +879,21 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     const Divider(height: 1),
                     _SettingRow(
                       icon: Icons.alarm_on_rounded,
-                      label: 'ئاگادارکردنەوەی زیرەک',
-                      subLabel: 'کات و دووبارەبوونەوەی ئاگادارکردنەوەکان ڕێکبخە',
+                      label: l.settingsSmartReminder,
+                      subLabel: l.settingsSmartReminderSub,
                       cs: cs,
                       trailing: IconButton(
-                        icon: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: cs.primary),
+                        icon: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                          color: cs.primary,
+                        ),
                         onPressed: () {
-                          if (ref.read(authProvider).status != AuthStatus.authenticated) {
-                            final locale = Localizations.localeOf(context).languageCode;
-                            final message = locale == 'ku'
-                                ? 'تکایە سەرەتا بچۆ ژوورەوە بۆ بەکارهێنانی ئەم تایبەتمەندییە'
-                                : (locale == 'ar'
-                                    ? 'يرجى تسجيل الدخول أولاً لاستخدام هذه الميزة'
-                                    : 'Please log in first to use this feature');
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  message,
-                                  textDirection: TextDirection.rtl,
-                                  style: const TextStyle(fontFamily: 'Cairo'),
-                                ),
-                                backgroundColor: Colors.orange,
-                              ),
-                            );
-                            return;
-                          }
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const RemindersPage()),
+                            MaterialPageRoute(
+                              builder: (context) => const RemindersPage(),
+                            ),
                           );
                         },
                       ),
@@ -786,22 +904,29 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 const SizedBox(height: 16),
 
                 // ── Calculation Method card ────────────────────────
-                _SectionLabel(label: 'ڕێگای هەژمارکردنی کاتەکان', cs: cs),
+                _SectionLabel(label: l.settingsCalculationMethod, cs: cs),
                 const SizedBox(height: 10),
                 _SettingsCard(
                   cs: cs,
                   children: [
                     _SettingRow(
                       icon: Icons.settings_suggest_rounded,
-                      label: 'ڕێگای کاتی نوێژ',
-                      subLabel: 'هەڵبژاردنی ڕێگای هەژمارکردنی کاتەکانی بانگ',
+                      label: l.settingsCalculationMethod,
+                      subLabel: l.settingsCalculationMethodSub,
                       cs: cs,
                       trailing: IconButton(
-                        icon: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: cs.primary),
+                        icon: Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          size: 16,
+                          color: cs.primary,
+                        ),
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const PrayerMethodSettingsPage()),
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const PrayerMethodSettingsPage(),
+                            ),
                           );
                         },
                       ),
@@ -812,7 +937,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 const SizedBox(height: 16),
 
                 // ── Data Management section ─────────────────────────
-                _SectionLabel(label: 'بەڕێوەبردنی داتاکان (Data Management)', cs: cs),
+                _SectionLabel(
+                  label: l.settingsDataManagement,
+                  cs: cs,
+                ),
                 const SizedBox(height: 10),
                 _SettingsCard(
                   cs: cs,
@@ -820,8 +948,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     // Export local data
                     _SettingRow(
                       icon: Icons.upload_file_rounded,
-                      label: 'هەناردەکردنی داتاکان',
-                      subLabel: 'هەناردەکردنی زانیارییەکانت بۆ ناو فایلێک بۆ پاشەکەوت',
+                      label: l.settingsExportData,
+                      subLabel: l.settingsExportDataSub,
                       cs: cs,
                       trailing: IconButton(
                         icon: Icon(Icons.share_rounded, color: cs.primary),
@@ -832,8 +960,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     // Import local data
                     _SettingRow(
                       icon: Icons.file_download_rounded,
-                      label: 'هێنانە ناوەوەی داتاکان',
-                      subLabel: 'گەڕاندنەوەی زانیارییەکان لە فایلی کۆپی پاشەکەوتەوە',
+                      label: l.settingsImportData,
+                      subLabel: l.settingsImportDataSub,
                       cs: cs,
                       trailing: IconButton(
                         icon: Icon(Icons.file_open_rounded, color: cs.primary),
@@ -844,44 +972,52 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     // Download offline content
                     _SettingRow(
                       icon: Icons.download_for_offline_rounded,
-                      label: 'داگرتنی هەموو ناوەڕۆکەکان',
-                      subLabel: 'داگرتنی داتای قورئان و تەجوید و ئەزکار بۆ بەکارهێنانی ئۆفلاین',
+                      label: l.settingsDownloadAll,
+                      subLabel: l.settingsDownloadAllSub,
                       cs: cs,
                       trailing: _buildOfflineContentDownloader(context),
                     ),
                     const Divider(height: 1),
-                    // Audio Downloads
-                    _SettingRow(
-                      icon: Icons.library_music_rounded,
-                      label: 'فایلە دەنگییەکان',
-                      subLabel: 'بەڕێوەبردنی فایلە دەنگییە داگیراوەکانی قورئان',
-                      cs: cs,
-                      trailing: _buildAudioStorageRow(context),
-                    ),
-                  ],
-                ).animate().fadeIn(duration: 300.ms, delay: 190.ms),
-
-                const SizedBox(height: 16),
-
-                // ── About card ────────────────────────────────────
-                _SettingsCard(
-                  cs: cs,
-                  children: [
-                    _SettingRow(
-                      icon: Icons.info_outline_rounded,
-                      label: l.settingsAbout,
-                      cs: cs,
-                      trailing: Text(
-                        l.settingsVersion,
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 12,
-                          color: cs.textSecondary,
+                    // Audio & Package Downloads Unified Manager
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const DownloadManagerPage(),
+                          ),
+                        ).then((_) => _loadAudioStorage());
+                      },
+                      child: _SettingRow(
+                        icon: Icons.download_for_offline_rounded,
+                        label: l.settingsDownloadManager,
+                        subLabel: l.settingsDownloadManagerSub,
+                        cs: cs,
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '${(_audioStorageBytes / (1024 * 1024)).toStringAsFixed(1)} MB',
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: cs.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 16,
+                              color: cs.primary,
+                            ),
+                          ],
                         ),
                       ),
                     ),
                   ],
-                ).animate().fadeIn(duration: 300.ms, delay: 200.ms),
+                ).animate().fadeIn(duration: 300.ms, delay: 190.ms),
 
                 const SizedBox(height: 32),
 
@@ -896,8 +1032,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           color: cs.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color:
-                                cs.primary.withValues(alpha: 0.2),
+                            color: cs.primary.withValues(alpha: 0.2),
                           ),
                         ),
                         padding: const EdgeInsets.all(12),
@@ -915,7 +1050,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        'قورئانەکەم',
+                        l.appName,
                         textDirection: TextDirection.rtl,
                         style: TextStyle(
                           fontFamily: 'Cairo',
@@ -945,9 +1080,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 }
 
-
-
-
 // ─────────────────────────────────────────────────────────────────────────────
 // Theme Selector
 // ─────────────────────────────────────────────────────────────────────────────
@@ -968,7 +1100,6 @@ class _ThemeSelector extends StatelessWidget {
     final modes = [
       (ThemeMode.light, Icons.light_mode_rounded, l.settingsLight),
       (ThemeMode.dark, Icons.dark_mode_rounded, l.settingsDark),
-      (ThemeMode.system, Icons.brightness_auto_rounded, l.settingsSystem),
     ];
 
     final cs = AppColorScheme.of(context);
@@ -985,22 +1116,15 @@ class _ThemeSelector extends StatelessWidget {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             margin: const EdgeInsets.only(left: 4),
-            padding:
-                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: active
-                  ? cs.primary
-                  : cs.primary.withValues(alpha: 0.08),
+              color: active ? cs.primary : cs.primary.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon,
-                    size: 14,
-                    color: active
-                        ? Colors.white
-                        : cs.primary),
+                Icon(icon, size: 14, color: active ? Colors.white : cs.primary),
                 const SizedBox(width: 4),
                 Text(
                   label,
@@ -1148,53 +1272,68 @@ class _SettingRow extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Color Picker Section
+// Color Picker Section (Gradient Swatches)
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _ColorPickerSection extends StatelessWidget {
   const _ColorPickerSection({
-    required this.currentColor,
-    required this.onColorSelected,
+    required this.currentGradient,
+    required this.onGradientSelected,
   });
-  final Color currentColor;
-  final ValueChanged<Color> onColorSelected;
+  final AccentGradient currentGradient;
+  final void Function(Color start, Color end, Color primary) onGradientSelected;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: AppColors.accentColorOptions.map((entry) {
-        final color = entry.$1;
-        final name = entry.$2;
-        final isSelected = currentColor.toARGB32() == color.toARGB32();
+    return Wrap(
+      alignment: WrapAlignment.spaceEvenly,
+      spacing: 10,
+      runSpacing: 10,
+      children: AppColors.accentGradientOptions.map((entry) {
+        final startColor = entry.$1;
+        final endColor = entry.$2;
+        final primaryColor = entry.$3;
+        final label = entry.$4;
+        final isSelected =
+            currentGradient.start.toARGB32() == startColor.toARGB32();
 
         return Tooltip(
-          message: name,
+          message: label,
           child: GestureDetector(
-            onTap: () => onColorSelected(color),
+            onTap: () => onGradientSelected(startColor, endColor, primaryColor),
             child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 280),
               curve: Curves.easeOutBack,
-              width: isSelected ? 44 : 38,
-              height: isSelected ? 44 : 38,
+              width: isSelected ? 46 : 40,
+              height: isSelected ? 46 : 40,
               decoration: BoxDecoration(
-                color: color,
+                gradient: LinearGradient(
+                  colors: [startColor, endColor],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? color.withValues(alpha: 0.8)
+                      ? Colors.white.withValues(alpha: 0.9)
                       : Colors.transparent,
-                  width: isSelected ? 3 : 0,
+                  width: isSelected ? 2.5 : 0,
                 ),
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: color.withValues(alpha: 0.5),
-                          blurRadius: 12,
+                          color: primaryColor.withValues(alpha: 0.55),
+                          blurRadius: 14,
                           spreadRadius: 2,
                         ),
                       ]
-                    : [],
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.12),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
               child: isSelected
                   ? const Icon(
@@ -1205,14 +1344,16 @@ class _ColorPickerSection extends StatelessWidget {
                   : null,
             ),
           ),
-        ).animate(
-          key: ValueKey('${color.toARGB32()}_$isSelected'),
-        ).scale(
-          begin: const Offset(0.8, 0.8),
-          end: const Offset(1.0, 1.0),
-          duration: 200.ms,
-          curve: Curves.easeOutBack,
-        );
+        )
+            .animate(
+                key: ValueKey(
+                    '${startColor.toARGB32()}_$isSelected'))
+            .scale(
+              begin: const Offset(0.85, 0.85),
+              end: const Offset(1.0, 1.0),
+              duration: 200.ms,
+              curve: Curves.easeOutBack,
+            );
       }).toList(),
     );
   }
@@ -1243,8 +1384,173 @@ class _LanguageOption extends StatelessWidget {
           color: active ? cs.primary : cs.textPrimary,
         ),
       ),
-      trailing: active ? Icon(Icons.check_circle_rounded, color: cs.primary) : null,
+      trailing: active
+          ? Icon(Icons.check_circle_rounded, color: cs.primary)
+          : null,
       onTap: onTap,
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Font Dropdown
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _FontDropdown extends StatelessWidget {
+  const _FontDropdown({
+    required this.cs,
+    required this.current,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final AppColorScheme cs;
+  final String current;
+  final List<(String, String)> options;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          builder: (ctx) {
+            return Container(
+              decoration: BoxDecoration(
+                color: cs.card,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
+              ),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: cs.divider,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ...options.map(
+                    (opt) => ListTile(
+                      title: Text(
+                        opt.$2,
+                        style: TextStyle(
+                          fontFamily: opt.$1,
+                          fontSize: 15,
+                          color: cs.textPrimary,
+                        ),
+                      ),
+                      subtitle: Text(
+                        opt.$1,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 11,
+                          color: cs.textSecondary,
+                        ),
+                      ),
+                      trailing: current == opt.$1
+                          ? Icon(Icons.check_circle_rounded,
+                              color: cs.primary)
+                          : null,
+                      onTap: () {
+                        onChanged(opt.$1);
+                        Navigator.pop(ctx);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: cs.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              options.firstWhere((o) => o.$1 == current,
+                      orElse: () => options.first)
+                  .$2,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: cs.primary,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Icon(Icons.expand_more_rounded, size: 14, color: cs.primary),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Font Target Selector
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _FontTargetSelector extends StatelessWidget {
+  const _FontTargetSelector({
+    required this.cs,
+    required this.current,
+    required this.onChanged,
+  });
+
+  final AppColorScheme cs;
+  final String current;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final targets = [
+      ('ui', 'UI'),
+      ('reader', l.settingsFontTargetReader),
+      ('both', l.settingsFontTargetBoth),
+    ];
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: targets.map((t) {
+        final active = t.$1 == current;
+        return GestureDetector(
+          onTap: () => onChanged(t.$1),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            margin: const EdgeInsets.only(left: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            decoration: BoxDecoration(
+              color: active ? cs.primary : cs.primary.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              t.$2,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: active ? Colors.white : cs.primary,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

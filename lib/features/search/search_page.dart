@@ -2,19 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dio/dio.dart';
+import 'package:isar/isar.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
-import '../../core/network/api_constants.dart';
+import '../../core/local_db/isar_service.dart';
+import '../../core/local_db/isar_collections.dart';
+import '../../core/providers/hadith_provider.dart';
+import '../hadith/hadith_category_page.dart';
+import '../notes/notes_page.dart';
 import '../quran/quran_reader_page.dart';
 import '../../core/models/surah_model.dart';
+import '../home/names_of_allah_page.dart';
+import '../home/seerah_page.dart';
+import '../home/sahaba_page.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Search Result Model
 // ─────────────────────────────────────────────────────────────────────────────
 
 class _SearchResult {
-  final String type; // 'ayah' | 'translation'
+  final String type; // 'ayah' | 'translation' | 'hadith' | 'note'
   final int ayahNumber;
   final String surahName;
   final String surahNameAr;
@@ -105,53 +112,310 @@ class _SearchPageState extends ConsumerState<SearchPage>
     });
 
     try {
-      final dio = Dio(BaseOptions(
-        baseUrl: ApiConstants.baseUrl,
-        connectTimeout: ApiConstants.connectTimeout,
-        receiveTimeout: ApiConstants.receiveTimeout,
-      ));
-
-      final params = <String, dynamic>{
-        'q': query,
-        'type': _filterType,
-        'per_page': 30,
-      };
-      if (_filterLang != 'all') params['language_code'] = _filterLang;
-
-      final response = await dio.get('/search', queryParameters: params);
-      final data = response.data as Map<String, dynamic>;
-      final innerData = data['data'] as Map<String, dynamic>? ?? {};
-
+      final isar = IsarService.instance.isar;
       final results = <_SearchResult>[];
 
-      // Parse ayah results
-      final ayahs = innerData['ayahs'] as List? ?? [];
-      for (final a in ayahs) {
-        results.add(_SearchResult(
-          type: 'ayah',
-          ayahNumber: a['ayah_number'] as int? ?? 0,
-          surahName: a['surah_name'] as String? ?? '',
-          surahNameAr: a['surah_name_ar'] as String? ?? '',
-          surahId: a['surah_id'] as int? ?? 0,
-          text: a['text'] as String? ?? '',
-          pageNumber: a['page_number'] as int?,
-          juzNumber: a['juz_number'] as int?,
-        ));
+      // Load all surahs for metadata mapping
+      final surahList = await isar.surahCollections.where().findAll();
+      final surahMap = {for (final s in surahList) s.number: s};
+
+      // 1. Query Ayahs from local database
+      List<AyahCollection> matchedAyahs = [];
+      final queryBuilder = isar.ayahCollections.filter();
+
+      if (_filterType == 'ayah') {
+        matchedAyahs = await queryBuilder
+            .textUthmaniContains(query, caseSensitive: false)
+            .findAll();
+      } else if (_filterType == 'translation') {
+        if (_filterLang == 'ku') {
+          matchedAyahs = await queryBuilder
+              .textKuContains(query, caseSensitive: false)
+              .findAll();
+        } else if (_filterLang == 'en') {
+          matchedAyahs = await queryBuilder
+              .textEnContains(query, caseSensitive: false)
+              .findAll();
+        } else {
+          matchedAyahs = await queryBuilder
+              .textKuContains(query, caseSensitive: false)
+              .or()
+              .textEnContains(query, caseSensitive: false)
+              .findAll();
+        }
+      } else {
+        // _filterType == 'all'
+        if (_filterLang == 'ku') {
+          matchedAyahs = await queryBuilder
+              .textUthmaniContains(query, caseSensitive: false)
+              .or()
+              .textKuContains(query, caseSensitive: false)
+              .findAll();
+        } else if (_filterLang == 'en') {
+          matchedAyahs = await queryBuilder
+              .textUthmaniContains(query, caseSensitive: false)
+              .or()
+              .textEnContains(query, caseSensitive: false)
+              .findAll();
+        } else {
+          // Both all lang & all types
+          matchedAyahs = await queryBuilder
+              .textUthmaniContains(query, caseSensitive: false)
+              .or()
+              .textKuContains(query, caseSensitive: false)
+              .or()
+              .textEnContains(query, caseSensitive: false)
+              .findAll();
+        }
       }
 
-      // Parse translation results
-      final translations = innerData['translations'] as List? ?? [];
-      for (final t in translations) {
-        results.add(_SearchResult(
-          type: 'translation',
-          ayahNumber: t['ayah_number'] as int? ?? 0,
-          surahName: t['surah_name'] as String? ?? '',
-          surahNameAr: (t['surah_name_ar'] as String?) ?? '',
-          surahId: t['surah_id'] as int? ?? 0,
-          text: t['original_text'] as String? ?? '',
-          translationText: t['text'] as String? ?? '',
-          languageCode: t['language_code'] as String?,
-        ));
+      for (final a in matchedAyahs) {
+        final surah = surahMap[a.surahNumber];
+        final isKu = Localizations.localeOf(context).languageCode == 'ku';
+        final surahName = isKu 
+            ? (surah?.nameKu ?? surah?.nameEn ?? 'Surah ${a.surahNumber}')
+            : (surah?.nameEn ?? surah?.nameKu ?? 'Surah ${a.surahNumber}');
+        final surahNameAr = surah?.nameAr ?? '';
+
+        final matchesArabic = a.textUthmani.toLowerCase().contains(query.toLowerCase());
+        final matchesKu = a.textKu != null && a.textKu!.toLowerCase().contains(query.toLowerCase());
+        final matchesEn = a.textEn != null && a.textEn!.toLowerCase().contains(query.toLowerCase());
+
+        if (_filterType == 'ayah') {
+          if (matchesArabic) {
+            results.add(_SearchResult(
+              type: 'ayah',
+              ayahNumber: a.ayahNumber,
+              surahName: surahName,
+              surahNameAr: surahNameAr,
+              surahId: a.surahNumber,
+              text: a.textUthmani,
+              pageNumber: a.pageNumber,
+              juzNumber: a.juzNumber,
+            ));
+          }
+        } else if (_filterType == 'translation') {
+          if (matchesKu && (_filterLang == 'all' || _filterLang == 'ku')) {
+            results.add(_SearchResult(
+              type: 'translation',
+              ayahNumber: a.ayahNumber,
+              surahName: surahName,
+              surahNameAr: surahNameAr,
+              surahId: a.surahNumber,
+              text: a.textUthmani,
+              translationText: a.textKu,
+              languageCode: 'ku',
+              pageNumber: a.pageNumber,
+              juzNumber: a.juzNumber,
+            ));
+          }
+          if (matchesEn && (_filterLang == 'all' || _filterLang == 'en')) {
+            results.add(_SearchResult(
+              type: 'translation',
+              ayahNumber: a.ayahNumber,
+              surahName: surahName,
+              surahNameAr: surahNameAr,
+              surahId: a.surahNumber,
+              text: a.textUthmani,
+              translationText: a.textEn,
+              languageCode: 'en',
+              pageNumber: a.pageNumber,
+              juzNumber: a.juzNumber,
+            ));
+          }
+        } else {
+          // _filterType == 'all'
+          bool added = false;
+          if (matchesArabic) {
+            results.add(_SearchResult(
+              type: 'ayah',
+              ayahNumber: a.ayahNumber,
+              surahName: surahName,
+              surahNameAr: surahNameAr,
+              surahId: a.surahNumber,
+              text: a.textUthmani,
+              pageNumber: a.pageNumber,
+              juzNumber: a.juzNumber,
+            ));
+            added = true;
+          }
+          if (matchesKu && (_filterLang == 'all' || _filterLang == 'ku')) {
+            results.add(_SearchResult(
+              type: 'translation',
+              ayahNumber: a.ayahNumber,
+              surahName: surahName,
+              surahNameAr: surahNameAr,
+              surahId: a.surahNumber,
+              text: a.textUthmani,
+              translationText: a.textKu,
+              languageCode: 'ku',
+              pageNumber: a.pageNumber,
+              juzNumber: a.juzNumber,
+            ));
+            added = true;
+          }
+          if (matchesEn && (_filterLang == 'all' || _filterLang == 'en')) {
+            results.add(_SearchResult(
+              type: 'translation',
+              ayahNumber: a.ayahNumber,
+              surahName: surahName,
+              surahNameAr: surahNameAr,
+              surahId: a.surahNumber,
+              text: a.textUthmani,
+              translationText: a.textEn,
+              languageCode: 'en',
+              pageNumber: a.pageNumber,
+              juzNumber: a.juzNumber,
+            ));
+            added = true;
+          }
+          if (!added) {
+            results.add(_SearchResult(
+              type: 'ayah',
+              ayahNumber: a.ayahNumber,
+              surahName: surahName,
+              surahNameAr: surahNameAr,
+              surahId: a.surahNumber,
+              text: a.textUthmani,
+              pageNumber: a.pageNumber,
+              juzNumber: a.juzNumber,
+            ));
+          }
+        }
+      }
+
+      // 2. Query Hadiths locally from Isar database
+      if (_filterType == 'all' || _filterType == 'translation') {
+        try {
+          final hadiths = await isar.hadithCollections.filter()
+              .arabicTextContains(query, caseSensitive: false)
+              .or()
+              .translationKuContains(query, caseSensitive: false)
+              .or()
+              .translationEnContains(query, caseSensitive: false)
+              .findAll();
+          
+          for (final h in hadiths) {
+            results.add(_SearchResult(
+              type: 'hadith',
+              ayahNumber: h.hadithId,
+              surahName: h.categoryNameKu,
+              surahNameAr: 'فەرموودە',
+              surahId: h.categoryId,
+              text: h.arabicText,
+              translationText: h.translationKu,
+              languageCode: 'ku',
+            ));
+          }
+        } catch (_) {}
+      }
+
+      // 3. Query Personal Notes locally
+      if (_filterType == 'all' || _filterType == 'translation') {
+        if (_filterLang == 'all' || _filterLang == 'ku') {
+          try {
+            final notes = await isar.noteCollections.filter()
+                .contentContains(query, caseSensitive: false)
+                .findAll();
+                
+            for (final n in notes) {
+              String sName = 'تێبینی گشتی';
+              if (n.surahNumber > 0) {
+                final surah = surahMap[n.surahNumber];
+                sName = surah?.nameKu ?? 'سورەتی ${n.surahNumber}';
+              }
+              results.add(_SearchResult(
+                type: 'note',
+                ayahNumber: n.ayahNumber,
+                surahName: sName,
+                surahNameAr: 'تێبینی',
+                surahId: n.surahNumber,
+                text: '',
+                translationText: n.content,
+                languageCode: 'ku',
+              ));
+            }
+          } catch (_) {}
+        }
+      }
+
+      // 4. Query Names of Allah
+      if (_filterType == 'all' || _filterType == 'translation') {
+        try {
+          final names = await isar.namesOfAllahCollections.filter()
+              .nameArContains(query, caseSensitive: false)
+              .or()
+              .nameKuContains(query, caseSensitive: false)
+              .or()
+              .meaningKuContains(query, caseSensitive: false)
+              .or()
+              .meaningEnContains(query, caseSensitive: false)
+              .or()
+              .virtueKuContains(query, caseSensitive: false)
+              .findAll();
+          for (final n in names) {
+            results.add(_SearchResult(
+              type: 'name_of_allah',
+              ayahNumber: n.nameId,
+              surahName: n.nameKu,
+              surahNameAr: 'ناوه‌کانی خودا',
+              surahId: n.nameId,
+              text: n.nameAr,
+              translationText: n.meaningKu,
+              languageCode: 'ku',
+            ));
+          }
+        } catch (_) {}
+      }
+
+      // 5. Query Seerah
+      if (_filterType == 'all' || _filterType == 'translation') {
+        try {
+          final seerah = await isar.seerahCollections.filter()
+              .titleKuContains(query, caseSensitive: false)
+              .or()
+              .contentMdContains(query, caseSensitive: false)
+              .findAll();
+          for (final s in seerah) {
+            results.add(_SearchResult(
+              type: 'seerah',
+              ayahNumber: s.seerahId,
+              surahName: s.titleKu,
+              surahNameAr: 'ژیاننامەی پێغەمبەر',
+              surahId: s.seerahId,
+              text: s.titleAr,
+              translationText: '${s.contentMd.substring(0, s.contentMd.length > 150 ? 150 : s.contentMd.length)}...',
+              languageCode: 'ku',
+            ));
+          }
+        } catch (_) {}
+      }
+
+      // 6. Query Sahaba
+      if (_filterType == 'all' || _filterType == 'translation') {
+        try {
+          final sahaba = await isar.sahabaCollections.filter()
+              .nameKuContains(query, caseSensitive: false)
+              .or()
+              .epithetKuContains(query, caseSensitive: false)
+              .or()
+              .summaryKuContains(query, caseSensitive: false)
+              .or()
+              .biographyMdContains(query, caseSensitive: false)
+              .findAll();
+          for (final s in sahaba) {
+            results.add(_SearchResult(
+              type: 'sahaba',
+              ayahNumber: s.sahabaId,
+              surahName: s.nameKu,
+              surahNameAr: 'ژیاننامەی هاوەڵان',
+              surahId: s.sahabaId,
+              text: s.nameAr,
+              translationText: s.summaryKu,
+              languageCode: 'ku',
+            ));
+          }
+        } catch (_) {}
       }
 
       setState(() {
@@ -161,7 +425,7 @@ class _SearchPageState extends ConsumerState<SearchPage>
     } catch (e) {
       setState(() {
         _isLoading = false;
-        _errorMsg = 'کێشەیەک ڕوویدا. تکایە پەیوەندی ئینتەرنێتت بپشکنە.';
+        _errorMsg = 'کێشەیەک ڕوویدا لە کاتی گەڕانی ناوخۆیی.';
       });
     }
   }
@@ -672,6 +936,11 @@ class _ResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isTranslation = result.type == 'translation';
+    final isHadith = result.type == 'hadith';
+    final isNote = result.type == 'note';
+    final isNameOfAllah = result.type == 'name_of_allah';
+    final isSeerah = result.type == 'seerah';
+    final isSahaba = result.type == 'sahaba';
 
     return GestureDetector(
       onTap: () => _openReader(context),
@@ -709,7 +978,17 @@ class _ResultCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: isTranslation
                           ? Colors.blue.withValues(alpha: 0.12)
-                          : cs.primary.withValues(alpha: 0.12),
+                          : isHadith
+                              ? Colors.purple.withValues(alpha: 0.12)
+                              : isNote
+                                  ? Colors.orange.withValues(alpha: 0.12)
+                                  : isNameOfAllah
+                                      ? Colors.teal.withValues(alpha: 0.12)
+                                      : isSeerah
+                                          ? Colors.brown.withValues(alpha: 0.12)
+                                          : isSahaba
+                                              ? Colors.indigo.withValues(alpha: 0.12)
+                                              : cs.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
@@ -718,27 +997,71 @@ class _ResultCard extends StatelessWidget {
                         Icon(
                           isTranslation
                               ? Icons.translate_rounded
-                              : Icons.menu_book_rounded,
+                              : isHadith
+                                  ? Icons.star_rounded
+                                  : isNote
+                                      ? Icons.note_alt_rounded
+                                      : isNameOfAllah
+                                          ? Icons.brightness_high_rounded
+                                          : isSeerah
+                                              ? Icons.history_edu_rounded
+                                              : isSahaba
+                                                  ? Icons.people_outline_rounded
+                                                  : Icons.menu_book_rounded,
                           size: 11,
-                          color:
-                              isTranslation ? Colors.blue : cs.primary,
+                          color: isTranslation
+                              ? Colors.blue
+                              : isHadith
+                                  ? Colors.purple
+                                  : isNote
+                                      ? Colors.orange
+                                      : isNameOfAllah
+                                          ? Colors.teal
+                                          : isSeerah
+                                              ? Colors.brown
+                                              : isSahaba
+                                                  ? Colors.indigo
+                                                  : cs.primary,
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          isTranslation ? 'وەرگێڕان' : 'ئایەت',
+                          isTranslation
+                              ? 'وەرگێڕان'
+                              : isHadith
+                                  ? 'فەرموودە'
+                                  : isNote
+                                      ? 'تێبینی'
+                                      : isNameOfAllah
+                                          ? 'ناوی خودا'
+                                          : isSeerah
+                                              ? 'ژیاننامەی پێغەمبەر'
+                                              : isSahaba
+                                                  ? 'هاوەڵان'
+                                                  : 'ئایەت',
                           style: TextStyle(
                             fontFamily: 'Cairo',
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
-                            color:
-                                isTranslation ? Colors.blue : cs.primary,
+                            color: isTranslation
+                                ? Colors.blue
+                                : isHadith
+                                    ? Colors.purple
+                                    : isNote
+                                        ? Colors.orange
+                                        : isNameOfAllah
+                                            ? Colors.teal
+                                            : isSeerah
+                                                ? Colors.brown
+                                                : isSahaba
+                                                    ? Colors.indigo
+                                                    : cs.primary,
                           ),
                         ),
                       ],
                     ),
                   ),
                   const Spacer(),
-                  // Surah name
+                  // Surah/Category name
                   Text(
                     result.surahName,
                     textDirection: TextDirection.rtl,
@@ -749,27 +1072,29 @@ class _ResultCard extends StatelessWidget {
                       color: cs.textPrimary,
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  // Ayah number badge
-                  Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: cs.primary.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Center(
-                      child: Text(
-                        '${result.ayahNumber}',
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                          color: cs.primary,
+                  if (result.ayahNumber > 0 && (result.type == 'ayah' || result.type == 'translation')) ...[
+                    const SizedBox(width: 6),
+                    // Ayah number badge
+                    Container(
+                      width: 26,
+                      height: 26,
+                      decoration: BoxDecoration(
+                        color: cs.primary.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${result.ayahNumber}',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: cs.primary,
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -780,24 +1105,25 @@ class _ResultCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Arabic text (always shown)
-                  Text(
-                    result.text,
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.right,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'UthmanicHafs',
-                      fontSize: 16,
-                      height: 1.9,
-                      color: cs.textPrimary,
+                  // Arabic text (always shown unless personal note and empty)
+                  if (result.text.isNotEmpty)
+                    Text(
+                      result.text,
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: isHadith ? 'Cairo' : 'UthmanicHafs',
+                        fontSize: 16,
+                        height: 1.9,
+                        color: cs.textPrimary,
+                      ),
                     ),
-                  ),
 
-                  // Translation text (only for translation results)
-                  if (isTranslation && result.translationText != null) ...[
-                    const SizedBox(height: 8),
+                  // Translation text / Hadith / Note text
+                  if ((isTranslation || isHadith || isNote) && result.translationText != null) ...[
+                    if (result.text.isNotEmpty) const SizedBox(height: 8),
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -863,7 +1189,7 @@ class _ResultCard extends StatelessWidget {
                   // Copy button
                   GestureDetector(
                     onTap: () {
-                      final copyText = isTranslation && result.translationText != null
+                      final copyText = (isTranslation || isHadith || isNote) && result.translationText != null
                           ? '${result.text}\n\n${result.translationText}'
                           : result.text;
                       Clipboard.setData(ClipboardData(text: copyText));
@@ -891,12 +1217,17 @@ class _ResultCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Open in reader
+                  // Open in reader / category / notes page
                   GestureDetector(
                     onTap: () => _openReader(context),
                     child: Row(
                       children: [
-                        Text('خوێندنەوە',
+                        Text(
+                            isHadith
+                                ? 'پیشاندان'
+                                : isNote
+                                    ? 'تێبینییەکان'
+                                    : 'خوێندنەوە',
                             style: TextStyle(
                               fontFamily: 'Cairo',
                               fontSize: 11,
@@ -919,24 +1250,84 @@ class _ResultCard extends StatelessWidget {
   }
 
   void _openReader(BuildContext context) {
-    final surah = SurahModel(
-      id: result.surahId,
-      number: result.surahId,
-      nameAr: result.surahNameAr.isNotEmpty ? result.surahNameAr : result.surahName,
-      nameEn: result.surahName,
-      nameKu: result.surahName,
-      totalAyahs: 286,
-      revelationType: 'Meccan',
-    );
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => QuranReaderPage(
-          surah: surah,
-          initialAyahNumber: result.ayahNumber,
+    if (result.type == 'hadith') {
+      final categoryId = result.surahId;
+      final isar = IsarService.instance.isar;
+      final hadiths = isar.hadithCollections.filter().categoryIdEqualTo(categoryId).findAllSync();
+      final hCategory = HadithCategory(
+        id: categoryId,
+        nameKu: result.surahName,
+        nameAr: 'الحديث',
+        order: 1,
+        isActive: true,
+        hadiths: hadiths.map((h) => HadithItem(
+          id: h.hadithId,
+          categoryId: h.categoryId,
+          arabicText: h.arabicText,
+          translationKu: h.translationKu,
+          translationEn: h.translationEn,
+          narrator: h.narrator,
+          source: h.source,
+          explanationKu: h.explanationKu,
+          explanationEn: h.explanationEn,
+          order: h.order,
+          isActive: h.isActive,
+        )).toList(),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HadithCategoryPage(category: hCategory),
         ),
-      ),
-    );
+      );
+    } else if (result.type == 'note') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const NotesPage(),
+        ),
+      );
+    } else if (result.type == 'name_of_allah') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const NamesOfAllahPage(),
+        ),
+      );
+    } else if (result.type == 'seerah') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const SeerahPage(),
+        ),
+      );
+    } else if (result.type == 'sahaba') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const SahabaPage(),
+        ),
+      );
+    } else {
+      final surah = SurahModel(
+        id: result.surahId,
+        number: result.surahId,
+        nameAr: result.surahNameAr.isNotEmpty ? result.surahNameAr : result.surahName,
+        nameEn: result.surahName,
+        nameKu: result.surahName,
+        totalAyahs: 286,
+        revelationType: 'Meccan',
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => QuranReaderPage(
+            surah: surah,
+            initialAyahNumber: result.ayahNumber,
+          ),
+        ),
+      );
+    }
   }
 }
 

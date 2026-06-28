@@ -1,0 +1,202 @@
+[
+    {
+        "id": 6091,
+        "ayah_number": 1,
+        "text_uthmani": "أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ",
+        "text_simple": null,
+        "page_number": 1226,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12181,
+                "language_code": "en",
+                "content": "Did We not expand for you, [O Muḥammad], your breast?<sup foot_note=197780>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12182,
+                "language_code": "ku",
+                "content": "(ئه‌ی محمد صلی الله علیه وسلم) ئایا دڵ و ده‌روون و سینه‌مان گوشادو ئاسووده نه‌کردیت؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6092,
+        "ayah_number": 2,
+        "text_uthmani": "وَوَضَعْنَا عَنكَ وِزْرَكَ",
+        "text_simple": null,
+        "page_number": 1226,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12183,
+                "language_code": "en",
+                "content": "And We removed from you your burden<sup foot_note=197781>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12184,
+                "language_code": "ku",
+                "content": "ئایا باری گرانمان له‌سه‌ر شانی تۆ لانه‌برد؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6093,
+        "ayah_number": 3,
+        "text_uthmani": "ٱلَّذِىٓ أَنقَضَ ظَهْرَكَ",
+        "text_simple": null,
+        "page_number": 1226,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12185,
+                "language_code": "en",
+                "content": "Which had weighed upon your back",
+                "is_active": true
+            },
+            {
+                "id": 12186,
+                "language_code": "ku",
+                "content": "ئه‌وه‌ی که پشتی تۆی هیلاك و ماندوو کردبوو؟!",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6094,
+        "ayah_number": 4,
+        "text_uthmani": "وَرَفَعْنَا لَكَ ذِكْرَكَ",
+        "text_simple": null,
+        "page_number": 1226,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12187,
+                "language_code": "en",
+                "content": "And raised high for you your repute.",
+                "is_active": true
+            },
+            {
+                "id": 12188,
+                "language_code": "ku",
+                "content": "ناوو ناوبانگی تۆمان به‌رزو بڵند نه‌کرده‌وه (له شایه‌تماندا هاوڕێ له‌گه‌ڵ ناوی ئێمه‌دا ناوت ده‌برێت، ناوت له‌سه‌ر زاری فریشته و په‌ری و گرۆی ئاده‌میزاده‌).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6095,
+        "ayah_number": 5,
+        "text_uthmani": "فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+        "text_simple": null,
+        "page_number": 1226,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12189,
+                "language_code": "en",
+                "content": "For indeed, with hardship [will be] ease [i.e., relief].",
+                "is_active": true
+            },
+            {
+                "id": 12190,
+                "language_code": "ku",
+                "content": "به‌ڕاستی هاوڕێ له‌گه‌ڵ ته‌نگانه‌دا خۆشی و ئاسووده‌یی دێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6096,
+        "ayah_number": 6,
+        "text_uthmani": "إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+        "text_simple": null,
+        "page_number": 1227,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12191,
+                "language_code": "en",
+                "content": "Indeed, with hardship [will be] ease.",
+                "is_active": true
+            },
+            {
+                "id": 12192,
+                "language_code": "ku",
+                "content": "بێگومان به دڵنیاییه‌وه هاوڕێ له‌گه‌ڵ ته‌نگانه‌دا خۆشی و ئاسووده‌یی هه‌ر ده‌بێت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6097,
+        "ayah_number": 7,
+        "text_uthmani": "فَإِذَا فَرَغْتَ فَٱنصَبْ",
+        "text_simple": null,
+        "page_number": 1227,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12193,
+                "language_code": "en",
+                "content": "So when you have finished [your duties], then stand up [for worship].",
+                "is_active": true
+            },
+            {
+                "id": 12194,
+                "language_code": "ku",
+                "content": "جا کاتێك له‌کارێکی خێر ده‌بیته‌وه‌، خۆت ماندوو بکه به‌کارێکی خێری تره‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6098,
+        "ayah_number": 8,
+        "text_uthmani": "وَإِلَىٰ رَبِّكَ فَٱرْغَب",
+        "text_simple": null,
+        "page_number": 1227,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12195,
+                "language_code": "en",
+                "content": "And to your Lord direct [your] longing.",
+                "is_active": true
+            },
+            {
+                "id": 12196,
+                "language_code": "ku",
+                "content": "با هه‌میشه‌و به‌رده‌وام حه‌زو ئاره‌زووت بۆ به‌ده‌ستهێنانی ڕه‌زامه‌ندی خوا بێت، به‌رده‌وام خه‌ڵکیش هان بده تا په‌روه‌ردگارت بناسن و له هه‌وڵی ڕه‌زامه‌ندی ئه‌ودا بن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

@@ -114,29 +114,32 @@ class _RemindersPageState extends ConsumerState<RemindersPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'چالاککردنی بیرخەرەوەکان',
-                                  style: TextStyle(
-                                    fontFamily: 'Cairo',
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'چالاککردنی بیرخەرەوەکان',
+                                    style: TextStyle(
+                                      fontFamily: 'Cairo',
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'هەموو بیرخەرەوەکانی ئاگادارکردنەوە پێکەوە چالاک/ناچالاک بکە',
-                                  style: TextStyle(
-                                    fontFamily: 'Cairo',
-                                    fontSize: 12,
-                                    color: Colors.white70,
+                                  SizedBox(height: 4),
+                                  Text(
+                                    'هەموو بیرخەرەوەکانی ئاگادارکردنەوە پێکەوە چالاک/ناچالاک بکە',
+                                    style: TextStyle(
+                                      fontFamily: 'Cairo',
+                                      fontSize: 12,
+                                      color: Colors.white70,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
+                            const SizedBox(width: 16),
                             Switch(
                               value: state.isMasterEnabled,
                               activeThumbColor: Colors.white,

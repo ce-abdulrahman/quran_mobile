@@ -1,0 +1,127 @@
+[
+    {
+        "id": 6217,
+        "ayah_number": 1,
+        "text_uthmani": "تَبَّتْ يَدَآ أَبِى لَهَبٍ وَتَبَّ",
+        "text_simple": null,
+        "page_number": 1263,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12432,
+                "language_code": "en",
+                "content": "May the hands of Abū Lahab be ruined, and ruined is he.<sup foot_note=197827>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12433,
+                "language_code": "ku",
+                "content": "ده‌سته‌کانی بشکێت ئه‌بو له‌هه‌بو ڕسوا بێت، ئاشکرایه که هه‌ر ڕاسوایش ده‌بێت و‎ (له‌ناو ده‌چێت).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6218,
+        "ayah_number": 2,
+        "text_uthmani": "مَآ أَغْنَىٰ عَنْهُ مَالُهُۥ وَمَا كَسَبَ",
+        "text_simple": null,
+        "page_number": 1263,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12434,
+                "language_code": "en",
+                "content": "His wealth will not avail him or that which he gained.",
+                "is_active": true
+            },
+            {
+                "id": 12435,
+                "language_code": "ku",
+                "content": "ماڵ و دارای و ئه‌و شتانه‌ی که به ده‌ستی هێناوه‌، فریای نه‌که‌وت.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6219,
+        "ayah_number": 3,
+        "text_uthmani": "سَيَصْلَىٰ نَارًا ذَاتَ لَهَبٍ",
+        "text_simple": null,
+        "page_number": 1263,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12436,
+                "language_code": "en",
+                "content": "He will [enter to] burn in a Fire of [blazing] flame",
+                "is_active": true
+            },
+            {
+                "id": 12437,
+                "language_code": "ku",
+                "content": "له ئاینده‌دا ده‌خرێته ناو ئاگرێکی بڵێسه‌داره‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6220,
+        "ayah_number": 4,
+        "text_uthmani": "وَٱمْرَأَتُهُۥ حَمَّالَةَ ٱلْحَطَبِ",
+        "text_simple": null,
+        "page_number": 1263,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12438,
+                "language_code": "en",
+                "content": "And his wife [as well] - the carrier of firewood.<sup foot_note=197828>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12439,
+                "language_code": "ku",
+                "content": "هه‌روه‌ها ژنه‌که‌شی که هه‌میشه هه‌ڵگری کۆڵه داره و (ئازاری پێغه‌مبه‌ر ده‌دات).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6221,
+        "ayah_number": 5,
+        "text_uthmani": "فِى جِيدِهَا حَبْلٌ مِّن مَّسَدٍۭ",
+        "text_simple": null,
+        "page_number": 1264,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12440,
+                "language_code": "en",
+                "content": "Around her neck is a rope of [twisted] fiber.",
+                "is_active": true
+            },
+            {
+                "id": 12441,
+                "language_code": "ku",
+                "content": "هه‌میشه گوریسێکی چنراو له پوشی خورما له گه‌ردنیایه‌تی (له قیامه‌تیش دا زنجیری ئاسن ده‌کرێته گه‌ردنی).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

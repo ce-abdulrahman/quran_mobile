@@ -1,0 +1,152 @@
+[
+    {
+        "id": 6231,
+        "ayah_number": 1,
+        "text_uthmani": "قُلْ أَعُوذُ بِرَبِّ ٱلنَّاسِ",
+        "text_simple": null,
+        "page_number": 1269,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12460,
+                "language_code": "en",
+                "content": "Say, \"I seek refuge in the Lord of mankind,",
+                "is_active": true
+            },
+            {
+                "id": 12461,
+                "language_code": "ku",
+                "content": "(ئه‌ی محمد (صلی الله علیه وسلم) ئه‌ی ئیماندار) بڵێ: په‌نا ده‌گرم به په‌روه‌ردگاری خه‌ڵکی.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6232,
+        "ayah_number": 2,
+        "text_uthmani": "مَلِكِ ٱلنَّاسِ",
+        "text_simple": null,
+        "page_number": 1269,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12462,
+                "language_code": "en",
+                "content": "The Sovereign of mankind,",
+                "is_active": true
+            },
+            {
+                "id": 12463,
+                "language_code": "ku",
+                "content": "پادشای خه‌ڵکی",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6233,
+        "ayah_number": 3,
+        "text_uthmani": "إِلَـٰهِ ٱلنَّاسِ",
+        "text_simple": null,
+        "page_number": 1269,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12464,
+                "language_code": "en",
+                "content": "The God of mankind,",
+                "is_active": true
+            },
+            {
+                "id": 12465,
+                "language_code": "ku",
+                "content": "به خوای خه‌ڵکی.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6234,
+        "ayah_number": 4,
+        "text_uthmani": "مِن شَرِّ ٱلْوَسْوَاسِ ٱلْخَنَّاسِ",
+        "text_simple": null,
+        "page_number": 1269,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12466,
+                "language_code": "en",
+                "content": "From the evil of the retreating whisperer<sup foot_note=197832>1<\/sup> -",
+                "is_active": true
+            },
+            {
+                "id": 12467,
+                "language_code": "ku",
+                "content": "له شه‌ڕ و خراپه‌ی ئه‌وه‌ی که وه‌سوه‌سه و خه‌ته‌ره و خه‌یاڵ ده‌خاته دڵه‌وه که (خه‌ناسه‌). بریتیه له‌وه‌ی که وه‌سوه‌سه فڕێ ده‌داته سینه و دڵ و ده‌رونی خه‌ڵکییه‌وه‌.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6235,
+        "ayah_number": 5,
+        "text_uthmani": "ٱلَّذِى يُوَسْوِسُ فِى صُدُورِ ٱلنَّاسِ",
+        "text_simple": null,
+        "page_number": 1269,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12468,
+                "language_code": "en",
+                "content": "Who whispers [evil] into the breasts of mankind -",
+                "is_active": true
+            },
+            {
+                "id": 12469,
+                "language_code": "ku",
+                "content": "له په‌ری و خه‌ڵکی، له جنۆکه و ئاده‌میزاد (ئه‌وانه‌ی که شه‌یتان سیفه‌تن).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6236,
+        "ayah_number": 6,
+        "text_uthmani": "مِنَ ٱلْجِنَّةِ وَٱلنَّاسِ",
+        "text_simple": null,
+        "page_number": 1270,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12470,
+                "language_code": "en",
+                "content": "From among the jinn and mankind\".<sup foot_note=197833>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12471,
+                "language_code": "ku",
+                "content": "له په‌ری و خه‌ڵكی (له جنۆكه و ئینسان ئه‌وانه‌ی شه‌یتان سیفه‌تن).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

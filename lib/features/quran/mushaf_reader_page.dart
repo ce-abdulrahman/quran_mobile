@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -15,10 +16,12 @@ import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/bookmarks_provider.dart';
 import '../../core/providers/notes_provider.dart';
 import '../../core/utils/quran_utils.dart';
+import '../../core/services/tajweed_engine.dart';
 import 'quran_providers.dart';
 import 'providers/audio_player_provider.dart';
 import 'widgets/share_card_sheet.dart';
 import 'widgets/quran_settings_sheet.dart';
+import '../../core/widgets/feature_not_available_dialog.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mushaf Reader Page
@@ -464,7 +467,8 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
     asyncVal.whenData((list) {
       if (list.isNotEmpty) {
         final first = list.first;
-        final uniqueSurahs = list.map((a) => a.surah?.nameEn ?? '').toSet().join(' / ');
+        final isKu = Localizations.localeOf(context).languageCode == 'ku';
+        final uniqueSurahs = list.map((a) => (isKu ? a.surah?.nameKu : a.surah?.nameEn) ?? '').toSet().join(' / ');
         headerMeta = 'جزء ${first.juzNumber ?? 1} — سورەتی $uniqueSurahs';
       }
     });
@@ -534,20 +538,6 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.travel_explore_rounded, color: text, size: 22),
-                    onPressed: () {
-                      QuranSettingsSheet.show(
-                        context,
-                        surahId: _selectedAyah?.surah?.id ?? 1,
-                        currentPage: _currentPage,
-                        isMushaf: true,
-                        initialIndex: 3,
-                        onJumpToPage: (page) => _jumpToPage(page),
-                        onJumpToSurah: (surah) => _jumpToPage(surah.pageStart ?? 1),
-                      );
-                    },
-                  ),
-                  IconButton(
                     icon: Icon(Icons.tune_rounded, color: text, size: 22),
                     onPressed: () {
                       QuranSettingsSheet.show(
@@ -584,6 +574,9 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
           );
         }
 
+        final quranFont = (settings.fontTarget == 'reader' || settings.fontTarget == 'both')
+            ? settings.quranFontFamily
+            : 'UthmanicHafs';
         final spans = <InlineSpan>[];
         for (int i = 0; i < ayahs.length; i++) {
           final ayah = ayahs[i];
@@ -611,7 +604,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
                       child: Text(
                         'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
                         style: TextStyle(
-                          fontFamily: 'UthmanicHafs',
+                          fontFamily: quranFont,
                           fontSize: settings.fontSize + 2,
                           color: textPrimary.withValues(alpha: 0.95),
                         ),
@@ -625,38 +618,80 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
             }
           }
 
-          spans.add(
-            TextSpan(
+          if (settings.showTajweed == true && ayah.tajweedSegments.isNotEmpty) {
+            final tajweedSpans = TajweedEngine.buildSpans(
               text: ayah.textUthmani,
-              style: TextStyle(
-                fontFamily: 'UthmanicHafs',
-                fontSize: settings.fontSize,
-                height: 2.2,
-                color: isSelected 
-                    ? cs.primary 
-                    : (isPlayingAyah ? cs.primary : textPrimary),
-                backgroundColor: isSelected 
-                    ? cs.primary.withValues(alpha: 0.14) 
-                    : (isPlayingAyah ? cs.primary.withValues(alpha: 0.08) : null),
+              segments: ayah.tajweedSegments,
+              defaultColor: textPrimary,
+              inactiveRules: ref.watch(inactiveTajweedRulesProvider),
+            );
+
+            final mappedTajweedSpans = tajweedSpans.map((span) {
+              if (span is TextSpan) {
+                final baseStyle = span.style ?? const TextStyle();
+                return TextSpan(
+                  text: span.text,
+                  children: span.children,
+                  style: TextStyle(
+                    fontFamily: 'QPCV4Tajweed',
+                    fontSize: settings.fontSize + 4,
+                    height: 2.2,
+                    color: baseStyle.color,
+                    fontWeight: baseStyle.fontWeight,
+                    backgroundColor: isSelected 
+                        ? cs.primary.withValues(alpha: 0.14) 
+                        : (isPlayingAyah ? cs.primary.withValues(alpha: 0.08) : null),
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      setState(() {
+                        if (_selectedAyah?.id == ayah.id) {
+                          _selectedAyah = null;
+                        } else {
+                          _selectedAyah = ayah;
+                        }
+                      });
+                    },
+                );
+              }
+              return span;
+            }).toList();
+
+            spans.addAll(mappedTajweedSpans);
+          } else {
+            spans.add(
+              TextSpan(
+                text: ayah.textUthmani,
+                style: TextStyle(
+                  fontFamily: quranFont,
+                  fontSize: settings.fontSize,
+                  height: 2.2,
+                  color: isSelected 
+                      ? cs.primary 
+                      : (isPlayingAyah ? cs.primary : textPrimary),
+                  backgroundColor: isSelected 
+                      ? cs.primary.withValues(alpha: 0.14) 
+                      : (isPlayingAyah ? cs.primary.withValues(alpha: 0.08) : null),
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                    setState(() {
+                      if (_selectedAyah?.id == ayah.id) {
+                        _selectedAyah = null;
+                      } else {
+                        _selectedAyah = ayah;
+                      }
+                    });
+                  },
               ),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () {
-                  setState(() {
-                    if (_selectedAyah?.id == ayah.id) {
-                      _selectedAyah = null;
-                    } else {
-                      _selectedAyah = ayah;
-                    }
-                  });
-                },
-            ),
-          );
+            );
+          }
 
           spans.add(
             TextSpan(
               text: ' ﴿${ayah.ayahNumber}﴾ ',
               style: TextStyle(
-                fontFamily: 'UthmanicHafs',
+                fontFamily: quranFont,
                 fontSize: settings.fontSize - 2,
                 fontWeight: FontWeight.bold,
                 color: cs.primary.withValues(alpha: 0.8),
@@ -688,7 +723,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
               child: Directionality(
                 textDirection: TextDirection.rtl,
                 child: RichText(
-                  textAlign: TextAlign.justify,
+                  textAlign: kIsWeb ? TextAlign.center : TextAlign.justify,
                   text: TextSpan(children: spans),
                 ),
               ),
@@ -720,8 +755,56 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
   }
 
   Widget _buildSurahBanner(BuildContext context, SurahModel surah, Color textPrimary) {
+    if (kIsWeb) {
+      final cs = AppColorScheme.of(context);
+      final languageCode = Localizations.localeOf(context).languageCode;
+      final subtitle = languageCode == 'ku'
+          ? '${surah.nameKu} • ${surah.totalAyahs} ئایەت'
+          : (languageCode == 'ar'
+              ? '${surah.nameAr} • ${surah.totalAyahs} ئایە'
+              : '${surah.nameEn} • ${surah.totalAyahs} Ayahs');
+      return Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(top: 18, bottom: 12),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
+        decoration: BoxDecoration(
+          color: cs.primary.withValues(alpha: 0.04),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: cs.primary.withValues(alpha: 0.12),
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          children: [
+            Text(
+              surah.nameAr,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'Amiri',
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                height: 1.2,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 12,
+                color: cs.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     final width = MediaQuery.of(context).size.width;
-    final responsiveFontSize = (width * 0.26).clamp(70.0, 140.0);
+    final responsiveFontSize = (width * 0.16).clamp(45.0, 85.0);
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(top: 18, bottom: 8),
@@ -786,8 +869,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
 
     final isBookmarked = bookmarks.any((b) =>
         b.surahId == (ayah.surah?.id ?? 1) && b.ayahNumber == ayah.ayahNumber);
-    final isFavorited = favorites.any((f) =>
-        f.surahId == (ayah.surah?.id ?? 1) && f.ayahNumber == ayah.ayahNumber);
+    final isFavorited = favorites.any((f) => f.favoriteId == 'ayah_${ayah.surah?.id ?? 1}_${ayah.ayahNumber}');
     final note = notes.cast<LocalNote?>().firstWhere(
       (n) => n?.surahNumber == (ayah.surah?.id ?? 1) && n?.ayahNumber == ayah.ayahNumber,
       orElse: () => null,
@@ -826,7 +908,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
             Row(
               children: [
                 Text(
-                  '${ayah.surah?.nameEn ?? ""} : ${ayah.ayahNumber}',
+                  '${(Localizations.localeOf(context).languageCode == 'ku' ? ayah.surah?.nameKu : ayah.surah?.nameEn) ?? ""} : ${ayah.ayahNumber}',
                   style: TextStyle(
                     fontFamily: 'Cairo',
                     fontSize: 14,
@@ -967,14 +1049,12 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
                   color: isPlayingThis ? Colors.amber : cs.primary,
                   cs: cs,
                   onTap: () {
-                    if (isPlayingThis) {
-                      ref.read(audioPlayerProvider.notifier).pause();
-                    } else {
-                      ref.read(audioPlayerProvider.notifier).playAyah(
-                            ayah.surah?.id ?? 1,
-                            ayah.ayahNumber,
-                          );
-                    }
+                    showFeatureUnderDevelopmentDialog(
+                      context,
+                      messageKu: 'ئەم تایبەتمەندییە (خوێندنەوەی دەنگی قورئانخوێنەکان) لە ئێستادا کاری لەسەر دەکرێت بۆیە بەردەست نییە. سوپاس بۆ ئارامگریت.',
+                      messageAr: 'هذه الميزة (أصوات القراء) قيد التطوير حالياً وليست متوفرة. شكراً لصبركم.',
+                      messageEn: 'This feature (reciters audio) is currently under development and is not available. Thank you for your patience.',
+                    );
                   },
                 ),
                 // Favorite Star
@@ -1082,7 +1162,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'ئایەتی ${ayah.ayahNumber} لە سورەتی ${ayah.surah?.nameEn ?? ""}',
+                'ئایەتی ${ayah.ayahNumber} لە سورەتی ${(Localizations.localeOf(context).languageCode == 'ku' ? ayah.surah?.nameKu : ayah.surah?.nameEn) ?? ""}',
                 textDirection: TextDirection.rtl,
                 style: TextStyle(
                   fontFamily: 'Cairo',

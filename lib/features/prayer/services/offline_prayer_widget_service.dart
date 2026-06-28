@@ -106,6 +106,33 @@ class OfflinePrayerWidgetService {
       }
     }
 
+    String convertTo12Hour(String hhmm) {
+      try {
+        final parts = hhmm.split(':');
+        if (parts.length < 2) return hhmm;
+        final hour = int.tryParse(parts[0]) ?? 0;
+        final minute = int.tryParse(parts[1]) ?? 0;
+        final period = hour >= 12 ? 'PM' : 'AM';
+        final displayHour = hour % 12 == 0 ? 12 : hour % 12;
+        final displayMinute = minute.toString().padLeft(2, '0');
+        return '$displayHour:$displayMinute $period';
+      } catch (e) {
+        return hhmm;
+      }
+    }
+
+    if (settings.calculationMethod == 'kurdistan') {
+      for (final key in prayerTimesMap.keys) {
+        final val = prayerTimesMap[key];
+        if (val != null) {
+          prayerTimesMap[key] = convertTo12Hour(val);
+        }
+      }
+      if (nextPrayerTime.isNotEmpty) {
+        nextPrayerTime = convertTo12Hour(nextPrayerTime);
+      }
+    }
+
     // Build Hijri date locally
     final hijriDate = _getHijriDateString(today);
     final gregorianDate = DateFormat('d MMMM yyyy').format(today);
@@ -127,37 +154,49 @@ class OfflinePrayerWidgetService {
   }
 
   static String _getHijriDateString(DateTime date) {
-    int year = date.year;
-    int month = date.month;
-    int day = date.day;
+    // Accurate Gregorian → Hijri conversion via Julian Day Number (JDN)
+    // Reference: Dershowitz & Reingold "Calendrical Calculations"
+    int gYear = date.year;
+    int gMonth = date.month;
+    int gDay = date.day;
 
-    if (month < 3) {
-      year -= 1;
-      month += 12;
-    }
+    // Compute Julian Day Number from Gregorian date
+    int a = ((14 - gMonth) / 12).floor();
+    int y = gYear + 4800 - a;
+    int m = gMonth + 12 * a - 3;
 
-    int a = (year / 100).floor();
-    int b = (a / 4).floor();
-    int c = 2 - a + b;
-    int e = (365.25 * (year + 4716)).floor();
-    int f = (30.6001 * (month + 1)).floor();
-    double jd = c + day + e + f - 1524.5;
+    int jdn = gDay +
+        ((153 * m + 2) / 5).floor() +
+        365 * y +
+        (y / 4).floor() -
+        (y / 100).floor() +
+        (y / 400).floor() -
+        32045;
 
-    double l = jd - 1948440 + 10632;
+    // Convert JDN to Hijri
+    int l = jdn - 1948440 + 10632;
     int n = ((l - 1) / 10631).floor();
     l = l - 10631 * n + 354;
-    int j = (((10985 - l) / 5316).floor() * ((50 - l) / 4).floor()) +
-        (((l - 70) / 4).floor() * ((10985 - l) / 5316).floor());
-    l = l - ((30 - j) / 15).floor() * ((17719 - j) / 328).floor() -
-        ((j / 16).floor() * ((j - 7) / 2).floor());
-    int y = 30 * n + j - 30;
-    int m = ((l / 29.5001).floor() + 1).floor();
-    int d = (l - (29.5001 * (m - 1)).floor() + 1).floor();
+    int j =
+        ((10985 - l) / 5316).floor() * ((50 * l) / 17719).floor() +
+        (l / 5670).floor() * ((43 * l) / 15238).floor();
+    l = l -
+        ((30 - j) / 15).floor() * ((17719 * j) / 10985).floor() -
+        (j / 16).floor() * ((15238 * j) / 43).floor() +
+        29;
+    int hYear = 30 * n + j - 30;
+    int hMonth = (l / 28.5001).floor();
+    if (hMonth > 12) hMonth = 12;
+    int hDay = l - ((hMonth - 1) * 29.5001).floor();
+
+    // Safety clamp
+    if (hMonth < 1 || hMonth > 12) hMonth = 1;
+    if (hDay < 1 || hDay > 30) hDay = 1;
 
     final hijriMonths = [
       'المحرّم',
       'صفر',
-      'ربيع الأول',
+      'ربيع الأوّل',
       'ربيع الآخر',
       'جمادى الأولى',
       'جمادى الآخرة',
@@ -166,19 +205,17 @@ class OfflinePrayerWidgetService {
       'رمضان',
       'شوّال',
       'ذو القعدة',
-      'ذو الحجة'
+      'ذو الحجة',
     ];
 
-    if (m < 1 || m > 12) m = 1;
-
     String toArabicDigits(int number) {
-      final digits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+      const digits = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
       return number.toString().split('').map((char) {
         final val = int.tryParse(char);
         return val != null ? digits[val] : char;
       }).join('');
     }
 
-    return '${toArabicDigits(d)} ${hijriMonths[m - 1]} ${toArabicDigits(y)}';
+    return '${toArabicDigits(hDay)} ${hijriMonths[hMonth - 1]} ${toArabicDigits(hYear)}';
   }
 }

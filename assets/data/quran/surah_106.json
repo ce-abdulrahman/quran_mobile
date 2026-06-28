@@ -1,0 +1,102 @@
+[
+    {
+        "id": 6194,
+        "ayah_number": 1,
+        "text_uthmani": "لِإِيلَـٰفِ قُرَيْشٍ",
+        "text_simple": null,
+        "page_number": 1253,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12387,
+                "language_code": "en",
+                "content": "For the accustomed security of the Quraysh<sup foot_note=197820>1<\/sup> -",
+                "is_active": true
+            },
+            {
+                "id": 12388,
+                "language_code": "ku",
+                "content": "له‌به‌ر ئه‌وه‌ی قوڕه‌یش هۆگر بووه‌و...",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6195,
+        "ayah_number": 2,
+        "text_uthmani": "إِۦلَـٰفِهِمْ رِحْلَةَ ٱلشِّتَآءِ وَٱلصَّيْفِ",
+        "text_simple": null,
+        "page_number": 1253,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12389,
+                "language_code": "en",
+                "content": "Their accustomed security [in] the caravan of winter and summer<sup foot_note=197821>1<\/sup> -",
+                "is_active": true
+            },
+            {
+                "id": 12390,
+                "language_code": "ku",
+                "content": "خوی گرتووه به کاروانی زستانه‌ی (یه‌مه‌ن)و کاروانی هاوینه‌ی (شام) بۆ بازرگانی و (دابین کردنی بژێوی).",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6196,
+        "ayah_number": 3,
+        "text_uthmani": "فَلْيَعْبُدُوا۟ رَبَّ هَـٰذَا ٱلْبَيْتِ",
+        "text_simple": null,
+        "page_number": 1253,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12391,
+                "language_code": "en",
+                "content": "Let them worship the Lord of this House,<sup foot_note=197822>1<\/sup>",
+                "is_active": true
+            },
+            {
+                "id": 12392,
+                "language_code": "ku",
+                "content": "که‌واته با په‌روه‌ردگارو خاوه‌نی ئه‌م ماڵه پیرۆزه (که‌عبه‌) بپه‌رستن.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    },
+    {
+        "id": 6197,
+        "ayah_number": 4,
+        "text_uthmani": "ٱلَّذِىٓ أَطْعَمَهُم مِّن جُوعٍ وَءَامَنَهُم مِّنْ خَوْفٍۭ",
+        "text_simple": null,
+        "page_number": 1254,
+        "juz_number": 30,
+        "hizb_number": 60,
+        "rub_number": 237,
+        "translations": [
+            {
+                "id": 12393,
+                "language_code": "en",
+                "content": "Who has fed them, [saving them] from hunger and made them safe, [saving them] from fear.",
+                "is_active": true
+            },
+            {
+                "id": 12394,
+                "language_code": "ku",
+                "content": "ئه‌و زاته‌ی له‌برسێتی ڕزگاری کردن و خۆراکی پێبه‌خشین و له ترس و بیمی (جه‌رده و ڕێگران) پاڕاستوونی و ئاسایشی بۆ دابین کردوون.",
+                "is_active": true
+            }
+        ],
+        "tajweed_segments": []
+    }
+]

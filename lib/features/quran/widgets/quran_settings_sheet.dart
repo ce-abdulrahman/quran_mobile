@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/l10n/app_localizations.dart';
 import '../../../core/models/surah_model.dart';
 import '../../../core/models/juz_model.dart';
 import '../../../core/providers/app_providers.dart';
@@ -10,6 +11,7 @@ import '../providers/audio_player_provider.dart';
 import '../../tajweed/tajweed_page.dart';
 import '../quran_reader_page.dart';
 import '../mushaf_reader_page.dart';
+import '../../../core/widgets/feature_not_available_dialog.dart';
 
 class QuranSettingsSheet extends ConsumerStatefulWidget {
   final int surahId;
@@ -169,45 +171,57 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
                         ]
                       : null,
                 ),
-                tabs: const [
+                tabs: [
                   Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.menu_book_rounded, size: 16),
-                        SizedBox(width: 4),
-                        Text('خوێندنەوە', style: TextStyle(fontFamily: 'Cairo', fontSize: 11, fontWeight: FontWeight.bold)),
-                      ],
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.menu_book_rounded, size: 16),
+                          const SizedBox(width: 4),
+                          Text(context.l10n.tabReading, style: const TextStyle(fontFamily: 'Cairo', fontSize: 11, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
                   ),
                   Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.palette_rounded, size: 16),
-                        SizedBox(width: 4),
-                        Text('ڕەنگ', style: TextStyle(fontFamily: 'Cairo', fontSize: 11, fontWeight: FontWeight.bold)),
-                      ],
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.palette_rounded, size: 16),
+                          const SizedBox(width: 4),
+                          Text(context.l10n.tabColor, style: const TextStyle(fontFamily: 'Cairo', fontSize: 11, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
                   ),
                   Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.volume_up_rounded, size: 16),
-                        SizedBox(width: 4),
-                        Text('دەنگ', style: TextStyle(fontFamily: 'Cairo', fontSize: 11, fontWeight: FontWeight.bold)),
-                      ],
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.volume_up_rounded, size: 16),
+                          const SizedBox(width: 4),
+                          Text(context.l10n.tabAudio, style: const TextStyle(fontFamily: 'Cairo', fontSize: 11, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
                   ),
                   Tab(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.explore_rounded, size: 16),
-                        SizedBox(width: 4),
-                        Text('بڕین', style: TextStyle(fontFamily: 'Cairo', fontSize: 11, fontWeight: FontWeight.bold)),
-                      ],
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.explore_rounded, size: 16),
+                          const SizedBox(width: 4),
+                          Text(context.l10n.tabNavigation, style: const TextStyle(fontFamily: 'Cairo', fontSize: 11, fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -335,7 +349,18 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
           title: 'ڕەنگەکانی تەجوید',
           value: settings.showTajweed,
           cs: cs,
-          onChanged: (v) => ref.read(readerSettingsProvider.notifier).toggleTajweed(v),
+          onChanged: (v) {
+            if (v) {
+              showFeatureUnderDevelopmentDialog(
+                context,
+                messageKu: 'ئەم تایبەتمەندییە (یاساکان و ڕەنگەکانی تەجوید) لە ئێستادا کاری لەسەر دەکرێت بۆیە بەردەست نییە. سوپاس بۆ ئارامگریت.',
+                messageAr: 'هذه الميزة (أحكام وألوان التجويد) قيد التطوير حالياً وليست متوفرة. شكراً لصبركم.',
+                messageEn: 'This feature (Tajweed rules and coloring) is currently under development and is not available. Thank you for your patience.',
+              );
+            } else {
+              ref.read(readerSettingsProvider.notifier).toggleTajweed(false);
+            }
+          },
         ),
 
         // Tajweed Rules Manager Button
@@ -856,7 +881,7 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
 
                 if (filtered.isEmpty) {
                   return Center(
-                    child: Text('هیچ سورەتێک نەدۆزرایەوە', style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary)),
+                    child: Text(context.l10n.quranNoSurahFound, style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary)),
                   );
                 }
 
@@ -918,13 +943,14 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('هەڵە لە بارکردنی سورەتەکان', style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary))),
+              error: (e, _) => Center(child: Text(context.l10n.quranErrorLoadingSurahs, style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary))),
             ),
           ),
         ],
       );
     } else {
-      // Page Slider
+      // Numeric Page Input
+      final textController = TextEditingController(text: '${widget.currentPage ?? 1}');
       int currentVal = widget.currentPage ?? 1;
       return StatefulBuilder(
         builder: (context, setPageState) {
@@ -935,30 +961,63 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'لاپەڕە $currentVal لە ٦٠٤',
+                  'لاپەڕە هەڵبژێرە (١ تا ٦٠٤)',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Cairo',
-                    fontSize: 16,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: cs.primary,
+                    color: cs.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 16),
-                Slider(
-                  value: currentVal.toDouble(),
-                  min: 1,
-                  max: 604,
-                  divisions: 603,
-                  activeColor: cs.primary,
-                  inactiveColor: cs.primary.withValues(alpha: 0.15),
-                  onChanged: (v) {
-                    setPageState(() => currentVal = v.round());
-                  },
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: cs.bg.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(AppThemeTokens.r12),
+                    border: Border.all(color: cs.cardBorder),
+                  ),
+                  child: TextField(
+                    controller: textController,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: cs.primary,
+                    ),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'ژمارەی لاپەڕە',
+                    ),
+                    onChanged: (v) {
+                      final val = int.tryParse(v);
+                      if (val != null && val >= 1 && val <= 604) {
+                        currentVal = val;
+                      }
+                    },
+                  ),
                 ),
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
+                    final textVal = int.tryParse(textController.text);
+                    if (textVal != null && textVal >= 1 && textVal <= 604) {
+                      currentVal = textVal;
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'تکایە ژمارەیەک لە نێوان ١ تا ٦٠٤ بنووسە',
+                            style: TextStyle(fontFamily: 'Cairo'),
+                          ),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                      return;
+                    }
                     Navigator.pop(context);
                     if (widget.onJumpToPage != null) {
                       widget.onJumpToPage!(currentVal);

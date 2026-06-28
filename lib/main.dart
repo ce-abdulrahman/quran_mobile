@@ -15,11 +15,13 @@ import 'shell/app_shell.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/local_db/isar_service.dart';
+import 'core/services/audio_quality_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await IsarService.init();
-  final sharedPrefs = await SharedPreferences.getInstance(); 
+  final sharedPrefs = await SharedPreferences.getInstance();
+  await AudioQualityManager().init(sharedPrefs); 
 
   // Initialize Hive for high-performance, low-memory caching
   await Hive.initFlutter();
@@ -75,6 +77,11 @@ class QuranApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final accentColor = ref.watch(accentColorProvider);
     final appLocale = ref.watch(appLocaleProvider);
+    final readerSettings = ref.watch(readerSettingsProvider);
+
+    final uiFont = (readerSettings.fontTarget == 'ui' || readerSettings.fontTarget == 'both')
+        ? readerSettings.uiFontFamily
+        : 'Cairo';
 
     return MaterialApp(
       title: 'قورئانەکەم',
@@ -84,18 +91,18 @@ class QuranApp extends ConsumerWidget {
       theme: ThemeData(
         brightness: Brightness.light,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: accentColor,
+          seedColor: accentColor.primary,
           brightness: Brightness.light,
         ),
-        fontFamily: 'Cairo',
+        fontFamily: uiFont,
       ),
       darkTheme: ThemeData(
         brightness: Brightness.dark,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: accentColor,
+          seedColor: accentColor.primary,
           brightness: Brightness.dark,
         ),
-        fontFamily: 'Cairo',
+        fontFamily: uiFont,
       ),
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -111,6 +118,13 @@ class QuranApp extends ConsumerWidget {
       routes: {
         '/': (_) => const SplashPage(),
         '/shell': (_) => const AppShell(),
+      },
+      builder: (context, child) {
+        final isRtl = appLocale.languageCode == 'ar' || appLocale.languageCode == 'ku';
+        return Directionality(
+          textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
+          child: child!,
+        );
       },
     );
   }

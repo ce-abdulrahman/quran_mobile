@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/auth_provider.dart';
 import 'themes/theme_selector_page.dart';
-import 'fingerprint/fingerprint_counter_page.dart';
 import '../statistics/statistics_page.dart';
 import '../achievements/achievements_page.dart';
 import '../tracker/reading_tracker_page.dart';
@@ -56,13 +55,6 @@ class FeatureMenuRegistry {
           icon: Icons.tune_rounded,
           title: (l) => l.menuCounterSettings,
           onTap: (_, __) => onCounterSettingsTap(),
-          isVisible: (_) => true,
-        ),
-        FeatureMenuItem(
-          id: 'fingerprint',
-          icon: Icons.fingerprint_rounded,
-          title: (l) => l.menuFingerprintMode,
-          onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => FingerprintCounterPage(selectedDhikr: activeDhikr))),
           isVisible: (_) => true,
         ),
       ],
