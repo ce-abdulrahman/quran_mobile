@@ -1,54 +1,100 @@
+import 'dart:io';
+import 'dart:convert';
+import 'package:path_provider/path_provider.dart';
+import 'package:isar/isar.dart';
+import '../local_db/isar_service.dart';
+import '../local_db/isar_collections.dart';
 import '../models/reciter_model.dart';
 import '../network/api_client.dart';
 import '../network/api_result.dart';
 
 class AudioRepository {
   final ApiClient _apiClient;
+  final Isar _isar = IsarService.instance.isar;
 
   AudioRepository(this._apiClient);
 
-  /// Fetch all reciters
+  /// Fetch all reciters. Reads exclusively from local Isar.
   Future<ApiResult<List<ReciterModel>>> getReciters() async {
     try {
-      final response = await _apiClient.get('/reciters');
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
-        final rawList = responseData['data'] as List;
-        final reciters = rawList.map((e) => ReciterModel.fromJson(e as Map<String, dynamic>)).toList();
-        return ApiSuccess(reciters);
-      } else {
-        return const ApiError('شکست لە هێنانی ناوی قورئان خوێنەکان');
+      final collections = await _isar.reciterCollections.where().sortByReciterId().findAll();
+      
+      if (collections.isEmpty) {
+        return const ApiError('لیستی قورئانخوێنەکان هێشتا بارنەکراوە. تکایە پەیجی سپڵاش بکەرەوە.');
       }
-    } on ApiException catch (e) {
-      return ApiError(e.message, statusCode: e.statusCode);
+
+      final list = collections.map((c) => ReciterModel(
+        id: c.reciterId,
+        name: c.nameKu,
+        riwayah: c.type == 'kurdish' ? 'تەفسیری کوردی' : 'ڕیوایەتی حەفس',
+        language: c.type == 'kurdish' ? 'ku' : 'ar',
+        image: c.imageAsset,
+      )).toList();
+
+      return ApiSuccess(list);
     } catch (e) {
       return ApiError(e.toString());
     }
   }
 
-  /// Fetch audio stream URL and timings for a specific surah and reciter
+  /// Fetch audio stream URL and timings. Fallback to local offline directory.
   Future<ApiResult<SurahAudioResponse>> getSurahAudio(int surahId, int reciterId, {String? quality}) async {
-    try {
-      final queryParams = <String, dynamic>{'reciter_id': reciterId};
-      if (quality != null && quality != 'offline_only') {
-        queryParams['quality'] = quality;
+    // 1. Try remote network first if not restricted
+    if (quality != 'offline_only') {
+      try {
+        final queryParams = <String, dynamic>{'reciter_id': reciterId};
+        if (quality != null) {
+          queryParams['quality'] = quality;
+        }
+        final response = await _apiClient.get(
+          '/surahs/$surahId/audio',
+          queryParameters: queryParams,
+        ).timeout(const Duration(seconds: 3));
+
+        final responseData = response.data;
+        if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
+          final data = responseData['data'] as Map<String, dynamic>;
+          final parsed = SurahAudioResponse.fromJson(data);
+          
+          // Asynchronously cache this timing data locally
+          _cacheTimingLocally(surahId, reciterId, data);
+          
+          return ApiSuccess(parsed);
+        }
+      } catch (_) {
+        // Fall through to local cache/file retrieval
       }
-      final response = await _apiClient.get(
-        '/surahs/$surahId/audio',
-        queryParameters: queryParams,
-      );
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
-        final data = responseData['data'] as Map<String, dynamic>;
+    }
+
+    // 2. Try loading local downloaded timing file
+    try {
+      final docsDir = await getApplicationDocumentsDirectory();
+      final localFile = File('${docsDir.path}/audio_metadata/reciter_$reciterId/surah_$surahId.json');
+      
+      if (await localFile.exists()) {
+        final content = await localFile.readAsString();
+        final data = jsonDecode(content) as Map<String, dynamic>;
         final parsed = SurahAudioResponse.fromJson(data);
         return ApiSuccess(parsed);
-      } else {
-        return const ApiError('فایلی دەنگی یان کاتەکان نەدۆزرانەوە');
       }
-    } on ApiException catch (e) {
-      return ApiError(e.message, statusCode: e.statusCode);
-    } catch (e) {
-      return ApiError(e.toString());
+    } catch (_) {
+      // Fall through
+    }
+
+    return const ApiError('فایلی دەنگی و کاتی ئایەتەکان بەردەست نییە بە شێوازی ئۆفلاین');
+  }
+
+  Future<void> _cacheTimingLocally(int surahId, int reciterId, Map<String, dynamic> data) async {
+    try {
+      final docsDir = await getApplicationDocumentsDirectory();
+      final dir = Directory('${docsDir.path}/audio_metadata/reciter_$reciterId');
+      if (!await dir.exists()) {
+        await dir.create(recursive: true);
+      }
+      final file = File('${dir.path}/surah_$surahId.json');
+      await file.writeAsString(jsonEncode(data));
+    } catch (_) {
+      // Ignore caching failures
     }
   }
 }

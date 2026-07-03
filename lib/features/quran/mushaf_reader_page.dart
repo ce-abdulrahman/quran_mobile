@@ -619,11 +619,15 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
           }
 
           if (settings.showTajweed == true && ayah.tajweedSegments.isNotEmpty) {
-            final tajweedSpans = TajweedEngine.buildSpans(
+            final tajweedSpans = TajweedSpanCache.getOrBuild(
+              ayahId: ayah.id,
               text: ayah.textUthmani,
               segments: ayah.tajweedSegments,
               defaultColor: textPrimary,
               inactiveRules: ref.watch(inactiveTajweedRulesProvider),
+              ruleColors: const {},
+              fontFamily: 'QPCV4Tajweed',
+              fontSize: settings.fontSize + 4,
             );
 
             final mappedTajweedSpans = tajweedSpans.map((span) {

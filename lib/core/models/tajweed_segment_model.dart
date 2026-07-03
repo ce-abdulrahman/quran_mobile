@@ -8,6 +8,10 @@ class TajweedSegmentModel {
   final String? ruleNameAr;
   final String? colorCode;
   final String? ruleSlug;
+  final int? ruleId;
+  final int? colorId;
+  final bool? connectsToLeft;
+  final bool? connectsToRight;
 
   const TajweedSegmentModel({
     required this.textSegment,
@@ -19,6 +23,10 @@ class TajweedSegmentModel {
     this.ruleNameAr,
     this.colorCode,
     this.ruleSlug,
+    this.ruleId,
+    this.colorId,
+    this.connectsToLeft,
+    this.connectsToRight,
   });
 
   factory TajweedSegmentModel.fromJson(Map<String, dynamic> json) {
@@ -34,6 +42,10 @@ class TajweedSegmentModel {
       ruleNameAr: rule['name_ar'] as String?,
       colorCode: rule['color_code'] as String? ?? json['color_code'] as String?,
       ruleSlug: rule['slug'] as String? ?? json['rule_slug'] as String?,
+      ruleId: json['rule_id'] as int? ?? rule['id'] as int?,
+      colorId: json['color_id'] as int?,
+      connectsToLeft: json['connects_to_left'] as bool?,
+      connectsToRight: json['connects_to_right'] as bool?,
     );
   }
 
@@ -43,6 +55,10 @@ class TajweedSegmentModel {
       'start_index': startIndex,
       'end_index': endIndex,
       'note': note,
+      'rule_id': ruleId,
+      'color_id': colorId,
+      'connects_to_left': connectsToLeft,
+      'connects_to_right': connectsToRight,
       'rule': {
         'slug': ruleSlug,
         'name': ruleName,

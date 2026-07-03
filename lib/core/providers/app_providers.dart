@@ -528,9 +528,12 @@ class AppLocaleNotifier extends StateNotifier<Locale> {
 final tajweedRuleSegmentsCountProvider = FutureProvider.family<int, String>((ref, ruleSlug) async {
   if (kIsWeb) return 0;
   final isar = IsarService.instance.isar;
+  final rule = await isar.tajweedRuleCollections.filter().ruleSlugEqualTo(ruleSlug).findFirst();
+  if (rule == null) return 0;
+
   final count = await isar.ayahCollections
       .filter()
-      .tajweedSegmentsJsonContains('"$ruleSlug"')
+      .tajweedSegmentsElement((q) => q.ruleIdEqualTo(rule.ruleId))
       .count();
   return count;
 });
@@ -542,7 +545,7 @@ final tajweedCategorySegmentsCountProvider = FutureProvider.family<int, TajweedC
   for (final rule in category.rules) {
     final count = await isar.ayahCollections
         .filter()
-        .tajweedSegmentsJsonContains('"${rule.slug}"')
+        .tajweedSegmentsElement((q) => q.ruleIdEqualTo(rule.id))
         .count();
     total += count;
   }

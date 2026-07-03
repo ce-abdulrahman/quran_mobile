@@ -1,177 +1,81 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
-import '../cache/cache_manager.dart';
-import '../network/api_client.dart';
-import '../network/api_result.dart';
-import '../network/api_constants.dart';
+import 'package:isar/isar.dart';
+import '../local_db/isar_service.dart';
+import '../local_db/isar_collections.dart';
 import '../providers/hadith_provider.dart';
+import '../network/api_result.dart';
 
 class HadithRepository {
-  final ApiClient _apiClient;
-  final CacheManager _cacheManager;
+  final Isar _isar = IsarService.instance.isar;
 
-  HadithRepository(this._apiClient, this._cacheManager);
+  HadithRepository([dynamic a, dynamic b]); // Match constructor signature
 
-  /// Fetch all hadith categories. Loads from Laravel API with offline fallback.
+  /// Fetch all hadith categories. Reads exclusively from Isar.
   Future<ApiResult<List<HadithCategory>>> getHadiths({bool forceRefresh = false}) async {
-    const cacheKey = 'cache_hadith_categories';
-
-    if (!forceRefresh) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      if (cachedJson != null && cachedJson is List) {
-        try {
-          final categories = cachedJson.map((e) => HadithCategory.fromJson(e as Map<String, dynamic>)).toList();
-          return ApiSuccess(categories);
-        } catch (_) {}
-      }
-    }
-
     try {
-      final response = await _apiClient.get(ApiConstants.hadiths);
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && (responseData['status'] == 'success' || responseData['success'] == true)) {
-        final rawList = responseData['data'] as List;
-        final categories = rawList.map((e) => HadithCategory.fromJson(e as Map<String, dynamic>)).toList();
+      final collections = await _isar.hadithCollections.where().findAll();
 
-        // Cache it for future offline usage (7 days)
-        await _cacheManager.set(cacheKey, rawList, const Duration(days: 7));
-        return ApiSuccess(categories);
-      } else {
-        return _fallbackToLocalAssets(cacheKey, 'سەرکەوتوو نەبوو لە وەرگرتنی داتا لە ڕاژەکار');
-      }
-    } catch (e) {
-      return _fallbackToLocalAssets(cacheKey, e.toString());
-    }
-  }
-
-  Future<ApiResult<List<HadithCategory>>> _fallbackToLocalAssets(String cacheKey, String errorMsg) async {
-    // 1. Try local CacheManager cache first
-    final cachedJson = _cacheManager.get(cacheKey);
-    if (cachedJson != null && cachedJson is List) {
-      try {
-        final categories = cachedJson.map((e) => HadithCategory.fromJson(e as Map<String, dynamic>)).toList();
-        return ApiSuccess(categories);
-      } catch (_) {}
-    }
-
-    // 2. Fallback to parsing and grouping flat hadiths.json
-    try {
-      final jsonString = await rootBundle.loadString('assets/data/hadiths.json');
-      final rawList = jsonDecode(jsonString) as List;
-
-      if (rawList.isEmpty) return const ApiSuccess([]);
-
-      final first = rawList.first as Map<String, dynamic>;
-      if (first.containsKey('hadiths')) {
-        // Categorized format
-        final categories = rawList
-            .map((e) => HadithCategory.fromJson(e as Map<String, dynamic>))
-            .toList();
-        return ApiSuccess(categories);
+      if (collections.isEmpty) {
+        return const ApiError('فەرموودەکان هێشتا بارنەکراون. تکایە پەیجی سپڵاش بکەرەوە.');
       }
 
-      // New flat format from imanikurd
-      final items = rawList.map((e) {
-        final m = e as Map<String, dynamic>;
-        return HadithItem(
-          id: m['id'] as int? ?? 0,
-          categoryId: m['category_id'] as int? ?? 1,
-          arabicText: m['arabic_text'] as String? ?? '',
-          translationKu: m['translation_ku'] as String? ?? '',
-          narrator: m['narrator'] as String?,
-          source: m['source'] as String?,
-          explanationKu: m['explanation_ku'] as String?,
-          order: m['order'] as int? ?? 0,
-          isActive: m['is_active'] != false,
-        );
-      }).toList();
+      // Group hadith items by categoryId
+      final Map<int, List<HadithItem>> groups = {};
+      final Map<int, HadithCollection> categoryMeta = {};
 
-      // Group by source book
-      final Map<String, List<HadithItem>> groups = {};
-      for (final h in items) {
-        final key = _sourceKey(h.source);
-        groups.putIfAbsent(key, () => []).add(h);
+      for (final h in collections) {
+        groups.putIfAbsent(h.categoryId, () => []).add(HadithItem(
+          id: h.hadithId,
+          categoryId: h.categoryId,
+          arabicText: h.arabicText,
+          translationKu: h.translationKu,
+          translationEn: h.translationEn,
+          narrator: h.narrator,
+          source: h.source,
+          explanationKu: h.explanationKu,
+          explanationEn: h.explanationEn,
+          order: h.order,
+          isActive: h.isActive,
+        ));
+        categoryMeta[h.categoryId] = h;
       }
 
-      // Build category list (sorted by count desc)
-      final sortedKeys = groups.keys.toList()
-        ..sort((a, b) => groups[b]!.length.compareTo(groups[a]!.length));
+      final List<HadithCategory> categories = [];
+      groups.forEach((catId, items) {
+        final meta = categoryMeta[catId]!;
+        // Sort items by order
+        items.sort((a, b) => a.order.compareTo(b.order));
 
-      final categories = sortedKeys.asMap().entries.map((entry) {
-        final idx = entry.key + 1;
-        final key = entry.value;
-        final hadiths = groups[key]!;
-        return HadithCategory(
-          id: idx,
-          nameKu: _sourceNameKu(key),
-          nameAr: _sourceNameAr(key),
+        categories.add(HadithCategory(
+          id: catId,
+          nameKu: meta.categoryNameKu,
+          nameAr: meta.categoryNameAr,
           nameEn: null,
-          icon: _sourceIcon(key),
-          order: idx,
+          icon: _sourceIcon(meta.source),
+          order: catId,
           isActive: true,
-          hadiths: hadiths,
-        );
-      }).toList();
+          hadiths: items,
+        ));
+      });
+
+      // Sort categories by id/order
+      categories.sort((a, b) => a.order.compareTo(b.order));
 
       return ApiSuccess(categories);
     } catch (e) {
-      return ApiError('$errorMsg | فایلی ناوخۆیی بار نەکرا: $e');
+      return ApiError(e.toString());
     }
   }
 
-  /// Extract canonical source key from source string like "رواه البخاري ٨"
-  String _sourceKey(String? source) {
-    if (source == null || source.isEmpty) return 'other';
+  String _sourceIcon(String? source) {
+    if (source == null || source.isEmpty) return 'menu_book_rounded';
     final s = source.toLowerCase();
-    if (s.contains('بخاري') || s.contains('bukhari')) return 'bukhari';
-    if (s.contains('مسلم') || s.contains('muslim')) return 'muslim';
-    if (s.contains('ترمذي') || s.contains('tirmidhi')) return 'tirmidhi';
-    if (s.contains('أبو داود') || s.contains('abu dawud')) return 'abudawud';
-    if (s.contains('نسائي') || s.contains('nasai')) return 'nasai';
-    if (s.contains('ابن ماجه') || s.contains('ibn majah')) return 'ibnmajah';
-    if (s.contains('أحمد') || s.contains('ahmad')) return 'ahmad';
-    return 'other';
-  }
-
-  String _sourceIcon(String key) {
-    const icons = {
-      'bukhari': 'menu_book_rounded',
-      'muslim': 'library_books_rounded',
-      'tirmidhi': 'shield_rounded',
-      'abudawud': 'mosque_rounded',
-      'nasai': 'star_rounded',
-      'ibnmajah': 'favorite_rounded',
-      'ahmad': 'shield_rounded',
-      'other': 'menu_book_rounded',
-    };
-    return icons[key] ?? 'menu_book_rounded';
-  }
-
-  String _sourceNameKu(String key) {
-    const names = {
-      'bukhari': 'بخاری',
-      'muslim': 'موسلیم',
-      'tirmidhi': 'ترمیزی',
-      'abudawud': 'ئەبوداود',
-      'nasai': 'نەسائی',
-      'ibnmajah': 'ئیبن ماجە',
-      'ahmad': 'ئەحمەد',
-      'other': 'گشتی',
-    };
-    return names[key] ?? 'گشتی';
-  }
-
-  String _sourceNameAr(String key) {
-    const names = {
-      'bukhari': 'البخاري',
-      'muslim': 'مسلم',
-      'tirmidhi': 'الترمذي',
-      'abudawud': 'أبو داود',
-      'nasai': 'النسائي',
-      'ibnmajah': 'ابن ماجه',
-      'ahmad': 'أحمد',
-      'other': 'عام',
-    };
-    return names[key] ?? 'عام';
+    if (s.contains('بخاري') || s.contains('bukhari')) return 'menu_book_rounded';
+    if (s.contains('مسلم') || s.contains('muslim')) return 'library_books_rounded';
+    if (s.contains('ترمذي') || s.contains('tirmidhi')) return 'shield_rounded';
+    if (s.contains('أبو داود') || s.contains('abu dawud')) return 'mosque_rounded';
+    if (s.contains('نسائي') || s.contains('nasai')) return 'star_rounded';
+    if (s.contains('ابن ماجه') || s.contains('ibn majah')) return 'favorite_rounded';
+    if (s.contains('أحمد') || s.contains('ahmad')) return 'shield_rounded';
+    return 'menu_book_rounded';
   }
 }

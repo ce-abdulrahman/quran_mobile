@@ -7,6 +7,7 @@ import '../../core/providers/app_providers.dart';
 import '../../core/providers/auth_provider.dart';
 import '../../core/providers/feature_flag_provider.dart';
 import '../../core/providers/prayer_times_provider.dart';
+import '../../core/local_db/isar_service.dart';
 import '../prayer/providers/prayer_times_provider.dart';
 import '../prayer/providers/prayer_widget_provider.dart';
 
@@ -39,22 +40,57 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     } catch (_) {}
   }
 
+  double _seedingProgress = 0.0;
+  String _seedingStatus = '';
+  bool _isSeeding = false;
+
   @override
   void initState() {
     super.initState();
-    // Kick off auth check + feature flag sync in parallel during splash
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Auth check (non-blocking; app_shell handles all states gracefully)
       ref.read(authProvider.notifier).checkAuthState();
-      // Feature flags background sync (uses cached flags if offline)
       ref.read(featureFlagServiceProvider).sync();
-      // Prayer times background sync on boot
       _syncPrayerTimesOnBoot();
+      _checkDatabaseSeeding();
     });
-    Timer(const Duration(milliseconds: 2600), () {
+  }
+
+  Future<void> _checkDatabaseSeeding() async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    final isInitialized = prefs.getBool('is_db_initialized') ?? false;
+
+    if (isInitialized) {
+      await Future.delayed(const Duration(milliseconds: 2000));
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/shell');
-    });
+    } else {
+      setState(() {
+        _isSeeding = true;
+        _seedingStatus = 'ئامادەکردنی بنکەی زانیاری...';
+      });
+
+      try {
+        await IsarService.instance.seedDatabaseWithProgress(
+          onProgress: (status, progress) {
+            if (mounted) {
+              setState(() {
+                _seedingStatus = status;
+                _seedingProgress = progress;
+              });
+            }
+          },
+        );
+        
+        if (!mounted) return;
+        Navigator.of(context).pushReplacementNamed('/shell');
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            _seedingStatus = 'هەڵەیەک ڕوویدا لە کاتی سازدانی ئەپەکە. تکایە ئەپەکە دابخەرەوە و بیکەرەوە.';
+          });
+        }
+      }
+    }
   }
 
   @override
@@ -207,12 +243,55 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                         .animate()
                         .fadeIn(duration: 600.ms, delay: 550.ms),
 
-                    const SizedBox(height: 60),
+                    const SizedBox(height: 48),
 
-                    // Loading dots
-                    _LoadingDots()
-                        .animate()
-                        .fadeIn(duration: 400.ms, delay: 900.ms),
+                    // Seeding progress or loading dots
+                    if (_isSeeding) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 48),
+                        child: Column(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: SizedBox(
+                                width: 220,
+                                child: LinearProgressIndicator(
+                                  value: _seedingProgress,
+                                  backgroundColor: Colors.white.withValues(alpha: 0.2),
+                                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                                  minHeight: 5,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              '${(_seedingProgress * 100).toInt()}%',
+                              style: const TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _seedingStatus,
+                              textAlign: TextAlign.center,
+                              textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 11,
+                                color: Colors.white.withValues(alpha: 0.85),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ] else ...[
+                      _LoadingDots()
+                          .animate()
+                          .fadeIn(duration: 400.ms, delay: 900.ms),
+                    ],
                   ],
                 ),
               ),

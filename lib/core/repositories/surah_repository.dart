@@ -1,270 +1,257 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
-import '../cache/cache_manager.dart';
+import 'package:isar/isar.dart';
+import '../local_db/isar_service.dart';
+import '../local_db/isar_collections.dart';
 import '../models/surah_model.dart';
 import '../models/ayah_model.dart';
 import '../models/banner_model.dart';
+import '../models/tajweed_segment_model.dart';
 import '../network/api_client.dart';
-import '../network/api_constants.dart';
 import '../network/api_result.dart';
 
 class SurahRepository {
   final ApiClient _apiClient;
-  final CacheManager _cacheManager;
+  final Isar _isar = IsarService.instance.isar;
 
-  SurahRepository(this._apiClient, this._cacheManager);
+  SurahRepository(this._apiClient, [dynamic _]); // Match constructor signature
 
-  /// Fetch all Surahs. Uses Cache-First strategy.
+  /// Fetch all Surahs. Reads exclusively from Isar.
   Future<ApiResult<List<SurahModel>>> getSurahs({bool forceRefresh = false}) async {
-    const cacheKey = 'cache_surahs';
-
-    if (!forceRefresh) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      if (cachedJson != null && cachedJson is List) {
-        final cachedList = cachedJson.map((e) => SurahModel.fromJson(e as Map<String, dynamic>)).toList();
-        return ApiSuccess(cachedList);
-      }
-    }
-
     try {
-      final response = await _apiClient.get(ApiConstants.surahs);
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
-        final rawList = responseData['data'] as List;
-        final surahs = rawList.map((e) => SurahModel.fromJson(e as Map<String, dynamic>)).toList();
-        
-        // Cache it
-        await _cacheManager.set(cacheKey, rawList, ApiConstants.surahsTtl);
-        return ApiSuccess(surahs);
-      } else {
-        return const ApiError('هەڵەیەک لە داڕشتەی داتاکاندا هەیە');
+      final collections = await _isar.surahCollections.where().sortByNumber().findAll();
+      
+      if (collections.isEmpty) {
+        return const ApiError('قورئانی پیرۆز هێشتا بارنەکراوە. تکایە پەیجی سپڵاش بکەرەوە.');
       }
-    } on ApiException catch (e) {
-      // If error but we have cached data, return the cache wrapped in ApiError
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<SurahModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        cachedList = cachedJson.map((e) => SurahModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-      return ApiError(e.message, statusCode: e.statusCode, cachedData: cachedList);
+
+      final list = collections.map((c) => SurahModel(
+        id: c.number,
+        number: c.number,
+        nameAr: c.nameAr,
+        nameEn: c.nameEn,
+        nameKu: c.nameKu,
+        totalAyahs: c.totalAyahs,
+        revelationType: c.revelationType,
+        pageStart: c.pageStart,
+        pageEnd: c.pageEnd,
+      )).toList();
+
+      return ApiSuccess(list);
     } catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<SurahModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        cachedList = cachedJson.map((e) => SurahModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-      return ApiError(e.toString(), cachedData: cachedList);
+      return ApiError(e.toString());
     }
   }
 
-  /// Fetch all Ayahs for a Surah. Uses Cache-First strategy.
+  /// Fetch all Ayahs for a Surah. Reads exclusively from Isar.
   Future<ApiResult<List<AyahModel>>> getAyahs(int surahId, {bool forceRefresh = false}) async {
-    final cacheKey = 'cache_ayahs_$surahId';
-
-    if (!forceRefresh) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      if (cachedJson != null && cachedJson is List) {
-        final cachedList = cachedJson.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-        return ApiSuccess(cachedList);
-      }
-    }
-
     try {
-      final response = await _apiClient.get(
-        ApiConstants.ayahs(surahId),
-        queryParameters: {'per_page': 500},
-      );
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
-        final rawData = responseData['data'];
-        List? rawList;
+      final collections = await _isar.ayahCollections
+          .filter()
+          .surahNumberEqualTo(surahId)
+          .sortByAyahNumber()
+          .findAll();
 
-        if (rawData is List) {
-          rawList = rawData;
-        } else if (rawData is Map<String, dynamic>) {
-          if (rawData.containsKey('ayahs') && rawData['ayahs'] is List) {
-            rawList = rawData['ayahs'] as List;
-          } else if (rawData.containsKey('data') && rawData['data'] is List) {
-            rawList = rawData['data'] as List;
-          }
-        }
-
-        if (rawList != null) {
-          final ayahs = rawList.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-
-          // Cache it
-          await _cacheManager.set(cacheKey, rawList, ApiConstants.ayahsTtl);
-          return ApiSuccess(ayahs);
-        } else {
-          return _fallbackToLocalAssets(surahId, cacheKey, 'هەڵەیەک لە داڕشتەی ئایەتەکاندا هەیە');
-        }
-      } else {
-        return _fallbackToLocalAssets(surahId, cacheKey, 'سەرکەوتوو نەبوو لە بارکردنی ئایەتەکان');
+      if (collections.isEmpty) {
+        return ApiError('ئایەتەکانی سوورەتی $surahId نەدۆزرانەوە لە بنکەی زانیاری.');
       }
+
+      // Load Surah metadata for mapping
+      final surahCol = await _isar.surahCollections.filter().numberEqualTo(surahId).findFirst();
+      final surahModel = surahCol != null 
+          ? SurahModel(
+              id: surahCol.number,
+              number: surahCol.number,
+              nameAr: surahCol.nameAr,
+              nameEn: surahCol.nameEn,
+              nameKu: surahCol.nameKu,
+              totalAyahs: surahCol.totalAyahs,
+              revelationType: surahCol.revelationType,
+              pageStart: surahCol.pageStart,
+              pageEnd: surahCol.pageEnd,
+            )
+          : null;
+
+      final list = collections.map((a) {
+        final segments = (a.tajweedSegments ?? []).map((s) => TajweedSegmentModel(
+          textSegment: s.textSegment ?? '',
+          startIndex: s.startIndex,
+          endIndex: s.endIndex,
+          ruleId: s.ruleId,
+          colorId: s.colorId,
+          connectsToLeft: s.connectsToLeft,
+          connectsToRight: s.connectsToRight,
+        )).toList();
+
+        return AyahModel(
+          id: a.ayahId,
+          ayahNumber: a.ayahNumber,
+          textUthmani: a.textUthmani,
+          textEn: a.textEn,
+          textKu: a.textKu,
+          surah: surModelWithNumber(surahModel, a.surahNumber),
+          pageNumber: a.pageNumber,
+          juzNumber: a.juzNumber,
+          hizbNumber: a.hizbNumber,
+          rubNumber: a.rubNumber,
+          tajweedSegments: segments,
+        );
+      }).toList();
+
+      return ApiSuccess(list);
     } catch (e) {
-      return _fallbackToLocalAssets(surahId, cacheKey, e.toString());
+      return ApiError(e.toString());
     }
   }
 
-  Future<ApiResult<List<AyahModel>>> _fallbackToLocalAssets(int surahId, String cacheKey, String errorMsg) async {
-    // 1. Try local cache first
-    final cachedJson = _cacheManager.get(cacheKey);
-    if (cachedJson != null && cachedJson is List) {
-      try {
-        final cachedList = cachedJson.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-        return ApiSuccess(cachedList);
-      } catch (_) {}
-    }
-
-    // 2. Fallback to local assets/data/quran/surah_$surahId.json
-    try {
-      final jsonString = await rootBundle.loadString('assets/data/quran/surah_$surahId.json');
-      final rawList = jsonDecode(jsonString) as List;
-      final ayahs = rawList.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-      return ApiSuccess(ayahs);
-    } catch (e) {
-      return ApiError('$errorMsg | فایلی ناوخۆیی بار نەکرا: $e');
-    }
+  SurahModel? surModelWithNumber(SurahModel? m, int num) {
+    if (m != null) return m;
+    return SurahModel(
+      id: num,
+      number: num,
+      nameAr: '',
+      nameEn: 'Surah $num',
+      nameKu: 'سوورەتی $num',
+      totalAyahs: 0,
+      revelationType: 'Meccan',
+    );
   }
 
-  /// Fetch the deterministic Verse of the Day. Uses Cache-First strategy.
+  /// Fetch the deterministic Verse of the Day. Reads exclusively from Isar.
   Future<ApiResult<AyahModel>> getDailyVerse({bool forceRefresh = false}) async {
-    const cacheKey = 'cache_daily_verse';
-
-    if (!forceRefresh) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      if (cachedJson != null && cachedJson is Map<String, dynamic>) {
-        return ApiSuccess(AyahModel.fromJson(cachedJson));
-      }
-    }
-
     try {
-      final response = await _apiClient.get(ApiConstants.dailyVerse);
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
-        final rawMap = responseData['data'] as Map<String, dynamic>;
-        final ayah = AyahModel.fromJson(rawMap);
+      final now = DateTime.now();
+      final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays + 1;
+      
+      final totalAyahs = await _isar.ayahCollections.count();
+      if (totalAyahs == 0) {
+        return const ApiError('بنکەی زانیاری قورئان هێشتا بەتاڵە.');
+      }
 
-        // Cache it
-        await _cacheManager.set(cacheKey, rawMap, ApiConstants.dailyVerseTtl);
-        return ApiSuccess(ayah);
-      } else {
-        return const ApiError('هەڵەیەک لە داڕشتەی ئایەتی ڕۆژدا هەیە');
+      // Get a deterministic Ayah ID from 1 to totalAyahs
+      final int ayahId = (dayOfYear % totalAyahs) + 1;
+      
+      final a = await _isar.ayahCollections.filter().ayahIdEqualTo(ayahId).findFirst();
+      if (a == null) {
+        return const ApiError('ئایەتی دیاریکراو نەدۆزرایەوە.');
       }
-    } on ApiException catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      AyahModel? cachedAyah;
-      if (cachedJson != null && cachedJson is Map<String, dynamic>) {
-        cachedAyah = AyahModel.fromJson(cachedJson);
-      }
-      return ApiError(e.message, statusCode: e.statusCode, cachedData: cachedAyah);
+
+      final segments = (a.tajweedSegments ?? []).map((s) => TajweedSegmentModel(
+        textSegment: s.textSegment ?? '',
+        startIndex: s.startIndex,
+        endIndex: s.endIndex,
+        ruleId: s.ruleId,
+        colorId: s.colorId,
+        connectsToLeft: s.connectsToLeft,
+        connectsToRight: s.connectsToRight,
+      )).toList();
+
+      final surahCol = await _isar.surahCollections.filter().numberEqualTo(a.surahNumber).findFirst();
+      final surahModel = surahCol != null 
+          ? SurahModel(
+              id: surahCol.number,
+              number: surahCol.number,
+              nameAr: surahCol.nameAr,
+              nameEn: surahCol.nameEn,
+              nameKu: surahCol.nameKu,
+              totalAyahs: surahCol.totalAyahs,
+              revelationType: surahCol.revelationType,
+              pageStart: surahCol.pageStart,
+              pageEnd: surahCol.pageEnd,
+            )
+          : null;
+
+      final ayah = AyahModel(
+        id: a.ayahId,
+        ayahNumber: a.ayahNumber,
+        textUthmani: a.textUthmani,
+        textEn: a.textEn,
+        textKu: a.textKu,
+        surah: surModelWithNumber(surahModel, a.surahNumber),
+        pageNumber: a.pageNumber,
+        juzNumber: a.juzNumber,
+        hizbNumber: a.hizbNumber,
+        rubNumber: a.rubNumber,
+        tajweedSegments: segments,
+      );
+
+      return ApiSuccess(ayah);
     } catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      AyahModel? cachedAyah;
-      if (cachedJson != null && cachedJson is Map<String, dynamic>) {
-        cachedAyah = AyahModel.fromJson(cachedJson);
-      }
-      return ApiError(e.toString(), cachedData: cachedAyah);
+      return ApiError(e.toString());
     }
   }
 
-  /// Fetch all Ayahs for a page. Uses Cache-First strategy.
+  /// Fetch all Ayahs for a page. Reads exclusively from Isar.
   Future<ApiResult<List<AyahModel>>> getPageAyahs(int pageNumber, {bool forceRefresh = false}) async {
-    final cacheKey = 'cache_page_$pageNumber';
-
-    if (!forceRefresh) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      if (cachedJson != null && cachedJson is List) {
-        final cachedList = cachedJson.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-        return ApiSuccess(cachedList);
-      }
-    }
-
     try {
-      final response = await _apiClient.get(ApiConstants.pageAyahs(pageNumber));
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
-        final rawData = responseData['data'];
-        List? rawList;
+      final collections = await _isar.ayahCollections
+          .filter()
+          .pageNumberEqualTo(pageNumber)
+          .findAll();
 
-        if (rawData is List) {
-          rawList = rawData;
-        } else if (rawData is Map<String, dynamic>) {
-          if (rawData.containsKey('ayahs') && rawData['ayahs'] is List) {
-            rawList = rawData['ayahs'] as List;
-          } else if (rawData.containsKey('data') && rawData['data'] is List) {
-            rawList = rawData['data'] as List;
-          }
-        }
-
-        if (rawList != null) {
-          final ayahs = rawList.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-
-          // Cache it
-          await _cacheManager.set(cacheKey, rawList, ApiConstants.ayahsTtl);
-          return ApiSuccess(ayahs);
-        } else {
-          return const ApiError('هەڵەیەک لە داڕشتەی ئایەتەکاندا هەیە');
-        }
-      } else {
-        return const ApiError('سەرکەوتوو نەبوو لە بارکردنی لاپەڕەکە');
+      if (collections.isEmpty) {
+        return ApiError('ئایەتەکانی لاپەڕەی $pageNumber نەدۆزرانەوە لە بنکەی زانیاری.');
       }
-    } on ApiException catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<AyahModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        cachedList = cachedJson.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
+
+      final List<AyahModel> list = [];
+      for (final a in collections) {
+        final segments = (a.tajweedSegments ?? []).map((s) => TajweedSegmentModel(
+          textSegment: s.textSegment ?? '',
+          startIndex: s.startIndex,
+          endIndex: s.endIndex,
+          ruleId: s.ruleId,
+          colorId: s.colorId,
+          connectsToLeft: s.connectsToLeft,
+          connectsToRight: s.connectsToRight,
+        )).toList();
+
+        final surahCol = await _isar.surahCollections.filter().numberEqualTo(a.surahNumber).findFirst();
+        final surahModel = surahCol != null 
+            ? SurahModel(
+                id: surahCol.number,
+                number: surahCol.number,
+                nameAr: surahCol.nameAr,
+                nameEn: surahCol.nameEn,
+                nameKu: surahCol.nameKu,
+                totalAyahs: surahCol.totalAyahs,
+                revelationType: surahCol.revelationType,
+                pageStart: surahCol.pageStart,
+                pageEnd: surahCol.pageEnd,
+              )
+            : null;
+
+        list.add(AyahModel(
+          id: a.ayahId,
+          ayahNumber: a.ayahNumber,
+          textUthmani: a.textUthmani,
+          textEn: a.textEn,
+          textKu: a.textKu,
+          surah: surModelWithNumber(surahModel, a.surahNumber),
+          pageNumber: a.pageNumber,
+          juzNumber: a.juzNumber,
+          hizbNumber: a.hizbNumber,
+          rubNumber: a.rubNumber,
+          tajweedSegments: segments,
+        ));
       }
-      return ApiError(e.message, statusCode: e.statusCode, cachedData: cachedList);
+
+      return ApiSuccess(list);
     } catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<AyahModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        cachedList = cachedJson.map((e) => AyahModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-      return ApiError(e.toString(), cachedData: cachedList);
+      return ApiError(e.toString());
     }
   }
 
-  /// Fetch all active banners. Uses Network-First with Cache fallback strategy.
+  /// Banners load safely from API with fallback to empty list (non-blocking).
   Future<ApiResult<List<BannerModel>>> getBanners({bool forceRefresh = false}) async {
-    const cacheKey = 'cache_banners';
-
-    if (!forceRefresh) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      if (cachedJson != null && cachedJson is List) {
-        final cachedList = cachedJson.map((e) => BannerModel.fromJson(e as Map<String, dynamic>)).toList();
-        return ApiSuccess(cachedList);
-      }
-    }
-
     try {
-      final response = await _apiClient.get(ApiConstants.banners);
+      final response = await _apiClient.get('/banners').timeout(const Duration(seconds: 3));
       final responseData = response.data;
       if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
         final rawList = responseData['data'] as List;
         final banners = rawList.map((e) => BannerModel.fromJson(e as Map<String, dynamic>)).toList();
-
-        // Cache it
-        await _cacheManager.set(cacheKey, rawList, const Duration(hours: 4));
         return ApiSuccess(banners);
-      } else {
-        return const ApiError('هەڵەیەک لە داڕشتەی بانەرەکاندا هەیە');
       }
-    } on ApiException catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<BannerModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        cachedList = cachedJson.map((e) => BannerModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-      return ApiError(e.message, statusCode: e.statusCode, cachedData: cachedList);
-    } catch (e) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      List<BannerModel>? cachedList;
-      if (cachedJson != null && cachedJson is List) {
-        cachedList = cachedJson.map((e) => BannerModel.fromJson(e as Map<String, dynamic>)).toList();
-      }
-      return ApiError(e.toString(), cachedData: cachedList);
+      return const ApiSuccess([]);
+    } catch (_) {
+      return const ApiSuccess([]);
     }
   }
 }

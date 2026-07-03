@@ -25,8 +25,8 @@ class AboutPage extends StatelessWidget {
         ? 'دروستکراوە لەلایەن:'
         : (languageCode == 'ar' ? 'تم التطوير بواسطة:' : 'Developed by:');
     final devName = languageCode == 'ku'
-        ? 'ئەندازیار عەبدولڕەحمان ئیسماعیل'
-        : (languageCode == 'ar' ? 'المهندس عبدالرحمن اسماعيل' : 'Eng. Abdulrahman Ismail');
+        ? 'ئەندازیار عبدالرحمن إسماعیل'
+        : (languageCode == 'ar' ? 'المهندس عبدالرحمن إسماعيل' : 'Eng. Abdulrahman Ismail');
 
     return Scaffold(
       backgroundColor: cs.bg,

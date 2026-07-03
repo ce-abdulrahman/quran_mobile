@@ -1,70 +1,64 @@
-import 'dart:convert';
-import 'package:flutter/services.dart';
-import '../cache/cache_manager.dart';
-import '../network/api_client.dart';
-import '../network/api_constants.dart';
-import '../network/api_result.dart';
+import 'package:isar/isar.dart';
+import '../local_db/isar_service.dart';
+import '../local_db/isar_collections.dart';
 import '../providers/adhkar_provider.dart';
+import '../network/api_result.dart';
 
 class AdhkarRepository {
-  final ApiClient _apiClient;
-  final CacheManager _cacheManager;
+  final Isar _isar = IsarService.instance.isar;
 
-  AdhkarRepository(this._apiClient, this._cacheManager);
+  AdhkarRepository([dynamic a, dynamic b]); // Match constructor signature
 
-  /// Fetch all active Adhkars grouped by Category. Uses Cache-First strategy.
+  /// Fetch all active Adhkars grouped by Category. Reads exclusively from Isar.
   Future<ApiResult<List<AdhkarCategory>>> getAdhkars({bool forceRefresh = false}) async {
-    const cacheKey = 'cache_adhkars';
-
-    if (!forceRefresh) {
-      final cachedJson = _cacheManager.get(cacheKey);
-      if (cachedJson != null && cachedJson is List) {
-        try {
-          final cachedList = cachedJson.map((e) => AdhkarCategory.fromJson(e as Map<String, dynamic>)).toList();
-          return ApiSuccess(cachedList);
-        } catch (_) {
-          // If JSON format changed, proceed to fetch from network
-        }
-      }
-    }
-
     try {
-      final response = await _apiClient.get(ApiConstants.adhkars);
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData['status'] == 'success') {
-        final rawList = responseData['data'] as List;
-        final categories = rawList.map((e) => AdhkarCategory.fromJson(e as Map<String, dynamic>)).toList();
+      final collections = await _isar.adhkarCollections.where().findAll();
 
-        // Cache it
-        await _cacheManager.set(cacheKey, rawList, const Duration(hours: 12));
-        return ApiSuccess(categories);
-      } else {
-        return _fallbackToLocalAssets(cacheKey, 'هەڵەیەک لە داڕشتەی ئەزکارەکاندا هەیە');
+      if (collections.isEmpty) {
+        return const ApiError('ئەزکارەکان هێشتا بارنەکراون. تکایە پەیجی سپڵاش بکەرەوە.');
       }
-    } catch (e) {
-      return _fallbackToLocalAssets(cacheKey, e.toString());
-    }
-  }
 
-  Future<ApiResult<List<AdhkarCategory>>> _fallbackToLocalAssets(String cacheKey, String errorMsg) async {
-    // 1. Try local CacheManager cache first
-    final cachedJson = _cacheManager.get(cacheKey);
-    if (cachedJson != null && cachedJson is List) {
-      try {
-        final cachedList = cachedJson.map((e) => AdhkarCategory.fromJson(e as Map<String, dynamic>)).toList();
-        return ApiSuccess(cachedList);
-      } catch (_) {}
-    }
+      // Group adhkar items by categoryId
+      final Map<int, List<AdhkarItem>> groups = {};
+      final Map<int, AdhkarCollection> categoryMeta = {};
 
-    // 2. Fallback to hardcoded assets/data/adhkars.json
-    try {
-      final jsonString = await rootBundle.loadString('assets/data/adhkars.json');
-      final rawList = jsonDecode(jsonString) as List;
-      final categories = rawList.map((e) => AdhkarCategory.fromJson(e as Map<String, dynamic>)).toList();
+      for (final a in collections) {
+        groups.putIfAbsent(a.categoryId, () => []).add(AdhkarItem(
+          id: a.adhkarId,
+          categoryId: a.categoryId,
+          text: a.arabicText,
+          translation: a.translationKu,
+          benefit: a.description ?? '',
+          targetCount: a.targetCount,
+          source: a.source,
+        ));
+        categoryMeta[a.categoryId] = a;
+      }
+
+      final List<AdhkarCategory> categories = [];
+      groups.forEach((catId, items) {
+        final meta = categoryMeta[catId]!;
+        // Sort items by id/order
+        items.sort((a, b) => a.id.compareTo(b.id));
+
+        categories.add(AdhkarCategory(
+          id: catId,
+          nameKu: meta.categoryNameKu,
+          nameAr: meta.categoryNameAr,
+          nameEn: meta.categoryNameEn,
+          icon: meta.categoryIcon,
+          order: meta.categoryOrder,
+          isActive: true,
+          adhkars: items,
+        ));
+      });
+
+      // Sort categories by order
+      categories.sort((a, b) => a.order.compareTo(b.order));
+
       return ApiSuccess(categories);
     } catch (e) {
-      return ApiError('$errorMsg | فایلی ناوخۆیی بار نەکرا: $e');
+      return ApiError(e.toString());
     }
   }
 }
-

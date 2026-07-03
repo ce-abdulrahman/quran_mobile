@@ -1228,11 +1228,15 @@ class _AyahRow extends ConsumerWidget {
             showTajweed == true && ayah.tajweedSegments.isNotEmpty
                 ? Text.rich(
                     TextSpan(
-                      children: TajweedEngine.buildSpans(
+                      children: TajweedSpanCache.getOrBuild(
+                        ayahId: ayah.id,
                         text: ayah.textUthmani,
                         segments: ayah.tajweedSegments,
                         defaultColor: cs.textPrimary,
                         inactiveRules: inactiveRules,
+                        ruleColors: const {},
+                        fontFamily: 'QPCV4Tajweed',
+                        fontSize: fontSize + 4,
                       ),
                     ),
                     textDirection: TextDirection.rtl,

@@ -114,188 +114,66 @@ class _SearchPageState extends ConsumerState<SearchPage>
     try {
       final isar = IsarService.instance.isar;
       final results = <_SearchResult>[];
+      final isKu = Localizations.localeOf(context).languageCode == 'ku';
 
-      // Load all surahs for metadata mapping
+      // Load all surahs for mapping
       final surahList = await isar.surahCollections.where().findAll();
       final surahMap = {for (final s in surahList) s.number: s};
 
-      // 1. Query Ayahs from local database
-      List<AyahCollection> matchedAyahs = [];
-      final queryBuilder = isar.ayahCollections.filter();
+      // Query the unified SearchIndexCollection
+      dynamic queryBuilder = isar.searchIndexCollections.filter()
+          .contentContains(query, caseSensitive: false);
 
+      // Apply type filtering
       if (_filterType == 'ayah') {
-        matchedAyahs = await queryBuilder
-            .textUthmaniContains(query, caseSensitive: false)
-            .findAll();
+        queryBuilder = queryBuilder.typeEqualTo('ayah');
       } else if (_filterType == 'translation') {
-        if (_filterLang == 'ku') {
-          matchedAyahs = await queryBuilder
-              .textKuContains(query, caseSensitive: false)
-              .findAll();
-        } else if (_filterLang == 'en') {
-          matchedAyahs = await queryBuilder
-              .textEnContains(query, caseSensitive: false)
-              .findAll();
-        } else {
-          matchedAyahs = await queryBuilder
-              .textKuContains(query, caseSensitive: false)
-              .or()
-              .textEnContains(query, caseSensitive: false)
-              .findAll();
-        }
-      } else {
-        // _filterType == 'all'
-        if (_filterLang == 'ku') {
-          matchedAyahs = await queryBuilder
-              .textUthmaniContains(query, caseSensitive: false)
-              .or()
-              .textKuContains(query, caseSensitive: false)
-              .findAll();
-        } else if (_filterLang == 'en') {
-          matchedAyahs = await queryBuilder
-              .textUthmaniContains(query, caseSensitive: false)
-              .or()
-              .textEnContains(query, caseSensitive: false)
-              .findAll();
-        } else {
-          // Both all lang & all types
-          matchedAyahs = await queryBuilder
-              .textUthmaniContains(query, caseSensitive: false)
-              .or()
-              .textKuContains(query, caseSensitive: false)
-              .or()
-              .textEnContains(query, caseSensitive: false)
-              .findAll();
-        }
+        queryBuilder = queryBuilder.typeEqualTo('ayah').not();
       }
 
-      for (final a in matchedAyahs) {
-        final surah = surahMap[a.surahNumber];
-        final isKu = Localizations.localeOf(context).languageCode == 'ku';
-        final surahName = isKu 
-            ? (surah?.nameKu ?? surah?.nameEn ?? 'Surah ${a.surahNumber}')
-            : (surah?.nameEn ?? surah?.nameKu ?? 'Surah ${a.surahNumber}');
-        final surahNameAr = surah?.nameAr ?? '';
-
-        final matchesArabic = a.textUthmani.toLowerCase().contains(query.toLowerCase());
-        final matchesKu = a.textKu != null && a.textKu!.toLowerCase().contains(query.toLowerCase());
-        final matchesEn = a.textEn != null && a.textEn!.toLowerCase().contains(query.toLowerCase());
-
-        if (_filterType == 'ayah') {
-          if (matchesArabic) {
-            results.add(_SearchResult(
-              type: 'ayah',
-              ayahNumber: a.ayahNumber,
-              surahName: surahName,
-              surahNameAr: surahNameAr,
-              surahId: a.surahNumber,
-              text: a.textUthmani,
-              pageNumber: a.pageNumber,
-              juzNumber: a.juzNumber,
-            ));
-          }
-        } else if (_filterType == 'translation') {
-          if (matchesKu && (_filterLang == 'all' || _filterLang == 'ku')) {
-            results.add(_SearchResult(
-              type: 'translation',
-              ayahNumber: a.ayahNumber,
-              surahName: surahName,
-              surahNameAr: surahNameAr,
-              surahId: a.surahNumber,
-              text: a.textUthmani,
-              translationText: a.textKu,
-              languageCode: 'ku',
-              pageNumber: a.pageNumber,
-              juzNumber: a.juzNumber,
-            ));
-          }
-          if (matchesEn && (_filterLang == 'all' || _filterLang == 'en')) {
-            results.add(_SearchResult(
-              type: 'translation',
-              ayahNumber: a.ayahNumber,
-              surahName: surahName,
-              surahNameAr: surahNameAr,
-              surahId: a.surahNumber,
-              text: a.textUthmani,
-              translationText: a.textEn,
-              languageCode: 'en',
-              pageNumber: a.pageNumber,
-              juzNumber: a.juzNumber,
-            ));
-          }
-        } else {
-          // _filterType == 'all'
-          bool added = false;
-          if (matchesArabic) {
-            results.add(_SearchResult(
-              type: 'ayah',
-              ayahNumber: a.ayahNumber,
-              surahName: surahName,
-              surahNameAr: surahNameAr,
-              surahId: a.surahNumber,
-              text: a.textUthmani,
-              pageNumber: a.pageNumber,
-              juzNumber: a.juzNumber,
-            ));
-            added = true;
-          }
-          if (matchesKu && (_filterLang == 'all' || _filterLang == 'ku')) {
-            results.add(_SearchResult(
-              type: 'translation',
-              ayahNumber: a.ayahNumber,
-              surahName: surahName,
-              surahNameAr: surahNameAr,
-              surahId: a.surahNumber,
-              text: a.textUthmani,
-              translationText: a.textKu,
-              languageCode: 'ku',
-              pageNumber: a.pageNumber,
-              juzNumber: a.juzNumber,
-            ));
-            added = true;
-          }
-          if (matchesEn && (_filterLang == 'all' || _filterLang == 'en')) {
-            results.add(_SearchResult(
-              type: 'translation',
-              ayahNumber: a.ayahNumber,
-              surahName: surahName,
-              surahNameAr: surahNameAr,
-              surahId: a.surahNumber,
-              text: a.textUthmani,
-              translationText: a.textEn,
-              languageCode: 'en',
-              pageNumber: a.pageNumber,
-              juzNumber: a.juzNumber,
-            ));
-            added = true;
-          }
-          if (!added) {
-            results.add(_SearchResult(
-              type: 'ayah',
-              ayahNumber: a.ayahNumber,
-              surahName: surahName,
-              surahNameAr: surahNameAr,
-              surahId: a.surahNumber,
-              text: a.textUthmani,
-              pageNumber: a.pageNumber,
-              juzNumber: a.juzNumber,
-            ));
-          }
-        }
+      // Apply language filtering
+      if (_filterLang == 'ku') {
+        queryBuilder = queryBuilder.group((q) => q.languageEqualTo('ku').or().languageEqualTo('all'));
+      } else if (_filterLang == 'en') {
+        queryBuilder = queryBuilder.group((q) => q.languageEqualTo('en').or().languageEqualTo('all'));
       }
 
-      // 2. Query Hadiths locally from Isar database
-      if (_filterType == 'all' || _filterType == 'translation') {
-        try {
-          final hadiths = await isar.hadithCollections.filter()
-              .arabicTextContains(query, caseSensitive: false)
-              .or()
-              .translationKuContains(query, caseSensitive: false)
-              .or()
-              .translationEnContains(query, caseSensitive: false)
-              .findAll();
-          
-          for (final h in hadiths) {
+      final matchedIndexes = await queryBuilder
+          .sortByWeightDesc()
+          .findAll();
+
+      for (final idx in matchedIndexes) {
+        if (idx.type == 'ayah') {
+          final a = await isar.ayahCollections.filter()
+              .surahNumberEqualTo(idx.surahNumber!)
+              .and()
+              .ayahNumberEqualTo(idx.ayahNumber!)
+              .findFirst();
+          if (a != null) {
+            final surah = surahMap[a.surahNumber];
+            final surahName = isKu 
+                ? (surah?.nameKu ?? surah?.nameEn ?? 'Surah ${a.surahNumber}')
+                : (surah?.nameEn ?? surah?.nameKu ?? 'Surah ${a.surahNumber}');
+            
+            results.add(_SearchResult(
+              type: _filterType == 'translation' ? 'translation' : 'ayah',
+              ayahNumber: a.ayahNumber,
+              surahName: surahName,
+              surahNameAr: surah?.nameAr ?? '',
+              surahId: a.surahNumber,
+              text: a.textUthmani,
+              translationText: _filterType == 'translation' 
+                  ? (_filterLang == 'en' ? a.textEn : a.textKu) 
+                  : (a.textKu ?? a.textEn),
+              languageCode: _filterLang == 'en' ? 'en' : 'ku',
+              pageNumber: a.pageNumber,
+              juzNumber: a.juzNumber,
+            ));
+          }
+        } else if (idx.type == 'hadith') {
+          final hadithId = int.tryParse(idx.key.split('_').last) ?? 0;
+          final h = await isar.hadithCollections.filter().hadithIdEqualTo(hadithId).findFirst();
+          if (h != null) {
             results.add(_SearchResult(
               type: 'hadith',
               ayahNumber: h.hadithId,
@@ -307,76 +185,47 @@ class _SearchPageState extends ConsumerState<SearchPage>
               languageCode: 'ku',
             ));
           }
-        } catch (_) {}
-      }
-
-      // 3. Query Personal Notes locally
-      if (_filterType == 'all' || _filterType == 'translation') {
-        if (_filterLang == 'all' || _filterLang == 'ku') {
-          try {
-            final notes = await isar.noteCollections.filter()
-                .contentContains(query, caseSensitive: false)
-                .findAll();
-                
-            for (final n in notes) {
-              String sName = 'تێبینی گشتی';
-              if (n.surahNumber > 0) {
-                final surah = surahMap[n.surahNumber];
-                sName = surah?.nameKu ?? 'سورەتی ${n.surahNumber}';
-              }
-              results.add(_SearchResult(
-                type: 'note',
-                ayahNumber: n.ayahNumber,
-                surahName: sName,
-                surahNameAr: 'تێبینی',
-                surahId: n.surahNumber,
-                text: '',
-                translationText: n.content,
-                languageCode: 'ku',
-              ));
+        } else if (idx.type == 'note') {
+          final noteId = idx.key.split('_').last;
+          final n = await isar.noteCollections.filter().noteIdEqualTo(noteId).findFirst();
+          if (n != null) {
+            String sName = 'تێبینی گشتی';
+            String sNameAr = 'تێبینی';
+            if (n.surahNumber > 0) {
+              final surah = surahMap[n.surahNumber];
+              sName = surah?.nameKu ?? 'سورەتی ${n.surahNumber}';
+              sNameAr = surah?.nameAr ?? '';
             }
-          } catch (_) {}
-        }
-      }
-
-      // 4. Query Names of Allah
-      if (_filterType == 'all' || _filterType == 'translation') {
-        try {
-          final names = await isar.namesOfAllahCollections.filter()
-              .nameArContains(query, caseSensitive: false)
-              .or()
-              .nameKuContains(query, caseSensitive: false)
-              .or()
-              .meaningKuContains(query, caseSensitive: false)
-              .or()
-              .meaningEnContains(query, caseSensitive: false)
-              .or()
-              .virtueKuContains(query, caseSensitive: false)
-              .findAll();
-          for (final n in names) {
+            results.add(_SearchResult(
+              type: 'note',
+              ayahNumber: n.ayahNumber,
+              surahName: sName,
+              surahNameAr: sNameAr,
+              surahId: n.surahNumber,
+              text: '',
+              translationText: n.content,
+              languageCode: 'ku',
+            ));
+          }
+        } else if (idx.type == 'allah_name') {
+          final nameId = int.tryParse(idx.key.split('_').last) ?? 0;
+          final n = await isar.namesOfAllahCollections.filter().nameIdEqualTo(nameId).findFirst();
+          if (n != null) {
             results.add(_SearchResult(
               type: 'name_of_allah',
               ayahNumber: n.nameId,
               surahName: n.nameKu,
-              surahNameAr: 'ناوه‌کانی خودا',
+              surahNameAr: 'ناوەکانی خودا',
               surahId: n.nameId,
               text: n.nameAr,
               translationText: n.meaningKu,
               languageCode: 'ku',
             ));
           }
-        } catch (_) {}
-      }
-
-      // 5. Query Seerah
-      if (_filterType == 'all' || _filterType == 'translation') {
-        try {
-          final seerah = await isar.seerahCollections.filter()
-              .titleKuContains(query, caseSensitive: false)
-              .or()
-              .contentMdContains(query, caseSensitive: false)
-              .findAll();
-          for (final s in seerah) {
+        } else if (idx.type == 'seerah') {
+          final seerahId = int.tryParse(idx.key.split('_').last) ?? 0;
+          final s = await isar.seerahCollections.filter().seerahIdEqualTo(seerahId).findFirst();
+          if (s != null) {
             results.add(_SearchResult(
               type: 'seerah',
               ayahNumber: s.seerahId,
@@ -384,38 +233,26 @@ class _SearchPageState extends ConsumerState<SearchPage>
               surahNameAr: 'ژیاننامەی پێغەمبەر',
               surahId: s.seerahId,
               text: s.titleAr,
-              translationText: '${s.contentMd.substring(0, s.contentMd.length > 150 ? 150 : s.contentMd.length)}...',
+              translationText: s.contentMd.length > 150 ? '${s.contentMd.substring(0, 150)}...' : s.contentMd,
               languageCode: 'ku',
             ));
           }
-        } catch (_) {}
-      }
-
-      // 6. Query Sahaba
-      if (_filterType == 'all' || _filterType == 'translation') {
-        try {
-          final sahaba = await isar.sahabaCollections.filter()
-              .nameKuContains(query, caseSensitive: false)
-              .or()
-              .epithetKuContains(query, caseSensitive: false)
-              .or()
-              .summaryKuContains(query, caseSensitive: false)
-              .or()
-              .biographyMdContains(query, caseSensitive: false)
-              .findAll();
-          for (final s in sahaba) {
+        } else if (idx.type == 'sahaba') {
+          final sahabaId = int.tryParse(idx.key.split('_').last) ?? 0;
+          final s = await isar.sahabaCollections.filter().sahabaIdEqualTo(sahabaId).findFirst();
+          if (s != null) {
             results.add(_SearchResult(
               type: 'sahaba',
               ayahNumber: s.sahabaId,
               surahName: s.nameKu,
-              surahNameAr: 'ژیاننامەی هاوەڵان',
+              surahNameAr: 'هاوەڵان',
               surahId: s.sahabaId,
               text: s.nameAr,
               translationText: s.summaryKu,
               languageCode: 'ku',
             ));
           }
-        } catch (_) {}
+        }
       }
 
       setState(() {

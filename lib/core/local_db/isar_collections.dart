@@ -29,6 +29,17 @@ class SurahCollection {
   });
 }
 
+@embedded
+class TajweedSegment {
+  int? startIndex;
+  int? endIndex;
+  int? ruleId;
+  int? colorId;
+  bool? connectsToLeft;
+  bool? connectsToRight;
+  String? textSegment;
+}
+
 @collection
 class AyahCollection {
   Id id = Isar.autoIncrement;
@@ -45,7 +56,7 @@ class AyahCollection {
   int? juzNumber;
   int? hizbNumber;
   int? rubNumber;
-  String? tajweedSegmentsJson;
+  List<TajweedSegment>? tajweedSegments;
 
   AyahCollection({
     required this.ayahId,
@@ -58,13 +69,16 @@ class AyahCollection {
     this.juzNumber,
     this.hizbNumber,
     this.rubNumber,
-    this.tajweedSegmentsJson,
+    this.tajweedSegments,
   });
 }
 
 @collection
 class TajweedRuleCollection {
   Id id = Isar.autoIncrement;
+
+  @Index(unique: true)
+  int ruleId;
 
   @Index(unique: true)
   String ruleSlug;
@@ -75,13 +89,29 @@ class TajweedRuleCollection {
   String colorCode;
   String? description;
 
+  int categoryId;
+  String categorySlug;
+  String categoryNameAr;
+  String categoryNameEn;
+  String categoryNameKu;
+  int categoryOrder;
+  int rulePriority;
+
   TajweedRuleCollection({
+    required this.ruleId,
     required this.ruleSlug,
     required this.nameAr,
     required this.nameEn,
     required this.nameKu,
     required this.colorCode,
     this.description,
+    required this.categoryId,
+    required this.categorySlug,
+    required this.categoryNameAr,
+    required this.categoryNameEn,
+    required this.categoryNameKu,
+    required this.categoryOrder,
+    required this.rulePriority,
   });
 }
 
@@ -542,5 +572,85 @@ class FavoriteCollection {
     required this.createdAt,
     required this.updatedAt,
     required this.isSynced,
+  });
+}
+
+@collection
+class SearchIndexCollection {
+  Id id = Isar.autoIncrement;
+
+  @Index(unique: true)
+  String key; // e.g. "ayah_1_1" or "hadith_5" or "note_123"
+
+  String type; // 'ayah' | 'tafsir' | 'hadith' | 'adhkar' | 'seerah' | 'sahaba' | 'allah_name' | 'note'
+  String language; // 'ar' | 'ku' | 'en' | 'all'
+  int weight;
+
+  String title;
+  String subtitle;
+
+  @Index(type: IndexType.value)
+  String content; // Concatenated text for full-text search
+
+  int? surahNumber;
+  int? ayahNumber;
+  int? categoryId;
+  String? referenceId;
+
+  SearchIndexCollection({
+    required this.key,
+    required this.type,
+    required this.language,
+    required this.weight,
+    required this.title,
+    required this.subtitle,
+    required this.content,
+    this.surahNumber,
+    this.ayahNumber,
+    this.categoryId,
+    this.referenceId,
+  });
+}
+
+@collection
+class AdhkarCollection {
+  Id id = Isar.autoIncrement;
+
+  @Index(unique: true)
+  int adhkarId;
+
+  int categoryId;
+  String categoryNameKu;
+  String categoryNameAr;
+  String? categoryNameEn;
+  String? categoryIcon;
+  int categoryOrder;
+
+  String arabicText;
+  String translationKu;
+  String? translationEn;
+  String? description; // benefit
+  int targetCount;
+  String? source;
+
+  int version;
+  DateTime updatedAt;
+
+  AdhkarCollection({
+    required this.adhkarId,
+    required this.categoryId,
+    required this.categoryNameKu,
+    required this.categoryNameAr,
+    this.categoryNameEn,
+    this.categoryIcon,
+    required this.categoryOrder,
+    required this.arabicText,
+    required this.translationKu,
+    this.translationEn,
+    this.description,
+    required this.targetCount,
+    this.source,
+    required this.version,
+    required this.updatedAt,
   });
 }

@@ -8,6 +8,7 @@
       "version": "0.0.1+1",
       "dependencies": [
         "adhan",
+        "archive",
         "audio_service",
         "audio_session",
         "audioplayers",
@@ -155,6 +156,14 @@
         "flutter_web_plugins",
         "js",
         "rxdart"
+      ]
+    },
+    {
+      "name": "archive",
+      "version": "3.6.1",
+      "dependencies": [
+        "crypto",
+        "path"
       ]
     },
     {
