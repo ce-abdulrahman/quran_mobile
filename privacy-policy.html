@@ -6,6 +6,16 @@
     <title>یاسای پاراستنی نهێنی - My Quran</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Load Rudaw Font */
+        @font-face {
+            font-family: 'Rudaw';
+            src: url("https://db.onlinewebfonts.com/t/a18d5685fac011f6fa82f46d62982c7c.woff2") format("woff2"),
+                 url("https://db.onlinewebfonts.com/t/a18d5685fac011f6fa82f46d62982c7c.woff") format("woff"),
+                 url("https://db.onlinewebfonts.com/t/a18d5685fac011f6fa82f46d62982c7c.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+        }
+
         :root {
             --primary: #10B981;
             --primary-dark: #059669;
@@ -27,7 +37,7 @@
         }
 
         body {
-            font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+            font-family: 'Rudaw', 'Cairo', system-ui, -apple-system, sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
             line-height: 1.8;
@@ -101,6 +111,17 @@
             text-align: center;
             font-size: 0.85rem;
             color: var(--text-muted);
+        }
+
+        /* English Version uses Times New Roman */
+        .english-section,
+        .english-section h1,
+        .english-section h2,
+        .english-section p,
+        .english-section li,
+        .english-section div,
+        .english-section span {
+            font-family: 'Times New Roman', Times, serif !important;
         }
 
         .english-section {
