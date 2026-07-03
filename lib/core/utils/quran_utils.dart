@@ -118,3 +118,12 @@ String getSurahHeaderCharacter(int surahNumber) {
   ];
   return String.fromCharCode(surahHeaderCodes[surahNumber - 1]);
 }
+
+/// Strips HTML tags from a string, e.g. removes `<sup foot_note=...>1</sup>`.
+/// Also collapses multiple whitespace/newlines into single spaces.
+String stripHtmlTags(String input) {
+  // Remove all HTML tags
+  final noTags = input.replaceAll(RegExp(r'<[^>]+>'), '');
+  // Collapse whitespace
+  return noTags.replaceAll(RegExp(r'\s+'), ' ').trim();
+}

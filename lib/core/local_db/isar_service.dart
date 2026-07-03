@@ -177,21 +177,24 @@ class IsarService {
         final namesCount = await isar.namesOfAllahCollections.count();
         if (namesCount == 0) {
           final data = await _loadPackageData('allah_names', 'assets/data/names_of_allah.json');
-          final items = data.map((json) => NamesOfAllahCollection(
-            nameId: json['id'] as int? ?? json['nameId'] as int,
-            nameAr: json['name_ar'] as String? ?? json['nameAr'] as String,
-            nameKu: json['name_ku'] as String? ?? json['nameKu'] as String,
-            meaningKu: json['meaning_ku'] as String? ?? json['meaningKu'] as String,
-            meaningEn: json['meaning_en'] as String? ?? json['meaningEn'] as String,
-            verseAr: json['verse_ar'] as String? ?? json['verseAr'] as String? ?? '',
-            verseKu: json['verse_ku'] as String? ?? json['verseKu'] as String? ?? '',
-            virtueKu: json['virtue_ku'] as String? ?? json['virtueKu'] as String? ?? '',
-            slug: json['slug'] as String? ?? 'name-${json['id']}',
-            version: json['version'] as int? ?? 1,
-            updatedAt: json['updated_at'] != null 
-                ? DateTime.parse(json['updated_at'] as String) 
-                : DateTime.now(),
-          )).toList();
+          final items = data.map((json) {
+            final id = json['id'] ?? json['nameId'] ?? 0;
+            return NamesOfAllahCollection(
+              nameId: id as int,
+              nameAr: (json['name_ar'] ?? json['nameAr'] ?? '') as String,
+              nameKu: (json['name_ku'] ?? json['nameKu'] ?? '') as String,
+              meaningKu: (json['meaning_ku'] ?? json['meaningKu'] ?? '') as String,
+              meaningEn: (json['meaning_en'] ?? json['meaningEn'] ?? '') as String,
+              verseAr: (json['verse_ar'] ?? json['verseAr'] ?? '') as String,
+              verseKu: (json['verse_ku'] ?? json['verseKu'] ?? '') as String,
+              virtueKu: (json['virtue_ku'] ?? json['virtueKu'] ?? '') as String,
+              slug: (json['slug'] ?? 'name-$id') as String,
+              version: (json['version'] ?? 1) as int,
+              updatedAt: json['updated_at'] != null 
+                  ? DateTime.parse(json['updated_at'] as String) 
+                  : DateTime.now(),
+            );
+          }).toList();
           await isar.writeTxn(() => isar.namesOfAllahCollections.putAll(items));
         }
         await markStepDone('names_of_allah');
@@ -205,18 +208,21 @@ class IsarService {
         final seerahCount = await isar.seerahCollections.count();
         if (seerahCount == 0) {
           final data = await _loadPackageData('seerah', 'assets/data/seerah.json');
-          final items = data.map((json) => SeerahCollection(
-            seerahId: json['id'] as int? ?? json['seerahId'] as int,
-            titleKu: json['title_ku'] as String? ?? json['titleKu'] as String,
-            titleAr: json['title_ar'] as String? ?? json['titleAr'] as String,
-            period: json['period'] as String,
-            contentMd: json['content_md'] as String? ?? json['contentMd'] as String,
-            slug: json['slug'] as String? ?? 'seerah-${json['id']}',
-            version: json['version'] as int? ?? 1,
-            updatedAt: json['updated_at'] != null 
-                ? DateTime.parse(json['updated_at'] as String) 
-                : DateTime.now(),
-          )).toList();
+          final items = data.map((json) {
+            final id = json['id'] ?? json['seerahId'] ?? 0;
+            return SeerahCollection(
+              seerahId: id as int,
+              titleKu: (json['title_ku'] ?? json['titleKu'] ?? '') as String,
+              titleAr: (json['title_ar'] ?? json['titleAr'] ?? '') as String,
+              period: (json['period'] ?? '') as String,
+              contentMd: (json['content_md'] ?? json['contentMd'] ?? '') as String,
+              slug: (json['slug'] ?? 'seerah-$id') as String,
+              version: (json['version'] ?? 1) as int,
+              updatedAt: json['updated_at'] != null 
+                  ? DateTime.parse(json['updated_at'] as String) 
+                  : DateTime.now(),
+            );
+          }).toList();
           await isar.writeTxn(() => isar.seerahCollections.putAll(items));
         }
         await markStepDone('seerah');
@@ -230,20 +236,23 @@ class IsarService {
         final sahabaCount = await isar.sahabaCollections.count();
         if (sahabaCount == 0) {
           final data = await _loadPackageData('sahaba', 'assets/data/sahaba.json');
-          final items = data.map((json) => SahabaCollection(
-            sahabaId: json['id'] as int? ?? json['sahabaId'] as int,
-            nameKu: json['name_ku'] as String? ?? json['nameKu'] as String,
-            nameAr: json['name_ar'] as String? ?? json['nameAr'] as String,
-            epithetKu: json['epithet_ku'] as String? ?? json['epithetKu'] as String? ?? '',
-            summaryKu: json['summary_ku'] as String? ?? json['summaryKu'] as String? ?? '',
-            biographyMd: json['biography_md'] as String? ?? json['biographyMd'] as String,
-            virtuesKu: json['virtues_ku'] as String? ?? json['virtuesKu'] as String? ?? '',
-            slug: json['slug'] as String? ?? 'sahaba-${json['id']}',
-            version: json['version'] as int? ?? 1,
-            updatedAt: json['updated_at'] != null 
-                ? DateTime.parse(json['updated_at'] as String) 
-                : DateTime.now(),
-          )).toList();
+          final items = data.map((json) {
+            final id = json['id'] ?? json['sahabaId'] ?? 0;
+            return SahabaCollection(
+              sahabaId: id as int,
+              nameKu: (json['name_ku'] ?? json['nameKu'] ?? '') as String,
+              nameAr: (json['name_ar'] ?? json['nameAr'] ?? '') as String,
+              epithetKu: (json['epithet_ku'] ?? json['epithetKu'] ?? '') as String,
+              summaryKu: (json['summary_ku'] ?? json['summaryKu'] ?? '') as String,
+              biographyMd: (json['biography_md'] ?? json['biographyMd'] ?? '') as String,
+              virtuesKu: (json['virtues_ku'] ?? json['virtuesKu'] ?? '') as String,
+              slug: (json['slug'] ?? 'sahaba-$id') as String,
+              version: (json['version'] ?? 1) as int,
+              updatedAt: json['updated_at'] != null 
+                  ? DateTime.parse(json['updated_at'] as String) 
+                  : DateTime.now(),
+            );
+          }).toList();
           await isar.writeTxn(() => isar.sahabaCollections.putAll(items));
         }
         await markStepDone('sahaba');
@@ -257,21 +266,24 @@ class IsarService {
         final recitersCount = await isar.reciterCollections.count();
         if (recitersCount == 0) {
           final data = await _loadPackageData('audio_metadata', 'assets/data/reciters.json');
-          final items = data.map((json) => ReciterCollection(
-            reciterId: json['reciterId'] as int,
-            nameKu: json['name_ku'] as String? ?? json['nameKu'] as String,
-            nameAr: json['name_ar'] as String? ?? json['nameAr'] as String,
-            type: json['type'] as String,
-            bioKu: json['bio_ku'] as String? ?? json['bioKu'] as String? ?? '',
-            imageAsset: json['image_asset'] as String? ?? json['imageAsset'] as String? ?? 'assets/images/default_reciter.png',
-            sampleAudioUrl: json['sample_audio_url'] as String? ?? json['sampleAudioUrl'] as String? ?? '',
-            downloadBaseUrl: json['download_base_url'] as String? ?? json['downloadBaseUrl'] as String? ?? '',
-            slug: json['slug'] as String? ?? 'reciter-${json['reciterId']}',
-            version: json['version'] as int? ?? 1,
-            updatedAt: json['updated_at'] != null 
-                ? DateTime.parse(json['updated_at'] as String) 
-                : DateTime.now(),
-          )).toList();
+          final items = data.map((json) {
+            final id = json['reciterId'] ?? json['id'] ?? 0;
+            return ReciterCollection(
+              reciterId: id as int,
+              nameKu: (json['name_ku'] ?? json['nameKu'] ?? '') as String,
+              nameAr: (json['name_ar'] ?? json['nameAr'] ?? '') as String,
+              type: (json['type'] ?? 'arabic') as String,
+              bioKu: (json['bio_ku'] ?? json['bioKu'] ?? '') as String,
+              imageAsset: (json['image_asset'] ?? json['imageAsset'] ?? 'assets/images/default_reciter.png') as String,
+              sampleAudioUrl: (json['sample_audio_url'] ?? json['sampleAudioUrl'] ?? '') as String,
+              downloadBaseUrl: (json['download_base_url'] ?? json['downloadBaseUrl'] ?? '') as String,
+              slug: (json['slug'] ?? 'reciter-$id') as String,
+              version: (json['version'] ?? 1) as int,
+              updatedAt: json['updated_at'] != null 
+                  ? DateTime.parse(json['updated_at'] as String) 
+                  : DateTime.now(),
+            );
+          }).toList();
           await isar.writeTxn(() => isar.reciterCollections.putAll(items));
         }
         await markStepDone('reciters');
@@ -285,26 +297,29 @@ class IsarService {
         final hadithsCount = await isar.hadithCollections.count();
         if (hadithsCount == 0) {
           final data = await _loadPackageData('hadith', 'assets/data/hadiths.json');
-          final items = data.map((json) => HadithCollection(
-            hadithId: json['id'] as int? ?? json['hadithId'] as int,
-            categoryId: json['category_id'] as int? ?? json['categoryId'] as int? ?? 1,
-            categoryNameAr: json['category_name_ar'] as String? ?? json['categoryNameAr'] as String? ?? 'عام',
-            categoryNameKu: json['category_name_ku'] as String? ?? json['categoryNameKu'] as String? ?? 'گشتی',
-            arabicText: json['arabic_text'] as String? ?? json['arabicText'] as String,
-            translationKu: json['translation_ku'] as String? ?? json['translationKu'] as String,
-            translationEn: json['translation_en'] as String? ?? json['translationEn'] as String?,
-            narrator: json['narrator'] as String?,
-            source: json['source'] as String?,
-            explanationKu: json['explanation_ku'] as String? ?? json['explanationKu'] as String?,
-            explanationEn: json['explanation_en'] as String? ?? json['explanationEn'] as String?,
-            order: json['order'] as int? ?? 0,
-            isActive: json['is_active'] != false && json['isActive'] != false,
-            slug: json['slug'] as String? ?? 'hadith-${json['id'] ?? json['hadithId']}',
-            version: json['version'] as int? ?? 1,
-            updatedAt: json['updated_at'] != null 
-                ? DateTime.parse(json['updated_at'] as String) 
-                : DateTime.now(),
-          )).toList();
+          final items = data.map((json) {
+            final id = json['id'] ?? json['hadithId'] ?? 0;
+            return HadithCollection(
+              hadithId: id as int,
+              categoryId: (json['category_id'] ?? json['categoryId'] ?? 1) as int,
+              categoryNameAr: (json['category_name_ar'] ?? json['categoryNameAr'] ?? 'عام') as String,
+              categoryNameKu: (json['category_name_ku'] ?? json['categoryNameKu'] ?? 'گشتی') as String,
+              arabicText: (json['arabic_text'] ?? json['arabicText'] ?? '') as String,
+              translationKu: (json['translation_ku'] ?? json['translationKu'] ?? '') as String,
+              translationEn: (json['translation_en'] ?? json['translationEn']) as String?,
+              narrator: json['narrator'] as String?,
+              source: json['source'] as String?,
+              explanationKu: (json['explanation_ku'] ?? json['explanationKu']) as String?,
+              explanationEn: (json['explanation_en'] ?? json['explanationEn']) as String?,
+              order: (json['order'] ?? 0) as int,
+              isActive: json['is_active'] != false && json['isActive'] != false,
+              slug: (json['slug'] ?? 'hadith-$id') as String,
+              version: (json['version'] ?? 1) as int,
+              updatedAt: json['updated_at'] != null 
+                  ? DateTime.parse(json['updated_at'] as String) 
+                  : DateTime.now(),
+            );
+          }).toList();
           await isar.writeTxn(() => isar.hadithCollections.putAll(items));
         }
         await markStepDone('hadiths');
@@ -332,7 +347,7 @@ class IsarService {
             for (final rule in rulesList) {
               items.add(TajweedRuleCollection(
                 ruleId: rule['id'] as int? ?? rule['ruleId'] as int? ?? 0,
-                ruleSlug: rule['slug'] as String,
+                ruleSlug: rule['slug'] as String? ?? '',
                 nameAr: rule['name_ar'] as String? ?? rule['nameAr'] as String? ?? '',
                 nameEn: rule['name'] as String? ?? rule['nameEn'] as String? ?? '',
                 nameKu: rule['name_ku'] as String? ?? rule['nameKu'] as String? ?? '',
@@ -362,17 +377,21 @@ class IsarService {
         update('بارکردنی ناوی سوورەتەکان...');
         final surahsCount = await isar.surahCollections.count();
         if (surahsCount == 0) {
-          final data = await _loadPackageData('quran', 'assets/data/surahs.json');
-          final items = data.map((json) => SurahCollection(
-            number: json['number'] as int,
-            nameAr: json['name_ar'] as String? ?? json['nameAr'] as String? ?? '',
-            nameEn: json['name_en'] as String? ?? json['nameEn'] as String? ?? '',
-            nameKu: json['name_ku'] as String? ?? json['nameKu'] as String? ?? '',
-            totalAyahs: json['ayah_count'] as int? ?? json['totalAyahs'] as int? ?? 0,
-            revelationType: json['revelation_type'] as String? ?? json['revelationType'] as String? ?? 'Meccan',
-            pageStart: json['page_start'] as int? ?? json['pageStart'] as int?,
-            pageEnd: json['page_end'] as int? ?? json['pageEnd'] as int?,
-          )).toList();
+          final rawData = await _loadPackageData('quran', 'assets/data/surahs.json');
+          final data = rawData.where((x) => x is Map && x.containsKey('number')).toList();
+          final items = data.map((x) {
+            final json = x as Map<String, dynamic>;
+            return SurahCollection(
+              number: (json['number'] ?? 0) as int,
+              nameAr: (json['name_ar'] ?? json['nameAr'] ?? '') as String,
+              nameEn: (json['name_en'] ?? json['nameEn'] ?? '') as String,
+              nameKu: (json['name_ku'] ?? json['nameKu'] ?? '') as String,
+              totalAyahs: (json['ayah_count'] ?? json['totalAyahs'] ?? 0) as int,
+              revelationType: (json['revelation_type'] ?? json['revelationType'] ?? 'Meccan') as String,
+              pageStart: json['page_start'] as int?,
+              pageEnd: json['page_end'] as int?,
+            );
+          }).toList();
           await isar.writeTxn(() => isar.surahCollections.putAll(items));
         }
         await markStepDone('surahs');

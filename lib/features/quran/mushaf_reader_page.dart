@@ -704,32 +704,15 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
           );
         }
 
-        final isDark = Theme.of(context).brightness == Brightness.dark;
-        return Center(
-          child: Container(
-            constraints: const BoxConstraints(maxWidth: 650),
-            margin: const EdgeInsets.fromLTRB(16, 48, 16, 72),
-            decoration: BoxDecoration(
-              color: cardBg,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: cardBorder, width: 1.5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.04),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: RichText(
-                  textAlign: kIsWeb ? TextAlign.center : TextAlign.justify,
-                  text: TextSpan(children: spans),
-                ),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(12, 44, 12, 68),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: RichText(
+                textAlign: kIsWeb ? TextAlign.center : TextAlign.justify,
+                text: TextSpan(children: spans),
               ),
             ),
           ),
@@ -986,7 +969,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> {
             ],
             if (ref.read(readerSettingsProvider).showEnglish && ayah.textEn != null && ayah.textEn!.isNotEmpty) ...[
               Text(
-                ayah.textEn!,
+                stripHtmlTags(ayah.textEn!),
                 textDirection: TextDirection.ltr,
                 style: TextStyle(
                   fontFamily: 'Cairo',

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>یاسای پاراستنی نهێنی - My Quran</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --primary-dark: #059669;
+            --bg: #F9FAFB;
+            --card: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #4B5563;
+            --border: #E5E7EB;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #111827;
+                --card: #1F2937;
+                --text-main: #F9FAFB;
+                --text-muted: #9CA3AF;
+                --border: #374151;
+            }
+        }
+
+        body {
+            font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem 1rem;
+            padding: 2.5rem;
+            background-color: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .app-name {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            border-right: 4px solid var(--primary);
+            padding-right: 10px;
+        }
+
+        p, li {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            text-align: justify;
+        }
+
+        ul {
+            padding-right: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .english-section {
+            direction: ltr;
+            text-align: left;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px dashed var(--border);
+        }
+
+        .english-section h1 {
+            text-align: center;
+        }
+        .english-section h2 {
+            border-right: none;
+            border-left: 4px solid var(--primary);
+            padding-right: 0;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>یاسای پاراستنی نهێنی</h1>
+        <div class="app-name">ئەپی My Quran (قورئانەکەم)</div>
+    </header>
+
+    <main>
+        <p>ئێمە زۆر گرنگی بە پاراستنی زانیارییەکانت دەدەین. ئەم بەڵگەنامەیە ڕوونکردنەوە دەدات لەسەر چۆنیەتی مامەڵەکردنی ئەپەکەمان لەگەڵ زانیارییەکانی تۆدا.</p>
+
+        <h2>١. کۆکردنەوەی زانیارییەکان</h2>
+        <p>ئەپی <strong>My Quran</strong> ئەپێکی <strong>Offline-First</strong>ـە (واتە بەشێوەی ئۆفلاین کاردەکات). ئێمە هیچ جۆرە زانیارییەکی کەسی، ناسنامە، یان شوێنی تۆ کۆناکەینەوە، پاشەکەوت ناکەین، و نانێرین بۆ هیچ لایەنێکی دەرەکی.</p>
+
+        <h2>٢. هەڵگرتنی زانیارییەکان (Storage)</h2>
+        <p>هەموو زانیارییەکانی ئەپەکە (وەکو نیشانەکان (Bookmarks)، تێبینییەکان، و مێژووی تەسبیح و لەبەرکردن) بە تەواوی لەسەر ئامێرەکەی خۆت پاشەکەوت دەبن بە بەکارهێنانی بنکەی زانیاری ناوخۆیی (Isar Database و SharedPreferences). هیچ کام لەم زانیارییانە بۆ هیچ سێرڤەرێک نانێردرێن.</p>
+
+        <h2>٣. مۆڵەتەکان (Permissions)</h2>
+        <p>ئەپەکە پێویستی بە هیچ مۆڵەتێکی هەستیار نییە (وەکو دەستگەیشتن بە کامێرا، ناوەکان، یان شوێن (Location)). هەر مۆڵەتێک داوا بکرێت تەنها بۆ کارکردنی دروستی ئەپەکەیە لەسەر مۆبایلەکەت (بۆ نموونە ناردنی ئاگادارکەرەوەی بانگەکان).</p>
+
+        <h2>٤. گۆڕانکاری لەم یاسایەدا</h2>
+        <p>لەوانەیە لە داهاتوودا گۆڕانکاری لەم یاسایەدا بکەین. هەر گۆڕانکارییەک ڕووبدات لەم لاپەڕەیەدا بڵاو دەکرێتەوە.</p>
+
+        <h2>٥. پەیوەندی</h2>
+        <p>ئەگەر هەر پرسیار یان تێبینییەکت هەیە، دەتوانیت پەیوەندیمان پێوە بکەیت لە ڕێگەی ئیمەیڵەوە.</p>
+    </main>
+
+    <!-- English Version -->
+    <section class="english-section">
+        <header>
+            <h1>Privacy Policy</h1>
+            <div class="app-name">My Quran Application</div>
+        </header>
+
+        <main>
+            <p>We are committed to protecting your privacy. This Privacy Policy explains how our mobile application handles your information.</p>
+
+            <h2>1. Information Collection</h2>
+            <p><strong>My Quran</strong> is an <strong>Offline-First</strong> application. We do not collect, store, transmit, or share any personal data, location data, or device identifiers to any external servers or third parties.</p>
+
+            <h2>2. Local Storage</h2>
+            <p>All app-related data (such as bookmarks, notes, memorization progress, and tasbih counts) are stored locally on your device using secure local databases (Isar Database & SharedPreferences). None of this data is uploaded to our servers.</p>
+
+            <h2>3. App Permissions</h2>
+            <p>The app does not request or require any sensitive permissions (such as access to your camera, contacts, or background location). Any requested permissions are strictly for local app features (such as sending prayer time notifications).</p>
+
+            <h2>4. Changes to This Privacy Policy</h2>
+            <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
+
+            <h2>5. Contact Us</h2>
+            <p>If you have any questions or suggestions about this Privacy Policy, please feel free to contact us.</p>
+        </main>
+    </section>
+
+    <div class="footer">
+        <p>دوایین نوێکردنەوە: ٣ی تەممووزی ٢٠٢٦ | Last Updated: July 3, 2026</p>
+    </div>
+</div>
+
+</body>
+</html>

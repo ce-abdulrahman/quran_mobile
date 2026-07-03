@@ -11,7 +11,6 @@ import '../providers/audio_player_provider.dart';
 import '../../tajweed/tajweed_page.dart';
 import '../quran_reader_page.dart';
 import '../mushaf_reader_page.dart';
-import '../../../core/widgets/feature_not_available_dialog.dart';
 
 class QuranSettingsSheet extends ConsumerStatefulWidget {
   final int surahId;
@@ -350,16 +349,7 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
           value: settings.showTajweed,
           cs: cs,
           onChanged: (v) {
-            if (v) {
-              showFeatureUnderDevelopmentDialog(
-                context,
-                messageKu: 'ئەم تایبەتمەندییە (یاساکان و ڕەنگەکانی تەجوید) لە ئێستادا کاری لەسەر دەکرێت بۆیە بەردەست نییە. سوپاس بۆ ئارامگریت.',
-                messageAr: 'هذه الميزة (أحكام وألوان التجويد) قيد التطوير حالياً وليست متوفرة. شكراً لصبركم.',
-                messageEn: 'This feature (Tajweed rules and coloring) is currently under development and is not available. Thank you for your patience.',
-              );
-            } else {
-              ref.read(readerSettingsProvider.notifier).toggleTajweed(false);
-            }
+            ref.read(readerSettingsProvider.notifier).toggleTajweed(v);
           },
         ),
 

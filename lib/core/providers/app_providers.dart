@@ -210,7 +210,7 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
           showKurdish: _prefs.getBool(_showKuKey) ?? true,
           showEnglish: _prefs.getBool(_showEnKey) ?? true,
           distractionFree: _prefs.getBool(_distractionFreeKey) ?? true,
-          showTajweed: _prefs.getBool(_showTajweedKey) ?? true,
+          showTajweed: _prefs.getBool(_showTajweedKey) ?? false,
           lineHeight: _prefs.getDouble(_lineHeightKey) ?? 2.0,
           bgMode: _prefs.getString(_bgModeKey) ?? 'cream',
           uiFontFamily: _prefs.getString(_uiFontFamilyKey) ?? 'Cairo',

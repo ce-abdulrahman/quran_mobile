@@ -14,6 +14,7 @@ import '../../core/providers/app_providers.dart';
 import '../../core/providers/bookmarks_provider.dart';
 import '../../core/providers/notes_provider.dart';
 import '../../core/utils/responsive.dart';
+import '../../core/utils/quran_utils.dart';
 import 'quran_providers.dart';
 import 'widgets/audio_player_panel.dart';
 import 'providers/audio_player_provider.dart';
@@ -1275,7 +1276,7 @@ class _AyahRow extends ConsumerWidget {
             if (showEnglish == true && ayah.textEn != null && ayah.textEn!.isNotEmpty) ...[
               const SizedBox(height: 10),
               Text(
-                ayah.textEn!,
+                stripHtmlTags(ayah.textEn!),
                 textDirection: TextDirection.ltr,
                 style: TextStyle(
                   fontFamily: 'Cairo',
