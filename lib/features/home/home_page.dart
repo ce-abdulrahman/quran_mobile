@@ -850,240 +850,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     );
   }
 
-  Widget _buildLastSessionCard(
-    BuildContext context,
-    AppColorScheme cs,
-    Color accentColor,
-    TasbihSessionState sessionState,
-  ) {
-    final l = context.l10n;
-    if (sessionState.isLoading) {
-      return _buildCardSkeleton(cs);
-    }
-
-    final lastSession = sessionState.history.isNotEmpty ? sessionState.history.first : null;
-
-    if (lastSession == null) {
-      return _HomeCollapsibleCard(
-        title: context.l10n.cardLastSession,
-        emoji: '📖',
-        isInitiallyExpanded: _expandedCards[6] ?? false,
-        onToggle: (exp) {
-          setState(() {
-            _expandedCards[6] = exp;
-          });
-        },
-        child: Center(
-          child: Text(
-            l.homeNoSessions,
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontSize: 12,
-              color: cs.textSecondary,
-            ),
-          ),
-        ),
-      );
-    }
-
-    final minutes = lastSession.durationSeconds ~/ 60;
-    final formattedTime = DateFormat('yyyy/MM/dd hh:mm a').format(lastSession.startTime);
-    final dhikrName = lastSession.customDhikrName ?? lastSession.dhikr?.name ?? context.l10n.dhikrWord;
-
-    return _HomeCollapsibleCard(
-      title: context.l10n.cardLastSession,
-      emoji: '📖',
-      isInitiallyExpanded: _expandedCards[6] ?? false,
-      onToggle: (exp) {
-        setState(() {
-          _expandedCards[6] = exp;
-        });
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            dhikrName,
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: cs.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                '${lastSession.totalCount} ${context.l10n.dhikrWord}',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: cs.textPrimary,
-                ),
-              ),
-              Text(
-                '$minutes ${context.l10n.minutesWord}',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: cs.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            formattedTime,
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontSize: 11,
-              color: cs.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickStatsCard(
-    BuildContext context,
-    AppColorScheme cs,
-    Color accentColor,
-    StatisticsState statisticsState,
-  ) {
-    final l = context.l10n;
-    if (statisticsState.isLoading) {
-      return _buildCardSkeleton(cs);
-    }
-
-    final totalDhikr = statisticsState.dashboard.totalDhikr;
-    final totalSessions = statisticsState.dashboard.totalSessions;
-    final rareAchievements = statisticsState.dashboard.rareAchievements;
-
-    return _HomeCollapsibleCard(
-      title: context.l10n.statsQuickActionInsights,
-      emoji: '📊',
-      isInitiallyExpanded: _expandedCards[7] ?? false,
-      onToggle: (exp) {
-        setState(() {
-          _expandedCards[7] = exp;
-        });
-      },
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                l.homeTotalDhikrs,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-              Text(
-                NumberFormat.decimalPattern().format(totalDhikr),
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: cs.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                context.l10n.totalSessionsLabel,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 12,
-                  color: cs.textSecondary,
-                ),
-              ),
-              Text(
-                '$totalSessions',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: cs.textPrimary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                l.homeRareAchievements,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-              Text(
-                '$rareAchievements',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: cs.textPrimary,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSmartInsightCard(
-    BuildContext context,
-    AppColorScheme cs,
-    Color accentColor,
-    StatisticsState statisticsState,
-  ) {
-    final l = context.l10n;
-    if (statisticsState.isLoading) {
-      return _buildCardSkeleton(cs);
-    }
-
-    final insight = statisticsState.insights.isNotEmpty ? statisticsState.insights.first : null;
-    final insightText = insight?.fallback ?? l.homeMostActiveAfterMaghrib;
-    final insightEmoji = insight?.icon ?? '💡';
-
-    return _HomeCollapsibleCard(
-      title: context.l10n.cardInsight,
-      emoji: insightEmoji,
-      isInitiallyExpanded: _expandedCards[8] ?? false,
-      onToggle: (exp) {
-        setState(() {
-          _expandedCards[8] = exp;
-        });
-      },
-      child: Text(
-        insightText,
-        textDirection: TextDirection.rtl,
-        style: TextStyle(
-          fontFamily: 'Cairo',
-          fontSize: 13,
-          color: cs.textPrimary,
-          height: 1.4,
-        ),
-      ),
-    );
-  }
 
   Widget _buildCardSkeleton(AppColorScheme cs) {
     return Container(
@@ -1167,7 +933,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     final cs = AppColorScheme.of(context);
     final accentColor = ref.watch(accentColorProvider);
     final statisticsState = ref.watch(statisticsProvider);
-    final tasbihSessionState = ref.watch(tasbihSessionProvider);
     final tasbihState = ref.watch(tasbihProvider);
 
     return Scaffold(
@@ -1198,15 +963,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     child: const _CategoriesGrid(),
                   ),
 
-                  // ── Section: ئامار و بەردەوامی ──
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 20, p, 12),
-                    child: _SectionDivider(
-                      title: context.l10n.statsQuickActionInsights,
-                    ),
-                  ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
-
-                  // ── 8 Motivation/Analytics Cards ──
+                  // ── Motivation/Analytics Cards ──
                   
                   // Card 1: Profile Card (Guest or Authenticated)
                   Padding(
@@ -1237,24 +994,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                     padding: EdgeInsets.fromLTRB(p, 10, p, 0),
                     child: _buildNextAchievementCard(context, cs, accentColor, statisticsState),
                   ).animate().fadeIn(duration: 400.ms, delay: 160.ms),
-
-                  // Card 6: Last Session Summary Card (Collapsible)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: _buildLastSessionCard(context, cs, accentColor, tasbihSessionState),
-                  ).animate().fadeIn(duration: 400.ms, delay: 170.ms),
-
-                  // Card 7: Quick Statistics Card (Collapsible)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: _buildQuickStatsCard(context, cs, accentColor, statisticsState),
-                  ).animate().fadeIn(duration: 400.ms, delay: 180.ms),
-
-                  // Card 8: Smart Insight Card (Collapsible)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: _buildSmartInsightCard(context, cs, accentColor, statisticsState),
-                  ).animate().fadeIn(duration: 400.ms, delay: 190.ms),
                 ],
               ),
             ),
@@ -1431,104 +1170,37 @@ class _AppBarRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    final cs = AppColorScheme.of(context);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(padding, 10, padding, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // ── Theme toggle & Language switcher — left ──
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () => ref.read(themeModeProvider.notifier).toggle(),
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.22),
-                      width: 1,
-                    ),
-                  ),
-                  child: Icon(
-                    ref.watch(themeModeProvider) == ThemeMode.dark
-                        ? Icons.light_mode_outlined
-                        : Icons.dark_mode_outlined,
-                    color: Colors.white.withValues(alpha: 0.9),
-                    size: 18,
-                  ),
+          // ── Settings Button — left ──
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsPage(showBackButton: true)),
+              );
+            },
+            child: Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.22),
+                  width: 1,
                 ),
               ),
-              const SizedBox(width: 8),
-              PopupMenuButton<String>(
-                offset: const Offset(0, 48),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                color: cs.card,
-                onSelected: (langCode) {
-                  ref.read(appLocaleProvider.notifier).setLocale(langCode);
-                },
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.22),
-                      width: 1,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.language_rounded,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'ku',
-                    child: Text(
-                      'کوردی',
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        color: cs.textPrimary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'ar',
-                    child: Text(
-                      'العربية',
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        color: cs.textPrimary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'en',
-                    child: Text(
-                      'English',
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        color: cs.textPrimary,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+              child: const Icon(
+                Icons.settings_rounded,
+                color: Colors.white,
+                size: 20,
               ),
-            ],
+            ),
           ),
 
           // ── App name — center ──
