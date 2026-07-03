@@ -197,7 +197,7 @@ class AppLocalizations {
   String get settingsLanguage => _translate(ku: 'زمان', ar: 'اللغة', en: 'Language');
   String get settingsFontSize => _translate(ku: 'قەبارەی فۆنت', ar: 'حجم الخط', en: 'Font Size');
   String get settingsAbout => _translate(ku: 'دەربارە', ar: 'حول التطبيق', en: 'About');
-  String get settingsVersion => _translate(ku: 'وەشان ١.٠.٠', ar: 'الإصدار ١.٠.٠', en: 'Version 1.0.0');
+  String get settingsVersion => _translate(ku: 'وەشان ١.٠.١', ar: 'الإصدار ١.٠.١', en: 'Version 1.0.1');
   String get settingsAppearance => _translate(ku: 'دیمەن', ar: 'المظهر الخارجي', en: 'Appearance');
   String get settingsGeneral => _translate(ku: 'گشتی', ar: 'عام', en: 'General');
 

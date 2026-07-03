@@ -9,11 +9,9 @@ import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/providers/statistics_provider.dart';
 import '../../core/models/ayah_model.dart';
-import '../../core/models/banner_model.dart';
 import '../../core/utils/responsive.dart';
 import '../search/search_page.dart';
 import '../quran/quran_page.dart';
-import '../quran/quran_reader_page.dart';
 import '../bookmarks/bookmarks_page.dart';
 import '../favorites/favorites_page.dart';
 import '../settings/settings_page.dart';
@@ -38,30 +36,6 @@ import '../achievements/achievements_page.dart';
 import '../statistics/statistics_page.dart';
 import '../notes/notes_page.dart';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Ad Slide Data
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _AdSlide {
-  final String titleArabic;
-  final String verse;
-  final String source;
-  final AyahModel? ayah;
-  const _AdSlide(this.titleArabic, this.verse, this.source, {this.ayah});
-}
-
-const _slides = [
-  _AdSlide(
-    'إِنَّ هَٰذَا الْقُرْآنَ يَهْدِي لِلَّتِي هِيَ أَقْوَمُ',
-    'ئەم قورئانە ڕێنمایی دەکات بۆ ئەوەی ڕاستترینەوە',
-    '— ئیسرا ١٧:٩',
-  ),
-  _AdSlide(
-    'وَلَقَدْ يَسَّرْنَا الْقُرْآنَ لِلذِّكْرِ',
-    'ئێمە قورئانەکەمان ئاسان کرد بۆ یادەوەری',
-    '— القمر ٥٤:١٧',
-  ),
-];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Category Data
@@ -1205,20 +1179,14 @@ class _HomePageState extends ConsumerState<HomePage> {
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.only(
-                top: topPadding + 262,
+                top: topPadding + 338,
                 bottom: 24,
               ),
               child: Column(
                 children: [
-                  // 1. Prayer Times Countdown Widget
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 35, p, 0),
-                    child: const PrayerWidgetCard(),
-                  ).animate().fadeIn(duration: 400.ms, delay: 155.ms),
-
                   // ── Section: تایبەتمەندییەکان ────────────────────
                   Padding(
-                    padding: EdgeInsets.fromLTRB(p, 20, p, 12),
+                    padding: EdgeInsets.fromLTRB(p, 10, p, 12),
                     child: _SectionDivider(
                       title: context.l10n.homeFeaturesOne,
                     ),
@@ -1390,118 +1358,15 @@ class _HomeCollapsibleCard extends StatelessWidget {
 // Green Zone  (appbar + verse banner card + dots)
 // ─────────────────────────────────────────────────────────────────────────────
 
-class _GreenZone extends ConsumerStatefulWidget {
+class _GreenZone extends ConsumerWidget {
   const _GreenZone({required this.padding});
   final double padding;
 
   @override
-  ConsumerState<_GreenZone> createState() => _GreenZoneState();
-}
-
-class _GreenZoneState extends ConsumerState<_GreenZone> {
-  final _ctrl = PageController();
-  int _page = 0;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(const Duration(seconds: 5), (_) {
-      if (!mounted) return;
-      final dailyVerseLen = ref.read(dailyVerseProvider).when(
-            data: (_) => 1,
-            error: (_, __) => 0,
-            loading: () => 0,
-          );
-      final bannersLen = ref.read(bannersProvider).when(
-            data: (banners) => banners.isNotEmpty ? banners.length : _slides.length,
-            error: (_, __) => _slides.length,
-            loading: () => _slides.length,
-          );
-      final len = dailyVerseLen + bannersLen;
-      if (len == 0) return;
-      final next = (_page + 1) % len;
-      _ctrl.animateToPage(
-        next,
-        duration: const Duration(milliseconds: 450),
-        curve: Curves.easeInOut,
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final p = widget.padding;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = padding;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = AppColorScheme.of(context);
-
-    final AsyncValue<AyahModel> dailyVerseAsync = ref.watch(dailyVerseProvider);
-    final AsyncValue<List<BannerModel>> bannersAsync = ref.watch(bannersProvider);
-
-    final List<_AdSlide> activeSlides = [];
-
-    // 1. Add Daily Verse if loaded successfully
-    dailyVerseAsync.whenData((ayah) {
-      activeSlides.add(_AdSlide(
-        ayah.textUthmani,
-        ayah.textKu ?? ayah.textEn ?? '',
-        '— ${ayah.surah?.nameEn ?? ""} ${ayah.surah?.number ?? ""}:${ayah.ayahNumber}',
-        ayah: ayah,
-      ));
-    });
-
-    // 2. Add dynamic banners or fallback to static ones if empty/loading/error
-    bannersAsync.when(
-      data: (banners) {
-        if (banners.isNotEmpty) {
-          for (final b in banners) {
-            // Check if this banner has a linked surah/ayah, if so create an AyahModel
-            AyahModel? ayahLink;
-            if (b.surah != null && b.ayahNumber != null) {
-              ayahLink = AyahModel(
-                id: 0,
-                ayahNumber: b.ayahNumber!,
-                textUthmani: b.titleArabic ?? '',
-                textKu: b.verse,
-                textEn: null,
-                surah: b.surah,
-              );
-            }
-            activeSlides.add(_AdSlide(
-              b.titleArabic ?? '',
-              b.verse,
-              b.source ?? '',
-              ayah: ayahLink,
-            ));
-          }
-        } else {
-          activeSlides.addAll(_slides);
-        }
-      },
-      error: (_, __) {
-        activeSlides.addAll(_slides);
-      },
-      loading: () {
-        activeSlides.addAll(_slides);
-      },
-    );
-
-    // If still empty (e.g. dailyVerse is loading and banners are loading), add default slides as fallback
-    if (activeSlides.isEmpty) {
-      activeSlides.addAll(_slides);
-    }
-
-    // Safeguard page indexing in case activeSlides length changes dynamically
-    if (_page >= activeSlides.length) {
-      _page = 0;
-    }
 
     return Container(
       decoration: BoxDecoration(
@@ -1530,53 +1395,13 @@ class _GreenZoneState extends ConsumerState<_GreenZone> {
 
             const SizedBox(height: 16),
 
-            // ── Verse banner card ──────────────────────────────────
+            // ── Prayer Times Card ──────────────────────────────────
             Padding(
               padding: EdgeInsets.symmetric(horizontal: p),
-              child: Container(
-                height: 150,
-                decoration: BoxDecoration(
-                  color: AppColorScheme.of(context).card,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.18),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
-                ),
-                clipBehavior: Clip.hardEdge,
-                child: PageView.builder(
-                  controller: _ctrl,
-                  itemCount: activeSlides.length,
-                  onPageChanged: (i) => setState(() => _page = i),
-                  itemBuilder: (_, i) => _VerseSlide(slide: activeSlides[i]),
-                ),
-              ),
+              child: const PrayerWidgetCard(),
             ),
 
-            const SizedBox(height: 12),
-
-            // ── Dot indicators ─────────────────────────────────────
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(activeSlides.length, (i) {
-                final active = i == _page;
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 250),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: active ? 24 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: active ? Colors.white : Colors.white38,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                );
-              }),
-            ),
-
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
 
             // ── Rounded white overlap at bottom ────────────────────
             Container(
@@ -1757,157 +1582,6 @@ class _AppBarRow extends ConsumerWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Verse Slide  (inside white card)
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _VerseSlide extends StatelessWidget {
-  const _VerseSlide({required this.slide});
-  final _AdSlide slide;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = AppColorScheme.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return InkWell(
-      onTap: () {
-        if (slide.ayah != null && slide.ayah!.surah != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => QuranReaderPage(
-                surah: slide.ayah!.surah!,
-                initialAyahNumber: slide.ayah!.ayahNumber,
-              ),
-            ),
-          );
-        }
-      },
-      child: Container(
-        color: cs.card,
-        child: Row(
-        children: [
-          // ── Left: green gradient + verse text ──
-          Expanded(
-            flex: 55,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: isDark
-                      ? [
-                          AppColorScheme.darken(cs.primary, 0.42),
-                          AppColorScheme.darken(cs.primary, 0.35),
-                        ]
-                      : [cs.primaryDeep, cs.primary],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 0, 10, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // ئایەتی ڕۆژ pill
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text('✨', style: TextStyle(fontSize: 9)),
-                        const SizedBox(width: 3),
-                        Text(
-                          context.l10n.homeDailyVerse,
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white.withValues(alpha: 0.9),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    slide.verse,
-                    textDirection: TextDirection.rtl,
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      height: 1.5,
-                      color: Colors.white.withValues(alpha: 0.85),
-                    ),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    slide.source,
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 9,
-                      color: Colors.white.withValues(alpha: 0.55),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // ── Right: white + Arabic quran text ──
-          Expanded(
-            flex: 45,
-            child: Container(
-              color: cs.card,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Background circle accent
-                  Positioned(
-                    top: -15,
-                    right: -15,
-                    child: Container(
-                      width: 110,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: cs.primary.withValues(alpha: 0.06),
-                      ),
-                    ),
-                  ),
-                  // Arabic Quranic text
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: Text(
-                      slide.titleArabic,
-                      textDirection: TextDirection.rtl,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontFamily: 'UthmanicHafs',
-                        fontSize: 15,
-                        height: 1.8,
-                        color: cs.textPrimary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-    );
-  }
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Section Divider  ─ ─ ─  Title  ─ ─ ─
