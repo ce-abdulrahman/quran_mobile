@@ -1,0 +1,108 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import '../interfaces/coordinate_provider.dart';
+import '../services/mushaf_cache_manager.dart';
+
+class QuranpediaCoordinateAdapter implements CoordinateProvider {
+  final MushafCacheManager cacheManager;
+
+  const QuranpediaCoordinateAdapter({
+    required this.cacheManager,
+  });
+
+  @override
+  Future<PageCoordinates> getCoordinates(int pageNumber) async {
+    final jsonDir = await cacheManager.getDiskDirectory('json');
+    final pageStr = pageNumber.toString().padLeft(3, '0');
+    final file = File('${jsonDir.path}/$pageStr.json');
+    if (!await file.exists()) {
+      throw FileSystemException('Coordinate file not found locally: ${file.path}');
+    }
+
+    final jsonString = await file.readAsString();
+    final decoded = jsonDecode(jsonString) as List<dynamic>;
+
+    final ayahs = decoded.map((x) {
+      final jsonMap = x as Map<String, dynamic>;
+      final surahNum = jsonMap['surahNumber'] as int? ?? 0;
+      final ayahNum = jsonMap['ayahNumber'] as int? ?? 0;
+      final xVal = (jsonMap['x'] as num? ?? 0.0).toDouble();
+      final yVal = (jsonMap['y'] as num? ?? 0.0).toDouble();
+      final polyStr = jsonMap['polygon'] as String? ?? '';
+      final path = _parsePolygonPath(polyStr);
+
+      return AyahCoordinate(
+        surahNumber: surahNum,
+        ayahNumber: ayahNum,
+        x: xVal,
+        y: yVal,
+        polygonString: polyStr,
+        path: path,
+      );
+    }).toList();
+
+    return PageCoordinates(
+      pageNumber: pageNumber,
+      ayahs: ayahs,
+    );
+  }
+
+  static Path _parsePolygonPath(String polyStr) {
+    final path = Path();
+    final s = polyStr.trim();
+    if (s.isEmpty) return path;
+
+    final regExp = RegExp(r'([MLZmlz])|(-?\d*\.?\d+)');
+    final matches = regExp.allMatches(s).map((m) => m.group(0)!).toList();
+
+    int i = 0;
+    while (i < matches.length) {
+      final token = matches[i];
+      if (token == 'M' || token == 'm') {
+        if (i + 2 < matches.length) {
+          final x = double.tryParse(matches[i + 1]) ?? 0.0;
+          final y = double.tryParse(matches[i + 2]) ?? 0.0;
+          path.moveTo(x, y);
+          i += 3;
+        } else {
+          i++;
+        }
+      } else if (token == 'L' || token == 'l') {
+        if (i + 2 < matches.length) {
+          final x = double.tryParse(matches[i + 1]) ?? 0.0;
+          final y = double.tryParse(matches[i + 2]) ?? 0.0;
+          path.lineTo(x, y);
+          i += 3;
+        } else {
+          i++;
+        }
+      } else if (token == 'Z' || token == 'z') {
+        path.close();
+        i += 1;
+      } else {
+        if (i == 0) {
+          final points = s.split(RegExp(r'\s+'));
+          bool isFirst = true;
+          for (final pt in points) {
+            final coords = pt.split(',');
+            if (coords.length == 2) {
+              final x = double.tryParse(coords[0]) ?? 0.0;
+              final y = double.tryParse(coords[1]) ?? 0.0;
+              if (isFirst) {
+                path.moveTo(x, y);
+                isFirst = false;
+              } else {
+                path.lineTo(x, y);
+              }
+            }
+          }
+          path.close();
+          break;
+        }
+        i++;
+      }
+    }
+    return path;
+  }
+}

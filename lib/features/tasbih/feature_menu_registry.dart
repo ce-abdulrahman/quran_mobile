@@ -3,9 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/auth_provider.dart';
 import 'themes/theme_selector_page.dart';
-import '../statistics/statistics_page.dart';
 import '../achievements/achievements_page.dart';
-import '../tracker/reading_tracker_page.dart';
 import '../settings/reminders_page.dart';
 import '../settings/settings_page.dart';
 
@@ -60,13 +58,6 @@ class FeatureMenuRegistry {
       ],
       FeatureMenuGroup.progress: [
         FeatureMenuItem(
-          id: 'statistics',
-          icon: Icons.analytics_rounded,
-          title: (l) => l.menuStatistics,
-          onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const StatisticsPage())),
-          isVisible: (_) => true,
-        ),
-        FeatureMenuItem(
           id: 'daily_goals',
           icon: Icons.track_changes_rounded,
           title: (l) => l.menuDailyGoals,
@@ -78,13 +69,6 @@ class FeatureMenuRegistry {
           icon: Icons.emoji_events_rounded,
           title: (l) => l.menuAchievements,
           onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const AchievementsPage())),
-          isVisible: (_) => true,
-        ),
-        FeatureMenuItem(
-          id: 'streak',
-          icon: Icons.local_fire_department_rounded,
-          title: (l) => l.menuStreakSystem,
-          onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const ReadingTrackerPage(showBackButton: true))),
           isVisible: (_) => true,
         ),
       ],

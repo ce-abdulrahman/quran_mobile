@@ -12,6 +12,7 @@ class AdhkarItem {
   final int categoryId;
   final String text;
   final String translation;
+  final String translationEn;
   final String benefit;
   final int targetCount;
   final String? source;
@@ -21,17 +22,26 @@ class AdhkarItem {
     required this.categoryId,
     required this.text,
     required this.translation,
+    this.translationEn = '',
     required this.benefit,
     required this.targetCount,
     this.source,
   });
+
+  String getTranslation(String localeCode) {
+    if (localeCode == 'en' && translationEn.isNotEmpty) {
+      return translationEn;
+    }
+    return translation;
+  }
 
   factory AdhkarItem.fromJson(Map<String, dynamic> json) {
     return AdhkarItem(
       id: json['id'] as int? ?? 0,
       categoryId: json['category_id'] as int? ?? 0,
       text: json['arabic_text'] as String? ?? '',
-      translation: json['translation_ku'] as String? ?? json['translation_en'] as String? ?? '',
+      translation: json['translation_ku'] as String? ?? '',
+      translationEn: json['translation_en'] as String? ?? '',
       benefit: json['description'] as String? ?? '',
       targetCount: json['count'] as int? ?? 1,
       source: json['source'] as String?,
@@ -63,6 +73,13 @@ class AdhkarCategory {
     required this.isActive,
     required this.adhkars,
   });
+
+  String getName(String localeCode) {
+    if (localeCode == 'en' && nameEn != null && nameEn!.isNotEmpty) {
+      return nameEn!;
+    }
+    return nameKu;
+  }
 
   factory AdhkarCategory.fromJson(Map<String, dynamic> json) {
     final rawAdhkars = json['adhkars'] as List? ?? [];

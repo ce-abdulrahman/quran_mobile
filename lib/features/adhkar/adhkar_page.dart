@@ -69,7 +69,21 @@ class _AdhkarPageState extends ConsumerState<AdhkarPage> {
     }
   }
 
-  String _getSubtitle(int categoryId, String nameKu) {
+  String _getSubtitle(int categoryId, String name, bool isKu) {
+    if (!isKu) {
+      switch (categoryId) {
+        case 1:
+          return 'Recommended to be read after Fajr prayer until sunrise';
+        case 2:
+          return 'Recommended to be read after Asr prayer until sunset';
+        case 3:
+          return 'Supplications and remembrances after obligatory prayers';
+        case 4:
+          return 'Read before sleeping for protection during the night';
+        default:
+          return 'Islamic remembrances and supplications';
+      }
+    }
     switch (categoryId) {
       case 1:
         return 'شایستەیە دوای نوێژی بەیانی تا هەڵاتنی خۆر بخوێندرێت';
@@ -89,6 +103,7 @@ class _AdhkarPageState extends ConsumerState<AdhkarPage> {
     final cs = AppColorScheme.of(context);
     final l = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final langCode = ref.watch(appLocaleProvider).languageCode;
 
     ref.watch(adhkarProvider);
     final notifier = ref.read(adhkarProvider.notifier);
@@ -310,7 +325,7 @@ class _AdhkarPageState extends ConsumerState<AdhkarPage> {
                       final lowercaseQuery = _query.toLowerCase();
                       final results = categories.expand((cat) => cat.adhkars).where((item) {
                         final inText = item.text.toLowerCase().contains(lowercaseQuery);
-                        final inTrans = item.translation.toLowerCase().contains(lowercaseQuery);
+                        final inTrans = item.getTranslation(langCode).toLowerCase().contains(lowercaseQuery);
                         final inSource = item.source?.toLowerCase().contains(lowercaseQuery) ?? false;
                         final inBenefit = item.benefit.toLowerCase().contains(lowercaseQuery);
                         return inText || inTrans || inSource || inBenefit;
@@ -366,7 +381,7 @@ class _AdhkarPageState extends ConsumerState<AdhkarPage> {
                         final icon = _getIconData(cat.icon);
                         final iconColor = _getIconColor(cat.icon);
                         final bgGradient = _getBgGradient(cat.icon);
-                        final subtitle = _getSubtitle(cat.id, cat.nameKu);
+                        final subtitle = _getSubtitle(cat.id, cat.getName(langCode), langCode == 'ku');
 
                         return GestureDetector(
                           onTap: () {
@@ -375,7 +390,7 @@ class _AdhkarPageState extends ConsumerState<AdhkarPage> {
                               MaterialPageRoute(
                                 builder: (_) => AdhkarCategoryPage(
                                   categoryKey: catKey,
-                                  title: cat.nameKu,
+                                  title: cat.getName(langCode),
                                   items: cat.adhkars,
                                 ),
                               ),
@@ -432,7 +447,7 @@ class _AdhkarPageState extends ConsumerState<AdhkarPage> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        cat.nameKu,
+                                        cat.getName(langCode),
                                         style: TextStyle(
                                           fontFamily: 'Cairo',
                                           fontSize: 14,
@@ -585,9 +600,9 @@ class _AdhkarSearchResultCardState extends State<_AdhkarSearchResultCard> {
           const Divider(height: 1),
           const SizedBox(height: 12),
 
-          // Kurdish translation
+          // Kurdish/English translation
           Text(
-            widget.item.translation,
+            widget.item.getTranslation(Localizations.localeOf(context).languageCode),
             textDirection: TextDirection.rtl,
             style: TextStyle(
               fontFamily: 'Cairo',

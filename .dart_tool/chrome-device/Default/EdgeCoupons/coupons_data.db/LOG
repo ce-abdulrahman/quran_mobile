@@ -1,25 +1,23 @@
-2026/06/28-12:25:01.196 3e94 Reusing MANIFEST C:\Users\kurdn\AppData\Local\Temp\flutter_tools.c4d83712\flutter_tools_chrome_device.d176b7c6\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
-2026/06/28-12:25:01.198 3e94 Recovering log #39
-2026/06/28-12:25:01.198 3e94 Reusing old log C:\Users\kurdn\AppData\Local\Temp\flutter_tools.c4d83712\flutter_tools_chrome_device.d176b7c6\Default\EdgeCoupons/coupons_data.db/000039.log 
-2026/06/28-12:25:01.199 3e94 Delete type=0 #4
-2026/06/28-12:25:01.200 3e94 Delete type=0 #7
-2026/06/28-12:25:01.200 3e94 Delete type=2 #8
-2026/06/28-12:25:01.200 3e94 Delete type=0 #10
-2026/06/28-12:25:01.200 3e94 Delete type=2 #11
-2026/06/28-12:25:01.200 3e94 Delete type=0 #13
-2026/06/28-12:25:01.200 3e94 Delete type=2 #14
-2026/06/28-12:25:01.238 3e94 Delete type=0 #16
-2026/06/28-12:25:01.314 3e94 Delete type=2 #17
-2026/06/28-12:25:01.391 3e94 Delete type=0 #19
-2026/06/28-12:25:01.406 3e94 Delete type=2 #21
-2026/06/28-12:25:01.418 3e94 Delete type=0 #23
-2026/06/28-12:25:01.418 3e94 Delete type=2 #24
-2026/06/28-12:25:01.419 3e94 Delete type=0 #26
-2026/06/28-12:25:01.452 3e94 Delete type=2 #27
-2026/06/28-12:25:01.453 3e94 Delete type=0 #29
-2026/06/28-12:25:01.453 3e94 Delete type=2 #30
-2026/06/28-12:25:01.453 3e94 Delete type=0 #32
-2026/06/28-12:25:01.500 3e94 Delete type=0 #36
-2026/06/28-12:25:09.812 41fc Level-0 table #43: started
-2026/06/28-12:25:09.816 41fc Level-0 table #43: 682948 bytes OK
-2026/06/28-12:25:09.818 41fc Delete type=0 #39
+2026/07/04-02:14:44.578 2fc0 Reusing MANIFEST C:\Users\kurdn\AppData\Local\Temp\flutter_tools.39e92dc5\flutter_tools_chrome_device.e104906f\Default\EdgeCoupons/coupons_data.db/MANIFEST-000001
+2026/07/04-02:14:44.580 2fc0 Recovering log #42
+2026/07/04-02:14:44.581 2fc0 Reusing old log C:\Users\kurdn\AppData\Local\Temp\flutter_tools.39e92dc5\flutter_tools_chrome_device.e104906f\Default\EdgeCoupons/coupons_data.db/000042.log 
+2026/07/04-02:14:44.581 2fc0 Delete type=0 #4
+2026/07/04-02:14:44.581 2fc0 Delete type=0 #7
+2026/07/04-02:14:44.581 2fc0 Delete type=2 #8
+2026/07/04-02:14:44.581 2fc0 Delete type=0 #10
+2026/07/04-02:14:44.581 2fc0 Delete type=2 #11
+2026/07/04-02:14:44.581 2fc0 Delete type=0 #13
+2026/07/04-02:14:44.581 2fc0 Delete type=2 #14
+2026/07/04-02:14:44.587 2fc0 Delete type=0 #16
+2026/07/04-02:14:44.600 2fc0 Delete type=2 #17
+2026/07/04-02:14:44.611 2fc0 Delete type=0 #19
+2026/07/04-02:14:44.612 2fc0 Delete type=2 #21
+2026/07/04-02:14:44.612 2fc0 Delete type=0 #23
+2026/07/04-02:14:44.612 2fc0 Delete type=2 #24
+2026/07/04-02:14:44.612 2fc0 Delete type=0 #26
+2026/07/04-02:14:44.612 2fc0 Delete type=2 #27
+2026/07/04-02:14:44.696 2fc0 Delete type=0 #29
+2026/07/04-02:14:44.709 2fc0 Delete type=2 #30
+2026/07/04-02:14:44.720 2fc0 Delete type=0 #32
+2026/07/04-02:14:44.745 2fc0 Delete type=0 #36
+2026/07/04-02:14:44.757 2fc0 Delete type=0 #39

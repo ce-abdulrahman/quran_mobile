@@ -5,6 +5,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/bookmarks_provider.dart';
 import '../quran/quran_reader_page.dart';
+import '../quran/mushaf_reader_page.dart';
 import '../quran/quran_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -20,84 +21,48 @@ class BookmarksPage extends ConsumerWidget {
     final cs = AppColorScheme.of(context);
     final l = context.l10n;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isKu = Localizations.localeOf(context).languageCode == 'ku';
     
-    // Sort so that the newest bookmarks (last added) appear at the top
     final bookmarks = ref.watch(bookmarksProvider).reversed.toList();
+    final pageBookmarks = ref.watch(pageBookmarksProvider);
 
-    return Scaffold(
-      backgroundColor: cs.bg,
-      appBar: AppBar(
-        backgroundColor: isDark ? AppColorScheme.darken(cs.primary, 0.35) : cs.primary,
-        elevation: 0,
-        centerTitle: true,
-        leading: showBackButton
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              )
-            : null,
-        title: Text(
-          l.bookmarksTitle,
-          style: const TextStyle(
-            fontFamily: 'Cairo',
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: cs.bg,
+        appBar: AppBar(
+          backgroundColor: isDark ? AppColorScheme.darken(cs.primary, 0.35) : cs.primary,
+          elevation: 0,
+          centerTitle: true,
+          leading: showBackButton
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                )
+              : null,
+          title: Text(
+            l.bookmarksTitle,
+            style: const TextStyle(
+              fontFamily: 'Cairo',
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          bottom: TabBar(
+            indicatorColor: AppColors.accentGoldDeep,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
+            labelStyle: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 14),
+            tabs: [
+              Tab(text: isKu ? 'ئایەتەکان' : 'Ayahs'),
+              Tab(text: isKu ? 'لاپەڕەکان' : 'Pages'),
+            ],
           ),
         ),
-      ),
-      body: Column(
-        children: [
-          // ── Header Banner ─────────────────────────────────────────
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isDark
-                    ? [AppColorScheme.darken(cs.primary, 0.35), AppColorScheme.darken(cs.primary, 0.42)]
-                    : [cs.primary, cs.primaryDeep],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(24),
-                bottomRight: Radius.circular(24),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.bookmark_rounded, color: Colors.white, size: 16),
-                      const SizedBox(width: 6),
-                      Text(
-                        l.bookmarkCount(bookmarks.length),
-                        style: const TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // ── Content ───────────────────────────────────────────────
-          Expanded(
-            child: bookmarks.isEmpty
+        body: TabBarView(
+          children: [
+            // ── Tab 1: Ayah Bookmarks ──────────────────────────────
+            bookmarks.isEmpty
                 ? _EmptyBookmarks(cs: cs, l: l)
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
@@ -111,8 +76,28 @@ class BookmarksPage extends ConsumerWidget {
                           delay: Duration(milliseconds: 40 * i),
                         ),
                   ),
-          ),
-        ],
+
+            // ── Tab 2: Page Bookmarks ──────────────────────────────
+            pageBookmarks.isEmpty
+                ? _EmptyBookmarks(cs: cs, l: l)
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
+                    physics: const BouncingScrollPhysics(),
+                    itemCount: pageBookmarks.length,
+                    itemBuilder: (_, i) {
+                      final pageNum = pageBookmarks[i];
+                      return _PageBookmarkCard(
+                        pageNumber: pageNum,
+                        cs: cs,
+                        isKu: isKu,
+                      ).animate().fadeIn(
+                            duration: 250.ms,
+                            delay: Duration(milliseconds: 40 * i),
+                          );
+                    },
+                  ),
+          ],
+        ),
       ),
     );
   }
@@ -320,6 +305,111 @@ class _BookmarkCard extends ConsumerWidget {
                   ),
                 ],
               ),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.delete_outline_rounded,
+                color: Colors.red.withValues(alpha: 0.8),
+                size: 20,
+              ),
+              onPressed: () {
+                ref.read(bookmarksProvider.notifier).toggle(bookmark);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _PageBookmarkCard extends ConsumerWidget {
+  const _PageBookmarkCard({
+    required this.pageNumber,
+    required this.cs,
+    required this.isKu,
+  });
+
+  final int pageNumber;
+  final AppColorScheme cs;
+  final bool isKu;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MushafReaderPage(initialPage: pageNumber),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: cs.card,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: cs.cardBorder),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: cs.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(
+                Icons.menu_book_rounded,
+                color: cs.primary,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isKu ? 'لاپەڕەی $pageNumber' : 'Page $pageNumber',
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: cs.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    isKu ? 'خوێندنەوەی لاپەڕە لە موسحەف' : 'Read page in Mushaf',
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 12,
+                      color: cs.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.delete_outline_rounded,
+                color: Colors.red.withValues(alpha: 0.8),
+                size: 20,
+              ),
+              onPressed: () {
+                ref.read(pageBookmarksProvider.notifier).toggle(pageNumber);
+              },
             ),
           ],
         ),

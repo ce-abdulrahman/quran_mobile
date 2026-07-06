@@ -8,6 +8,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/providers/statistics_provider.dart';
+
 import '../../core/models/ayah_model.dart';
 import '../../core/utils/responsive.dart';
 import '../search/search_page.dart';
@@ -16,7 +17,7 @@ import '../bookmarks/bookmarks_page.dart';
 import '../favorites/favorites_page.dart';
 import '../settings/settings_page.dart';
 import '../settings/about_page.dart';
-import '../tracker/reading_tracker_page.dart';
+
 import '../khatm/khatm_tracker_page.dart';
 import '../adhkar/adhkar_page.dart';
 import '../tasbih/tasbih_page.dart';
@@ -33,8 +34,9 @@ import 'sahaba_page.dart';
 import '../../core/providers/tasbih_session_provider.dart';
 import '../tasbih/active_session_page.dart';
 import '../achievements/achievements_page.dart';
-import '../statistics/statistics_page.dart';
+
 import '../notes/notes_page.dart';
+import '../quran/mushaf_reader_page.dart';
 
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -58,15 +60,6 @@ class _CatData {
 }
 
 List<_CatData> _buildCats(BuildContext context) => [
-      _CatData(
-        icon: Icons.menu_book_rounded,
-        iconColor: AppColorScheme.of(context).primary,
-        label: (l) => l.quranTitle,
-        onTap: (ref, ctx) => () => Navigator.push(
-              ctx,
-              MaterialPageRoute(builder: (_) => const QuranPage(showBackButton: true)),
-            ),
-      ),
       _CatData(
         icon: Icons.mosque_rounded,
         iconColor: const Color(0xFF0F8F4C),
@@ -207,24 +200,7 @@ List<_CatData> _buildCats(BuildContext context) => [
               MaterialPageRoute(builder: (_) => const FavoritesPage(showBackButton: true)),
             ),
       ),
-      _CatData(
-        icon: Icons.bar_chart_rounded,
-        iconColor: const Color(0xFFFF5722),
-        label: (l) => l.readingStatsTitle,
-        onTap: (ref, ctx) => () => Navigator.push(
-              ctx,
-              MaterialPageRoute(builder: (_) => const ReadingTrackerPage(showBackButton: true)),
-            ),
-      ),
-      _CatData(
-        icon: Icons.insights_rounded,
-        iconColor: const Color(0xFF6F42C1),
-        label: (l) => l.statsAndInsightsTitle,
-        onTap: (ref, ctx) => () => Navigator.push(
-              ctx,
-              MaterialPageRoute(builder: (_) => const StatisticsPage()),
-            ),
-      ),
+
       _CatData(
         icon: Icons.info_outline_rounded,
         iconColor: const Color(0xFF00BCD4),
@@ -900,6 +876,155 @@ class _HomePageState extends ConsumerState<HomePage> {
     ).animate(onPlay: (c) => c.repeat()).shimmer(duration: 1.seconds, color: cs.primary.withValues(alpha: 0.05));
   }
 
+  Widget _buildQuranDualCards(BuildContext context, AppColorScheme cs, double p) {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    final lastPage = prefs.getInt('quran.last_mushaf_page') ?? prefs.getInt('mushaf_last_read_page') ?? 1;
+    final lastSurahName = prefs.getString('quran.last_surah') ?? 'الفاتحة';
+    final lastAyah = prefs.getInt('quran.last_ayah') ?? 1;
+
+    final isKu = Localizations.localeOf(context).languageCode == 'ku';
+    final isEn = Localizations.localeOf(context).languageCode == 'en';
+    
+    final continueLabel = isKu ? 'خوێندنەوەی موسحەف' : (isEn ? 'Continue Mushaf' : 'متابعة المصحف');
+    final directoryLabel = isKu ? 'پۆلێنکاری و گەڕان' : (isEn ? 'Quran Directory' : 'فهرس القرآن');
+    final pageLabel = isKu ? 'لاپەڕە' : (isEn ? 'Page' : 'الصفحة');
+    final surahLabel = isKu ? 'سورەتی' : (isEn ? 'Surah' : 'سورة');
+    final ayahLabel = isKu ? 'ئایەتی' : (isEn ? 'Ayah' : 'الآية');
+
+    return Column(
+      children: [
+        // Card 1: Mushaf (Continue Reading)
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => MushafReaderPage(initialPage: lastPage)),
+            ).then((_) => setState(() {}));
+          },
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: cs.card,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: cs.cardBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: cs.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.menu_book_rounded, color: cs.primary, size: 24),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        continueLabel,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: cs.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$pageLabel $lastPage - $surahLabel $lastSurahName ($ayahLabel $lastAyah)',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: cs.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Card 2: Quran Directory
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const QuranPage(showBackButton: true)),
+            ).then((_) => setState(() {}));
+          },
+          child: Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: cs.card,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: cs.cardBorder),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.02),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: cs.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.explore_rounded, color: cs.primary, size: 24),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isKu ? 'قورئانی پیرۆز' : (isEn ? 'Noble Quran' : 'القرآن الكريم'),
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: cs.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        directoryLabel,
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: cs.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = Responsive.pagePadding(context);
@@ -932,6 +1057,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     final topPadding = MediaQuery.of(context).padding.top;
     final cs = AppColorScheme.of(context);
     final accentColor = ref.watch(accentColorProvider);
+
     final statisticsState = ref.watch(statisticsProvider);
     final tasbihState = ref.watch(tasbihProvider);
 
@@ -956,6 +1082,12 @@ class _HomePageState extends ConsumerState<HomePage> {
                       title: context.l10n.homeFeaturesOne,
                     ),
                   ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
+
+                  // ── Split Quran Cards (Mushaf and Directory) ──
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(p, 0, p, 16),
+                    child: _buildQuranDualCards(context, cs, p),
+                  ),
 
                   // ── Categories grid ──
                   Padding(
@@ -1709,51 +1841,7 @@ class _CatTile extends StatelessWidget {
 class _HomeProfileCard extends ConsumerWidget {
   const _HomeProfileCard();
 
-  Widget _buildStatItem(BuildContext context, String emoji, String value, String label) {
-    final cs = AppColorScheme.of(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-      decoration: BoxDecoration(
-        color: cs.divider.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: cs.cardBorder.withValues(alpha: 0.6)),
-      ),
-      child: Row(
-        children: [
-          Text(emoji, style: const TextStyle(fontSize: 18)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: cs.textPrimary,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 9,
-                    color: cs.textSecondary,
-                  ),
-                ),
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
+
 
   Widget _buildQuickAction(BuildContext context, IconData icon, String label, Color color, VoidCallback onTap) {
     final cs = AppColorScheme.of(context);
@@ -1791,13 +1879,6 @@ class _HomeProfileCard extends ConsumerWidget {
     final accentColor = ref.watch(accentColorProvider);
 
     const user = null;
-    final statsState = ref.watch(statisticsProvider);
-    final dashboard = statsState.dashboard;
-
-    final streak = dashboard.currentStreak;
-    final achievements = dashboard.totalAchievements;
-    final goalProgress = dashboard.goalCompletionRate.round();
-    final productivity = dashboard.productivityScore;
 
     final name = context.l10n.homeReciter;
     final title = context.l10n.homeOfflineMode;
@@ -1872,69 +1953,15 @@ class _HomeProfileCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
-
-          // Stats items row 1
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatItem(
-                  context,
-                  '🔥',
-                  context.l10n.homeStreakDaysCount(streak),
-                  context.l10n.homeStreakLabel,
-                ),
-              ),
-              Expanded(
-                child: _buildStatItem(
-                  context,
-                  '🏆',
-                  '$achievements',
-                  context.l10n.authAchievements,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-
-          // Stats items row 2
-          Row(
-            children: [
-              Expanded(
-                child: _buildStatItem(
-                  context,
-                  '🎯',
-                  '$goalProgress%',
-                  context.l10n.homeGoalCompletion,
-                ),
-              ),
-              Expanded(
-                child: _buildStatItem(
-                  context,
-                  '📊',
-                  '$productivity',
-                  context.l10n.productivityScoreLabel,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
           Divider(color: cs.cardBorder, height: 1),
           const SizedBox(height: 14),
 
-          // Quick Actions row (Local actions only, Profile and Ranks deferred to V2)
+          // Quick Actions row
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             child: Row(
               children: [
-                _buildQuickAction(
-                  context,
-                  Icons.insights_rounded,
-                  context.l10n.statsQuickActionInsights,
-                  accentColor,
-                  () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatisticsPage())),
-                ),
-                const SizedBox(width: 16),
                 _buildQuickAction(
                   context,
                   Icons.emoji_events_outlined,

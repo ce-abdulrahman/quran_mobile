@@ -59,7 +59,10 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     final prefs = ref.read(sharedPreferencesProvider);
     final isInitialized = prefs.getBool('is_db_initialized') ?? false;
 
-    if (isInitialized) {
+    // Check if we need to force seeding (e.g. empty tables due to app updates)
+    final needsSeeding = !isInitialized || await IsarService.instance.checkNeedSeeding();
+
+    if (!needsSeeding) {
       await Future.delayed(const Duration(milliseconds: 2000));
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/shell');

@@ -73,9 +73,9 @@ class AppLocalizations {
   String get tasbihResetYes => _translate(ku: 'بەڵێ', ar: 'نعم', en: 'Yes');
   String get tasbihResetNo => _translate(ku: 'نەخێر', ar: 'لا', en: 'No');
   String get tasbihSaved => _translate(ku: 'پاراستوو', ar: 'تم الحفظ', en: 'Saved');
-  String get tasbihSubhanAllah => _translate(ku: 'سوبحانالله', ar: 'سبحان الله', en: 'Subhan Allah');
-  String get tasbihAlhamdulillah => _translate(ku: 'ئەلحەمدولله', ar: 'الحمد لله', en: 'Alhamdulillah');
-  String get tasbihAllahuAkbar => _translate(ku: 'ئەللاهو ئەکبەر', ar: 'الله أكبر', en: 'Allahu Akbar');
+  String get tasbihSubhanAllah => _translate(ku: 'سبحان الله', ar: 'سبحان الله', en: 'Subhan Allah');
+  String get tasbihAlhamdulillah => _translate(ku: 'الحمد لله', ar: 'الحمد لله', en: 'Alhamdulillah');
+  String get tasbihAllahuAkbar => _translate(ku: 'الله أكبر', ar: 'الله أكبر', en: 'Allahu Akbar');
   String get tasbihGoal => _translate(ku: 'ئامانج: ٣٣', ar: 'الهدف: ٣٣', en: 'Goal: 33');
   String get tasbihCounter => _translate(ku: 'تەسبیحکار', ar: 'المسبحة', en: 'Tasbih Counter');
   String get tasbihStats => _translate(ku: 'گرافیکی ئامار', ar: 'الإحصائيات', en: 'Statistics');
@@ -83,7 +83,7 @@ class AppLocalizations {
   String get tasbihWeek => _translate(ku: 'ئەم هەفتەیە', ar: 'هذا الأسبوع', en: 'This Week');
   String get tasbihMonth => _translate(ku: 'ئەم مانگە', ar: 'هذا الشهر', en: 'This Month');
   String get tasbihTotal => _translate(ku: 'کۆی گشتی', ar: 'المجموع', en: 'Total');
-  String get tasbihDhikrBreakdown => _translate(ku: 'جیاکردنەوەی ذکرەکان', ar: 'تفاصيل الأذكار', en: 'Dhikr Breakdown');
+  String get tasbihDhikrBreakdown => _translate(ku: 'جیاکردنەوەی زکرەکان', ar: 'تفاصيل الأذكار', en: 'Dhikr Breakdown');
   String get tasbihHistoryLogs => _translate(ku: 'تۆمارەکان', ar: 'سجل المحفوظات', en: 'History Logs');
   String get tasbihDailyGoal => _translate(ku: 'ئامانجی ڕۆژانە', ar: 'الهدف اليومي', en: 'Daily Goal');
   String get tasbihChangeGoal => _translate(ku: 'گۆڕینی ئامانج', ar: 'تغيير الهدف', en: 'Change Goal');
@@ -798,7 +798,7 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool shouldReload(LocalizationsDelegate<AppLocalizations> old) => false;
+  bool shouldReload(LocalizationsDelegate<AppLocalizations> old) => true;
 }
 
 extension AppLocalizationsBuildContext on BuildContext {

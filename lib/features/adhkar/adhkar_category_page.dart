@@ -142,9 +142,9 @@ class _AdhkarCategoryPageState extends ConsumerState<AdhkarCategoryPage> {
                       const Divider(height: 1),
                       const SizedBox(height: 12),
 
-                      // Kurdish translation
+                      // Kurdish/English translation
                       Text(
-                        item.translation,
+                        item.getTranslation(Localizations.localeOf(context).languageCode),
                         textDirection: TextDirection.rtl,
                         style: TextStyle(
                           fontFamily: 'Cairo',

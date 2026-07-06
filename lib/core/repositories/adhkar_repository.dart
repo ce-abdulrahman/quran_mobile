@@ -28,6 +28,7 @@ class AdhkarRepository {
           categoryId: a.categoryId,
           text: a.arabicText,
           translation: a.translationKu,
+          translationEn: a.translationEn ?? '',
           benefit: a.description ?? '',
           targetCount: a.targetCount,
           source: a.source,

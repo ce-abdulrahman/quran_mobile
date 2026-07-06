@@ -7,8 +7,7 @@ import '../../../core/l10n/app_localizations.dart';
 import '../../auth/auth_provider.dart';
 import '../../../core/providers/app_providers.dart';
 import '../providers/prayer_widget_provider.dart';
-import '../prayer_times_page.dart';
-import '../../settings/settings_page.dart';
+
 
 class PrayerWidgetCard extends ConsumerStatefulWidget {
   const PrayerWidgetCard({super.key});
@@ -215,45 +214,10 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Header Row: City, Hijri Date, Gregorian Date
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.location_on_rounded,
-                                color: Colors.white.withValues(alpha: 0.8),
-                                size: 16,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                data.currentCity,
-                                style: const TextStyle(
-                                  fontFamily: 'Cairo',
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text(
-                            data.hijriDate,
-                            style: TextStyle(
-                              fontFamily: 'Cairo',
-                              fontSize: 12,
-                              color: Colors.white.withValues(alpha: 0.85),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
                       // Next Prayer Title, Live countdown
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -266,7 +230,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                                 _getTranslation('prayer_widget.next_prayer', context),
                                 style: TextStyle(
                                   fontFamily: 'Cairo',
-                                  fontSize: 12,
+                                  fontSize: 11,
                                   color: Colors.white.withValues(alpha: 0.75),
                                   letterSpacing: 0.5,
                                 ),
@@ -276,17 +240,17 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                                 _getPrayerName(data.nextPrayer, l),
                                 style: const TextStyle(
                                   fontFamily: 'Cairo',
-                                  fontSize: 28,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.w800,
                                   color: Colors.white,
                                   height: 1.2,
                                 ),
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: 1),
                               Text(
                                 '${l.prayerTimesTitle}: ${_stripAmPm(data.nextPrayerTime)}',
                                 style: TextStyle(
-                                  fontSize: 13,
+                                  fontSize: 12,
                                   color: Colors.white.withValues(alpha: 0.8),
                                 ),
                               ),
@@ -303,7 +267,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                                   color: Colors.white.withValues(alpha: 0.75),
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: 2),
                               ValueListenableBuilder<String>(
                                 valueListenable: _countdownNotifier,
                                 builder: (context, countdownStr, _) {
@@ -311,7 +275,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                                     countdownStr,
                                     style: const TextStyle(
                                       fontFamily: 'Cairo',
-                                      fontSize: 28,
+                                      fontSize: 24,
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white,
                                       letterSpacing: 1.0,
@@ -323,11 +287,11 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 12),
 
                       // Horizontal list of prayer times
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(16),
@@ -340,7 +304,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                               final isNext = entry.key.toLowerCase() == data.nextPrayer.toLowerCase();
                               return AnimatedContainer(
                                 duration: 300.ms,
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                 decoration: isNext
                                     ? BoxDecoration(
                                         color: Colors.white.withValues(alpha: 0.15),
@@ -368,7 +332,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                                         color: isNext ? Colors.white : Colors.white.withValues(alpha: 0.7),
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
+                                    const SizedBox(height: 3),
                                     Text(
                                       _stripAmPm(entry.value),
                                       style: TextStyle(
@@ -384,86 +348,6 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-
-                      // Action Button Bar
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              // Qibla Finder Icon
-                              _ActionButton(
-                                icon: Icons.explore_rounded,
-                                tooltip: _getTranslation('prayer_widget.open_qibla', context),
-                                onTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        l.quranTapToRead, // fallback/soon translation
-                                        style: const TextStyle(fontFamily: 'Cairo'),
-                                      ),
-                                      behavior: SnackBarBehavior.floating,
-                                      backgroundColor: cs.primary,
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 8),
-
-                              // Settings Icon
-                              _ActionButton(
-                                icon: Icons.settings_rounded,
-                                tooltip: _getTranslation('prayer_widget.open_settings', context),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const SettingsPage(showBackButton: true)),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              // View Full Times Icon
-                              TextButton.icon(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const PrayerTimesPage(showBackButton: true)),
-                                  );
-                                },
-                                icon: const Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white),
-                                label: Text(
-                                  _getTranslation('prayer_widget.title', context),
-                                  style: const TextStyle(
-                                    fontFamily: 'Cairo',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                  backgroundColor: Colors.white.withValues(alpha: 0.1),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-
-                              // Manual Refresh Button
-                              _ActionButton(
-                                icon: Icons.refresh_rounded,
-                                tooltip: _getTranslation('prayer_widget.refresh', context),
-                                onTap: () => ref.read(prayerWidgetProvider.notifier).refreshWidgetData(),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),
@@ -473,7 +357,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
         );
       },
       loading: () => Container(
-        height: 220,
+        height: 140,
         decoration: BoxDecoration(
           color: cs.card,
           borderRadius: BorderRadius.circular(24),
@@ -519,37 +403,3 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
   }
 }
 
-class _ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback onTap;
-
-  const _ActionButton({
-    required this.icon,
-    required this.tooltip,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Icon(
-            icon,
-            color: Colors.white,
-            size: 18,
-          ),
-        ),
-      ),
-    );
-  }
-}

@@ -551,3 +551,18 @@ final tajweedCategorySegmentsCountProvider = FutureProvider.family<int, TajweedC
   }
   return total;
 });
+
+final mushafZoomProvider = StateNotifierProvider<MushafZoomNotifier, double>((ref) {
+  final prefs = ref.watch(sharedPreferencesProvider);
+  return MushafZoomNotifier(prefs);
+});
+
+class MushafZoomNotifier extends StateNotifier<double> {
+  final SharedPreferences _prefs;
+  MushafZoomNotifier(this._prefs) : super(_prefs.getDouble('quran.page_zoom') ?? 1.0);
+
+  Future<void> setZoom(double val) async {
+    state = val.clamp(1.0, 3.0);
+    await _prefs.setDouble('quran.page_zoom', state);
+  }
+}

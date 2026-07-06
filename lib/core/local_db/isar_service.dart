@@ -554,6 +554,44 @@ class IsarService {
     }
   }
 
+  /// Checks if any critical collection is empty, returning true if seeding is required.
+  Future<bool> checkNeedSeeding() async {
+    try {
+      final namesCount = await isar.namesOfAllahCollections.count();
+      final seerahCount = await isar.seerahCollections.count();
+      final sahabaCount = await isar.sahabaCollections.count();
+      final recitersCount = await isar.reciterCollections.count();
+      final hadithsCount = await isar.hadithCollections.count();
+      final rulesCount = await isar.tajweedRuleCollections.count();
+      final surahsCount = await isar.surahCollections.count();
+      final adhkarsCount = await isar.adhkarCollections.count();
+
+      if (namesCount == 0 ||
+          seerahCount == 0 ||
+          sahabaCount == 0 ||
+          recitersCount == 0 ||
+          hadithsCount == 0 ||
+          rulesCount == 0 ||
+          surahsCount == 0 ||
+          adhkarsCount == 0) {
+        final prefs = await SharedPreferences.getInstance();
+        if (namesCount == 0) await prefs.setBool('seed_step_names_of_allah', false);
+        if (seerahCount == 0) await prefs.setBool('seed_step_seerah', false);
+        if (sahabaCount == 0) await prefs.setBool('seed_step_sahaba', false);
+        if (recitersCount == 0) await prefs.setBool('seed_step_reciters', false);
+        if (hadithsCount == 0) await prefs.setBool('seed_step_hadiths', false);
+        if (rulesCount == 0) await prefs.setBool('seed_step_tajweed_rules', false);
+        if (surahsCount == 0) await prefs.setBool('seed_step_surahs', false);
+        if (adhkarsCount == 0) await prefs.setBool('seed_step_adhkars', false);
+        await prefs.setBool('is_db_initialized', false);
+        return true;
+      }
+      return false;
+    } catch (_) {
+      return true; // Seed on error to be safe
+    }
+  }
+
   static void initForTest(Isar isarInstance) {
     _instance = IsarService._(isarInstance);
   }

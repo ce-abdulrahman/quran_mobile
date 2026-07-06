@@ -591,25 +591,72 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       ),
                     ),
                     const Divider(height: 1),
-                    // Quran Font Family
-                    _SettingRow(
-                      icon: Icons.menu_book_rounded,
-                      label: l.settingsFontQuran,
-                      subLabel: l.settingsFontQuranSub,
-                      cs: cs,
-                      trailing: _FontDropdown(
-                        cs: cs,
-                        current: readerSettings.quranFontFamily,
-                        options: const [
-                          ('UthmanicHafs', 'Uthmanic Hafs'),
-                          ('Amiri', 'Amiri'),
-                          ('ScheherazadeNew', 'Scheherazade New'),
-                        ],
-                        onChanged: (f) => ref
-                            .read(readerSettingsProvider.notifier)
-                            .setQuranFontFamily(f),
+                    // Quran Font Family — locked when Tajweed is active
+                    if (readerSettings.showTajweed) ...[
+                      Container(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.lock_rounded, color: Colors.amber, size: 18),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                'فۆنتی قورئان قفڵکراوە — نیشاندانی تەجوید چالاکە و فۆنتی تایبەتی QPCV4Tajweed دەبێت بەکاربهێنرێت بۆ ئەوەی پیتەکان لێک جیا نەبن.',
+                                textDirection: TextDirection.rtl,
+                                style: TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontSize: 11,
+                                  color: Colors.amber[800],
+                                  height: 1.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                      _SettingRow(
+                        icon: Icons.menu_book_rounded,
+                        label: l.settingsFontQuran,
+                        subLabel: l.settingsFontQuranSub,
+                        cs: cs,
+                        trailing: _FontDropdown(
+                          cs: cs,
+                          current: readerSettings.quranFontFamily,
+                          options: const [
+                            ('UthmanicHafs', 'Uthmanic Hafs'),
+                            ('Amiri', 'Amiri'),
+                            ('ScheherazadeNew', 'Scheherazade New'),
+                          ],
+                          onChanged: (f) {},
+                          disabledMessage: 'ناتوانی فۆنت بگۆڕیت لەبەر ئەوەی نیشاندانی تەجوید چالاکە',
+                        ),
+                      ),
+                    ] else ...[
+                      _SettingRow(
+                        icon: Icons.menu_book_rounded,
+                        label: l.settingsFontQuran,
+                        subLabel: l.settingsFontQuranSub,
+                        cs: cs,
+                        trailing: _FontDropdown(
+                          cs: cs,
+                          current: readerSettings.quranFontFamily,
+                          options: const [
+                            ('UthmanicHafs', 'Uthmanic Hafs'),
+                            ('Amiri', 'Amiri'),
+                            ('ScheherazadeNew', 'Scheherazade New'),
+                          ],
+                          onChanged: (f) => ref
+                              .read(readerSettingsProvider.notifier)
+                              .setQuranFontFamily(f),
+                        ),
+                      ),
+                    ],
                     const Divider(height: 1),
                     // Font Target
                     _SettingRow(
@@ -1402,17 +1449,34 @@ class _FontDropdown extends StatelessWidget {
     required this.current,
     required this.options,
     required this.onChanged,
+    this.disabledMessage,
   });
 
   final AppColorScheme cs;
   final String current;
   final List<(String, String)> options;
   final ValueChanged<String> onChanged;
+  final String? disabledMessage;
 
   @override
   Widget build(BuildContext context) {
+    final isDisabled = disabledMessage != null;
     return GestureDetector(
       onTap: () {
+        if (isDisabled) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                disabledMessage!,
+                textDirection: TextDirection.rtl,
+                style: const TextStyle(fontFamily: 'Cairo'),
+              ),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor: Colors.amber[800],
+            ),
+          );
+          return;
+        }
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
@@ -1474,26 +1538,40 @@ class _FontDropdown extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: cs.primary.withValues(alpha: 0.1),
+          color: isDisabled
+              ? Colors.grey.withValues(alpha: 0.15)
+              : cs.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: cs.primary.withValues(alpha: 0.2)),
+          border: Border.all(
+            color: isDisabled
+                ? Colors.grey.withValues(alpha: 0.3)
+                : cs.primary.withValues(alpha: 0.2),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (isDisabled) ...[
+              const Icon(Icons.lock_rounded, size: 12, color: Colors.grey),
+              const SizedBox(width: 4),
+            ],
             Text(
-              options.firstWhere((o) => o.$1 == current,
-                      orElse: () => options.first)
-                  .$2,
+              isDisabled
+                  ? 'QPCV4Tajweed'
+                  : options.firstWhere((o) => o.$1 == current,
+                          orElse: () => options.first)
+                      .$2,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: cs.primary,
+                color: isDisabled ? Colors.grey : cs.primary,
               ),
             ),
-            const SizedBox(width: 4),
-            Icon(Icons.expand_more_rounded, size: 14, color: cs.primary),
+            if (!isDisabled) ...[
+              const SizedBox(width: 4),
+              Icon(Icons.expand_more_rounded, size: 14, color: cs.primary),
+            ],
           ],
         ),
       ),

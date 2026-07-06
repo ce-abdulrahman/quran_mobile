@@ -53,15 +53,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     super.initState();
     _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ref.read(readingTrackerProvider.notifier).trackRead(
-              widget.surah.id,
-              widget.surah.nameEn,
-              widget.initialAyahNumber ?? 1,
-              secondsSpent: 1,
-              readingMode: 'list',
-            );
-      }
+      // reading tracker removed in v1.0.4
     });
   }
 
@@ -145,13 +137,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
       }
 
       if (visibleAyah != null) {
-        ref.read(readingTrackerProvider.notifier).trackRead(
-              widget.surah.id,
-              widget.surah.nameEn,
-              visibleAyah,
-              secondsSpent: 2,
-              readingMode: 'list',
-            );
+        // reading tracker removed in v1.0.4
       }
     } catch (_) {}
   }
@@ -917,13 +903,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
             _scrollToAyah(next.currentAyahNumber!, list);
           });
         }
-        ref.read(readingTrackerProvider.notifier).trackRead(
-              widget.surah.id,
-              widget.surah.nameEn,
-              next.currentAyahNumber!,
-              secondsSpent: 3,
-              readingMode: 'list',
-            );
+        // reading tracker removed in v1.0.4
       }
     });
 
@@ -931,6 +911,8 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     final topPadding = MediaQuery.of(context).padding.top;
     final topOffset = topPadding + 140.0 + (widget.surah.totalAyahs > 30 ? 58.0 : 0.0);
     final bottomOffset = MediaQuery.of(context).padding.bottom + 96.0;
+
+    final bool isHeaderCurrentlyVisible = (readerSettings.distractionFree != true) || _isHeaderVisible;
 
     return Scaffold(
       backgroundColor: cs.bg,
@@ -941,9 +923,11 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
             child: GestureDetector(
               behavior: HitTestBehavior.translucent,
               onTap: () {
-                setState(() {
-                  _isHeaderVisible = !_isHeaderVisible;
-                });
+                if (readerSettings.distractionFree == true) {
+                  setState(() {
+                    _isHeaderVisible = !_isHeaderVisible;
+                  });
+                }
               },
               child: ayahsAsync.when(
                 data: (ayahs) {
@@ -1025,7 +1009,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            top: _isHeaderVisible ? 0 : -topOffset - 20,
+            top: isHeaderCurrentlyVisible ? 0 : -topOffset - 20,
             left: 0,
             right: 0,
             child: _buildFloatingHeader(context, cs, isDark, p, ayahsAsync, topOffset),
@@ -1035,7 +1019,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
           AnimatedPositioned(
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            bottom: (playerState.currentAyahNumber != null || playerState.isPlaying || playerState.isLoading) && _isHeaderVisible ? 0 : -140,
+            bottom: (playerState.currentAyahNumber != null || playerState.isPlaying || playerState.isLoading) && isHeaderCurrentlyVisible ? 0 : -140,
             left: 0,
             right: 0,
             child: SafeArea(
@@ -1245,7 +1229,7 @@ class _AyahRow extends ConsumerWidget {
                     style: TextStyle(
                       fontFamily: 'QPCV4Tajweed',
                       fontSize: fontSize + 4,
-                      height: 2.2,
+                      height: readerSettings.lineHeight,
                     ),
                   )
                 : Text(
@@ -1255,7 +1239,7 @@ class _AyahRow extends ConsumerWidget {
                     style: TextStyle(
                       fontFamily: quranFont,
                       fontSize: fontSize + 4,
-                      height: 2.2,
+                      height: readerSettings.lineHeight,
                       color: cs.textPrimary,
                     ),
                   ),

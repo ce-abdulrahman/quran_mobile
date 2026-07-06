@@ -8,7 +8,7 @@ import '../../core/models/surah_model.dart';
 import 'quran_providers.dart';
 import 'quran_reader_page.dart';
 import 'mushaf_reader_page.dart';
-import 'quran_statistics_page.dart';
+
 import '../../core/providers/app_providers.dart';
 import '../settings/settings_page.dart';
 import '../../core/widgets/feature_not_available_dialog.dart';
@@ -415,28 +415,6 @@ class _QuranHeader extends ConsumerWidget {
                               );
                             },
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.bar_chart_rounded, color: Colors.white, size: 22),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const QuranStatisticsPage(),
-                                ),
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.auto_stories_rounded, color: Colors.white, size: 22),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const MushafReaderPage(),
-                                ),
-                              );
-                            },
-                          ),
                         ],
                       ),
                     ],
@@ -650,26 +628,17 @@ class _JuzList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final juzs = JuzModel.list;
-    final trackerState = ref.watch(readingTrackerProvider);
-    final history = trackerState.history;
 
     return _buildResponsiveGrid<JuzModel>(
       context: context,
       items: juzs,
       padding: p,
-      mainAxisExtent: 96.0,
+      mainAxisExtent: 80.0,
       itemBuilder: (context, juz) {
         final name = l.localeCode == 'ar' 
             ? juz.arabicName 
             : (l.localeCode == 'en' ? juz.englishName : juz.kurdishName);
         
-        final uniqueReadInJuz = history
-            .where((h) => h.juzNumber == juz.juzNumber)
-            .map((h) => '${h.surahId}-${h.ayahNumber}')
-            .toSet()
-            .length;
-        final totalAyahsInJuz = ReadingTrackerNotifier.juzTotalAyahs[juz.juzNumber - 1];
-        final progress = totalAyahsInJuz > 0 ? (uniqueReadInJuz / totalAyahsInJuz).clamp(0.0, 1.0) : 0.0;
 
         return Card(
           color: cs.card,
@@ -679,77 +648,40 @@ class _JuzList extends ConsumerWidget {
             side: BorderSide(color: cs.cardBorder),
           ),
           margin: EdgeInsets.zero,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
-                leading: IslamicStarBadge(
-                  number: juz.juzNumber,
-                  color: cs.primary,
-                  textColor: cs.textPrimary,
-                  size: 34,
-                ),
-                title: Text(
-                  name,
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontWeight: FontWeight.bold,
-                    color: cs.textPrimary,
-                    fontSize: 13.5,
-                  ),
-                ),
-                subtitle: Text(
-                  'لاپەڕەی ${juz.startPage}',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 11,
-                    color: cs.textSecondary,
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (progress > 0) ...[
-                      Text(
-                        '${(progress * 100).toStringAsFixed(0)}%',
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: progress >= 1.0 ? cs.primary : Colors.amber[700],
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                    ],
-                    Icon(Icons.arrow_forward_ios_rounded, size: 12, color: cs.primary),
-                  ],
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MushafReaderPage(initialPage: juz.startPage),
-                    ),
-                  );
-                },
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+            leading: IslamicStarBadge(
+              number: juz.juzNumber,
+              color: cs.primary,
+              textColor: cs.textPrimary,
+              size: 34,
+            ),
+            title: Text(
+              name,
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontWeight: FontWeight.bold,
+                color: cs.textPrimary,
+                fontSize: 13.5,
               ),
-              if (progress > 0)
-                Padding(
-                  padding: const EdgeInsets.only(left: 14, right: 14, bottom: 8),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(2),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 3,
-                      backgroundColor: cs.bg,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        progress >= 1.0 ? cs.primary : Colors.amber[700]!,
-                      ),
-                    ),
-                  ),
+            ),
+            subtitle: Text(
+              'لاپەڕەی ${juz.startPage}',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 11,
+                color: cs.textSecondary,
+              ),
+            ),
+            trailing: Icon(Icons.arrow_forward_ios_rounded, size: 12, color: cs.primary),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MushafReaderPage(initialPage: juz.startPage),
                 ),
-            ],
+              );
+            },
           ),
         );
       },
@@ -766,8 +698,6 @@ class _HizbList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hizbs = HizbModel.list;
-    final trackerState = ref.watch(readingTrackerProvider);
-    final history = trackerState.history;
 
     return _buildResponsiveGrid<HizbModel>(
       context: context,
@@ -775,13 +705,6 @@ class _HizbList extends ConsumerWidget {
       padding: p,
       mainAxisExtent: 96.0,
       itemBuilder: (context, hiz) {
-        final uniqueReadInHizb = history
-            .where((h) => h.hizbNumber == hiz.hizbNumber)
-            .map((h) => '${h.surahId}-${h.ayahNumber}')
-            .toSet()
-            .length;
-        final totalAyahsInHizb = ReadingTrackerNotifier.hizbTotalAyahs[hiz.hizbNumber - 1];
-        final progress = totalAyahsInHizb > 0 ? (uniqueReadInHizb / totalAyahsInHizb).clamp(0.0, 1.0) : 0.0;
 
         return Card(
           color: cs.card,
@@ -791,77 +714,40 @@ class _HizbList extends ConsumerWidget {
             side: BorderSide(color: cs.cardBorder),
           ),
           margin: EdgeInsets.zero,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
-                leading: IslamicStarBadge(
-                  number: hiz.hizbNumber,
-                  color: cs.primary,
-                  textColor: cs.textPrimary,
-                  size: 34,
-                ),
-                title: Text(
-                  'حزبی ${hiz.hizbNumber}',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontWeight: FontWeight.bold,
-                    color: cs.textPrimary,
-                    fontSize: 13.5,
-                  ),
-                ),
-                subtitle: Text(
-                  'لاپەڕەی ${hiz.startPage}',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 11,
-                    color: cs.textSecondary,
-                  ),
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (progress > 0) ...[
-                      Text(
-                        '${(progress * 100).toStringAsFixed(0)}%',
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 11,
-                          fontWeight: FontWeight.bold,
-                          color: progress >= 1.0 ? cs.primary : Colors.amber[700],
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                    ],
-                    Icon(Icons.arrow_forward_ios_rounded, size: 12, color: cs.primary),
-                  ],
-                ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => MushafReaderPage(initialPage: hiz.startPage),
-                    ),
-                  );
-                },
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 0),
+            leading: IslamicStarBadge(
+              number: hiz.hizbNumber,
+              color: cs.primary,
+              textColor: cs.textPrimary,
+              size: 34,
+            ),
+            title: Text(
+              'حزبی ${hiz.hizbNumber}',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontWeight: FontWeight.bold,
+                color: cs.textPrimary,
+                fontSize: 13.5,
               ),
-              if (progress > 0)
-                Padding(
-                  padding: const EdgeInsets.only(left: 14, right: 14, bottom: 8),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(2),
-                    child: LinearProgressIndicator(
-                      value: progress,
-                      minHeight: 3,
-                      backgroundColor: cs.bg,
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        progress >= 1.0 ? cs.primary : Colors.amber[700]!,
-                      ),
-                    ),
-                  ),
+            ),
+            subtitle: Text(
+              'لاپەڕەی ${hiz.startPage}',
+              style: TextStyle(
+                fontFamily: 'Cairo',
+                fontSize: 11,
+                color: cs.textSecondary,
+              ),
+            ),
+            trailing: Icon(Icons.arrow_forward_ios_rounded, size: 12, color: cs.primary),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => MushafReaderPage(initialPage: hiz.startPage),
                 ),
-            ],
+              );
+            },
           ),
         );
       },
@@ -1004,9 +890,9 @@ class _SajdahList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sajdahs = SajdahModel.list;
     final trackerState = ref.watch(readingTrackerProvider);
     final history = trackerState.history;
+    final sajdahs = SajdahModel.list;
 
     return _buildResponsiveGrid<SajdahModel>(
       context: context,
@@ -1212,9 +1098,6 @@ class _SurahCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tracker = ref.watch(readingTrackerProvider.notifier);
-    final progress = tracker.getSurahProgress(surah.id, surah.totalAyahs);
-    final readCount = tracker.getSurahReadCount(surah.id);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
@@ -1246,6 +1129,7 @@ class _SurahCard extends ConsumerWidget {
         );
       },
       child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: cs.card,
@@ -1319,35 +1203,6 @@ class _SurahCard extends ConsumerWidget {
                 ),
               ],
             ),
-            if (readCount > 0) ...[
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        minHeight: 5,
-                        backgroundColor: cs.bg,
-                        valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    '$readCount/${surah.totalAyahs} خوێندراوەتەوە',
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: cs.primary,
-                    ),
-                  ),
-                ],
-              ),
-            ],
           ],
         ),
       ),

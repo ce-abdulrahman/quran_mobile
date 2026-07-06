@@ -7,7 +7,6 @@ import '../../../core/models/surah_model.dart';
 import '../../../core/models/juz_model.dart';
 import '../../../core/providers/app_providers.dart';
 import '../quran_providers.dart';
-import '../providers/audio_player_provider.dart';
 import '../../tajweed/tajweed_page.dart';
 import '../quran_reader_page.dart';
 import '../mushaf_reader_page.dart';
@@ -252,39 +251,74 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
       padding: const EdgeInsets.symmetric(horizontal: AppThemeTokens.s20, vertical: AppThemeTokens.s8),
       physics: const BouncingScrollPhysics(),
       children: [
-        // Font Size Slider
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'قەبارەی فۆنت',
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: cs.textPrimary,
+        // Font Size or Page Zoom Slider
+        if (widget.isMushaf) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'گەورەکردنی لاپەڕە',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: cs.textPrimary,
+                ),
               ),
-            ),
-            Text(
-              '${settings.fontSize.round()}',
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: cs.primary,
+              Text(
+                '${ref.watch(mushafZoomProvider).toStringAsFixed(1)}x',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: cs.primary,
+                ),
               ),
-            ),
-          ],
-        ),
-        Slider(
-          value: settings.fontSize,
-          min: 12,
-          max: 40,
-          divisions: 28,
-          activeColor: cs.primary,
-          inactiveColor: cs.primary.withValues(alpha: 0.15),
-          onChanged: (v) => ref.read(readerSettingsProvider.notifier).setFontSize(v),
-        ),
+            ],
+          ),
+          Slider(
+            value: ref.watch(mushafZoomProvider),
+            min: 1.0,
+            max: 3.0,
+            divisions: 20,
+            activeColor: cs.primary,
+            inactiveColor: cs.primary.withValues(alpha: 0.15),
+            onChanged: (v) => ref.read(mushafZoomProvider.notifier).setZoom(v),
+          ),
+        ] else ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'قەبارەی فۆنت',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: cs.textPrimary,
+                ),
+              ),
+              Text(
+                '${settings.fontSize.round()}',
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: cs.primary,
+                ),
+              ),
+            ],
+          ),
+          Slider(
+            value: settings.fontSize,
+            min: 12,
+            max: 40,
+            divisions: 28,
+            activeColor: cs.primary,
+            inactiveColor: cs.primary.withValues(alpha: 0.15),
+            onChanged: (v) => ref.read(readerSettingsProvider.notifier).setFontSize(v),
+          ),
+        ],
         const SizedBox(height: 8),
 
         // Line Spacing (Line Height)
@@ -342,16 +376,44 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
           onChanged: (v) => ref.read(readerSettingsProvider.notifier).toggleEnglish(v),
         ),
 
-        // Tajweed Switch
-        _buildSwitchRow(
-          icon: Icons.color_lens_rounded,
-          title: 'ڕەنگەکانی تەجوید',
+        // Tajweed Switch — with active badge when ON
+        _buildTajweedSwitchRow(
           value: settings.showTajweed,
           cs: cs,
           onChanged: (v) {
             ref.read(readerSettingsProvider.notifier).toggleTajweed(v);
           },
         ),
+
+        // Font lock notice — shown when Tajweed is active (non-Mushaf only)
+        if (!widget.isMushaf && settings.showTajweed)
+          Container(
+            margin: const EdgeInsets.only(top: 4, bottom: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.amber.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.lock_rounded, color: Colors.amber, size: 16),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'فۆنتی قورئان قفڵکراوە. دەبێت تەجوید ناچالاک بکەیت بۆ گۆڕینی فۆنت.',
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 11,
+                      color: Colors.amber[800],
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
 
         // Tajweed Rules Manager Button
         AnimatedSize(
@@ -548,157 +610,41 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
 
   // ── Tab 3: Audio Settings ────────────────────────────────────────────────
   Widget _buildAudioTab(BuildContext context, AppColorScheme cs, bool isDark) {
-    final playerState = ref.watch(audioPlayerProvider);
-    final recitersAsync = ref.watch(recitersProvider);
-
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: AppThemeTokens.s20, vertical: AppThemeTokens.s8),
-      physics: const BouncingScrollPhysics(),
-      children: [
-        // Active Reciter Row
-        Text(
-          'قورئان خوێن',
-          style: TextStyle(
-            fontFamily: 'Cairo',
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-            color: cs.textPrimary,
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        recitersAsync.when(
-          data: (reciters) {
-            final activeReciter = reciters.firstWhere(
-              (r) => r.id == playerState.selectedReciterId,
-              orElse: () => reciters.first,
-            );
-
-            return Container(
-              decoration: BoxDecoration(
-                color: cs.bg,
-                borderRadius: BorderRadius.circular(AppThemeTokens.r12),
-                border: Border.all(color: cs.cardBorder),
-              ),
-              child: ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: cs.primary.withValues(alpha: 0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(Icons.mic_rounded, color: cs.primary, size: 20),
-                ),
-                title: Text(
-                  activeReciter.name,
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: cs.textPrimary,
-                  ),
-                ),
-                subtitle: Text(
-                  'ڕیوایەتی ${activeReciter.riwayah}',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 11,
-                    color: cs.textSecondary,
-                  ),
-                ),
-                trailing: Text(
-                  'بگۆڕە',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: cs.primary,
-                  ),
-                ),
-                onTap: () => _showReciterListSheet(context, reciters, activeReciter, cs, isDark),
-              ),
-            );
-          },
-          loading: () => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          error: (e, _) => Center(
-            child: Text(
-              'خوێنەرەکان بارنەکران',
-              style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
-            ),
-          ),
-        ),
-        const SizedBox(height: 18),
-
-        // Playback Speed Slider
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Icon(
+              Icons.music_off_rounded,
+              size: 54,
+              color: cs.textSecondary.withValues(alpha: 0.5),
+            ),
+            const SizedBox(height: 16),
             Text(
-              'خێرایی خوێندنەوە',
+              'ئەم تایبەتمەندییە کارا نییە',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Cairo',
-                fontSize: 13,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
                 color: cs.textPrimary,
               ),
             ),
+            const SizedBox(height: 8),
             Text(
-              '${playerState.speed}x',
+              'بەشی دەنگ و خوێندنەوە لە ئێستادا بەردەست نییە بۆ ئەم چاپە.',
+              textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'Cairo',
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: cs.primary,
+                fontSize: 12,
+                color: cs.textSecondary,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [0.75, 1.0, 1.25, 1.5, 2.0].map((s) {
-            final active = playerState.speed == s;
-            return InkWell(
-              onTap: () => ref.read(audioPlayerProvider.notifier).setSpeed(s),
-              borderRadius: BorderRadius.circular(AppThemeTokens.r8),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: active ? cs.primary : cs.bg,
-                  borderRadius: BorderRadius.circular(AppThemeTokens.r8),
-                  border: Border.all(color: active ? cs.primary : cs.cardBorder),
-                ),
-                child: Text(
-                  '${s}x',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: active ? Colors.white : cs.textPrimary,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 18),
-
-        Divider(color: cs.divider),
-
-        // Auto Scroll Toggle
-        _buildSwitchRow(
-          icon: Icons.phonelink_ring_rounded,
-          title: 'لادانی لاپەڕەی ئۆتۆماتیکی لەگەڵ دەنگ',
-          value: playerState.isAutoScrollEnabled,
-          cs: cs,
-          onChanged: (v) => ref.read(audioPlayerProvider.notifier).toggleAutoScroll(),
-        ),
-      ],
+      ),
     );
   }
 
@@ -1038,98 +984,7 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
     }
   }
 
-  // ── Show Reciter Selector dialog inside sheet ────────────────────────────
-  void _showReciterListSheet(
-    BuildContext context,
-    List<dynamic> reciters,
-    dynamic currentReciter,
-    AppColorScheme cs,
-    bool isDark,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) {
-        return ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(AppThemeTokens.r24),
-            topRight: Radius.circular(AppThemeTokens.r24),
-          ),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              color: isDark ? const Color(0xFF0A2218).withValues(alpha: 0.9) : Colors.white.withValues(alpha: 0.95),
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    'هەڵبژاردنی قورئان خوێن',
-                    textDirection: TextDirection.rtl,
-                    style: TextStyle(
-                      fontFamily: 'Cairo',
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: cs.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Flexible(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: reciters.length,
-                      itemBuilder: (context, index) {
-                        final reciter = reciters[index];
-                        final isSelected = reciter.id == currentReciter.id;
 
-                        return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          decoration: BoxDecoration(
-                            color: isSelected ? cs.primary.withValues(alpha: 0.1) : Colors.transparent,
-                            borderRadius: BorderRadius.circular(AppThemeTokens.r12),
-                            border: Border.all(
-                              color: isSelected ? cs.primary : Colors.transparent,
-                              width: 1,
-                            ),
-                          ),
-                          child: ListTile(
-                            onTap: () {
-                              ref.read(audioPlayerProvider.notifier).changeReciter(reciter.id, widget.surahId);
-                              Navigator.pop(context); // Close sub sheet
-                            },
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                            title: Text(
-                              reciter.name,
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 13.5,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                                color: cs.textPrimary,
-                              ),
-                            ),
-                            subtitle: Text(
-                              'ڕیوایەتی ${reciter.riwayah}',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 10.5,
-                                color: cs.textSecondary,
-                              ),
-                            ),
-                            trailing: isSelected ? Icon(Icons.check_circle_rounded, color: cs.primary) : null,
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   // ── Helper Row Switch builder ───────────────────────────────────────────
   Widget _buildSwitchRow({
@@ -1175,4 +1030,80 @@ class _QuranSettingsSheetState extends ConsumerState<QuranSettingsSheet> with Si
       ),
     );
   }
+
+  // Special Tajweed switch row with a colored active badge
+  Widget _buildTajweedSwitchRow({
+    required bool value,
+    required AppColorScheme cs,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: value
+                      ? const Color(0xFF2E7D32).withValues(alpha: 0.12)
+                      : cs.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.color_lens_rounded,
+                  color: value ? const Color(0xFF2E7D32) : cs.primary,
+                  size: 18,
+                ),
+              ),
+              const SizedBox(width: AppThemeTokens.s12),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'ڕەنگەکانی تەجوید',
+                    style: TextStyle(
+                      fontFamily: 'Cairo',
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: cs.textPrimary,
+                    ),
+                  ),
+                  if (value)
+                    Container(
+                      margin: const EdgeInsets.only(top: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2E7D32).withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: const Color(0xFF2E7D32).withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: const Text(
+                        '● چالاکە',
+                        style: TextStyle(
+                          fontFamily: 'Cairo',
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF2E7D32),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+          Switch(
+            value: value,
+            activeColor: const Color(0xFF2E7D32),
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
 }
+

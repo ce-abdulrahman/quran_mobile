@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../local_db/isar_service.dart';
 import '../local_db/isar_collections.dart';
 
@@ -96,3 +97,41 @@ final bookmarksProvider =
     StateNotifierProvider<BookmarksNotifier, List<LocalBookmark>>((ref) {
   return BookmarksNotifier();
 });
+
+class PageBookmarksNotifier extends StateNotifier<List<int>> {
+  PageBookmarksNotifier() : super([]) {
+    _load();
+  }
+
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> list = prefs.getStringList('quran.page_bookmarks') ?? [];
+    // Sort page numbers ascending
+    final pages = list.map((e) => int.tryParse(e) ?? 0).where((e) => e > 0).toList();
+    pages.sort();
+    state = pages;
+  }
+
+  Future<void> toggle(int pageNumber) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> list = prefs.getStringList('quran.page_bookmarks') ?? [];
+    final String pageStr = pageNumber.toString();
+    if (list.contains(pageStr)) {
+      list.remove(pageStr);
+    } else {
+      list.add(pageStr);
+    }
+    await prefs.setStringList('quran.page_bookmarks', list);
+    await _load();
+  }
+
+  bool isBookmarked(int pageNumber) {
+    return state.contains(pageNumber);
+  }
+}
+
+final pageBookmarksProvider =
+    StateNotifierProvider<PageBookmarksNotifier, List<int>>((ref) {
+  return PageBookmarksNotifier();
+});
+

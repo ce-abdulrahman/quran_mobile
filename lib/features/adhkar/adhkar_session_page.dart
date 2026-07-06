@@ -281,7 +281,7 @@ class _AdhkarSessionPageState extends ConsumerState<AdhkarSessionPage>
                     const Divider(height: 1),
                     const SizedBox(height: 16),
                     Text(
-                      activeItem.translation,
+                      activeItem.getTranslation(Localizations.localeOf(context).languageCode),
                       textDirection: TextDirection.rtl,
                       textAlign: TextAlign.center,
                       style: TextStyle(
