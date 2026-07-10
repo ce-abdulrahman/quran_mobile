@@ -14,6 +14,7 @@ import 'shell/app_shell.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'core/local_db/isar_service.dart';
 import 'core/services/audio_quality_manager.dart';
 
@@ -21,6 +22,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await IsarService.init();
   final sharedPrefs = await SharedPreferences.getInstance();
+  final packageInfo = await PackageInfo.fromPlatform();
+  final appVersion = '${packageInfo.version}+${packageInfo.buildNumber}';
   await AudioQualityManager().init(sharedPrefs); 
 
   // Initialize Hive for high-performance, low-memory caching
@@ -53,6 +56,7 @@ void main() async {
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
         hiveCacheBoxProvider.overrideWithValue(cacheBox),
         prayerTimesHiveBoxProvider.overrideWithValue(prayerTimesBox),
+        appVersionProvider.overrideWithValue(appVersion),
       ],
       child: const QuranApp(),
     ),

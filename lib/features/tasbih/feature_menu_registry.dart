@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/auth_provider.dart';
 import 'themes/theme_selector_page.dart';
-import '../achievements/achievements_page.dart';
+// import '../achievements/achievements_page.dart';
 import '../settings/reminders_page.dart';
 import '../settings/settings_page.dart';
 
@@ -64,13 +64,13 @@ class FeatureMenuRegistry {
           onTap: (_, __) => onDailyGoalsTap(),
           isVisible: (_) => true,
         ),
-        FeatureMenuItem(
-          id: 'achievements',
-          icon: Icons.emoji_events_rounded,
-          title: (l) => l.menuAchievements,
-          onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const AchievementsPage())),
-          isVisible: (_) => true,
-        ),
+        // FeatureMenuItem(
+        //   id: 'achievements',
+        //   icon: Icons.emoji_events_rounded,
+        //   title: (l) => l.menuAchievements,
+        //   onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const AchievementsPage())),
+        //   isVisible: (_) => true,
+        // ),
       ],
       FeatureMenuGroup.productivity: [
         FeatureMenuItem(

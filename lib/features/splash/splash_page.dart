@@ -10,6 +10,7 @@ import '../../core/providers/prayer_times_provider.dart';
 import '../../core/local_db/isar_service.dart';
 import '../prayer/providers/prayer_times_provider.dart';
 import '../prayer/providers/prayer_widget_provider.dart';
+import 'changelog_dialog.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -65,6 +66,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     if (!needsSeeding) {
       await Future.delayed(const Duration(milliseconds: 2000));
       if (!mounted) return;
+      await ChangelogDialog.showIfNeeded(context);
+      if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/shell');
     } else {
       setState(() {
@@ -84,6 +87,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
           },
         );
         
+        if (!mounted) return;
+        await ChangelogDialog.showIfNeeded(context);
         if (!mounted) return;
         Navigator.of(context).pushReplacementNamed('/shell');
       } catch (e) {

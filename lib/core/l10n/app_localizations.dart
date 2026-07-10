@@ -364,7 +364,7 @@ class AppLocalizations {
   String get khatmStatusAhead => _translate(ku: 'پێش کەوتووە ✨', ar: 'متقدم ✨', en: 'Ahead of schedule ✨');
 
   // ── Adhkar ───────────────────────────────────────────────────────
-  String get adhkarTitle => _translate(ku: 'ئەزکارەکان', ar: 'الأذكار', en: 'Adhkar');
+  String get adhkarTitle => _translate(ku: 'زکرەکان', ar: 'الأذكار', en: 'Adhkar');
   String get adhkarMorning => _translate(ku: 'ئەزکاری بەیانیان', ar: 'أذكار الصباح', en: 'Morning Adhkar');
   String get adhkarEvening => _translate(ku: 'ئەزکاری ئێواران', ar: 'أذكار المساء', en: 'Evening Adhkar');
   String get adhkarAfterPrayer => _translate(ku: 'ئەزکاری دوای نوێژ', ar: 'أذكار بعد الصلاة', en: 'After Prayer Adhkar');

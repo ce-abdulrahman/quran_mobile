@@ -105,6 +105,55 @@ class IsarService {
     return _instance!;
   }
 
+  /// Seeds Tajweed rules directly from the local bundled asset file.
+  /// Always reads from assets/data/packages/tajweed/tajweed_rules.json — no API call.
+  Future<void> _seedTajweedRulesFromLocalAsset() async {
+    try {
+      final jsonString = await rootBundle.loadString(
+        'assets/data/packages/tajweed/tajweed_rules.json',
+      );
+      final List<dynamic> data = jsonDecode(jsonString) as List;
+      final List<TajweedRuleCollection> items = [];
+      for (final cat in data) {
+        final catId = cat['id'] as int? ?? cat['categoryId'] as int? ?? 0;
+        final catSlug = cat['slug'] as String? ?? '';
+        final catNameKu = cat['name_ku'] as String? ?? cat['nameKu'] as String? ?? '';
+        final catNameAr = cat['name_ar'] as String? ?? cat['nameAr'] as String? ?? '';
+        final catNameEn = cat['name'] as String? ?? cat['nameEn'] as String? ?? '';
+        final catOrder = cat['order'] as int? ?? 0;
+        int rulePriority = 0;
+
+        final rulesList = cat['rules'] as List<dynamic>? ?? [];
+        for (final rule in rulesList) {
+          items.add(TajweedRuleCollection(
+            ruleId: rule['id'] as int? ?? rule['ruleId'] as int? ?? 0,
+            ruleSlug: rule['slug'] as String? ?? '',
+            nameAr: rule['name_ar'] as String? ?? rule['nameAr'] as String? ?? '',
+            nameEn: rule['name'] as String? ?? rule['nameEn'] as String? ?? '',
+            nameKu: rule['name_ku'] as String? ?? rule['nameKu'] as String? ?? '',
+            colorCode: rule['color_code'] as String? ?? rule['colorCode'] as String? ?? '#000000',
+            description: rule['description_ku'] as String? ?? rule['descriptionKu'] as String? ?? rule['description'] as String?,
+            categoryId: catId,
+            categorySlug: catSlug,
+            categoryNameAr: catNameAr,
+            categoryNameEn: catNameEn,
+            categoryNameKu: catNameKu,
+            categoryOrder: catOrder,
+            rulePriority: rulePriority++,
+          ));
+        }
+      }
+      if (items.isNotEmpty) {
+        await isar.writeTxn(() async {
+          await isar.tajweedRuleCollections.clear();
+          await isar.tajweedRuleCollections.putAll(items);
+        });
+      }
+    } catch (e) {
+      if (kDebugMode) print('Failed to seed tajweed rules from local asset: $e');
+    }
+  }
+
   /// Helper to safely load JSON from standard packages directory, or fall back to old asset structure.
   Future<List<dynamic>> _loadPackageData(String packageName, String fallbackAssetPath) async {
     try {
@@ -297,78 +346,86 @@ class IsarService {
         final hadithsCount = await isar.hadithCollections.count();
         if (hadithsCount == 0) {
           final data = await _loadPackageData('hadith', 'assets/data/hadiths.json');
-          final items = data.map((json) {
-            final id = json['id'] ?? json['hadithId'] ?? 0;
-            return HadithCollection(
-              hadithId: id as int,
-              categoryId: (json['category_id'] ?? json['categoryId'] ?? 1) as int,
-              categoryNameAr: (json['category_name_ar'] ?? json['categoryNameAr'] ?? 'عام') as String,
-              categoryNameKu: (json['category_name_ku'] ?? json['categoryNameKu'] ?? 'گشتی') as String,
-              arabicText: (json['arabic_text'] ?? json['arabicText'] ?? '') as String,
-              translationKu: (json['translation_ku'] ?? json['translationKu'] ?? '') as String,
-              translationEn: (json['translation_en'] ?? json['translationEn']) as String?,
-              narrator: json['narrator'] as String?,
-              source: json['source'] as String?,
-              explanationKu: (json['explanation_ku'] ?? json['explanationKu']) as String?,
-              explanationEn: (json['explanation_en'] ?? json['explanationEn']) as String?,
-              order: (json['order'] ?? 0) as int,
-              isActive: json['is_active'] != false && json['isActive'] != false,
-              slug: (json['slug'] ?? 'hadith-$id') as String,
-              version: (json['version'] ?? 1) as int,
-              updatedAt: json['updated_at'] != null 
-                  ? DateTime.parse(json['updated_at'] as String) 
-                  : DateTime.now(),
-            );
-          }).toList();
-          await isar.writeTxn(() => isar.hadithCollections.putAll(items));
+          final List<HadithCollection> items = [];
+          for (final cat in data) {
+            final catId = cat['id'] as int? ?? 0;
+            final catNameKu = cat['name_ku'] as String? ?? cat['nameKu'] as String? ?? 'گشتی';
+            final catNameAr = cat['name_ar'] as String? ?? cat['nameAr'] as String? ?? 'عام';
+            // Check if this is a category object with nested hadiths
+            final nestedHadiths = cat['hadiths'] as List<dynamic>?;
+            if (nestedHadiths != null && nestedHadiths.isNotEmpty) {
+              // Nested category structure: {id, name_ku, name_ar, hadiths: [...]}
+              for (final json in nestedHadiths) {
+                final id = json['id'] ?? json['hadithId'] ?? 0;
+                items.add(HadithCollection(
+                  hadithId: id as int,
+                  categoryId: catId,
+                  categoryNameAr: catNameAr,
+                  categoryNameKu: catNameKu,
+                  arabicText: (json['arabic_text'] ?? json['arabicText'] ?? '') as String,
+                  translationKu: (json['translation_ku'] ?? json['translationKu'] ?? '') as String,
+                  translationEn: (json['translation_en'] ?? json['translationEn']) as String?,
+                  narrator: json['narrator'] as String?,
+                  source: json['source'] as String?,
+                  explanationKu: (json['explanation_ku'] ?? json['explanationKu']) as String?,
+                  explanationEn: (json['explanation_en'] ?? json['explanationEn']) as String?,
+                  order: (json['order'] ?? 0) as int,
+                  isActive: json['is_active'] != false && json['isActive'] != false,
+                  slug: (json['slug'] ?? 'hadith-$id') as String,
+                  version: (json['version'] ?? 1) as int,
+                  updatedAt: json['updated_at'] != null
+                      ? DateTime.parse(json['updated_at'] as String)
+                      : DateTime.now(),
+                ));
+              }
+            } else {
+              // Flat structure fallback: treat each object as a direct HadithCollection
+              final id = cat['id'] ?? cat['hadithId'] ?? 0;
+              final directCatId = cat['category_id'] ?? cat['categoryId'] ?? catId;
+              items.add(HadithCollection(
+                hadithId: id as int,
+                categoryId: directCatId as int,
+                categoryNameAr: (cat['category_name_ar'] ?? cat['categoryNameAr'] ?? catNameAr) as String,
+                categoryNameKu: (cat['category_name_ku'] ?? cat['categoryNameKu'] ?? catNameKu) as String,
+                arabicText: (cat['arabic_text'] ?? cat['arabicText'] ?? '') as String,
+                translationKu: (cat['translation_ku'] ?? cat['translationKu'] ?? '') as String,
+                translationEn: (cat['translation_en'] ?? cat['translationEn']) as String?,
+                narrator: cat['narrator'] as String?,
+                source: cat['source'] as String?,
+                explanationKu: (cat['explanation_ku'] ?? cat['explanationKu']) as String?,
+                explanationEn: (cat['explanation_en'] ?? cat['explanationEn']) as String?,
+                order: (cat['order'] ?? 0) as int,
+                isActive: cat['is_active'] != false && cat['isActive'] != false,
+                slug: (cat['slug'] ?? 'hadith-$id') as String,
+                version: (cat['version'] ?? 1) as int,
+                updatedAt: cat['updated_at'] != null
+                    ? DateTime.parse(cat['updated_at'] as String)
+                    : DateTime.now(),
+              ));
+            }
+          }
+          if (items.isNotEmpty) {
+            await isar.writeTxn(() => isar.hadithCollections.putAll(items));
+          }
         }
         await markStepDone('hadiths');
       } else {
         completedSteps++;
       }
 
+
       // 6. Tajweed Rules
       if (!isStepDone('tajweed_rules')) {
         update('بارکردنی یاساکانی تەجوید...');
-        final rulesCount = await isar.tajweedRuleCollections.count();
-        if (rulesCount == 0) {
-          final data = await _loadPackageData('tajweed', 'assets/data/tajweed_rules.json');
-          final List<TajweedRuleCollection> items = [];
-          for (final cat in data) {
-            final catId = cat['id'] as int? ?? cat['categoryId'] as int? ?? 0;
-            final catSlug = cat['slug'] as String? ?? '';
-            final catNameKu = cat['name_ku'] as String? ?? cat['nameKu'] as String? ?? '';
-            final catNameAr = cat['name_ar'] as String? ?? cat['nameAr'] as String? ?? '';
-            final catNameEn = cat['name'] as String? ?? cat['nameEn'] as String? ?? '';
-            final catOrder = cat['order'] as int? ?? 0;
-            int rulePriority = 0;
-
-            final rulesList = cat['rules'] as List<dynamic>? ?? [];
-            for (final rule in rulesList) {
-              items.add(TajweedRuleCollection(
-                ruleId: rule['id'] as int? ?? rule['ruleId'] as int? ?? 0,
-                ruleSlug: rule['slug'] as String? ?? '',
-                nameAr: rule['name_ar'] as String? ?? rule['nameAr'] as String? ?? '',
-                nameEn: rule['name'] as String? ?? rule['nameEn'] as String? ?? '',
-                nameKu: rule['name_ku'] as String? ?? rule['nameKu'] as String? ?? '',
-                colorCode: rule['color_code'] as String? ?? rule['colorCode'] as String? ?? '#000000',
-                description: rule['description_ku'] as String? ?? rule['descriptionKu'] as String? ?? rule['description'] as String?,
-                categoryId: catId,
-                categorySlug: catSlug,
-                categoryNameAr: catNameAr,
-                categoryNameEn: catNameEn,
-                categoryNameKu: catNameKu,
-                categoryOrder: catOrder,
-                rulePriority: rulePriority++,
-              ));
-            }
-          }
-          if (items.isNotEmpty) {
-            await isar.writeTxn(() => isar.tajweedRuleCollections.putAll(items));
-          }
-        }
+        await _seedTajweedRulesFromLocalAsset();
         await markStepDone('tajweed_rules');
       } else {
+        // Migration: Re-seed tajweed rules if categories changed (v2 update)
+        if (prefs.getBool('tajweed_rules_v2_migrated') != true) {
+          update('نوێکردنەوەی کاتەگۆریی تەجوید...');
+          await _seedTajweedRulesFromLocalAsset();
+          await prefs.setBool('tajweed_rules_v2_migrated', true);
+        }
         completedSteps++;
       }
 
@@ -455,6 +512,20 @@ class IsarService {
         try {
           final jsonString = await rootBundle.loadString('assets/data/quran/surah_$i.json');
           final List<dynamic> data = jsonDecode(jsonString);
+          
+          final String surahStr = i.toString().padLeft(3, '0');
+          final String segmentsPath = 'assets/data/packages/tajweed/$surahStr/segments.json';
+          Map<int, List<dynamic>>? packageSegmentsMap;
+          try {
+            final segmentsJsonStr = await rootBundle.loadString(segmentsPath);
+            final List<dynamic> segmentsData = jsonDecode(segmentsJsonStr);
+            packageSegmentsMap = {};
+            for (final item in segmentsData) {
+              final int ayahNum = item['ayah_number'] as int;
+              packageSegmentsMap[ayahNum] = item['segments'] as List<dynamic>? ?? [];
+            }
+          } catch (_) {}
+
           for (final json in data) {
             final translations = json['translations'] as List<dynamic>? ?? [];
             String? textEn;
@@ -467,7 +538,9 @@ class IsarService {
               }
             }
 
-            final segmentsJson = json['tajweed_segments'] as List<dynamic>? ?? [];
+            final int ayahNumber = json['ayah_number'] as int;
+            final List<dynamic> segmentsJson = packageSegmentsMap?[ayahNumber] ??
+                json['tajweed_segments'] as List<dynamic>? ?? [];
             final tajweedSegments = segmentsJson.map((x) {
               final m = x as Map<String, dynamic>;
               return TajweedSegment()
@@ -483,7 +556,7 @@ class IsarService {
             surahAyahs.add(AyahCollection(
               ayahId: json['id'] as int,
               surahNumber: i,
-              ayahNumber: json['ayah_number'] as int,
+              ayahNumber: ayahNumber,
               textUthmani: json['text_uthmani'] as String? ?? '',
               textEn: textEn,
               textKu: textKu,
@@ -511,10 +584,32 @@ class IsarService {
         completedSteps = 8 + i; // 8 metadata steps + current surah index
       }
 
-      // 10. Rebuild Search Index
+      // 10. Rebuild Search Index (spread progress across packages to avoid 99% hang)
       if (!isStepDone('search_index')) {
-        update('نوێکردنەوەی ئیندێکسی گەڕان...');
-        await SearchService.instance.rebuildAll();
+        final indexablePackages = ContentPackage.values
+            .where((p) => p != ContentPackage.prayer_database &&
+                p != ContentPackage.translations &&
+                p != ContentPackage.audio_metadata)
+            .toList();
+        final pkgCount = indexablePackages.length.toDouble();
+        int pkgDone = 0;
+        for (final pkg in indexablePackages) {
+          update('ئیندێکسکردنی گەڕان: ${pkg.name}...');
+          await SearchService.instance.rebuildIndex(pkg);
+          pkgDone++;
+          // Manually set progress between 122 and 123 as packages finish
+          final partial = completedSteps + (pkgDone / pkgCount);
+          final double progress = (partial / totalSteps).clamp(0.0, 1.0);
+          for (final cb in _progressCallbacks) {
+            try { cb('ئیندێکسکردنی گەڕان...', progress); } catch (_) {}
+          }
+        }
+        // Also index any existing user notes
+        update('ئیندێکسکردنی تێبینییەکان...');
+        final notes = await isar.noteCollections.where().findAll();
+        for (final n in notes) {
+          await SearchService.instance.indexNote(n);
+        }
         await markStepDone('search_index');
       } else {
         completedSteps++;
@@ -556,12 +651,37 @@ class IsarService {
 
   /// Checks if any critical collection is empty, returning true if seeding is required.
   Future<bool> checkNeedSeeding() async {
+    // Run tajweed segments update for Surah 1 & 2 if not done yet
+    await updateTajweedSegmentsForSurahs1And2();
+
     try {
       final namesCount = await isar.namesOfAllahCollections.count();
       final seerahCount = await isar.seerahCollections.count();
       final sahabaCount = await isar.sahabaCollections.count();
       final recitersCount = await isar.reciterCollections.count();
       final hadithsCount = await isar.hadithCollections.count();
+
+      final prefs = await SharedPreferences.getInstance();
+      // Migration for fixed Hadiths (unique hadithId)
+      if (prefs.getBool('hadiths_v3_migrated') != true) {
+        await prefs.setBool('seed_step_hadiths', false);
+        await prefs.setBool('seed_step_search_index', false);
+        await isar.writeTxn(() async {
+          await isar.hadithCollections.clear();
+          await isar.searchIndexCollections.clear();
+        });
+        await prefs.setBool('hadiths_v3_migrated', true);
+        await prefs.setBool('is_db_initialized', false);
+        return true;
+      }
+
+      // Auto-update check: if existing database has old flat structure (e.g. less than 100 hadiths)
+      if (hadithsCount > 0 && hadithsCount < 100) {
+        await prefs.setBool('seed_step_hadiths', false);
+        await isar.writeTxn(() => isar.hadithCollections.clear());
+        await prefs.setBool('is_db_initialized', false);
+        return true;
+      }
       final rulesCount = await isar.tajweedRuleCollections.count();
       final surahsCount = await isar.surahCollections.count();
       final adhkarsCount = await isar.adhkarCollections.count();
@@ -590,6 +710,61 @@ class IsarService {
     } catch (_) {
       return true; // Seed on error to be safe
     }
+  }
+
+  /// Updates the tajweed segments of Surah 1 and Surah 2 from package segments.json files
+  Future<void> updateTajweedSegmentsForSurahs1And2() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool('has_updated_tajweed_segments_v2') == true) {
+      return;
+    }
+    
+    for (int surahNum in [1, 2]) {
+      try {
+        final String surahStr = surahNum.toString().padLeft(3, '0');
+        final String segmentsPath = 'assets/data/packages/tajweed/$surahStr/segments.json';
+        final jsonString = await rootBundle.loadString(segmentsPath);
+        final List<dynamic> segmentsData = jsonDecode(jsonString);
+        
+        final Map<int, List<TajweedSegment>> ayahSegmentsMap = {};
+        for (final item in segmentsData) {
+          final int ayahNum = item['ayah_number'] as int;
+          final List<dynamic> segmentsList = item['segments'] as List<dynamic>? ?? [];
+          final List<TajweedSegment> segments = segmentsList.map((x) {
+            final m = x as Map<String, dynamic>;
+            return TajweedSegment()
+              ..startIndex = m['start_index'] as int?
+              ..endIndex = m['end_index'] as int?
+              ..ruleId = m['rule_id'] as int? ?? m['rule'] as int?
+              ..colorId = m['color_id'] as int?
+              ..connectsToLeft = m['connects_to_left'] as bool?
+              ..connectsToRight = m['connects_to_right'] as bool?
+              ..textSegment = m['text_segment'] as String?;
+          }).toList();
+          ayahSegmentsMap[ayahNum] = segments;
+        }
+        
+        final existingAyahs = await isar.ayahCollections.filter()
+            .surahNumberEqualTo(surahNum)
+            .findAll();
+            
+        if (existingAyahs.isNotEmpty) {
+          await isar.writeTxn(() async {
+            for (final ayah in existingAyahs) {
+              final newSegments = ayahSegmentsMap[ayah.ayahNumber] ?? [];
+              ayah.tajweedSegments = newSegments;
+              await isar.ayahCollections.put(ayah);
+            }
+          });
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          print("Failed to update tajweed segments for surah $surahNum: $e");
+        }
+      }
+    }
+    
+    await prefs.setBool('has_updated_tajweed_segments_v2', true);
   }
 
   static void initForTest(Isar isarInstance) {

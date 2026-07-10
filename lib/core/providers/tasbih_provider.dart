@@ -79,6 +79,21 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
   static const _customKey = 'tasbih_custom_list';
   static const _countsKey = 'tasbih_session_counts';
 
+  static const List<TasbihModel> _defaultDhikrs = [
+    TasbihModel(
+      id: '1',
+      name: 'أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',
+      target: 100,
+      isCustom: false,
+    ),
+    TasbihModel(
+      id: '2',
+      name: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ، سُبْحَانَ اللَّهِ الْعَظِيمِ',
+      target: 100,
+      isCustom: false,
+    ),
+  ];
+
   TasbihNotifier(this._prefs, this._ref)
       : super(const TasbihState(dhikrs: [], counts: {}, isLoading: true)) {
     _init();
@@ -181,39 +196,12 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
       _syncDailyGoalOnLoad(dailyGoalValue, dailyGoalProgress);
     }
 
-    // 3. Fetch remote dhikrs and merge
-    await fetchRemoteDhikrs(customDhikrs);
-  }
-
-  Future<void> fetchRemoteDhikrs(List<TasbihModel> customDhikrs) async {
-    try {
-      final repo = _ref.read(tasbihRepositoryProvider);
-      final result = await repo.getTasbihs();
-
-      result.when(
-        success: (remoteList) {
-          final merged = [...remoteList, ...customDhikrs];
-          state = state.copyWith(
-            dhikrs: merged,
-            isLoading: false,
-            errorMessage: null,
-          );
-        },
-        error: (msg, code, cached) {
-          final List<TasbihModel> merged = [...(cached ?? <TasbihModel>[]), ...customDhikrs];
-          state = state.copyWith(
-            dhikrs: merged,
-            isLoading: false,
-            errorMessage: msg,
-          );
-        },
-      );
-    } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
-    }
+    // 3. Merge local default dhikrs and custom ones
+    final merged = [..._defaultDhikrs, ...customDhikrs];
+    state = state.copyWith(
+      dhikrs: merged,
+      isLoading: false,
+    );
   }
 
   Future<void> addCustomDhikr(String name, int target) async {

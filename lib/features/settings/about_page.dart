@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
+import '../../core/providers/app_providers.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // About Page
 // ─────────────────────────────────────────────────────────────────────────────
 
-class AboutPage extends StatelessWidget {
+class AboutPage extends ConsumerWidget {
   const AboutPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final cs = AppColorScheme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l = context.l10n;
@@ -21,12 +23,15 @@ class AboutPage extends StatelessWidget {
     final isRtl = languageCode == 'ku' || languageCode == 'ar';
     final textDirection = isRtl ? TextDirection.rtl : TextDirection.ltr;
 
+    final activeText = languageCode == 'ku' ? 'چالاک' : (languageCode == 'ar' ? 'نشط' : 'Active');
+    final futureText = languageCode == 'ku' ? 'بۆ داهاتوو' : (languageCode == 'ar' ? 'قريباً' : 'Upcoming');
+
     final devTitle = languageCode == 'ku'
         ? 'دروستکراوە لەلایەن:'
         : (languageCode == 'ar' ? 'تم التطوير بواسطة:' : 'Developed by:');
     final devName = languageCode == 'ku'
-        ? 'ئەندازیار عبدالرحمن إسماعیل'
-        : (languageCode == 'ar' ? 'المهندس عبدالرحمن إسماعيل' : 'Eng. Abdulrahman Ismail');
+        ? 'عبدالرحمن إسماعیل'
+        : (languageCode == 'ar' ? 'عبدالرحمن إسماعيل' : 'Abdulrahman Ismael');
 
     return Scaffold(
       backgroundColor: cs.bg,
@@ -137,7 +142,7 @@ class AboutPage extends StatelessWidget {
                             ),
                           ),
                           child: Text(
-                            l.aboutVersion(l.localeCode == 'en' ? '1.0.0' : '١.٠.٠'),
+                            l.aboutVersion(ref.watch(appVersionProvider)),
                             style: const TextStyle(
                               fontFamily: 'Cairo',
                               fontSize: 13,
@@ -239,13 +244,16 @@ class AboutPage extends StatelessWidget {
                         const Divider(height: 1),
                         const SizedBox(height: 12),
                         ...[
-                          (Icons.menu_book_rounded, l.aboutFeatQuran),
-                          (Icons.headphones_rounded, l.aboutFeatAudio),
-                          (Icons.school_rounded, l.aboutFeatTajweed),
-                          (Icons.bookmark_rounded, l.aboutFeatBookmark),
-                          (Icons.bar_chart_rounded, l.aboutFeatStats),
-                          (Icons.notifications_rounded, l.aboutFeatNotif),
-                          (Icons.mosque_rounded, l.aboutFeatPrayer),
+                          (Icons.menu_book_rounded, l.aboutFeatQuran, true),
+                          (Icons.headphones_rounded, l.aboutFeatAudio, true),
+                          (Icons.school_rounded, l.aboutFeatTajweed, true),
+                          (Icons.bookmark_rounded, l.aboutFeatBookmark, true),
+                          (Icons.assignment_turned_in_rounded, l.khatmTitle, false),
+                          (Icons.psychology_rounded, l.memorizationQuizTitle, false),
+                          (Icons.note_alt_rounded, l.notesPageTitle, false),
+                          (Icons.bar_chart_rounded, l.aboutFeatStats, false),
+                          (Icons.notifications_rounded, l.aboutFeatNotif, true),
+                          (Icons.mosque_rounded, l.aboutFeatPrayer, true),
                         ].map(
                           (item) => Padding(
                             padding: const EdgeInsets.only(bottom: 10),
@@ -269,6 +277,24 @@ class AboutPage extends StatelessWidget {
                                       fontFamily: 'Cairo',
                                       fontSize: 13,
                                       color: cs.textPrimary,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                  decoration: BoxDecoration(
+                                    color: item.$3
+                                        ? cs.primary.withValues(alpha: 0.1)
+                                        : Colors.orange.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    item.$3 ? activeText : futureText,
+                                    style: TextStyle(
+                                      fontFamily: 'Cairo',
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: item.$3 ? cs.primary : Colors.orange[800],
                                     ),
                                   ),
                                 ),

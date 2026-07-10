@@ -26,10 +26,10 @@ import 'adapters/slide_page_turn_controller.dart';
 import 'adapters/shared_preferences_mushaf_repository.dart';
 import 'services/adaptive_cache_manager.dart';
 import 'services/user_interaction_lock.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'interfaces/mushaf_asset_provider.dart';
 import 'providers/vector_mushaf_provider.dart';
 import 'widgets/vector_mushaf_painter.dart';
+import 'widgets/mushaf_svg_renderer.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Mushaf Reader Page
@@ -805,9 +805,10 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
                         child: Stack(
                           children: [
                             Positioned.fill(
-                              child: SvgPicture.file(
+                              child: buildMushafSvg(
                                 asset.localFile,
-                                fit: BoxFit.fill,
+                                pageNum.toString().padLeft(3, '0'),
+                                BoxFit.fill,
                               ),
                             ),
                             Positioned.fill(

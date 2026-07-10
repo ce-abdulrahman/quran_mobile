@@ -53,8 +53,10 @@ class PrayerNotificationService {
 
     int notificationId = 10000;
 
-    // Use adhan library calculation params as fallback
+    // Use adhan library calculation params — Kurdistan Region (Ministry of Awqaf)
     final params = CalculationMethod.muslim_world_league.getParameters();
+    params.fajrAngle = 18.0;
+    params.ishaAngle = 17.0;
     params.madhab = Madhab.shafi;
     final coordinates = Coordinates(city.latitude, city.longitude);
 

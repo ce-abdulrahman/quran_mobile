@@ -10,6 +10,11 @@ import '../../core/models/ayah_model.dart';
 import '../../core/models/sajdah_model.dart';
 import '../../core/models/surah_model.dart';
 import '../../core/services/tajweed_engine.dart';
+import '../../core/models/tajweed_segment_model.dart';
+import '../../core/local_db/isar_collections.dart';
+import '../../core/local_db/isar_service.dart';
+import 'package:flutter/rendering.dart';
+import 'package:isar/isar.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/providers/bookmarks_provider.dart';
 import '../../core/providers/notes_provider.dart';
@@ -64,7 +69,9 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     _scrollController.dispose();
     _debounceTimer?.cancel();
     _scrollTrackTimer?.cancel();
-    ref.read(audioPlayerProvider.notifier).pause();
+    try {
+      ref.read(audioPlayerProvider.notifier).pause();
+    } catch (_) {}
     super.dispose();
   }
 
@@ -709,103 +716,127 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Custom AppBar
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.textPrimary),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    
-                    // Surah title with Prev/Next buttons
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (prevSurah != null)
-                          IconButton(
-                            icon: Icon(Icons.chevron_left_rounded, color: cs.textPrimary),
-                            tooltip: 'سورەتی پێشوو',
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => QuranReaderPage(surah: prevSurah),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        padding: const EdgeInsets.all(8),
+                        constraints: const BoxConstraints(),
+                        icon: Icon(Icons.arrow_back_ios_new_rounded, color: cs.textPrimary),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      
+                      // Surah title with Prev/Next buttons
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (prevSurah != null)
+                              IconButton(
+                                padding: const EdgeInsets.all(8),
+                                constraints: const BoxConstraints(),
+                                icon: Icon(Icons.chevron_left_rounded, color: cs.textPrimary),
+                                tooltip: 'سورەتی پێشوو',
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => QuranReaderPage(surah: prevSurah),
+                                    ),
+                                  );
+                                },
+                              )
+                            else
+                              const SizedBox(width: 32),
+                            Flexible(
+                              child: Text(
+                                Localizations.localeOf(context).languageCode == 'ku' ? widget.surah.nameKu : widget.surah.nameEn,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: cs.textPrimary,
                                 ),
-                              );
-                            },
-                          )
-                        else
-                          const SizedBox(width: 48),
-                        Text(
-                          Localizations.localeOf(context).languageCode == 'ku' ? widget.surah.nameKu : widget.surah.nameEn,
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: cs.textPrimary,
-                          ),
+                              ),
+                            ),
+                            if (nextSurah != null)
+                              IconButton(
+                                padding: const EdgeInsets.all(8),
+                                constraints: const BoxConstraints(),
+                                icon: Icon(Icons.chevron_right_rounded, color: cs.textPrimary),
+                                tooltip: 'سورەتی داهاتوو',
+                                onPressed: () {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => QuranReaderPage(surah: nextSurah),
+                                    ),
+                                  );
+                                },
+                              )
+                            else
+                              const SizedBox(width: 32),
+                          ],
                         ),
-                        if (nextSurah != null)
-                          IconButton(
-                            icon: Icon(Icons.chevron_right_rounded, color: cs.textPrimary),
-                            tooltip: 'سورەتی داهاتوو',
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => QuranReaderPage(surah: nextSurah),
-                                ),
-                              );
-                            },
-                          )
-                        else
-                          const SizedBox(width: 48),
-                      ],
-                    ),
-
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Tooltip(
-                          message: 'قورئانخوێنەکان',
-                          child: IconButton(
-                            icon: Icon(Icons.mic_rounded, color: cs.textPrimary),
-                            onPressed: () {
-                              showFeatureUnderDevelopmentDialog(
-                                context,
-                                messageKu: 'ئەم تایبەتمەندییە (خوێندنەوەی دەنگی قورئانخوێنەکان) لە ئێستادا کاری لەسەر دەکرێت بۆیە بەردەست نییە. سوپاس بۆ ئارامگریت.',
-                                messageAr: 'هذه الميزة (أصوات القراء) قيد التطوير حالياً وليست متوفرة. شكراً لصبركم.',
-                                messageEn: 'This feature (reciters audio) is currently under development and is not available. Thank you for your patience.',
-                              );
-                            },
+                      ),
+  
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Tooltip(
+                            message: 'قورئانخوێنەکان',
+                            child: IconButton(
+                              padding: const EdgeInsets.all(8),
+                              constraints: const BoxConstraints(),
+                              icon: Icon(Icons.mic_rounded, color: cs.textPrimary),
+                              onPressed: () {
+                                showFeatureUnderDevelopmentDialog(
+                                  context,
+                                  messageKu: 'ئەم تایبەتمەندییە (خوێندنەوەی دەنگی قورئانخوێنەکان) لە ئێستادا کاری لەسەر دەکرێت بۆیە بەردەست نییە. سوپاس بۆ ئارامگریت.',
+                                  messageAr: 'هذه الميزة (أصوات القراء) قيد التطوير حالياً وليست متوفرة. شكراً لصبركم.',
+                                  messageEn: 'This feature (reciters audio) is currently under development and is not available. Thank you for your patience.',
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        Tooltip(
-                          message: 'مۆدی موسحەف',
-                          child: IconButton(
-                            icon: Icon(Icons.menu_book_rounded, color: cs.textPrimary),
-                            onPressed: () {
-                              final int? surahStartPage = ayahsAsync.valueOrNull
-                                  ?.firstOrNull
-                                  ?.pageNumber ?? widget.surah.pageStart;
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => MushafReaderPage(
-                                    initialPage: surahStartPage,
+                          const SizedBox(width: 4),
+                          Tooltip(
+                            message: 'مۆدی موسحەف',
+                            child: IconButton(
+                              padding: const EdgeInsets.all(8),
+                              constraints: const BoxConstraints(),
+                              icon: Icon(Icons.menu_book_rounded, color: cs.textPrimary),
+                              onPressed: () {
+                                final int? surahStartPage = ayahsAsync.valueOrNull
+                                    ?.firstOrNull
+                                    ?.pageNumber ?? widget.surah.pageStart;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => MushafReaderPage(
+                                      initialPage: surahStartPage,
+                                    ),
                                   ),
-                                ),
-                              );
-                            },
+                                );
+                              },
+                            ),
                           ),
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.tune_rounded, color: cs.textPrimary),
-                          onPressed: () => _showSettingsBottomSheet(context, ayahsAsync),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(width: 4),
+                          IconButton(
+                            padding: const EdgeInsets.all(8),
+                            constraints: const BoxConstraints(),
+                            icon: Icon(Icons.tune_rounded, color: cs.textPrimary),
+                            onPressed: () => _showSettingsBottomSheet(context, ayahsAsync),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
                 // ── Surah Info Banner (Search) ──
                 if (widget.surah.totalAyahs > 30)
@@ -1211,26 +1242,14 @@ class _AyahRow extends ConsumerWidget {
             ),
             const SizedBox(height: 12),
             showTajweed == true && ayah.tajweedSegments.isNotEmpty
-                ? Text.rich(
-                    TextSpan(
-                      children: TajweedSpanCache.getOrBuild(
-                        ayahId: ayah.id,
-                        text: ayah.textUthmani,
-                        segments: ayah.tajweedSegments,
-                        defaultColor: cs.textPrimary,
-                        inactiveRules: inactiveRules,
-                        ruleColors: const {},
-                        fontFamily: 'QPCV4Tajweed',
-                        fontSize: fontSize + 4,
-                      ),
-                    ),
-                    textDirection: TextDirection.rtl,
-                    textAlign: TextAlign.right,
-                    style: TextStyle(
-                      fontFamily: 'QPCV4Tajweed',
-                      fontSize: fontSize + 4,
-                      height: readerSettings.lineHeight,
-                    ),
+                ? _TajweedText(
+                    ayahId: ayah.id,
+                    text: ayah.textUthmani,
+                    segments: ayah.tajweedSegments,
+                    defaultColor: cs.textPrimary,
+                    inactiveRules: inactiveRules,
+                    fontSize: fontSize + 4,
+                    lineHeight: readerSettings.lineHeight,
                   )
                 : Text(
                     ayah.textUthmani,
@@ -1434,3 +1453,244 @@ class _AyahsErrorState extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// _TajweedText — coloured Quran text with tap-to-identify rule popup
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _TajweedText extends ConsumerStatefulWidget {
+  final int ayahId;
+  final String text;
+  final List<TajweedSegmentModel> segments;
+  final Color defaultColor;
+  final Set<dynamic> inactiveRules;
+  final double fontSize;
+  final double lineHeight;
+
+  const _TajweedText({
+    required this.ayahId,
+    required this.text,
+    required this.segments,
+    required this.defaultColor,
+    required this.inactiveRules,
+    required this.fontSize,
+    required this.lineHeight,
+  });
+
+  @override
+  ConsumerState<_TajweedText> createState() => _TajweedTextState();
+}
+
+class _TajweedTextState extends ConsumerState<_TajweedText> {
+  final _key = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onTapUp: _onTapUp,
+      child: Text.rich(
+        key: _key,
+        TextSpan(
+          children: TajweedSpanCache.getOrBuild(
+            ayahId: widget.ayahId,
+            text: widget.text,
+            segments: widget.segments,
+            defaultColor: widget.defaultColor,
+            inactiveRules: widget.inactiveRules,
+            ruleColors: const {},
+            fontFamily: 'QPCV4Tajweed',
+            fontSize: widget.fontSize,
+          ),
+        ),
+        textDirection: TextDirection.rtl,
+        textAlign: TextAlign.right,
+        style: TextStyle(
+          fontFamily: 'QPCV4Tajweed',
+          fontSize: widget.fontSize,
+          height: widget.lineHeight,
+        ),
+      ),
+    );
+  }
+
+  void _onTapUp(TapUpDetails details) {
+    final para = _key.currentContext?.findRenderObject() as RenderParagraph?;
+    if (para == null) return;
+    final charOffset = para.getPositionForOffset(details.localPosition).offset;
+    TajweedSegmentModel? hit;
+    for (final seg in widget.segments) {
+      final s = seg.startIndex;
+      final e = seg.endIndex;
+      if (s != null && e != null && charOffset >= s && charOffset < e) {
+        hit = seg;
+        break;
+      }
+    }
+    if (hit == null || hit.ruleId == null) return;
+    _lookupAndShowRule(hit.ruleId!);
+  }
+
+  Future<void> _lookupAndShowRule(int ruleId) async {
+    final isar = IsarService.instance.isar;
+    final rule = await isar.tajweedRuleCollections
+        .filter()
+        .ruleIdEqualTo(ruleId)
+        .findFirst();
+    if (rule == null || !mounted) return;
+    // ignore: use_build_context_synchronously
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.35),
+      builder: (_) => _TajweedRuleSheet(rule: rule),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// _TajweedRuleSheet — rule info popup shown on tap
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _TajweedRuleSheet extends StatelessWidget {
+  final TajweedRuleCollection rule;
+  const _TajweedRuleSheet({required this.rule});
+
+  Color get _accent {
+    try {
+      return Color(int.parse('ff${rule.colorCode.replaceFirst('#', '')}', radix: 16));
+    } catch (_) {
+      return const Color(0xFF1B7340);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = AppColorScheme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final accent = _accent;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: cs.card,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.18),
+            blurRadius: 24,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: cs.cardBorder.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: accent, width: 2.5),
+                ),
+                child: Center(
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(color: accent, shape: BoxShape.circle),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      rule.nameKu,
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: cs.textPrimary,
+                      ),
+                    ),
+                    if (rule.nameAr.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        rule.nameAr,
+                        textDirection: TextDirection.rtl,
+                        style: TextStyle(fontFamily: 'Cairo', fontSize: 14, color: accent, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                    const SizedBox(height: 2),
+                    Text(
+                      rule.nameEn,
+                      style: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+              decoration: BoxDecoration(
+                color: isDark ? cs.primary.withValues(alpha: 0.12) : cs.primary.withValues(alpha: 0.07),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: cs.primary.withValues(alpha: 0.18)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.category_rounded, size: 14, color: cs.primary),
+                  const SizedBox(width: 6),
+                  Text(
+                    rule.categoryNameKu,
+                    textDirection: TextDirection.rtl,
+                    style: TextStyle(fontFamily: 'Cairo', fontSize: 12, fontWeight: FontWeight.w600, color: cs.primary),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (rule.description != null && rule.description!.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: accent.withValues(alpha: 0.18)),
+              ),
+              child: Text(
+                rule.description!,
+                textDirection: TextDirection.rtl,
+                textAlign: TextAlign.right,
+                style: TextStyle(fontFamily: 'Cairo', fontSize: 13, height: 1.6, color: cs.textSecondary),
+              ),
+            ),
+          ],
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+}

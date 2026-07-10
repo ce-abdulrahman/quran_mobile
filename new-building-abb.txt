@@ -1,0 +1,8 @@
+# ١. پاککردنەوەی کاشی کۆنی پڕۆژەکە
+flutter clean
+
+# ٢. هێنانی پاکێجەکان لە نوێوە
+flutter pub get
+
+# ٣. دروستکردنی فایلی Release Bundle (.aab)
+flutter build appbundle --release

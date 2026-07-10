@@ -11,17 +11,17 @@ import '../../core/providers/statistics_provider.dart';
 
 import '../../core/models/ayah_model.dart';
 import '../../core/utils/responsive.dart';
-import '../search/search_page.dart';
+// import '../search/search_page.dart';
 import '../quran/quran_page.dart';
 import '../bookmarks/bookmarks_page.dart';
 import '../favorites/favorites_page.dart';
 import '../settings/settings_page.dart';
 import '../settings/about_page.dart';
 
-import '../khatm/khatm_tracker_page.dart';
+// import '../khatm/khatm_tracker_page.dart'; // disabled
 import '../adhkar/adhkar_page.dart';
 import '../tasbih/tasbih_page.dart';
-import '../memorization/memorization_dashboard_page.dart';
+// import '../memorization/memorization_dashboard_page.dart'; // disabled
 import '../../core/providers/prayer_times_provider.dart';
 import '../prayer/prayer_times_page.dart';
 import '../prayer/widgets/prayer_widget_card.dart';
@@ -35,7 +35,7 @@ import '../../core/providers/tasbih_session_provider.dart';
 import '../tasbih/active_session_page.dart';
 import '../achievements/achievements_page.dart';
 
-import '../notes/notes_page.dart';
+// import '../notes/notes_page.dart'; // disabled
 import '../quran/mushaf_reader_page.dart';
 
 
@@ -69,15 +69,15 @@ List<_CatData> _buildCats(BuildContext context) => [
               MaterialPageRoute(builder: (_) => const PrayerTimesPage(showBackButton: true)),
             ),
       ),
-      _CatData(
-        icon: Icons.assignment_turned_in_rounded,
-        iconColor: const Color(0xFF0F8F4C),
-        label: (l) => l.khatmTitle,
-        onTap: (ref, ctx) => () => Navigator.push(
-              ctx,
-              MaterialPageRoute(builder: (_) => const KhatmTrackerPage(showBackButton: true)),
-            ),
-      ),
+      // _CatData( // khatm page disabled
+      //   icon: Icons.assignment_turned_in_rounded,
+      //   iconColor: const Color(0xFF0F8F4C),
+      //   label: (l) => l.khatmTitle,
+      //   onTap: (ref, ctx) => () => Navigator.push(
+      //         ctx,
+      //         MaterialPageRoute(builder: (_) => const KhatmTrackerPage(showBackButton: true)),
+      //       ),
+      // ),
       _CatData(
         icon: Icons.wb_sunny_rounded,
         iconColor: const Color(0xFFFF9800),
@@ -137,15 +137,15 @@ List<_CatData> _buildCats(BuildContext context) => [
               MaterialPageRoute(builder: (_) => const SahabaPage()),
             ),
       ),
-      _CatData(
-        icon: Icons.psychology_rounded,
-        iconColor: const Color(0xFFCD9D27),
-        label: (l) => l.memorizationQuizTitle,
-        onTap: (ref, ctx) => () => Navigator.push(
-              ctx,
-              MaterialPageRoute(builder: (_) => const MemorizationDashboardPage()),
-            ),
-      ),
+      // _CatData( // memorization quiz page disabled
+      //   icon: Icons.psychology_rounded,
+      //   iconColor: const Color(0xFFCD9D27),
+      //   label: (l) => l.memorizationQuizTitle,
+      //   onTap: (ref, ctx) => () => Navigator.push(
+      //         ctx,
+      //         MaterialPageRoute(builder: (_) => const MemorizationDashboardPage()),
+      //       ),
+      // ),
       _CatData(
         icon: Icons.fingerprint_rounded,
         iconColor: const Color(0xFF009688),
@@ -164,24 +164,24 @@ List<_CatData> _buildCats(BuildContext context) => [
               MaterialPageRoute(builder: (_) => const TajweedPage()),
             ),
       ),
-      _CatData(
-        icon: Icons.search_rounded,
-        iconColor: const Color(0xFF5B1A8A),
-        label: (l) => l.searchTitle,
-        onTap: (ref, ctx) => () => Navigator.push(
-              ctx,
-              MaterialPageRoute(builder: (_) => const SearchPage()),
-            ),
-      ),
-      _CatData(
-        icon: Icons.note_alt_rounded,
-        iconColor: const Color(0xFF6F42C1),
-        label: (l) => l.notesTitle,
-        onTap: (ref, ctx) => () => Navigator.push(
-              ctx,
-              MaterialPageRoute(builder: (_) => const NotesPage()),
-            ),
-      ),
+      // _CatData(
+      //   icon: Icons.search_rounded,
+      //   iconColor: const Color(0xFF5B1A8A),
+      //   label: (l) => l.searchTitle,
+      //   onTap: (ref, ctx) => () => Navigator.push(
+      //         ctx,
+      //         MaterialPageRoute(builder: (_) => const SearchPage()),
+      //       ),
+      // ),
+      // _CatData( // notes page disabled
+      //   icon: Icons.note_alt_rounded,
+      //   iconColor: const Color(0xFF6F42C1),
+      //   label: (l) => l.notesTitle,
+      //   onTap: (ref, ctx) => () => Navigator.push(
+      //         ctx,
+      //         MaterialPageRoute(builder: (_) => const NotesPage()),
+      //       ),
+      // ),
       _CatData(
         icon: Icons.bookmark_rounded,
         iconColor: const Color(0xFF1A3A5C),
@@ -1097,11 +1097,11 @@ class _HomePageState extends ConsumerState<HomePage> {
 
                   // ── Motivation/Analytics Cards ──
                   
-                  // Card 1: Profile Card (Guest or Authenticated)
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(p, 10, p, 0),
-                    child: const _HomeProfileCard(),
-                  ).animate().fadeIn(duration: 400.ms, delay: 120.ms),
+                  // Card 1: Profile Card (Guest or Authenticated) - Commented out
+                  // Padding(
+                  //   padding: EdgeInsets.fromLTRB(p, 10, p, 0),
+                  //   child: const _HomeProfileCard(),
+                  // ).animate().fadeIn(duration: 400.ms, delay: 120.ms),
 
                   // Card 2: Today's Dhikr Card (Always Expanded)
                   Padding(
@@ -1838,6 +1838,7 @@ class _CatTile extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 // Home Profile Card (Authenticated / Guest State)
 
+// ignore: unused_element
 class _HomeProfileCard extends ConsumerWidget {
   const _HomeProfileCard();
 

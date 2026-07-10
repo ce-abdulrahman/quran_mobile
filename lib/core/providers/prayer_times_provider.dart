@@ -110,7 +110,7 @@ class PrayerTimesState {
     required this.selectedCity,
     required this.isAzanEnabled,
     required this.prayerToggles,
-    this.calculationMethod = 'muslim_world_league',
+    this.calculationMethod = 'kurdistan',
     this.cities = kurdishCities,
     this.versionHash = '',
   });
@@ -214,7 +214,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     final rawToggles = _prefs.getString(_togglesKey);
 
     // Load API cached settings
-    final cachedMethod = _prefs.getString('prayer_settings_calculation_method') ?? 'muslim_world_league';
+    final cachedMethod = _prefs.getString('prayer_settings_calculation_method') ?? 'kurdistan';
     final cachedHash = _prefs.getString('prayer_settings_version_hash') ?? '';
     final cachedCitiesRaw = _prefs.getString('prayer_settings_cities_list');
     
@@ -306,7 +306,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
         final resData = response.data as Map<String, dynamic>;
         final data = resData['data'] as Map<String, dynamic>;
         final newHash = data['version_hash'] as String? ?? '';
-        final method = data['calculation_method'] as String? ?? 'muslim_world_league';
+        final method = data['calculation_method'] as String? ?? 'kurdistan';
         final isEnabled = data['global_notifications_enabled'] as bool? ?? true;
         
         final rawCities = data['cities'] as List<dynamic>? ?? [];

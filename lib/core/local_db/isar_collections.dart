@@ -440,7 +440,7 @@ class SahabaCollection {
 class HadithCollection {
   Id id = Isar.autoIncrement;
 
-  @Index(unique: true)
+  @Index()
   int hadithId;
 
   int categoryId;

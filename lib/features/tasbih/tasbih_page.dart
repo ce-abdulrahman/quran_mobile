@@ -322,46 +322,48 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
             textAlign: TextAlign.center,
             style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
           ),
-          content: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  controller: nameCtrl,
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
-                  decoration: InputDecoration(
-                    labelText: l.tasbihDhikrName,
-                    alignLabelWithHint: true,
-                    hintText: l.tasbihSubhanAllah,
+          content: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextFormField(
+                    controller: nameCtrl,
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
+                    decoration: InputDecoration(
+                      labelText: l.tasbihDhikrName,
+                      alignLabelWithHint: true,
+                      hintText: l.tasbihSubhanAllah,
+                    ),
+                    validator: (val) {
+                      if (val == null || val.trim().isEmpty) {
+                        return l.tasbihEnterDhikrName;
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (val) {
-                    if (val == null || val.trim().isEmpty) {
-                      return l.tasbihEnterDhikrName;
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                TextFormField(
-                  controller: targetCtrl,
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
-                  decoration: InputDecoration(
-                    labelText: l.tasbihGoalLabel,
-                    alignLabelWithHint: true,
-                    hintText: '33',
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: targetCtrl,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.right,
+                    textDirection: TextDirection.rtl,
+                    decoration: InputDecoration(
+                      labelText: l.tasbihGoalLabel,
+                      alignLabelWithHint: true,
+                      hintText: '33',
+                    ),
+                    validator: (val) {
+                      if (val == null || int.tryParse(val) == null || int.parse(val) <= 0) {
+                        return l.tasbihEnterValidGoal;
+                      }
+                      return null;
+                    },
                   ),
-                  validator: (val) {
-                    if (val == null || int.tryParse(val) == null || int.parse(val) <= 0) {
-                      return l.tasbihEnterValidGoal;
-                    }
-                    return null;
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           actions: [

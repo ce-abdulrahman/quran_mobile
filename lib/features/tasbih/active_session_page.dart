@@ -184,7 +184,7 @@ class _ActiveSessionPageState extends ConsumerState<ActiveSessionPage>
 
   void _enterMinimalMode() {
     ref.read(tasbihSessionProvider.notifier).setMode('minimal');
-    TasbihSessionOverlay.show(context, ref);
+    TasbihSessionOverlay.show(context);
     Navigator.pop(context);
   }
 
@@ -873,12 +873,12 @@ class _ActiveSessionPageState extends ConsumerState<ActiveSessionPage>
 class TasbihSessionOverlay {
   static OverlayEntry? _entry;
 
-  static void show(BuildContext context, WidgetRef ref) {
+  static void show(BuildContext context) {
     if (_entry != null) return;
 
     _entry = OverlayEntry(
       builder: (context) {
-        return _FloatingPillWidget(ref: ref);
+        return const _FloatingPillWidget();
       },
     );
     Overlay.of(context).insert(_entry!);
@@ -890,22 +890,21 @@ class TasbihSessionOverlay {
   }
 }
 
-class _FloatingPillWidget extends StatefulWidget {
-  final WidgetRef ref;
-  const _FloatingPillWidget({required this.ref});
+class _FloatingPillWidget extends ConsumerStatefulWidget {
+  const _FloatingPillWidget();
 
   @override
-  State<_FloatingPillWidget> createState() => _FloatingPillWidgetState();
+  ConsumerState<_FloatingPillWidget> createState() => _FloatingPillWidgetState();
 }
 
-class _FloatingPillWidgetState extends State<_FloatingPillWidget> {
+class _FloatingPillWidgetState extends ConsumerState<_FloatingPillWidget> {
   double _x = 20.0;
   double _y = 100.0;
   DateTime _lastTap = DateTime.fromMillisecondsSinceEpoch(0);
 
   @override
   Widget build(BuildContext context) {
-    final sessionState = widget.ref.watch(tasbihSessionProvider);
+    final sessionState = ref.watch(tasbihSessionProvider);
     final cs = AppColorScheme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -933,7 +932,7 @@ class _FloatingPillWidgetState extends State<_FloatingPillWidget> {
           _lastTap = now;
           
           if (!sessionState.isPaused) {
-            widget.ref.read(tasbihSessionProvider.notifier).increment();
+            ref.read(tasbihSessionProvider.notifier).increment();
             HapticFeedback.lightImpact();
           }
         },
@@ -962,7 +961,7 @@ class _FloatingPillWidgetState extends State<_FloatingPillWidget> {
                     // Hide overlay
                     TasbihSessionOverlay.hide();
                     // Set mode to normal
-                    widget.ref.read(tasbihSessionProvider.notifier).setMode('normal');
+                    ref.read(tasbihSessionProvider.notifier).setMode('normal');
                     // Push active page
                     Navigator.push(
                       context,

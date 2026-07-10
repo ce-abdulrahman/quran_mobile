@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.quran.mobile.quran_mobile"
+    namespace = "com.myquran.kurd"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

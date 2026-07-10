@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/widgets.dart';
 
 enum MushafAssetType { raster, vector }
@@ -9,7 +8,7 @@ class MushafPageAsset {
   final ImageProvider imageProvider;
   final Size dimensions;
   final MushafAssetType type;
-  final File localFile;
+  final dynamic localFile;
 
   const MushafPageAsset({
     required this.pageNumber,

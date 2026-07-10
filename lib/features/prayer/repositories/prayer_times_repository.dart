@@ -103,11 +103,13 @@ class PrayerTimesRepository {
       }
     } catch (_) {}
 
-    // 4. Fallback: Dynamic Adhan calculation
+    // 4. Fallback: Dynamic Adhan calculation (Kurdistan Region / Ministry of Awqaf)
     try {
       final parsedDate = DateTime.parse(date);
       final coordinates = adhan.Coordinates(lat, lng);
       final params = adhan.CalculationMethod.muslim_world_league.getParameters();
+      params.fajrAngle = 18.0;
+      params.ishaAngle = 17.0;
       params.madhab = adhan.Madhab.shafi;
 
       final prayerTimes = adhan.PrayerTimes(

@@ -42,6 +42,10 @@ final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
   throw UnimplementedError('Initialize SharedPreferences in main.dart first');
 });
 
+final appVersionProvider = Provider<String>((ref) {
+  throw UnimplementedError('Initialize app version in main.dart first');
+});
+
 final hiveCacheBoxProvider = Provider<Box>((ref) {
   throw UnimplementedError('Initialize Hive cache box in main.dart first');
 });
@@ -292,11 +296,11 @@ class AccentGradient extends Color {
     required this.primary,
   }) : super(primary.value);
 
-  // Default: Emerald Forest
+  // Default: Logo Green (سەوزی قورئانەکەم)
   static final AccentGradient defaultGradient = AccentGradient(
-    start: const Color(0xFF1AB66D),
-    end: const Color(0xFF0A7C3E),
-    primary: const Color(0xFF1AB66D),
+    start: const Color(0xFF075E45),
+    end: const Color(0xFF023224),
+    primary: const Color(0xFF075E45),
   );
 }
 
@@ -465,6 +469,17 @@ final tajweedCategoriesProvider = FutureProvider<List<TajweedCategoryModel>>((
     },
   );
 });
+
+// Synchronous lookup map: ruleId → TajweedRuleModel
+// Used by _TajweedText to resolve a tapped segment's rule instantly.
+final tajweedRuleMapProvider = Provider<Map<int, TajweedRuleModel>>((ref) {
+  final rulesAsync = ref.watch(tajweedRulesFutureProvider);
+  return rulesAsync.maybeWhen(
+    data: (rules) => {for (final r in rules) r.id: r},
+    orElse: () => {},
+  );
+});
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Active/Inactive Tajweed Rules Provider

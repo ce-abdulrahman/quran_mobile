@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  static const primaryGreen = Color(0xFF1AB66D);
-  static const primaryGreenDeep = Color(0xFF0F8F4C);
+  static const primaryGreen = Color(0xFF075E45);
+  static const primaryGreenDeep = Color(0xFF023224);
   static const accentGoldDeep = Color(0xFFCD9D27);
   static const surface = Color(0xFFFFFFFF);
   static const surfaceDark = Color(0xFF17211B);
@@ -13,40 +13,25 @@ class AppColors {
 
   /// ڕەنگە هەڵبژاردەکانی تایبەت - flat
   static const accentColorOptions = [
-    (Color(0xFF1AB66D), 'سەوز'),       // default green
-    (Color(0xFF2196F3), 'شین'),        // blue
-    (Color(0xFF7B1FA2), 'ئەرغووانی'), // purple
-    (Color(0xFFF57F17), 'زەرد'),       // amber
-    (Color(0xFFE53935), 'سووری'),      // red
-    (Color(0xFF00695C), 'تیاوی'),      // teal
+    (Color(0xFF075E45), 'سەوزی قورئانەکەم'), // Logo green (default)
+    (Color(0xFF4CAF50), 'سەوزی کاڵ'),       // light green (boy)
+    (Color(0xFF2196F3), 'شینی کاڵ'),       // light blue (boy)
+    (Color(0xFFE91E63), 'پەمەیی ناسک'),    // pink (girl)
+    (Color(0xFFF44336), 'سووری کاڵ'),      // light red (girl)
   ];
 
   /// گرادیەنتی تایبەت - (startColor, endColor, primaryColor, label)
   static const accentGradientOptions = [
-    // Emerald Forest
-    (Color(0xFF1AB66D), Color(0xFF0A7C3E), Color(0xFF1AB66D), 'سەوزی داریستان'),
-    // Ocean Blue
-    (Color(0xFF2196F3), Color(0xFF0D47A1), Color(0xFF1E88E5), 'شینی دەریا'),
-    // Royal Purple
-    (Color(0xFF9C27B0), Color(0xFF4A148C), Color(0xFF8E24AA), 'ئەرغووانی شاهانە'),
-    // Sunset Orange
-    (Color(0xFFFF6F00), Color(0xFFE53935), Color(0xFFF57C00), 'خۆرئاوابوون'),
-    // Rose Gold
-    (Color(0xFFE91E63), Color(0xFF880E4F), Color(0xFFD81B60), 'وردزی ئاڵتون'),
-    // Midnight Teal
-    (Color(0xFF00897B), Color(0xFF004D40), Color(0xFF00796B), 'تیلی شەو'),
-    // Desert Gold
-    (Color(0xFFE5A93B), Color(0xFF8C5E1B), Color(0xFFD49E35), 'ئاڵتوونی بیابان'),
-    // Magic Violet
-    (Color(0xFF8E2DE2), Color(0xFF4A00E0), Color(0xFF8E2DE2), 'مۆری ئەفسوناوی'),
-    // Coastal Blue
-    (Color(0xFF00C6FF), Color(0xFF0072FF), Color(0xFF0072FF), 'شینی کەناراو'),
-    // Crimson Dawn
-    (Color(0xFFE65C00), Color(0xFFF9D423), Color(0xFFE65C00), 'شەبەقی سوور'),
-    // Olive Garden
-    (Color(0xFF708238), Color(0xFF4B5320), Color(0xFF708238), 'سەوزی زەیتوونی'),
-    // Soft Sakura
-    (Color(0xFFFF758C), Color(0xFFFF7EB3), Color(0xFFFF758C), 'پەمەیی ناسک'),
+    // Logo Green (سەوزی قورئانەکەم)
+    (Color(0xFF075E45), Color(0xFF023224), Color(0xFF075E45), 'سەوزی قورئانەکەم'),
+    // Light Green (سەوزی کاڵ)
+    (Color(0xFF81C784), Color(0xFF388E3C), Color(0xFF4CAF50), 'سەوزی کاڵ'),
+    // Light Blue (شینی کاڵ)
+    (Color(0xFF64B5F6), Color(0xFF1976D2), Color(0xFF2196F3), 'شینی کاڵ'),
+    // Soft Pink (پەمەیی ناسک)
+    (Color(0xFFF48FB1), Color(0xFFC2185B), Color(0xFFE91E63), 'پەمەیی ناسک'),
+    // Light Red (سووری کاڵ)
+    (Color(0xFFEF9A9A), Color(0xFFD32F2F), Color(0xFFF44336), 'سووری کاڵ'),
   ];
 }
 

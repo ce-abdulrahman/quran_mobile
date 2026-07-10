@@ -4,7 +4,7 @@
 -dontwarn io.isar.**
 
 # Keep our Isar model collections from being renamed or obfuscated by Proguard/R8
--keep class com.quran.mobile.quran_mobile.core.local_db.** { *; }
+-keep class com.myquran.kurd.core.local_db.** { *; }
 
 # Keep standard Flutter classes
 -keep class io.flutter.plugin.** { *; }

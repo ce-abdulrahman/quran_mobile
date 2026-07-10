@@ -48,6 +48,12 @@
 @import isar_flutter_libs;
 #endif
 
+#if __has_include(<package_info_plus/FPPPackageInfoPlusPlugin.h>)
+#import <package_info_plus/FPPPackageInfoPlusPlugin.h>
+#else
+@import package_info_plus;
+#endif
+
 #if __has_include(<share_plus/FPPSharePlusPlugin.h>)
 #import <share_plus/FPPSharePlusPlugin.h>
 #else
@@ -76,6 +82,7 @@
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
   [HomeWidgetPlugin registerWithRegistrar:[registry registrarForPlugin:@"HomeWidgetPlugin"]];
   [IsarFlutterLibsPlugin registerWithRegistrar:[registry registrarForPlugin:@"IsarFlutterLibsPlugin"]];
+  [FPPPackageInfoPlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPPackageInfoPlusPlugin"]];
   [FPPSharePlusPlugin registerWithRegistrar:[registry registrarForPlugin:@"FPPSharePlusPlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];

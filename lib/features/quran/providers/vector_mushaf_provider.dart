@@ -1,11 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import '../interfaces/coordinate_provider.dart';
 import '../interfaces/page_geometry_provider.dart';
 import '../interfaces/mushaf_asset_provider.dart';
 import '../services/mushaf_cache_manager.dart';
 import '../adapters/kfqc_geometry_provider.dart';
-import '../adapters/quranpedia_coordinate_adapter.dart';
-import '../adapters/offline_first_asset_provider.dart';
+// Web adapters are always imported (web-safe, no dart:io)
+import '../adapters/mushaf_web_adapters.dart';
+// IO adapters only included on non-web. The dart:io using code is guarded by kIsWeb at runtime.
+// We use a conditional export pattern via createCoordinateProvider / createAssetProvider factories.
+import '../adapters/platform_mushaf_factory.dart';
 
 // Geometry Provider DI
 final pageGeometryProvider = Provider<PageGeometryProvider>((ref) {
@@ -19,18 +23,21 @@ final mushafCacheManagerProvider = Provider<MushafCacheManager>((ref) {
 
 // Coordinate Provider DI
 final coordinateProvider = Provider<CoordinateProvider>((ref) {
+  if (kIsWeb) {
+    return const WebCoordinateAdapter();
+  }
   final cacheManager = ref.watch(mushafCacheManagerProvider);
-  return QuranpediaCoordinateAdapter(cacheManager: cacheManager);
+  return createCoordinateProvider(cacheManager);
 });
 
 // Mushaf Asset Provider DI
 final mushafAssetProvider = Provider<MushafAssetProvider>((ref) {
   final geometry = ref.watch(pageGeometryProvider);
+  if (kIsWeb) {
+    return WebAssetProvider(geometryProvider: geometry);
+  }
   final cacheManager = ref.watch(mushafCacheManagerProvider);
-  return OfflineFirstAssetProvider(
-    geometryProvider: geometry,
-    cacheManager: cacheManager,
-  );
+  return createAssetProvider(geometry: geometry, cacheManager: cacheManager);
 });
 
 // Riverpod provider for loading and caching coordinates of a page in memory dynamically

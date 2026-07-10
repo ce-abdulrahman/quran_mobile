@@ -1108,7 +1108,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        l.settingsVersion,
+                        l.localeCode == 'ku'
+                            ? 'وەشان ${ref.watch(appVersionProvider)}'
+                            : (l.localeCode == 'ar'
+                                ? 'الإصدار ${ref.watch(appVersionProvider)}'
+                                : 'Version ${ref.watch(appVersionProvider)}'),
                         style: TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 12,
