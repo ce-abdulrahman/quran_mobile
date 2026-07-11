@@ -201,13 +201,16 @@ class _AudioPlayerPanelState extends ConsumerState<AudioPlayerPanel> {
                             children: [
                               Icon(Icons.mic_none_rounded, size: 16, color: cs.primary),
                               const SizedBox(width: 6),
-                              Text(
-                                selectedReciter.name,
-                                style: TextStyle(
-                                  fontFamily: 'Cairo',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: cs.textPrimary,
+                              Flexible(
+                                child: Text(
+                                  selectedReciter.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: 'Cairo',
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: cs.textPrimary,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -228,9 +231,11 @@ class _AudioPlayerPanelState extends ConsumerState<AudioPlayerPanel> {
                     ),
                   ),
 
-                  // Speed Control & Auto Scroll Toggle
-                  Row(
-                    children: [
+                  // Speed Control & Auto Scroll Toggle - wrapped in Flexible to prevent overflow
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                       // Advanced Audio Settings
                       IconButton(
                         onPressed: () {
@@ -284,6 +289,7 @@ class _AudioPlayerPanelState extends ConsumerState<AudioPlayerPanel> {
                         ),
                       ),
                     ],
+                    ),
                   ),
                 ],
               ),

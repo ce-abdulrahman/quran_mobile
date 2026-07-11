@@ -14,9 +14,10 @@ class SearchService {
     final String typeStr = _getTypeStr(package);
     if (typeStr.isEmpty) return;
 
-    // Delete existing index entries for this type
+    // Clear ALL search index entries first to ensure clean slate
+    // This prevents unique key violations if app restarts mid-seeding
     await _isar.writeTxn(() async {
-      await _isar.searchIndexCollections.filter().typeEqualTo(typeStr).deleteAll();
+      await _isar.searchIndexCollections.clear();
     });
 
     final List<SearchIndexCollection> newEntries = [];
@@ -179,9 +180,29 @@ class SearchService {
     }
 
     if (newEntries.isNotEmpty) {
-      await _isar.writeTxn(() async {
-        await _isar.searchIndexCollections.putAll(newEntries);
-      });
+      // Deduplicate by key to avoid unique index violations from corrupt DB state
+      final Map<String, SearchIndexCollection> dedupMap = {};
+      for (final entry in newEntries) {
+        dedupMap[entry.key] = entry;
+      }
+      final uniqueEntries = dedupMap.values.toList();
+
+      try {
+        await _isar.writeTxn(() async {
+          await _isar.searchIndexCollections.putAll(uniqueEntries);
+        });
+      } catch (e) {
+        // Fallback: insert one by one, skipping any that still conflict
+        for (final entry in uniqueEntries) {
+          try {
+            await _isar.writeTxn(() async {
+              await _isar.searchIndexCollections.put(entry);
+            });
+          } catch (_) {
+            // skip conflicting entry
+          }
+        }
+      }
     }
   }
 
@@ -215,6 +236,11 @@ class SearchService {
 
   /// Rebuilds indexes for all packages.
   Future<void> rebuildAll() async {
+    // Clear all search index entries first for clean slate
+    await _isar.writeTxn(() async {
+      await _isar.searchIndexCollections.clear();
+    });
+    
     for (final pkg in ContentPackage.values) {
       await rebuildIndex(pkg);
     }

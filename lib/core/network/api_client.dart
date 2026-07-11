@@ -17,6 +17,9 @@ class ApiClient {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
+        // Accept 304 Not Modified as a valid response (ETag caching)
+        // 304 is < 400 but Dio treats it as error by default when validateStatus returns false
+        validateStatus: (status) => status != null && (status < 400 || status == 304),
       ),
     );
 

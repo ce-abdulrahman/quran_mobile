@@ -1,7 +1,7 @@
 name: quran_mobile
 description: Quran mobile Flutter app
 publish_to: none
-version: 1.0.5+6
+version: 1.0.6+7
 environment:
   sdk: ">=3.11.0 <4.0.0"
 dependencies:
@@ -70,6 +70,120 @@ flutter:
     - assets/data/packages/sahaba/
     - assets/data/packages/seerah/
     - assets/data/packages/tajweed/
+    - assets/data/packages/tajweed/001/
+    - assets/data/packages/tajweed/002/
+    - assets/data/packages/tajweed/003/
+    - assets/data/packages/tajweed/004/
+    - assets/data/packages/tajweed/005/
+    - assets/data/packages/tajweed/006/
+    - assets/data/packages/tajweed/007/
+    - assets/data/packages/tajweed/008/
+    - assets/data/packages/tajweed/009/
+    - assets/data/packages/tajweed/010/
+    - assets/data/packages/tajweed/011/
+    - assets/data/packages/tajweed/012/
+    - assets/data/packages/tajweed/013/
+    - assets/data/packages/tajweed/014/
+    - assets/data/packages/tajweed/015/
+    - assets/data/packages/tajweed/016/
+    - assets/data/packages/tajweed/017/
+    - assets/data/packages/tajweed/018/
+    - assets/data/packages/tajweed/019/
+    - assets/data/packages/tajweed/020/
+    - assets/data/packages/tajweed/021/
+    - assets/data/packages/tajweed/022/
+    - assets/data/packages/tajweed/023/
+    - assets/data/packages/tajweed/024/
+    - assets/data/packages/tajweed/025/
+    - assets/data/packages/tajweed/026/
+    - assets/data/packages/tajweed/027/
+    - assets/data/packages/tajweed/028/
+    - assets/data/packages/tajweed/029/
+    - assets/data/packages/tajweed/030/
+    - assets/data/packages/tajweed/031/
+    - assets/data/packages/tajweed/032/
+    - assets/data/packages/tajweed/033/
+    - assets/data/packages/tajweed/034/
+    - assets/data/packages/tajweed/035/
+    - assets/data/packages/tajweed/036/
+    - assets/data/packages/tajweed/037/
+    - assets/data/packages/tajweed/038/
+    - assets/data/packages/tajweed/039/
+    - assets/data/packages/tajweed/040/
+    - assets/data/packages/tajweed/041/
+    - assets/data/packages/tajweed/042/
+    - assets/data/packages/tajweed/043/
+    - assets/data/packages/tajweed/044/
+    - assets/data/packages/tajweed/045/
+    - assets/data/packages/tajweed/046/
+    - assets/data/packages/tajweed/047/
+    - assets/data/packages/tajweed/048/
+    - assets/data/packages/tajweed/049/
+    - assets/data/packages/tajweed/050/
+    - assets/data/packages/tajweed/051/
+    - assets/data/packages/tajweed/052/
+    - assets/data/packages/tajweed/053/
+    - assets/data/packages/tajweed/054/
+    - assets/data/packages/tajweed/055/
+    - assets/data/packages/tajweed/056/
+    - assets/data/packages/tajweed/057/
+    - assets/data/packages/tajweed/058/
+    - assets/data/packages/tajweed/059/
+    - assets/data/packages/tajweed/060/
+    - assets/data/packages/tajweed/061/
+    - assets/data/packages/tajweed/062/
+    - assets/data/packages/tajweed/063/
+    - assets/data/packages/tajweed/064/
+    - assets/data/packages/tajweed/065/
+    - assets/data/packages/tajweed/066/
+    - assets/data/packages/tajweed/067/
+    - assets/data/packages/tajweed/068/
+    - assets/data/packages/tajweed/069/
+    - assets/data/packages/tajweed/070/
+    - assets/data/packages/tajweed/071/
+    - assets/data/packages/tajweed/072/
+    - assets/data/packages/tajweed/073/
+    - assets/data/packages/tajweed/074/
+    - assets/data/packages/tajweed/075/
+    - assets/data/packages/tajweed/076/
+    - assets/data/packages/tajweed/077/
+    - assets/data/packages/tajweed/078/
+    - assets/data/packages/tajweed/079/
+    - assets/data/packages/tajweed/080/
+    - assets/data/packages/tajweed/081/
+    - assets/data/packages/tajweed/082/
+    - assets/data/packages/tajweed/083/
+    - assets/data/packages/tajweed/084/
+    - assets/data/packages/tajweed/085/
+    - assets/data/packages/tajweed/086/
+    - assets/data/packages/tajweed/087/
+    - assets/data/packages/tajweed/088/
+    - assets/data/packages/tajweed/089/
+    - assets/data/packages/tajweed/090/
+    - assets/data/packages/tajweed/091/
+    - assets/data/packages/tajweed/092/
+    - assets/data/packages/tajweed/093/
+    - assets/data/packages/tajweed/094/
+    - assets/data/packages/tajweed/095/
+    - assets/data/packages/tajweed/096/
+    - assets/data/packages/tajweed/097/
+    - assets/data/packages/tajweed/098/
+    - assets/data/packages/tajweed/099/
+    - assets/data/packages/tajweed/100/
+    - assets/data/packages/tajweed/101/
+    - assets/data/packages/tajweed/102/
+    - assets/data/packages/tajweed/103/
+    - assets/data/packages/tajweed/104/
+    - assets/data/packages/tajweed/105/
+    - assets/data/packages/tajweed/106/
+    - assets/data/packages/tajweed/107/
+    - assets/data/packages/tajweed/108/
+    - assets/data/packages/tajweed/109/
+    - assets/data/packages/tajweed/110/
+    - assets/data/packages/tajweed/111/
+    - assets/data/packages/tajweed/112/
+    - assets/data/packages/tajweed/113/
+    - assets/data/packages/tajweed/114/
     - assets/data/packages/translations/
   fonts:
     - family: Patua One

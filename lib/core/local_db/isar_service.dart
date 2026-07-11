@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'isar_collections.dart';
 import 'content_package.dart';
 import '../services/search_service.dart';
+import '../network/api_client.dart';
 
 class IsarService {
   static IsarService? _instance;
@@ -113,45 +114,157 @@ class IsarService {
         'assets/data/packages/tajweed/tajweed_rules.json',
       );
       final List<dynamic> data = jsonDecode(jsonString) as List;
-      final List<TajweedRuleCollection> items = [];
-      for (final cat in data) {
-        final catId = cat['id'] as int? ?? cat['categoryId'] as int? ?? 0;
-        final catSlug = cat['slug'] as String? ?? '';
-        final catNameKu = cat['name_ku'] as String? ?? cat['nameKu'] as String? ?? '';
-        final catNameAr = cat['name_ar'] as String? ?? cat['nameAr'] as String? ?? '';
-        final catNameEn = cat['name'] as String? ?? cat['nameEn'] as String? ?? '';
-        final catOrder = cat['order'] as int? ?? 0;
-        int rulePriority = 0;
-
-        final rulesList = cat['rules'] as List<dynamic>? ?? [];
-        for (final rule in rulesList) {
-          items.add(TajweedRuleCollection(
-            ruleId: rule['id'] as int? ?? rule['ruleId'] as int? ?? 0,
-            ruleSlug: rule['slug'] as String? ?? '',
-            nameAr: rule['name_ar'] as String? ?? rule['nameAr'] as String? ?? '',
-            nameEn: rule['name'] as String? ?? rule['nameEn'] as String? ?? '',
-            nameKu: rule['name_ku'] as String? ?? rule['nameKu'] as String? ?? '',
-            colorCode: rule['color_code'] as String? ?? rule['colorCode'] as String? ?? '#000000',
-            description: rule['description_ku'] as String? ?? rule['descriptionKu'] as String? ?? rule['description'] as String?,
-            categoryId: catId,
-            categorySlug: catSlug,
-            categoryNameAr: catNameAr,
-            categoryNameEn: catNameEn,
-            categoryNameKu: catNameKu,
-            categoryOrder: catOrder,
-            rulePriority: rulePriority++,
-          ));
-        }
-      }
-      if (items.isNotEmpty) {
-        await isar.writeTxn(() async {
-          await isar.tajweedRuleCollections.clear();
-          await isar.tajweedRuleCollections.putAll(items);
-        });
-      }
+      await _parseAndSaveTajweedRules(data);
     } catch (e) {
       if (kDebugMode) print('Failed to seed tajweed rules from local asset: $e');
     }
+  }
+
+  /// Parses tajweed rules JSON and saves to Isar (used by both local asset and API)
+  Future<void> _parseAndSaveTajweedRules(List<dynamic> data) async {
+    final List<TajweedRuleCollection> items = [];
+    for (final cat in data) {
+      final catId = cat['id'] as int? ?? cat['categoryId'] as int? ?? 0;
+      final catSlug = cat['slug'] as String? ?? '';
+      final catNameKu = cat['name_ku'] as String? ?? cat['nameKu'] as String? ?? '';
+      final catNameAr = cat['name_ar'] as String? ?? cat['nameAr'] as String? ?? '';
+      final catNameEn = cat['name'] as String? ?? cat['nameEn'] as String? ?? '';
+      final catOrder = cat['order'] as int? ?? 0;
+      int rulePriority = 0;
+
+      final rulesList = cat['rules'] as List<dynamic>? ?? [];
+      for (final rule in rulesList) {
+        items.add(TajweedRuleCollection(
+          ruleId: rule['id'] as int? ?? rule['ruleId'] as int? ?? 0,
+          ruleSlug: rule['slug'] as String? ?? '',
+          nameAr: rule['name_ar'] as String? ?? rule['nameAr'] as String? ?? '',
+          nameEn: rule['name'] as String? ?? rule['nameEn'] as String? ?? '',
+          nameKu: rule['name_ku'] as String? ?? rule['nameKu'] as String? ?? '',
+          colorCode: rule['color_code'] as String? ?? rule['colorCode'] as String? ?? '#000000',
+          description: rule['description_ku'] as String? ?? rule['descriptionKu'] as String? ?? rule['description'] as String?,
+          categoryId: catId,
+          categorySlug: catSlug,
+          categoryNameAr: catNameAr,
+          categoryNameEn: catNameEn,
+          categoryNameKu: catNameKu,
+          categoryOrder: catOrder,
+          rulePriority: rulePriority++,
+        ));
+      }
+    }
+    if (items.isNotEmpty) {
+      await isar.writeTxn(() async {
+        await isar.tajweedRuleCollections.clear();
+        await isar.tajweedRuleCollections.putAll(items);
+      });
+    }
+  }
+
+  /// Syncs tajweed rules from Laravel API (colors, descriptions, categories)
+  /// Call this when user taps "Sync Tajweed" in settings or on app update
+  Future<bool> syncTajweedRulesFromServer() async {
+    try {
+      final api = ApiClient();
+      final response = await api.get('/tajweed-rules'); // Adjust endpoint as needed
+      
+      if (response.statusCode == 200 && response.data != null) {
+        final data = response.data;
+        List<dynamic> rulesData;
+        
+        if (data is Map && data['data'] != null) {
+          rulesData = data['data'] as List<dynamic>;
+        } else if (data is List) {
+          rulesData = data;
+        } else {
+          return false;
+        }
+
+        await _parseAndSaveTajweedRules(rulesData);
+        
+        // Update last sync timestamp
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('tajweed_rules_last_synced', DateTime.now().toIso8601String());
+        
+        if (kDebugMode) print('Tajweed rules synced from server: ${rulesData.length} categories');
+        return true;
+      }
+    } catch (e) {
+      if (kDebugMode) print('Failed to sync tajweed rules from server: $e');
+    }
+    return false;
+  }
+
+  /// Syncs tajweed segments for all surahs from Laravel API
+  /// Returns number of surahs updated
+  Future<int> syncTajweedSegmentsFromServer() async {
+    int updated = 0;
+    try {
+      final api = ApiClient();
+      
+      for (int surah = 1; surah <= 114; surah++) {
+        try {
+          final surahStr = surah.toString().padLeft(3, '0');
+          final response = await api.get('/tajweed/segments/$surahStr');
+          
+          if (response.statusCode == 200 && response.data != null) {
+            final data = response.data;
+            List<dynamic> segmentsData;
+            
+            if (data is Map && data['data'] != null) {
+              segmentsData = data['data'] as List<dynamic>;
+            } else if (data is List) {
+              segmentsData = data;
+            } else {
+              continue;
+            }
+
+            final Map<int, List<TajweedSegment>> ayahSegmentsMap = {};
+            for (final item in segmentsData) {
+              final int ayahNum = item['ayah_number'] as int;
+              final List<dynamic> segmentsList = item['segments'] as List<dynamic>? ?? [];
+              final List<TajweedSegment> segments = segmentsList.map((x) {
+                final m = x as Map<String, dynamic>;
+                return TajweedSegment()
+                  ..startIndex = m['start_index'] as int?
+                  ..endIndex = m['end_index'] as int?
+                  ..ruleId = m['rule_id'] as int? ?? m['rule'] as int?
+                  ..colorId = m['color_id'] as int?
+                  ..connectsToLeft = m['connects_to_left'] as bool?
+                  ..connectsToRight = m['connects_to_right'] as bool?
+                  ..textSegment = m['text_segment'] as String?;
+              }).toList();
+              ayahSegmentsMap[ayahNum] = segments;
+            }
+
+            final existingAyahs = await isar.ayahCollections.filter()
+                .surahNumberEqualTo(surah)
+                .findAll();
+                
+            if (existingAyahs.isNotEmpty) {
+              await isar.writeTxn(() async {
+                for (final ayah in existingAyahs) {
+                  final newSegments = ayahSegmentsMap[ayah.ayahNumber] ?? [];
+                  ayah.tajweedSegments = newSegments;
+                  await isar.ayahCollections.put(ayah);
+                }
+              });
+              updated++;
+            }
+          }
+        } catch (e) {
+          if (kDebugMode) print('Failed to sync tajweed segments for surah $surah: $e');
+        }
+      }
+      
+      if (updated > 0) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('tajweed_segments_last_synced', DateTime.now().toIso8601String());
+      }
+      
+    } catch (e) {
+      if (kDebugMode) print('Failed to sync tajweed segments: $e');
+    }
+    return updated;
   }
 
   /// Helper to safely load JSON from standard packages directory, or fall back to old asset structure.
@@ -456,7 +569,20 @@ class IsarService {
         completedSteps++;
       }
 
-      // 8. Adhkars
+      // 8. Quran Ayahs (individual surah files)
+      if (!isStepDone('quran_ayahs')) {
+        update('بارکردنی ئایەتەکانی قورئان...');
+        final ayahsCount = await isar.ayahCollections.count();
+        if (ayahsCount < 6000) { // Should be ~6236 ayahs
+          // This will run the loop below for all surahs
+          // We don't do anything here, the actual seeding happens in the loop
+        }
+        await markStepDone('quran_ayahs');
+      } else {
+        completedSteps += 114; // 114 surahs worth of steps
+      }
+
+      // 9. Adhkars
       if (!isStepDone('adhkars')) {
         update('بارکردنی ئەزکار و زیکرەکان...');
         final adhkarCount = await isar.adhkarCollections.count();
@@ -662,7 +788,7 @@ class IsarService {
       final hadithsCount = await isar.hadithCollections.count();
 
       final prefs = await SharedPreferences.getInstance();
-      // Migration for fixed Hadiths (unique hadithId)
+      // Migration for fixed Hadiths (unique hadithId) — runs once on first launch after update
       if (prefs.getBool('hadiths_v3_migrated') != true) {
         await prefs.setBool('seed_step_hadiths', false);
         await prefs.setBool('seed_step_search_index', false);
@@ -672,6 +798,15 @@ class IsarService {
         });
         await prefs.setBool('hadiths_v3_migrated', true);
         await prefs.setBool('is_db_initialized', false);
+        return true;
+      }
+
+      // If the search index rebuild previously failed (step not marked done),
+      // clear the entire search index so it rebuilds cleanly from scratch.
+      if (prefs.getBool('seed_step_search_index') != true) {
+        await isar.writeTxn(() async {
+          await isar.searchIndexCollections.clear();
+        });
         return true;
       }
 
@@ -685,6 +820,8 @@ class IsarService {
       final rulesCount = await isar.tajweedRuleCollections.count();
       final surahsCount = await isar.surahCollections.count();
       final adhkarsCount = await isar.adhkarCollections.count();
+      // NEW: Check ayahs count (should be ~6236) - critical for Quran reader
+      final ayahsCount = await isar.ayahCollections.count();
 
       if (namesCount == 0 ||
           seerahCount == 0 ||
@@ -693,7 +830,8 @@ class IsarService {
           hadithsCount == 0 ||
           rulesCount == 0 ||
           surahsCount == 0 ||
-          adhkarsCount == 0) {
+          adhkarsCount == 0 ||
+          ayahsCount < 6000) { // Should be 6236, allow some margin
         final prefs = await SharedPreferences.getInstance();
         if (namesCount == 0) await prefs.setBool('seed_step_names_of_allah', false);
         if (seerahCount == 0) await prefs.setBool('seed_step_seerah', false);
@@ -703,6 +841,7 @@ class IsarService {
         if (rulesCount == 0) await prefs.setBool('seed_step_tajweed_rules', false);
         if (surahsCount == 0) await prefs.setBool('seed_step_surahs', false);
         if (adhkarsCount == 0) await prefs.setBool('seed_step_adhkars', false);
+        if (ayahsCount < 6000) await prefs.setBool('seed_step_quran_ayahs', false);
         await prefs.setBool('is_db_initialized', false);
         return true;
       }
@@ -758,8 +897,9 @@ class IsarService {
           });
         }
       } catch (e) {
+        // Asset not found or invalid - skip silently, segments will be loaded from surah JSON
         if (kDebugMode) {
-          print("Failed to update tajweed segments for surah $surahNum: $e");
+          print("Tajweed segments for surah $surahNum not found in package, using fallback: $e");
         }
       }
     }

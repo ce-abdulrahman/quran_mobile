@@ -88,8 +88,8 @@ class ApiConstants {
   static String authProvinces(int id)    => '/auth/provinces/$id';
 
   // ── Timeouts ───────────────────────────────────────────────────────────────
-  static const Duration connectTimeout = Duration(seconds: 10);
-  static const Duration receiveTimeout = Duration(seconds: 15);
+  static const Duration connectTimeout = Duration(seconds: 30);
+  static const Duration receiveTimeout = Duration(seconds: 30);
 
   // ── Cache TTL ──────────────────────────────────────────────────────────────
   static const Duration surahsTtl   = Duration(hours: 24);
