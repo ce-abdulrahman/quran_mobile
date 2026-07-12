@@ -9,7 +9,7 @@ class VersionService {
 
   /// Changelog entries per version. Add new version entries at the top.
   static const Map<String, List<ChangelogEntry>> changelog = {
-    '1.0.5': [
+    '1.0.6': [
       ChangelogEntry(
         icon: '📚',
         titleKu: 'داتای نوێی فەرموودەکان',

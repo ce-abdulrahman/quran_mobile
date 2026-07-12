@@ -105,6 +105,7 @@ class PrayerTimesState {
   final String calculationMethod;
   final List<KurdishCity> cities;
   final String versionHash;
+  final String adhanSound; // Selected adhan sound filename (without extension)
 
   const PrayerTimesState({
     required this.selectedCity,
@@ -113,6 +114,7 @@ class PrayerTimesState {
     this.calculationMethod = 'kurdistan',
     this.cities = kurdishCities,
     this.versionHash = '',
+    this.adhanSound = 'azan', // Default to built-in azan.mp3
   });
 
   PrayerTimesState copyWith({
@@ -122,6 +124,7 @@ class PrayerTimesState {
     String? calculationMethod,
     List<KurdishCity>? cities,
     String? versionHash,
+    String? adhanSound,
   }) {
     return PrayerTimesState(
       selectedCity: selectedCity ?? this.selectedCity,
@@ -130,6 +133,7 @@ class PrayerTimesState {
       calculationMethod: calculationMethod ?? this.calculationMethod,
       cities: cities ?? this.cities,
       versionHash: versionHash ?? this.versionHash,
+      adhanSound: adhanSound ?? this.adhanSound,
     );
   }
 }
@@ -144,6 +148,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
   static const _cityKey = 'prayer_selected_city';
   static const _azanEnabledKey = 'prayer_azan_enabled';
   static const _togglesKey = 'prayer_toggles';
+  static const _adhanSoundKey = 'prayer_adhan_sound';
 
   PrayerTimesNotifier(this._prefs, this._ref)
       : super(
@@ -205,6 +210,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
       city: state.selectedCity,
       toggles: state.prayerToggles,
       isAzanEnabled: state.isAzanEnabled,
+      adhanSound: state.adhanSound,
     );
   }
 
@@ -212,6 +218,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     final rawCity = _prefs.getString(_cityKey);
     final rawAzan = _prefs.getBool(_azanEnabledKey);
     final rawToggles = _prefs.getString(_togglesKey);
+    final rawAdhanSound = _prefs.getString(_adhanSoundKey);
 
     // Load API cached settings
     final cachedMethod = _prefs.getString('prayer_settings_calculation_method') ?? 'kurdistan';
@@ -239,6 +246,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     }
 
     bool azanEnabled = rawAzan ?? true;
+    String adhanSound = rawAdhanSound ?? 'azan'; // Default to built-in azan.mp3
 
     Map<String, bool> toggles = {
       'Fajr': true,
@@ -279,6 +287,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
       calculationMethod: cachedMethod,
       cities: listCities,
       versionHash: cachedHash,
+      adhanSound: adhanSound,
     );
 
     // Run rescheduling and API sync
@@ -382,6 +391,12 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     updatedToggles[prayerName] = enabled;
     state = state.copyWith(prayerToggles: updatedToggles);
     await _prefs.setString(_togglesKey, jsonEncode(updatedToggles));
+    reschedule();
+  }
+
+  Future<void> changeAdhanSound(String soundName) async {
+    state = state.copyWith(adhanSound: soundName);
+    await _prefs.setString(_adhanSoundKey, soundName);
     reschedule();
   }
 

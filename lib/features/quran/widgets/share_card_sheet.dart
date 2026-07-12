@@ -86,20 +86,17 @@ class _ShareCardSheetState extends State<ShareCardSheet> {
   bool _showEnglish = false;
   bool _isSharing = false;
 
-  String _selectedArabicFont = 'UthmanicHafs';
+  String _selectedArabicFont = 'AmiriQuran';
   String _selectedKurdishFont = 'Cairo';
   String _selectedEnglishFont = 'Cairo';
 
   // Font mappings with friendly names and fontFamily values
   static const List<Map<String, String>> _arabicFonts = [
-    {'name': 'QPC Hafs (Default)', 'family': 'UthmanicHafs'},
-    {'name': 'Amiri', 'family': 'Amiri'},
-    {'name': 'Amiri Quran', 'family': 'AmiriQuran'},
+    {'name': 'Amiri Quran (Default)', 'family': 'AmiriQuran'},
     {'name': 'Scheherazade New', 'family': 'ScheherazadeNew'},
-    {'name': 'Wafeq', 'family': 'Wafeq'},
-    {'name': 'Hafs 18', 'family': 'Hafs18'},
-    {'name': 'Hafs Smart', 'family': 'HafsSmart'},
-    {'name': 'Warsh', 'family': 'Warsh'},
+    {'name': 'Lateef', 'family': 'Lateef'},
+    {'name': 'Noto Naskh Arabic', 'family': 'NotoNaskhArabic'},
+    {'name': 'IBMPlexSansArabic', 'family': 'IBMPlexSansArabic'},
   ];
 
   static const List<Map<String, String>> _kurdishFonts = [

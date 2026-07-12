@@ -25,6 +25,7 @@ class PrayerNotificationService {
     required KurdishCity city,
     required Map<String, bool> toggles,
     required bool isAzanEnabled,
+    required String adhanSound, // New parameter for selected adhan sound
   }) async {
     if (kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) {
       debugPrint('Skipping prayer notifications scheduling in web/test environment.');
@@ -135,33 +136,43 @@ class PrayerNotificationService {
 
         final kuName = prayerNamesKu[key] ?? key;
 
+        // Build sound resource - use selected adhan sound or fallback to default
+        final androidSound = adhanSound.isNotEmpty
+            ? RawResourceAndroidNotificationSound(adhanSound)
+            : const RawResourceAndroidNotificationSound('azan');
+        final iOSSound = adhanSound.isNotEmpty
+            ? '$adhanSound.wav'
+            : 'azan.wav';
+
         try {
+          final notificationDetails = NotificationDetails(
+            android: AndroidNotificationDetails(
+              _channelId,
+              _channelName,
+              channelDescription: _channelDesc,
+              importance: Importance.max,
+              priority: Priority.high,
+              playSound: true,
+              sound: androidSound,
+              icon: '@mipmap/ic_launcher',
+              largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+              color: const Color(0xFFCD9D27),
+              enableVibration: true,
+            ),
+            iOS: DarwinNotificationDetails(
+              presentAlert: true,
+              presentBadge: true,
+              presentSound: true,
+              sound: iOSSound,
+            ),
+          );
+
           await _plugin.zonedSchedule(
             notificationId,
             'کاتی نوێژی $kuName 🕋',
             'کاتی نوێژ بۆ شاری ${city.nameKu} هاتووە. (حی علی الصلاة)',
             scheduledTime,
-            const NotificationDetails(
-              android: AndroidNotificationDetails(
-                _channelId,
-                _channelName,
-                channelDescription: _channelDesc,
-                importance: Importance.max,
-                priority: Priority.high,
-                playSound: true,
-                sound: RawResourceAndroidNotificationSound('azan'),
-                icon: '@mipmap/ic_launcher',
-                largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
-                color: Color(0xFFCD9D27),
-                enableVibration: true,
-              ),
-              iOS: DarwinNotificationDetails(
-                presentAlert: true,
-                presentBadge: true,
-                presentSound: true,
-                sound: 'azan.wav',
-              ),
-            ),
+            notificationDetails,
             androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
             uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
           );

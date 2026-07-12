@@ -147,12 +147,9 @@ class ReaderSettings {
   final bool showTajweed;
   final double lineHeight;
   final String bgMode; // 'light' | 'dark' | 'cream' | 'khaki'
-  /// Font family for UI labels: 'Cairo' | 'NotoNaskhArabic' | 'Scheherazade'
-  final String uiFontFamily;
-  /// Font family for Quran Arabic text: 'UthmanicHafs' | 'Amiri' | 'ScheherazadeNew'
-  final String quranFontFamily;
-  /// Where font settings apply: 'ui' | 'reader' | 'both'
-  final String fontTarget;
+  // Internal automatic font management - no user selection
+  // Quran font: AmiriQuran (loaded lazily when needed)
+  // UI font: Cairo (Kurdish/English), IBMPlexSansArabic (Arabic)
 
   const ReaderSettings({
     required this.fontSize,
@@ -162,9 +159,6 @@ class ReaderSettings {
     required this.showTajweed,
     required this.lineHeight,
     required this.bgMode,
-    this.uiFontFamily = 'Cairo',
-    this.quranFontFamily = 'UthmanicHafs',
-    this.fontTarget = 'both',
   });
 
   ReaderSettings copyWith({
@@ -175,9 +169,6 @@ class ReaderSettings {
     bool? showTajweed,
     double? lineHeight,
     String? bgMode,
-    String? uiFontFamily,
-    String? quranFontFamily,
-    String? fontTarget,
   }) {
     return ReaderSettings(
       fontSize: fontSize ?? this.fontSize,
@@ -187,9 +178,6 @@ class ReaderSettings {
       showTajweed: showTajweed ?? this.showTajweed,
       lineHeight: lineHeight ?? this.lineHeight,
       bgMode: bgMode ?? this.bgMode,
-      uiFontFamily: uiFontFamily ?? this.uiFontFamily,
-      quranFontFamily: quranFontFamily ?? this.quranFontFamily,
-      fontTarget: fontTarget ?? this.fontTarget,
     );
   }
 }
@@ -203,9 +191,6 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
   static const _showTajweedKey = 'reader_show_tajweed';
   static const _lineHeightKey = 'reader_line_height';
   static const _bgModeKey = 'reader_bg_mode';
-  static const _uiFontFamilyKey = 'reader_ui_font_family';
-  static const _quranFontFamilyKey = 'reader_quran_font_family';
-  static const _fontTargetKey = 'reader_font_target';
 
   ReaderSettingsNotifier(this._prefs)
     : super(
@@ -217,10 +202,6 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
           showTajweed: _prefs.getBool(_showTajweedKey) ?? false,
           lineHeight: _prefs.getDouble(_lineHeightKey) ?? 2.0,
           bgMode: _prefs.getString(_bgModeKey) ?? 'cream',
-          uiFontFamily: _prefs.getString(_uiFontFamilyKey) ?? 'Cairo',
-          quranFontFamily:
-              _prefs.getString(_quranFontFamilyKey) ?? 'UthmanicHafs',
-          fontTarget: _prefs.getString(_fontTargetKey) ?? 'both',
         ),
       );
 
@@ -258,21 +239,6 @@ class ReaderSettingsNotifier extends StateNotifier<ReaderSettings> {
     state = state.copyWith(bgMode: mode);
     await _prefs.setString(_bgModeKey, mode);
   }
-
-  Future<void> setUiFontFamily(String font) async {
-    state = state.copyWith(uiFontFamily: font);
-    await _prefs.setString(_uiFontFamilyKey, font);
-  }
-
-  Future<void> setQuranFontFamily(String font) async {
-    state = state.copyWith(quranFontFamily: font);
-    await _prefs.setString(_quranFontFamilyKey, font);
-  }
-
-  Future<void> setFontTarget(String target) async {
-    state = state.copyWith(fontTarget: target);
-    await _prefs.setString(_fontTargetKey, target);
-  }
 }
 
 final readerSettingsProvider =
@@ -282,8 +248,37 @@ final readerSettingsProvider =
     });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Accent Gradient State
+// Font Utilities (Internal Automatic Management)
 // ─────────────────────────────────────────────────────────────────────────────
+
+/// Font families for internal automatic management only.
+/// No user-facing font selection - fonts are chosen automatically based on language/context.
+class FontFamilies {
+  // Quran fonts (installed in pubspec.yaml)
+  static const String amiriQuran = 'AmiriQuran';
+
+  // Arabic UI font
+  static const String ibmPlexSansArabic = 'IBMPlexSansArabic';
+
+  // Kurdish/English UI font
+  static const String cairo = 'Cairo';
+
+  /// Get appropriate font for language/context
+  static String getFontForLanguage({
+    required String languageCode, // 'ku', 'ar', 'en'
+  }) {
+    switch (languageCode) {
+      case 'ar':
+        return amiriQuran;
+      case 'ku':
+        return cairo;
+      case 'en':
+        return cairo;
+      default:
+        return amiriQuran;
+    }
+  }
+}
 
 class AccentGradient extends Color {
   final Color start;

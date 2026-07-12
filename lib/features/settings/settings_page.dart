@@ -553,7 +553,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         textDirection: TextDirection.rtl,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: 'UthmanicHafs',
+                          fontFamily: readerSettings.quranFontFamily,
                           fontSize: readerSettings.fontSize,
                           color: cs.textPrimary,
                           height: 2,
@@ -620,24 +620,31 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           ],
                         ),
                       ),
+                      // Font info (read-only when tajweed enabled)
                       _SettingRow(
                         icon: Icons.menu_book_rounded,
                         label: l.settingsFontQuran,
-                        subLabel: l.settingsFontQuranSub,
+                        subLabel: 'فۆنت خۆکار دەرچوو: ${readerSettings.quranFontFamily}',
                         cs: cs,
-                        trailing: _FontDropdown(
-                          cs: cs,
-                          current: readerSettings.quranFontFamily,
-                          options: const [
-                            ('UthmanicHafs', 'Uthmanic Hafs'),
-                            ('Amiri', 'Amiri'),
-                            ('ScheherazadeNew', 'Scheherazade New'),
-                          ],
-                          onChanged: (f) {},
-                          disabledMessage: 'ناتوانی فۆنت بگۆڕیت لەبەر ئەوەی نیشاندانی تەجوید چالاکە',
+                        trailing: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: cs.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            FontFamilies.getDisplayName(readerSettings.quranFontFamily, context),
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: cs.primary,
+                            ),
+                          ),
                         ),
                       ),
                     ] else ...[
+                      // Font selection for Quran text
                       _SettingRow(
                         icon: Icons.menu_book_rounded,
                         label: l.settingsFontQuran,
@@ -646,11 +653,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         trailing: _FontDropdown(
                           cs: cs,
                           current: readerSettings.quranFontFamily,
-                          options: const [
-                            ('UthmanicHafs', 'Uthmanic Hafs'),
-                            ('Amiri', 'Amiri'),
-                            ('ScheherazadeNew', 'Scheherazade New'),
-                          ],
+                          options: FontFamilies.arabicFonts
+                              .map((f) => (f, FontFamilies.getDisplayName(f, context)))
+                              .toList(),
                           onChanged: (f) => ref
                               .read(readerSettingsProvider.notifier)
                               .setQuranFontFamily(f),
@@ -1453,34 +1458,17 @@ class _FontDropdown extends StatelessWidget {
     required this.current,
     required this.options,
     required this.onChanged,
-    this.disabledMessage,
   });
 
   final AppColorScheme cs;
   final String current;
-  final List<(String, String)> options;
+final List<(String, String)> options;
   final ValueChanged<String> onChanged;
-  final String? disabledMessage;
 
   @override
   Widget build(BuildContext context) {
-    final isDisabled = disabledMessage != null;
     return GestureDetector(
       onTap: () {
-        if (isDisabled) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                disabledMessage!,
-                textDirection: TextDirection.rtl,
-                style: const TextStyle(fontFamily: 'Cairo'),
-              ),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: Colors.amber[800],
-            ),
-          );
-          return;
-        }
         showModalBottomSheet(
           context: context,
           backgroundColor: Colors.transparent,
@@ -1542,40 +1530,28 @@ class _FontDropdown extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: isDisabled
-              ? Colors.grey.withValues(alpha: 0.15)
-              : cs.primary.withValues(alpha: 0.1),
+          color: cs.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isDisabled
-                ? Colors.grey.withValues(alpha: 0.3)
-                : cs.primary.withValues(alpha: 0.2),
+            color: cs.primary.withValues(alpha: 0.2),
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (isDisabled) ...[
-              const Icon(Icons.lock_rounded, size: 12, color: Colors.grey),
-              const SizedBox(width: 4),
-            ],
             Text(
-              isDisabled
-                  ? 'QPCV4Tajweed'
-                  : options.firstWhere((o) => o.$1 == current,
-                          orElse: () => options.first)
-                      .$2,
+              options.firstWhere((o) => o.$1 == current,
+                      orElse: () => options.first)
+                  .$2,
               style: TextStyle(
                 fontFamily: 'Cairo',
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isDisabled ? Colors.grey : cs.primary,
+                color: cs.primary,
               ),
             ),
-            if (!isDisabled) ...[
-              const SizedBox(width: 4),
-              Icon(Icons.expand_more_rounded, size: 14, color: cs.primary),
-            ],
+            const SizedBox(width: 4),
+            Icon(Icons.expand_more_rounded, size: 14, color: cs.primary),
           ],
         ),
       ),

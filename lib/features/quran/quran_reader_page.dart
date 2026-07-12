@@ -1075,9 +1075,8 @@ class _BismillahBanner extends ConsumerWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = AppColorScheme.of(context);
     final readerSettings = ref.watch(readerSettingsProvider);
-    final quranFont = (readerSettings.fontTarget == 'reader' || readerSettings.fontTarget == 'both')
-        ? readerSettings.quranFontFamily
-        : 'UthmanicHafs';
+    // Use AmiriQuran for Quran text (Arabic), loaded lazily
+    const quranFont = 'AmiriQuran';
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24, top: 8),
@@ -1128,9 +1127,8 @@ class _AyahRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final readerSettings = ref.watch(readerSettingsProvider);
-    final quranFont = (readerSettings.fontTarget == 'reader' || readerSettings.fontTarget == 'both')
-        ? readerSettings.quranFontFamily
-        : 'UthmanicHafs';
+    // Use AmiriQuran for Quran text (Arabic), loaded lazily
+    const quranFont = 'AmiriQuran';
     final inactiveRules = ref.watch(inactiveTajweedRulesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final sajdah = SajdahModel.list.cast<SajdahModel?>().firstWhere(

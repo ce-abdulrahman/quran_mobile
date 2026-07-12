@@ -313,92 +313,110 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
       context: context,
       builder: (ctx) {
         final cs = AppColorScheme.of(context);
-        return AlertDialog(
+        final maxHeight = MediaQuery.of(context).size.height * 0.7;
+        return Dialog(
           backgroundColor: cs.card,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          title: Text(
-            l.tasbihAddNewDhikr,
-            textDirection: TextDirection.rtl,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
-          ),
-          content: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextFormField(
-                    controller: nameCtrl,
-                    textAlign: TextAlign.right,
-                    textDirection: TextDirection.rtl,
-                    decoration: InputDecoration(
-                      labelText: l.tasbihDhikrName,
-                      alignLabelWithHint: true,
-                      hintText: l.tasbihSubhanAllah,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: maxHeight),
+            child: SingleChildScrollView(
+              child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      l.tasbihAddNewDhikr,
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold, fontSize: 20),
                     ),
-                    validator: (val) {
-                      if (val == null || val.trim().isEmpty) {
-                        return l.tasbihEnterDhikrName;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: targetCtrl,
-                    keyboardType: TextInputType.number,
-                    textAlign: TextAlign.right,
-                    textDirection: TextDirection.rtl,
-                    decoration: InputDecoration(
-                      labelText: l.tasbihGoalLabel,
-                      alignLabelWithHint: true,
-                      hintText: '33',
-                    ),
-                    validator: (val) {
-                      if (val == null || int.tryParse(val) == null || int.parse(val) <= 0) {
-                        return l.tasbihEnterValidGoal;
-                      }
-                      return null;
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(l.homeCancel, style: const TextStyle(fontFamily: 'Cairo')),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  final name = nameCtrl.text.trim();
-                  final target = int.parse(targetCtrl.text.trim());
-                  ref.read(tasbihProvider.notifier).addCustomDhikr(name, target);
-                  Navigator.pop(ctx);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        l.tasbihDhikrAdded(name),
-                        textDirection: TextDirection.rtl,
-                        style: const TextStyle(fontFamily: 'Cairo'),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: nameCtrl,
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
+                      decoration: InputDecoration(
+                        labelText: l.tasbihDhikrName,
+                        alignLabelWithHint: true,
+                        hintText: l.tasbihSubhanAllah,
                       ),
-                      backgroundColor: const Color(0xFF0F8F4C),
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      validator: (val) {
+                        if (val == null || val.trim().isEmpty) {
+                          return l.tasbihEnterDhikrName;
+                        }
+                        return null;
+                      },
                     ),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: cs.primary,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: targetCtrl,
+                      keyboardType: TextInputType.number,
+                      textAlign: TextAlign.right,
+                      textDirection: TextDirection.rtl,
+                      decoration: InputDecoration(
+                        labelText: l.tasbihGoalLabel,
+                        alignLabelWithHint: true,
+                        hintText: '33',
+                      ),
+                      validator: (val) {
+                        if (val == null || int.tryParse(val) == null || int.parse(val) <= 0) {
+                          return l.tasbihEnterValidGoal;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: Text(l.homeCancel, style: const TextStyle(fontFamily: 'Cairo')),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                final name = nameCtrl.text.trim();
+                                final target = int.parse(targetCtrl.text.trim());
+                                ref.read(tasbihProvider.notifier).addCustomDhikr(name, target);
+                                Navigator.pop(ctx);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      l.tasbihDhikrAdded(name),
+                                      textDirection: TextDirection.rtl,
+                                      style: const TextStyle(fontFamily: 'Cairo'),
+                                    ),
+                                    backgroundColor: const Color(0xFF0F8F4C),
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                  ),
+                                );
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: cs.primary,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: Text(l.tasbihAddButton, style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              child: Text(l.tasbihAddButton, style: const TextStyle(fontFamily: 'Cairo', color: Colors.white, fontWeight: FontWeight.bold)),
             ),
-          ],
+          ),
+        ),
         );
       },
     );
