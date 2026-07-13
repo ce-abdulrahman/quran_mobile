@@ -137,9 +137,9 @@ class TajweedEngine {
 
         // Overlap: grapheme [gStart, gEnd) ∩ segment [segStart, segEnd)
         if (gStart < segEnd && gEnd > segStart) {
-          clusterColors[i] = (seg.colorId != null &&
-                  ruleColors.containsKey(seg.colorId))
-              ? ruleColors[seg.colorId]!
+          clusterColors[i] = (seg.ruleId != null &&
+                  ruleColors.containsKey(seg.ruleId))
+              ? ruleColors[seg.ruleId]!
               : _parseColor(seg.colorCode, defaultColor);
           clusterBold[i] = true;
           break;
@@ -242,22 +242,21 @@ class TajweedEngine {
   }
 
   static Color _parseColor(String? hexString, Color defaultColor) {
-    if (hexString == null || hexString.isEmpty) return const Color(0xFF1B7340);
-    final cleaned = hexString.replaceFirst('#', '').toLowerCase();
-    if (cleaned == '000000' || cleaned == 'ffffff') {
-      return defaultColor;
+    if (hexString == null || hexString.isEmpty) return defaultColor;
+    
+    // Extract the first hex color found (supports linear-gradient and plain hex)
+    final match = RegExp(r'#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})').firstMatch(hexString);
+    if (match != null) {
+      final cleaned = match.group(1)!.toLowerCase();
+      if (cleaned == '000000' || cleaned == 'ffffff') return defaultColor;
+      try {
+        if (cleaned.length == 6) {
+          return Color(int.parse('ff$cleaned', radix: 16));
+        } else if (cleaned.length == 8) {
+          return Color(int.parse(cleaned, radix: 16));
+        }
+      } catch (_) {}
     }
-    try {
-      final buffer = StringBuffer();
-      if (cleaned.length == 6) buffer.write('ff');
-      buffer.write(cleaned);
-      final parsed = Color(int.parse(buffer.toString(), radix: 16));
-      if (parsed == const Color(0xFF000000) || parsed == const Color(0xFFFFFFFF)) {
-        return defaultColor;
-      }
-      return parsed;
-    } catch (_) {
-      return const Color(0xFF1B7340);
-    }
+    return defaultColor;
   }
 }

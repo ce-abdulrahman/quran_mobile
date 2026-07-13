@@ -13,7 +13,7 @@ import '../../core/models/sajdah_model.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/bookmarks_provider.dart';
-import '../../core/providers/notes_provider.dart';
+
 import '../../core/utils/quran_utils.dart';
 import 'quran_providers.dart';
 import 'providers/audio_player_provider.dart';
@@ -890,16 +890,11 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
     );
     final bookmarks = ref.watch(bookmarksProvider);
     final favorites = ref.watch(favoritesProvider);
-    final notes = ref.watch(notesProvider);
 
     final isBookmarked = bookmarks.any((b) =>
         b.surahId == (ayah.surah?.id ?? 1) && b.ayahNumber == ayah.ayahNumber);
     final isFavorited = favorites.any((f) => f.favoriteId == 'ayah_${ayah.surah?.id ?? 1}_${ayah.ayahNumber}');
-    final note = notes.cast<LocalNote?>().firstWhere(
-      (n) => n?.surahNumber == (ayah.surah?.id ?? 1) && n?.ayahNumber == ayah.ayahNumber,
-      orElse: () => null,
-    );
-    final hasNote = note != null && note.content.isNotEmpty;
+
 
     final playerState = ref.watch(audioPlayerProvider);
     final isPlayingThis = playerState.isPlaying && playerState.currentAyahNumber == ayah.ayahNumber;
@@ -1018,48 +1013,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
               ),
               const SizedBox(height: 14),
             ],
-            if (hasNote) ...[
-              Container(
-                margin: const EdgeInsets.only(bottom: 14),
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.purple.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.purple.withValues(alpha: 0.15)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(Icons.edit_note_rounded, color: Colors.purple, size: 16),
-                        SizedBox(width: 6),
-                        Text(
-                          'تێبینی/ڕامانی تۆ',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.purple,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      note.content,
-                      textDirection: TextDirection.rtl,
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 12,
-                        height: 1.5,
-                        color: textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+
 
             // Action Buttons Row
             Row(
@@ -1109,14 +1063,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
                   cs: cs,
                   onTap: () => _showBookmarkCategoryPicker(context, ayah),
                 ),
-                // Note / Reflection edit
-                _panelAction(
-                  icon: hasNote ? Icons.edit_note_rounded : Icons.note_add_rounded,
-                  label: 'ڕامان',
-                  color: hasNote ? Colors.purple : textSecondary,
-                  cs: cs,
-                  onTap: () => _showNoteDialog(context, ayah, ref),
-                ),
+
                 // Copy Clipboard
                 _panelAction(
                   icon: Icons.copy_rounded,
@@ -1162,130 +1109,7 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
     );
   }
 
-  void _showNoteDialog(BuildContext context, AyahModel ayah, WidgetRef ref) {
-    final cs = AppColorScheme.of(context);
-    final surahId = ayah.surah?.id ?? 1;
-    final existingNote = ref.read(notesProvider.notifier).getNote(surahId, ayah.ayahNumber);
-    final textController = TextEditingController(text: existingNote?.content ?? '');
 
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          backgroundColor: cs.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text(
-            'نووسینی تێبینی/ڕامان',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'ئایەتی ${ayah.ayahNumber} لە سورەتی ${(Localizations.localeOf(context).languageCode == 'ku' ? ayah.surah?.nameKu : ayah.surah?.nameEn) ?? ""}',
-                textDirection: TextDirection.rtl,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 12,
-                  color: cs.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: textController,
-                maxLines: 4,
-                textDirection: TextDirection.rtl,
-                autofocus: true,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 14,
-                  color: cs.textPrimary,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'تێبینی یان تێڕامانی خۆت لێرە بنووسە...',
-                  hintStyle: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 12,
-                    color: cs.textSecondary.withValues(alpha: 0.5),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: cs.cardBorder),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: cs.primary),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(
-                'پاشگەزبوونەوە',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  color: cs.textSecondary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            if (existingNote != null)
-              TextButton(
-                onPressed: () {
-                  ref.read(notesProvider.notifier).deleteNote(surahId, ayah.ayahNumber);
-                  Navigator.pop(ctx);
-                },
-                child: const Text(
-                  'سڕینەوە',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ElevatedButton(
-              onPressed: () {
-                final content = textController.text.trim();
-                if (content.isNotEmpty) {
-                  ref.read(notesProvider.notifier).saveNote(
-                        surahNumber: surahId,
-                        ayahNumber: ayah.ayahNumber,
-                        content: content,
-                      );
-                } else if (existingNote != null) {
-                  ref.read(notesProvider.notifier).deleteNote(surahId, ayah.ayahNumber);
-                }
-                Navigator.pop(ctx);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: cs.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'پاشەکەوت',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   Widget _panelAction({
     required IconData icon,

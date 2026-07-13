@@ -16,7 +16,7 @@ import '../repositories/tasbih_repository.dart';
 import '../repositories/hadith_repository.dart';
 import '../repositories/tajweed_repository.dart';
 import '../repositories/backup_repository.dart';
-import '../repositories/auth_repository.dart';
+
 import '../models/ayah_model.dart';
 import '../models/banner_model.dart';
 import '../models/tajweed_rule_model.dart';
@@ -32,7 +32,7 @@ import 'hadith_provider.dart';
 
 export 'favorites_provider.dart';
 export 'reading_tracker_provider.dart';
-export 'khatm_provider.dart';
+
 export 'adhkar_provider.dart';
 export 'tasbih_provider.dart';
 export 'hadith_provider.dart';
@@ -74,10 +74,7 @@ final reciterHistorySyncQueueProvider = Provider<ReciterHistorySyncQueue>((
   return ReciterHistorySyncQueue(prefs: prefs, apiClient: client);
 });
 
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
-  final client = ref.watch(apiClientProvider);
-  return AuthRepository(client);
-});
+
 
 final surahRepositoryProvider = Provider<SurahRepository>((ref) {
   final client = ref.watch(apiClientProvider);

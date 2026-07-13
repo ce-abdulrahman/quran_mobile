@@ -81,11 +81,9 @@ class QuranApp extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final accentColor = ref.watch(accentColorProvider);
     final appLocale = ref.watch(appLocaleProvider);
-    final readerSettings = ref.watch(readerSettingsProvider);
 
-    final uiFont = (readerSettings.fontTarget == 'ui' || readerSettings.fontTarget == 'both')
-        ? readerSettings.uiFontFamily
-        : 'Cairo';
+
+    final uiFont = 'Cairo';
 
     return MaterialApp(
       title: 'قورئانەکەم',

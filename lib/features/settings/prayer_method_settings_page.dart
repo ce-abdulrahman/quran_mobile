@@ -60,13 +60,13 @@ class PrayerMethodSettingsPage extends ConsumerWidget {
                 ? 'قواعد محلية وتعديلات للعراق وكردستان (موصى به).'
                 : 'Iraq/Kurdistan local calculation rules and offsets (Recommended).';
       case 'prayer.method.title':
-        return isKurdish ? 'ڕێگای کاتی نوێژ' : isArabic ? 'طريقة الحساب' : 'Calculation Method';
+        return isKurdish ? 'دەنگی بانگدان' : isArabic ? 'صوت الأذان' : 'Adhan Sound';
       case 'prayer.method.subtitle':
         return isKurdish
-            ? 'هەڵبژاردنی ڕێگای هەژمارکردنی کاتەکانی بانگ'
+            ? 'هەڵبژاردنی دەنگی ئاگادارکردنەوە بۆ کاتەکانی بانگ'
             : isArabic
-                ? 'اختر طريقة حساب أوقات الصلاة'
-                : 'Choose calculation method for prayer times';
+                ? 'اختر صوت الأذان للتنبيه بمواقيت الصلاة'
+                : 'Choose adhan sound for prayer notifications';
       default:
         return key.split('.').last.replaceAll('_', ' ').toUpperCase();
     }
@@ -76,8 +76,6 @@ class PrayerMethodSettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final cs = AppColorScheme.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final methodsState = ref.watch(prayerMethodsListProvider);
-    final settingsState = ref.watch(prayerTimesSettingsProvider);
 
     return Scaffold(
       backgroundColor: cs.bg,
@@ -129,123 +127,12 @@ class PrayerMethodSettingsPage extends ConsumerWidget {
           ),
 
           // Scrollable list
-          Expanded(
-            child: methodsState.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : methodsState.methods.isEmpty
-                    ? Center(
-                        child: Text(
-                          'هیچ شێوازێک نەدۆزرایەوە',
-                          style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
-                        ),
-                      )
-                    : ListView(
-                        padding: const EdgeInsets.all(16),
-                        physics: const BouncingScrollPhysics(),
-                        children: [
-                          // Calculation Methods Section
-                          ...methodsState.methods.asMap().entries.map((entry) {
-                            final index = entry.key;
-                            final method = entry.value;
-                            final isSelected = settingsState.calculationMethod == method.key;
-
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              margin: const EdgeInsets.only(bottom: 12),
-                              decoration: BoxDecoration(
-                                color: isSelected ? cs.primary.withValues(alpha: 0.08) : cs.card,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: isSelected ? cs.primary : cs.cardBorder,
-                                  width: isSelected ? 1.5 : 1.0,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.02),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 3),
-                                  ),
-                                ],
-                              ),
-                              child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                                onTap: () {
-                                  ref.read(prayerTimesSettingsProvider.notifier).changeCalculationMethod(method.key);
-                                },
-                                title: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        _getTranslation(method.translationKeyName, context),
-                                        style: TextStyle(
-                                          fontFamily: 'Cairo',
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: isSelected ? cs.primary : cs.textPrimary,
-                                        ),
-                                      ),
-                                    ),
-                                    if (method.isDefault)
-                                      Container(
-                                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color: cs.primary.withValues(alpha: 0.12),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        child: Text(
-                                          'دەستپێک',
-                                          style: TextStyle(
-                                            fontFamily: 'Cairo',
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: cs.primary,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                                subtitle: Padding(
-                                  padding: const EdgeInsets.only(top: 6),
-                                  child: Text(
-                                    _getTranslation(method.translationKeyDesc, context),
-                                    style: TextStyle(
-                                      fontFamily: 'Cairo',
-                                      fontSize: 12,
-                                      height: 1.4,
-                                      color: cs.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                                trailing: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  width: 22,
-                                  height: 22,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: isSelected ? cs.primary : Colors.transparent,
-                                    border: Border.all(
-                                      color: isSelected ? cs.primary : cs.textSecondary.withValues(alpha: 0.4),
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: isSelected
-                                      ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
-                                      : null,
-                                ),
-                              ),
-                            ).animate().fadeIn(
-                                  duration: 300.ms,
-                                  delay: (index * 50).ms,
-                                );
-                          }),
-
-                          // ───────────────────────────────────────────────
-                          // Adhan Sound Selection Section
-                          // ───────────────────────────────────────────────
-                          const _AdhanSoundSelector(),
-                        ],
-                      ),
+          const Expanded(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(vertical: 8),
+              child: _AdhanSoundSelector(),
+            ),
           ),
         ],
       ),
@@ -266,11 +153,11 @@ class _AdhanSoundSelector extends ConsumerWidget {
       assetName: 'azan', // azan.mp3 in android/raw
     ),
     AdhanSoundOption(
-      id: 'azan_mekka',
-      titleKu: 'بانگی مەککە',
+      id: 'azan_makkah',
+      titleKu: 'بانگی مەككە',
       titleAr: 'أذان مكة',
       titleEn: 'Mecca Adhan',
-      assetName: 'azan_mekka',
+      assetName: 'azan_makkah',
     ),
     AdhanSoundOption(
       id: 'azan_medina',
@@ -285,13 +172,6 @@ class _AdhanSoundSelector extends ConsumerWidget {
       titleAr: 'أذان مصر',
       titleEn: 'Egypt Adhan',
       assetName: 'azan_egypt',
-    ),
-    AdhanSoundOption(
-      id: 'azan_turkey',
-      titleKu: 'بانگی تورکیا',
-      titleAr: 'أذان تركيا',
-      titleEn: 'Turkey Adhan',
-      assetName: 'azan_turkey',
     ),
     AdhanSoundOption(
       id: 'none',

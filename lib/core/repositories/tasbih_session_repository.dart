@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:isar/isar.dart';
 import '../models/tasbih_session_model.dart';
 import '../models/tasbih_session_log_model.dart';
@@ -9,16 +9,15 @@ import '../network/api_constants.dart';
 import '../network/api_result.dart';
 import '../local_db/isar_service.dart';
 import '../local_db/isar_collections.dart';
-import '../providers/auth_provider.dart';
+
 
 class TasbihSessionRepository {
-  final Ref _ref;
   final ApiClient _apiClient;
 
-  TasbihSessionRepository(this._ref, this._apiClient);
+  TasbihSessionRepository(this._apiClient);
 
   Isar get _isar => IsarService.instance.isar;
-  bool get _isAuthenticated => _ref.read(authProvider).isAuthenticated;
+  bool get _isAuthenticated => false;
 
   /// Start a new session.
   Future<ApiResult<TasbihSessionModel>> startSession({

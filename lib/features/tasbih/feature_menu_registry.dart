@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/l10n/app_localizations.dart';
-import '../../core/providers/auth_provider.dart';
+
 import 'themes/theme_selector_page.dart';
 // import '../achievements/achievements_page.dart';
 import '../settings/reminders_page.dart';
@@ -85,7 +85,7 @@ class FeatureMenuRegistry {
           icon: Icons.notifications_active_rounded,
           title: (l) => l.menuSmartReminders,
           onTap: (ctx, _) => Navigator.push(ctx, MaterialPageRoute(builder: (_) => const RemindersPage())),
-          isVisible: (ref) => ref.watch(authProvider).status == AuthStatus.authenticated,
+          isVisible: (ref) => false,
         ),
       ],
       FeatureMenuGroup.data: [

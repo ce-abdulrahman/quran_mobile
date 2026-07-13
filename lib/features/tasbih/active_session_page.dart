@@ -31,46 +31,57 @@ class _ActiveSessionPageState extends ConsumerState<ActiveSessionPage>
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   void _playThemeSound(TasbihThemeModel? theme, UserThemePreferenceModel prefs) {
-    if (!prefs.soundEnabled || theme == null) return;
-    final metadata = theme.themeMetadata;
-    final sound = metadata['sound'];
-    if (sound == null || sound['type'] == 'silent') return;
+    if (!prefs.soundEnabled) return;
+    
+    // Default fallback if no theme or metadata is set
+    if (theme == null || theme.themeMetadata['sound'] == null) {
+      _audioPlayer.play(AssetSource('sounds/click.wav'));
+      return;
+    }
+    
+    final sound = theme.themeMetadata['sound'];
+    if (sound['type'] == 'silent') {
+      // Theme explicitly uses no sound — respect the choice
+      return;
+    }
 
     final localPath = ref.read(tasbihThemeProvider.notifier).getLocalAssetPath(theme, 'sound');
     if (localPath != null && File(localPath).existsSync()) {
       _audioPlayer.play(DeviceFileSource(localPath));
     } else {
-      SystemSound.play(SystemSoundType.click);
+      // CDN asset not downloaded yet — use the local click sound as fallback
+      _audioPlayer.play(AssetSource('sounds/click.wav'));
     }
   }
 
   void _triggerThemeHaptics(TasbihThemeModel? theme, UserThemePreferenceModel prefs) {
     if (!prefs.hapticEnabled) return;
-    if (theme == null) {
-      HapticFeedback.lightImpact();
+    
+    // Default fallback if no theme or metadata is set
+    if (theme == null || theme.themeMetadata['haptic'] == null) {
+      HapticFeedback.mediumImpact();
       return;
     }
-    final metadata = theme.themeMetadata;
-    final haptic = metadata['haptic'];
-    if (haptic != null) {
-      final profile = haptic['profile'] ?? 'medium';
-      switch (profile) {
-        case 'soft':
+    
+    final haptic = theme.themeMetadata['haptic'];
+    final profile = haptic['profile'] ?? 'medium';
+    switch (profile) {
+      case 'soft':
           HapticFeedback.lightImpact();
           break;
         case 'medium':
           HapticFeedback.mediumImpact();
           break;
         case 'strong':
-          HapticFeedback.vibrate();
+          HapticFeedback.heavyImpact();
           break;
         case 'disabled':
-        default:
+          // Theme says no haptic — but user enabled haptics, so light touch
+          HapticFeedback.selectionClick();
           break;
+      default:
+          HapticFeedback.mediumImpact();
       }
-    } else {
-      HapticFeedback.lightImpact();
-    }
   }
 
   @override

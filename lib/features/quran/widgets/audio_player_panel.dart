@@ -179,7 +179,8 @@ class _AudioPlayerPanelState extends ConsumerState<AudioPlayerPanel> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Reciter Selector
-                  recitersAsync.when(
+                  Flexible(
+                    child: recitersAsync.when(
                     data: (reciters) {
                       final selectedReciter = reciters.firstWhere(
                         (r) => r.id == playerState.selectedReciterId,
@@ -228,6 +229,7 @@ class _AudioPlayerPanelState extends ConsumerState<AudioPlayerPanel> {
                     error: (_, __) => Text(
                       'خوێنەرەکان بارنەکران',
                       style: TextStyle(fontFamily: 'Cairo', fontSize: 11, color: cs.textSecondary),
+                    ),
                     ),
                   ),
 

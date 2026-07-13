@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
 import 'app_providers.dart';
 import '../services/prayer_notification_service.dart';
-import '../../features/auth/auth_provider.dart';
+
 import '../../features/prayer/providers/prayer_times_provider.dart';
 import '../../features/prayer/providers/prayer_widget_provider.dart';
 
@@ -165,27 +165,8 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
           ),
         ) {
     _loadSettings();
-    _ref.listen<AuthState>(authProvider, (previous, next) {
-      _handleAuthChange(next);
-    });
   }
 
-  void _handleAuthChange(AuthState authState) {
-    if (authState.status == AuthStatus.authenticated && authState.user?.province != null) {
-      final provinceName = authState.user!.province!.getLocalizedName('en');
-      final matchingCity = state.cities.firstWhere(
-        (c) => c.nameEn.toLowerCase() == provinceName.toLowerCase(),
-        orElse: () => state.selectedCity,
-      );
-      if (matchingCity.nameEn.toLowerCase() == provinceName.toLowerCase() &&
-          matchingCity.nameEn != state.selectedCity.nameEn) {
-        state = state.copyWith(selectedCity: matchingCity);
-        _prefs.setString(_cityKey, jsonEncode(matchingCity.toJson()));
-        reschedule();
-        _syncCityOnTrigger(matchingCity);
-      }
-    }
-  }
 
   void _syncCityOnTrigger(KurdishCity city) {
     try {
@@ -248,6 +229,13 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     bool azanEnabled = rawAzan ?? true;
     String adhanSound = rawAdhanSound ?? 'azan'; // Default to built-in azan.mp3
 
+    // Migrate old sound IDs to corrected filenames
+    const soundMigrations = {'azan_mekka': 'azan_makkah', 'azan_turkey': 'azan'};
+    if (soundMigrations.containsKey(adhanSound)) {
+      adhanSound = soundMigrations[adhanSound]!;
+      _prefs.setString(_adhanSoundKey, adhanSound);
+    }
+
     Map<String, bool> toggles = {
       'Fajr': true,
       'Dhuhr': true,
@@ -266,19 +254,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
 
     // Check if user is authenticated and overwrite city if they have a province set
     KurdishCity initialSelectedCity = city;
-    try {
-      final authState = _ref.read(authProvider);
-      if (authState.status == AuthStatus.authenticated && authState.user?.province != null) {
-        final provinceName = authState.user!.province!.getLocalizedName('en');
-        final matchingCity = listCities.firstWhere(
-          (c) => c.nameEn.toLowerCase() == provinceName.toLowerCase(),
-          orElse: () => city,
-        );
-        if (matchingCity.nameEn.toLowerCase() == provinceName.toLowerCase()) {
-          initialSelectedCity = matchingCity;
-        }
-      }
-    } catch (_) {}
+
 
     state = PrayerTimesState(
       selectedCity: initialSelectedCity,
@@ -334,23 +310,11 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
         await _prefs.setBool('prayer_settings_global_notifications', isEnabled);
         await _prefs.setString('prayer_settings_cities_list', jsonEncode(fetchedCities.map((c) => c.toJson()).toList()));
         
-        // Update selected city if not in the list anymore, or align with user province
+        // Update selected city if not in the list anymore
         KurdishCity currentSelected = state.selectedCity;
-        final authState = _ref.read(authProvider);
-        if (authState.status == AuthStatus.authenticated && authState.user?.province != null) {
-          final provinceName = authState.user!.province!.getLocalizedName('en');
-          final matchingCity = fetchedCities.firstWhere(
-            (c) => c.nameEn.toLowerCase() == provinceName.toLowerCase(),
-            orElse: () => currentSelected,
-          );
-          if (matchingCity.nameEn.toLowerCase() == provinceName.toLowerCase()) {
-            currentSelected = matchingCity;
-          }
-        } else {
-          bool exists = fetchedCities.any((c) => c.nameEn == currentSelected.nameEn);
-          if (!exists && fetchedCities.isNotEmpty) {
-            currentSelected = fetchedCities.first;
-          }
+        bool exists = fetchedCities.any((c) => c.nameEn == currentSelected.nameEn);
+        if (!exists && fetchedCities.isNotEmpty) {
+          currentSelected = fetchedCities.first;
         }
         await _prefs.setString(_cityKey, jsonEncode(currentSelected.toJson()));
         
@@ -369,11 +333,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
   }
 
   Future<void> changeCity(KurdishCity city) async {
-    final authState = _ref.read(authProvider);
-    if (authState.status == AuthStatus.authenticated) {
-      // Lock city updates for authenticated users
-      return;
-    }
+
     state = state.copyWith(selectedCity: city);
     await _prefs.setString(_cityKey, jsonEncode(city.toJson()));
     reschedule();
@@ -406,14 +366,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     await _prefs.setString('prayer_settings_calculation_method', key);
     reschedule();
 
-    // 2. Sync with backend if authenticated
-    try {
-      final auth = _ref.read(authProvider);
-      if (auth.status == AuthStatus.authenticated) {
-        final client = _ref.read(apiClientProvider);
-        await client.post('/user/prayer-method', data: {'prayer_method_key': key});
-      }
-    } catch (_) {}
+
   }
 }
 

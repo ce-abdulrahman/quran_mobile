@@ -119,7 +119,8 @@ class TasbihThemeNotifier extends StateNotifier<TasbihThemeState> {
       // Update last used time in cache tracking
       _updateCacheAccess(active.themeKey);
     } else {
-      state = state.copyWith(isLoading: false);
+      final globalPrefs = _loadPreferences('_global');
+      state = state.copyWith(activePreferences: globalPrefs, isLoading: false);
     }
   }
 
@@ -235,11 +236,14 @@ class TasbihThemeNotifier extends StateNotifier<TasbihThemeState> {
 
   /// Save customized preference overrides for the active theme
   Future<void> savePreferences(UserThemePreferenceModel prefs) async {
-    if (state.activeTheme == null) return;
+    state = state.copyWith(activePreferences: prefs);
+    if (state.activeTheme == null) {
+      await _prefs.setString('${_prefsPrefix}_global', jsonEncode(prefs.toJson()));
+      return;
+    }
     
     final key = state.activeTheme!.themeKey;
     await _prefs.setString('$_prefsPrefix$key', jsonEncode(prefs.toJson()));
-    state = state.copyWith(activePreferences: prefs);
 
     // Sync with backend if logged in
     try {

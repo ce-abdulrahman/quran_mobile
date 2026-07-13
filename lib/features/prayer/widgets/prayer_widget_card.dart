@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/l10n/app_localizations.dart';
-import '../../auth/auth_provider.dart';
+
 import '../../../core/providers/app_providers.dart';
 import '../providers/prayer_widget_provider.dart';
 
@@ -161,8 +161,7 @@ class _PrayerWidgetCardState extends ConsumerState<PrayerWidgetCard> {
 
         if (!enabled) return const SizedBox.shrink();
 
-        final authState = ref.watch(authProvider);
-        if (visibility == 'only_authenticated' && authState.status != AuthStatus.authenticated) {
+        if (visibility == 'only_authenticated') {
           return const SizedBox.shrink();
         }
 

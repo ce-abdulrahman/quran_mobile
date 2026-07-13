@@ -18,7 +18,6 @@
         "dio",
         "encrypt",
         "file_picker",
-        "fl_chart",
         "flutter",
         "flutter_animate",
         "flutter_local_notifications",
@@ -251,15 +250,6 @@
       "dependencies": [
         "crypto",
         "meta"
-      ]
-    },
-    {
-      "name": "fl_chart",
-      "version": "0.70.2",
-      "dependencies": [
-        "equatable",
-        "flutter",
-        "vector_math"
       ]
     },
     {
@@ -1022,14 +1012,6 @@
         "flutter",
         "meta",
         "plugin_platform_interface"
-      ]
-    },
-    {
-      "name": "equatable",
-      "version": "2.0.8",
-      "dependencies": [
-        "collection",
-        "meta"
       ]
     },
     {

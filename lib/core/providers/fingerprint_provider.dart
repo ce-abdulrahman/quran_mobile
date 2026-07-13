@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/fingerprint_settings_model.dart';
 import '../models/fingerprint_statistics_model.dart';
 import '../repositories/fingerprint_repository.dart';
-import 'auth_provider.dart';
+
 import 'achievement_provider.dart';
 import 'app_providers.dart';
 
@@ -219,7 +219,7 @@ class FingerprintNotifier extends StateNotifier<FingerprintState> {
         await fetchRemoteData();
         
         // Refresh standard user details and achievements
-        _ref.read(authProvider.notifier).checkAuthState();
+
         _ref.read(achievementProvider.notifier).loadAchievements();
       },
       error: (message, _, __) async {
@@ -270,7 +270,7 @@ class FingerprintNotifier extends StateNotifier<FingerprintState> {
     if (queue.length > failedItems.length) {
       // Something was synced
       await fetchRemoteData();
-      _ref.read(authProvider.notifier).checkAuthState();
+
       _ref.read(achievementProvider.notifier).loadAchievements();
     }
   }

@@ -9,7 +9,7 @@ import '../../core/local_db/isar_service.dart';
 import '../../core/local_db/isar_collections.dart';
 import '../../core/providers/hadith_provider.dart';
 import '../hadith/hadith_category_page.dart';
-import '../notes/notes_page.dart';
+
 import '../quran/quran_reader_page.dart';
 import '../../core/models/surah_model.dart';
 import '../home/names_of_allah_page.dart';
@@ -1117,13 +1117,7 @@ class _ResultCard extends StatelessWidget {
           builder: (_) => HadithCategoryPage(category: hCategory),
         ),
       );
-    } else if (result.type == 'note') {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const NotesPage(),
-        ),
-      );
+
     } else if (result.type == 'name_of_allah') {
       Navigator.push(
         context,

@@ -136,33 +136,36 @@ class PrayerNotificationService {
 
         final kuName = prayerNamesKu[key] ?? key;
 
-        // Build sound resource - use selected adhan sound or fallback to default
-        final androidSound = adhanSound.isNotEmpty
+        final bool playSound = adhanSound != 'none';
+        final androidSound = playSound && adhanSound.isNotEmpty
             ? RawResourceAndroidNotificationSound(adhanSound)
-            : const RawResourceAndroidNotificationSound('azan');
-        final iOSSound = adhanSound.isNotEmpty
+            : null;
+        final iOSSound = playSound && adhanSound.isNotEmpty
             ? '$adhanSound.wav'
-            : 'azan.wav';
+            : null;
+
+        // Android channels are immutable. We must use a different channel ID for different sounds or silent.
+        final String dynamicChannelId = '${_channelId}_${playSound ? adhanSound : 'silent'}';
 
         try {
           final notificationDetails = NotificationDetails(
             android: AndroidNotificationDetails(
-              _channelId,
+              dynamicChannelId,
               _channelName,
               channelDescription: _channelDesc,
               importance: Importance.max,
               priority: Priority.high,
-              playSound: true,
+              playSound: playSound,
               sound: androidSound,
               icon: '@mipmap/ic_launcher',
-              largeIcon: DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
+              largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
               color: const Color(0xFFCD9D27),
               enableVibration: true,
             ),
             iOS: DarwinNotificationDetails(
               presentAlert: true,
               presentBadge: true,
-              presentSound: true,
+              presentSound: playSound,
               sound: iOSSound,
             ),
           );

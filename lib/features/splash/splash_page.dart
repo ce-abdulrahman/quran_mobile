@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/providers/app_providers.dart';
-import '../../core/providers/auth_provider.dart';
 import '../../core/providers/feature_flag_provider.dart';
 import '../../core/providers/prayer_times_provider.dart';
 import '../../core/local_db/isar_service.dart';
@@ -49,7 +48,6 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(authProvider.notifier).checkAuthState();
       ref.read(featureFlagServiceProvider).sync();
       _syncPrayerTimesOnBoot();
       _checkDatabaseSeeding();
@@ -86,6 +84,16 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             }
           },
         );
+
+        // Wait 3 seconds after first-run seeding so all Isar providers
+        // initialize before the main shell renders (fixes first-launch glitch).
+        if (mounted) {
+          setState(() {
+            _seedingStatus = 'ئامادەی بەکارهێنانە...';
+            _seedingProgress = 1.0;
+          });
+        }
+        await Future.delayed(const Duration(seconds: 3));
         
         if (!mounted) return;
         await ChangelogDialog.showIfNeeded(context);

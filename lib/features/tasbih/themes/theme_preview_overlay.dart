@@ -51,8 +51,12 @@ class _ThemePreviewOverlayState extends ConsumerState<ThemePreviewOverlay>
   }
 
   void _playThemeSound() {
+    if (widget.theme.themeMetadata['sound'] == null) {
+      SystemSound.play(SystemSoundType.click);
+      return;
+    }
     final sound = widget.theme.themeMetadata['sound'];
-    if (sound != null && sound['type'] != 'silent') {
+    if (sound['type'] != 'silent') {
       // Typically we load the asset path, for preview we trigger system click if asset isn't resolved
       SystemSound.play(SystemSoundType.click);
     }

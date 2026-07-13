@@ -254,6 +254,8 @@ class AppLocalizations {
   String get settingsSmartReminderSub => _translate(ku: 'کات و دووبارەبوونەوەی ئاگادارکردنەوەکان ڕێکبخە', ar: 'تعديل وقت وتكرار التذكيرات', en: 'Configure time and frequency of reminders');
   String get settingsCalculationMethod => _translate(ku: 'ڕێگای کاتی نوێژ', ar: 'طريقة الحساب', en: 'Calculation Method');
   String get settingsCalculationMethodSub => _translate(ku: 'هەڵبژاردنی ڕێگای هەژمارکردنی کاتەکانی بانگ', ar: 'تحديد طريقة حساب مواقيت الصلاة', en: 'Choose calculation method for prayer times');
+  String get settingsAdhanSound => _translate(ku: 'دەنگی بانگ', ar: 'صوت الأذان', en: 'Adhan Sound');
+  String get settingsAdhanSoundSub => _translate(ku: 'ڕێکخستنی دەنگی ئاگادارکردنەوەی کاتی بانگ', ar: 'تعديل صوت إشعار الأذان', en: 'Configure adhan notification sound');
   String get settingsDataManagement => _translate(ku: 'بەڕێوەبردنی داتاکان', ar: 'إدارة البيانات', en: 'Data Management');
   String get settingsExportDataSub => _translate(ku: 'هەناردەکردنی زانیارییەکانت بۆ ناو فایلێک بۆ پاشەکەوت', ar: 'تصدير بياناتك إلى ملف للنسخ الاحتياطي', en: 'Export your data to a backup file');
   String get settingsImportDataSub => _translate(ku: 'گەڕاندنەوەی زانیارییەکان لە فایلی کۆپی پاشەکەوتەوە', ar: 'استعادة بياناتك من ملف النسخ الاحتياطي', en: 'Restore your data from a backup file');
@@ -428,9 +430,7 @@ class AppLocalizations {
 
   // ── Redesign Additions ─────────────────────────────────────────────
   String get welcome => _translate(ku: 'بەخێربێیت', ar: 'مرحباً بك', en: 'Welcome');
-  String get guestProfileSub => _translate(ku: 'تۆمارێکی نوێ بکە بۆ هاوکاتکردنی دەستکەوتەکان، بەردەوامی، پشتیوانی و ئامارەکان.', ar: 'سجل الدخول لمزامنة إنجازاتك وسلسلتك وإحصائياتك.', en: 'Login to sync your achievements, streak, and statistics.');
-  String get login => _translate(ku: 'چوونە ژوورەوە', ar: 'تسجيل الدخول', en: 'Login');
-  String get register => _translate(ku: 'تۆمارکردن', ar: 'إنشاء حساب', en: 'Register');
+
   String get personalizationGroup => _translate(ku: 'تایبەتمەندکردن', ar: 'التخصيص', en: 'Personalization');
   String get progressGroup => _translate(ku: 'پێشکەوتن', ar: 'التقدم', en: 'Progress');
   String get productivityGroup => _translate(ku: 'بەرهەمداری', ar: 'الإنتاجية', en: 'Productivity');
@@ -466,7 +466,7 @@ class AppLocalizations {
   String get sajdah => _translate(ku: 'سەجدە', ar: 'السجدة', en: 'Sajdah');
   String get dailyGoal => _translate(ku: 'ئامانجی ڕۆژانە', ar: 'الهدف اليومي', en: 'Daily Goal');
   String get dailyGoalProgress => _translate(ku: 'پێشکەوتن لە ئامانجی ڕۆژانە', ar: 'تقدم الهدف اليومي', en: 'Daily Goal Progress');
-  String get khatmahProgress => _translate(ku: 'پێشکەوتنی خەتمە', ar: 'تقدم الختمة', en: 'Khatmah Progress');
+
   String get estimatedCompletion => _translate(ku: 'تەواوبوونی خەمڵێنراو', ar: 'التاريخ المتوقع للإتمام', en: 'Estimated Completion');
   String get pagesRemaining => _translate(ku: 'لاپەڕە ماوە', ar: 'صفحة متبقية', en: 'Pages Remaining');
   String get juzRemaining => _translate(ku: 'جوزء ماوە', ar: 'جزء متبقي', en: 'Juz Remaining');
@@ -630,24 +630,7 @@ class AppLocalizations {
   // ── Search Page ──────────────────────────────────────────────────
   String get searchRetry => _translate(ku: 'دووبارە هەوڵبدەرەوە', ar: 'المحاولة مرة أخرى', en: 'Retry');
 
-  // ── Notes ────────────────────────────────────────────────────────
-  String get notesDeleteTitle => _translate(ku: 'سڕینەوەی تێبینی', ar: 'حذف الملاحظة', en: 'Delete Note');
-  String get notesDeleteConfirm => _translate(ku: 'دڵنیای لە سڕینەوەی ئەم تێبینییە؟', ar: 'هل أنت متأكد من حذف هذه الملاحظة؟', en: 'Are you sure you want to delete this note?');
 
-  // ── Auth (additional) ────────────────────────────────────────────
-  String get authGenderMale => _translate(ku: 'نێر', ar: 'ذكر', en: 'Male');
-  String get authGenderFemale => _translate(ku: 'مێ', ar: 'أنثى', en: 'Female');
-  String get authLogoutThisDevice => _translate(ku: 'چوونەدەرەوە لەم ئامێرە', ar: 'تسجيل الخروج من هذا الجهاز', en: 'Log out from this device');
-  String get authLogoutAllDevices => _translate(ku: 'چوونەدەرەوە لە سەرجەم ئامێرەکان', ar: 'تسجيل الخروج من جميع الأجهزة', en: 'Log out from all devices');
-  String get authPrimaryColor => _translate(ku: 'ڕەنگی سەرەکی ئەپ', ar: 'اللون الرئيسي للتطبيق', en: 'App Primary Color');
-
-  // ── Leaderboard ──────────────────────────────────────────────────
-  String get leaderboardPublicProfile => _translate(ku: 'پڕۆفایلی گشتی', ar: 'الملف الشخصي العام', en: 'Public Profile');
-  String get leaderboardPublicProfileSub => _translate(ku: 'ناوی ڕاستەقینەت لە ڕیزبەندی نیشان بدرێت', ar: 'اعرض اسمك الحقيقي في لوحة المتصدرين', en: 'Show your real name in the leaderboard');
-  String get leaderboardAnonymous => _translate(ku: 'مۆدی نادیار (Anonymous)', ar: 'وضع مجهول الهوية', en: 'Anonymous Mode');
-  String get leaderboardAnonymousSub => _translate(ku: 'ناوی پڕۆفایلەکەت وەک بەکارهێنەرێکی نەناسراو نیشان بدرێت', ar: 'اعرض اسمك كمستخدم مجهول', en: 'Show your name as an anonymous user');
-  String get leaderboardHidden => _translate(ku: 'شاردراوە لە ڕیزبەندی', ar: 'مخفي في لوحة المتصدرين', en: 'Hidden from Leaderboard');
-  String get leaderboardHiddenSub => _translate(ku: 'خاڵەکانت تۆمار بکرێن بەڵام لە ڕیزبەندی نیشان نەدرێیت', ar: 'تسجيل نقاطك لكن عدم ظهورها في اللوحة', en: 'Record your points but not shown in leaderboard');
 
   // ── Statistics ───────────────────────────────────────────────────
   String get statsSpiritualProductivity => _translate(ku: 'نمرەی بەرهەمداری ڕۆحی', ar: 'درجة الإنتاجية الروحية', en: 'Spiritual Productivity Score');
@@ -756,22 +739,7 @@ class AppLocalizations {
   String get hadithTranslationHeader => _translate(ku: 'وەرگێڕان:', ar: 'الترجمة:', en: 'Translation:');
   String get hadithSourceHeader => _translate(ku: 'سەرچاوە:', ar: 'المصدر:', en: 'Source:');
 
-  // ── Notes Page ───────────────────────────────────────────────────
-  String get notesPageTitle => _translate(ku: 'تێبینی و ڕامانەکان', ar: 'الملاحظات والتأملات', en: 'Notes & Reflections');
-  String notesSurahNum(int num) => _translate(ku: 'سوورەت $num', ar: 'سورة $num', en: 'Surah $num');
-  String get notesNewTitle => _translate(ku: 'تێبینی و ڕامانی نوێ', ar: 'ملاحظة جديدة', en: 'New Note');
-  String get notesEditTitle => _translate(ku: 'دەستکاری تێبینی', ar: 'تعديل الملاحظة', en: 'Edit Note');
-  String get notesHintText => _translate(ku: 'لێرەدا بیرۆکە و ڕامانەکانت بنووسە...', ar: 'اكتب أفكارك هنا...', en: 'Write your thoughts here...');
-  String get notesCancel => _translate(ku: 'پاشگەزبوونەوە', ar: 'إلغاء', en: 'Cancel');
-  String get notesSave => _translate(ku: 'پاشەکەوتکردن', ar: 'حفظ', en: 'Save');
-  String get notesSearchHint => _translate(ku: 'بگەڕێ لە تێبینیەکان...', ar: 'ابحث في الملاحظات...', en: 'Search notes...');
-  String get notesEmptySearch => _translate(ku: 'هیچ تێبینیەک نەدۆزرایەوە بۆ گەڕانەکەت', ar: 'لم يتم العثور على ملاحظات لبحثك', en: 'No notes found for your search');
-  String get notesEmptyList => _translate(ku: 'هیچ تێبینیەک نییە لە ئێستادا', ar: 'لا توجد ملاحظات الآن', en: 'No notes yet');
-  String get notesEmptyHint => _translate(ku: 'تێبینی نوێ بنووسە بۆ تۆمارکردنی وانە و ڕامانەکانت', ar: 'اكتب ملاحظة جديدة لتسجيل دروسك وأفكارك', en: 'Write a new note to record your lessons and thoughts');
-  String get notesUpdatedAt => _translate(ku: 'نوێکراوەتەوە:', ar: 'تم التحديث:', en: 'Updated:');
-  String get notesGeneralNote => _translate(ku: 'تێبینی گشتی / ڕامان', ar: 'ملاحظة عامة / فكرة', en: 'General Note / Thought');
-  String get notesDeleteNo => _translate(ku: 'نەخێر', ar: 'لا', en: 'No');
-  String get notesDeleteYes => _translate(ku: 'بەڵێ', ar: 'نعم', en: 'Yes');
+
 
   // ── Tajweed Page ─────────────────────────────────────────────────
   String get tajweedPageTitle => _translate(ku: 'فێربوونی یاساکانی تەجوید', ar: 'تعلم قواعد التجويد', en: 'Learn Tajweed Rules');

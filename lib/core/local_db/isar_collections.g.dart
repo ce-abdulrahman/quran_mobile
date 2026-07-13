@@ -13,9 +13,9 @@ extension GetSurahCollectionCollection on Isar {
   IsarCollection<SurahCollection> get surahCollections => this.collection();
 }
 
-final SurahCollectionSchema = CollectionSchema(
+const SurahCollectionSchema = CollectionSchema(
   name: r'SurahCollection',
-  id: int.parse('7167559995064913286'),
+  id: 7167559995064913286,
   properties: {
     r'nameAr': PropertySchema(
       id: 0,
@@ -65,7 +65,7 @@ final SurahCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'number': IndexSchema(
-      id: int.parse('5012388430481709372'),
+      id: 5012388430481709372,
       name: r'number',
       unique: true,
       replace: false,
@@ -1637,9 +1637,9 @@ extension GetAyahCollectionCollection on Isar {
   IsarCollection<AyahCollection> get ayahCollections => this.collection();
 }
 
-final AyahCollectionSchema = CollectionSchema(
+const AyahCollectionSchema = CollectionSchema(
   name: r'AyahCollection',
-  id: int.parse('4369031179947514418'),
+  id: 4369031179947514418,
   properties: {
     r'ayahId': PropertySchema(
       id: 0,
@@ -1705,7 +1705,7 @@ final AyahCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'ayahId': IndexSchema(
-      id: -int.parse('5377454751934077591'),
+      id: -5377454751934077591,
       name: r'ayahId',
       unique: true,
       replace: false,
@@ -3632,9 +3632,9 @@ extension GetTajweedRuleCollectionCollection on Isar {
       this.collection();
 }
 
-final TajweedRuleCollectionSchema = CollectionSchema(
+const TajweedRuleCollectionSchema = CollectionSchema(
   name: r'TajweedRuleCollection',
-  id: int.parse('8322403600735904063'),
+  id: 8322403600735904063,
   properties: {
     r'categoryId': PropertySchema(
       id: 0,
@@ -3714,7 +3714,7 @@ final TajweedRuleCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'ruleId': IndexSchema(
-      id: -int.parse('7287016718321404572'),
+      id: -7287016718321404572,
       name: r'ruleId',
       unique: true,
       replace: false,
@@ -3727,7 +3727,7 @@ final TajweedRuleCollectionSchema = CollectionSchema(
       ],
     ),
     r'ruleSlug': IndexSchema(
-      id: int.parse('2455194139345975593'),
+      id: 2455194139345975593,
       name: r'ruleSlug',
       unique: true,
       replace: false,
@@ -6530,9 +6530,9 @@ extension GetPrayerTimesCollectionCollection on Isar {
       this.collection();
 }
 
-final PrayerTimesCollectionSchema = CollectionSchema(
+const PrayerTimesCollectionSchema = CollectionSchema(
   name: r'PrayerTimesCollection',
-  id: int.parse('2405109234651288703'),
+  id: 2405109234651288703,
   properties: {
     r'cacheKey': PropertySchema(
       id: 0,
@@ -6572,7 +6572,7 @@ final PrayerTimesCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'cacheKey': IndexSchema(
-      id: int.parse('5885332021012296610'),
+      id: 5885332021012296610,
       name: r'cacheKey',
       unique: true,
       replace: false,
@@ -7901,9 +7901,9 @@ extension GetMemorizationPlanCollectionCollection on Isar {
       this.collection();
 }
 
-final MemorizationPlanCollectionSchema = CollectionSchema(
+const MemorizationPlanCollectionSchema = CollectionSchema(
   name: r'MemorizationPlanCollection',
-  id: int.parse('4432947998175925090'),
+  id: 4432947998175925090,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,
@@ -7958,7 +7958,7 @@ final MemorizationPlanCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'planId': IndexSchema(
-      id: int.parse('7282644713036731817'),
+      id: 7282644713036731817,
       name: r'planId',
       unique: true,
       replace: false,
@@ -9468,9 +9468,9 @@ extension GetMemorizationReviewCollectionCollection on Isar {
       get memorizationReviewCollections => this.collection();
 }
 
-final MemorizationReviewCollectionSchema = CollectionSchema(
+const MemorizationReviewCollectionSchema = CollectionSchema(
   name: r'MemorizationReviewCollection',
-  id: -int.parse('3956903754914043338'),
+  id: -3956903754914043338,
   properties: {
     r'isSynced': PropertySchema(
       id: 0,
@@ -9510,7 +9510,7 @@ final MemorizationReviewCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'reviewId': IndexSchema(
-      id: int.parse('392236526580651382'),
+      id: 392236526580651382,
       name: r'reviewId',
       unique: true,
       replace: false,
@@ -10701,9 +10701,9 @@ extension GetTasbihSessionCollectionCollection on Isar {
       this.collection();
 }
 
-final TasbihSessionCollectionSchema = CollectionSchema(
+const TasbihSessionCollectionSchema = CollectionSchema(
   name: r'TasbihSessionCollection',
-  id: int.parse('6038320167572759588'),
+  id: 6038320167572759588,
   properties: {
     r'avgPerMinute': PropertySchema(
       id: 0,
@@ -10768,7 +10768,7 @@ final TasbihSessionCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'sessionId': IndexSchema(
-      id: int.parse('6949518585047923839'),
+      id: 6949518585047923839,
       name: r'sessionId',
       unique: true,
       replace: false,
@@ -12594,9 +12594,9 @@ extension GetReadingHistoryCollectionCollection on Isar {
       this.collection();
 }
 
-final ReadingHistoryCollectionSchema = CollectionSchema(
+const ReadingHistoryCollectionSchema = CollectionSchema(
   name: r'ReadingHistoryCollection',
-  id: -int.parse('2942315340283946227'),
+  id: -2942315340283946227,
   properties: {
     r'durationSeconds': PropertySchema(
       id: 0,
@@ -13282,9 +13282,9 @@ extension GetBookmarkCollectionCollection on Isar {
       this.collection();
 }
 
-final BookmarkCollectionSchema = CollectionSchema(
+const BookmarkCollectionSchema = CollectionSchema(
   name: r'BookmarkCollection',
-  id: -int.parse('7433758756138560705'),
+  id: -7433758756138560705,
   properties: {
     r'ayahNumber': PropertySchema(
       id: 0,
@@ -13324,7 +13324,7 @@ final BookmarkCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'bookmarkId': IndexSchema(
-      id: int.parse('7502005763379596484'),
+      id: 7502005763379596484,
       name: r'bookmarkId',
       unique: true,
       replace: false,
@@ -14331,9 +14331,9 @@ extension GetNoteCollectionCollection on Isar {
   IsarCollection<NoteCollection> get noteCollections => this.collection();
 }
 
-final NoteCollectionSchema = CollectionSchema(
+const NoteCollectionSchema = CollectionSchema(
   name: r'NoteCollection',
-  id: -int.parse('880493522486186259'),
+  id: -880493522486186259,
   properties: {
     r'ayahNumber': PropertySchema(
       id: 0,
@@ -14378,7 +14378,7 @@ final NoteCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'noteId': IndexSchema(
-      id: -int.parse('9014133502494436840'),
+      id: -9014133502494436840,
       name: r'noteId',
       unique: true,
       replace: false,
@@ -15548,9 +15548,9 @@ extension GetAudioFavoriteCollectionCollection on Isar {
       this.collection();
 }
 
-final AudioFavoriteCollectionSchema = CollectionSchema(
+const AudioFavoriteCollectionSchema = CollectionSchema(
   name: r'AudioFavoriteCollection',
-  id: int.parse('8320977553766732322'),
+  id: 8320977553766732322,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,
@@ -15580,7 +15580,7 @@ final AudioFavoriteCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'favoriteKey': IndexSchema(
-      id: int.parse('2684096142477831931'),
+      id: 2684096142477831931,
       name: r'favoriteKey',
       unique: true,
       replace: false,
@@ -16521,9 +16521,9 @@ extension GetDownloadCollectionCollection on Isar {
       this.collection();
 }
 
-final DownloadCollectionSchema = CollectionSchema(
+const DownloadCollectionSchema = CollectionSchema(
   name: r'DownloadCollection',
-  id: int.parse('8807255898380263598'),
+  id: 8807255898380263598,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,
@@ -16578,7 +16578,7 @@ final DownloadCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'downloadKey': IndexSchema(
-      id: -int.parse('3924819050589750973'),
+      id: -3924819050589750973,
       name: r'downloadKey',
       unique: true,
       replace: false,
@@ -18118,9 +18118,9 @@ extension GetNamesOfAllahCollectionCollection on Isar {
       this.collection();
 }
 
-final NamesOfAllahCollectionSchema = CollectionSchema(
+const NamesOfAllahCollectionSchema = CollectionSchema(
   name: r'NamesOfAllahCollection',
-  id: int.parse('2016929537859491863'),
+  id: 2016929537859491863,
   properties: {
     r'meaningEn': PropertySchema(
       id: 0,
@@ -18185,7 +18185,7 @@ final NamesOfAllahCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'nameId': IndexSchema(
-      id: -int.parse('6985159207553840634'),
+      id: -6985159207553840634,
       name: r'nameId',
       unique: true,
       replace: false,
@@ -18198,7 +18198,7 @@ final NamesOfAllahCollectionSchema = CollectionSchema(
       ],
     ),
     r'slug': IndexSchema(
-      id: int.parse('6169444064746062836'),
+      id: 6169444064746062836,
       name: r'slug',
       unique: false,
       replace: false,
@@ -20447,9 +20447,9 @@ extension GetSeerahCollectionCollection on Isar {
   IsarCollection<SeerahCollection> get seerahCollections => this.collection();
 }
 
-final SeerahCollectionSchema = CollectionSchema(
+const SeerahCollectionSchema = CollectionSchema(
   name: r'SeerahCollection',
-  id: -int.parse('5218421529354325023'),
+  id: -5218421529354325023,
   properties: {
     r'contentMd': PropertySchema(
       id: 0,
@@ -20499,7 +20499,7 @@ final SeerahCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'seerahId': IndexSchema(
-      id: -int.parse('1086402056972916924'),
+      id: -1086402056972916924,
       name: r'seerahId',
       unique: true,
       replace: false,
@@ -20512,7 +20512,7 @@ final SeerahCollectionSchema = CollectionSchema(
       ],
     ),
     r'slug': IndexSchema(
-      id: int.parse('6169444064746062836'),
+      id: 6169444064746062836,
       name: r'slug',
       unique: false,
       replace: false,
@@ -22182,9 +22182,9 @@ extension GetSahabaCollectionCollection on Isar {
   IsarCollection<SahabaCollection> get sahabaCollections => this.collection();
 }
 
-final SahabaCollectionSchema = CollectionSchema(
+const SahabaCollectionSchema = CollectionSchema(
   name: r'SahabaCollection',
-  id: int.parse('2260652625311812399'),
+  id: 2260652625311812399,
   properties: {
     r'biographyMd': PropertySchema(
       id: 0,
@@ -22244,7 +22244,7 @@ final SahabaCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'sahabaId': IndexSchema(
-      id: -int.parse('2393680415312519979'),
+      id: -2393680415312519979,
       name: r'sahabaId',
       unique: true,
       replace: false,
@@ -22257,7 +22257,7 @@ final SahabaCollectionSchema = CollectionSchema(
       ],
     ),
     r'slug': IndexSchema(
-      id: int.parse('6169444064746062836'),
+      id: 6169444064746062836,
       name: r'slug',
       unique: false,
       replace: false,
@@ -24292,9 +24292,9 @@ extension GetHadithCollectionCollection on Isar {
   IsarCollection<HadithCollection> get hadithCollections => this.collection();
 }
 
-final HadithCollectionSchema = CollectionSchema(
+const HadithCollectionSchema = CollectionSchema(
   name: r'HadithCollection',
-  id: -int.parse('7963363437607057576'),
+  id: -7963363437607057576,
   properties: {
     r'arabicText': PropertySchema(
       id: 0,
@@ -24384,9 +24384,9 @@ final HadithCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'hadithId': IndexSchema(
-      id: int.parse('3874849906276205956'),
+      id: 3874849906276205956,
       name: r'hadithId',
-      unique: true,
+      unique: false,
       replace: false,
       properties: [
         IndexPropertySchema(
@@ -24397,7 +24397,7 @@ final HadithCollectionSchema = CollectionSchema(
       ],
     ),
     r'slug': IndexSchema(
-      id: int.parse('6169444064746062836'),
+      id: 6169444064746062836,
       name: r'slug',
       unique: false,
       replace: false,
@@ -24569,61 +24569,6 @@ List<IsarLinkBase<dynamic>> _hadithCollectionGetLinks(HadithCollection object) {
 void _hadithCollectionAttach(
     IsarCollection<dynamic> col, Id id, HadithCollection object) {
   object.id = id;
-}
-
-extension HadithCollectionByIndex on IsarCollection<HadithCollection> {
-  Future<HadithCollection?> getByHadithId(int hadithId) {
-    return getByIndex(r'hadithId', [hadithId]);
-  }
-
-  HadithCollection? getByHadithIdSync(int hadithId) {
-    return getByIndexSync(r'hadithId', [hadithId]);
-  }
-
-  Future<bool> deleteByHadithId(int hadithId) {
-    return deleteByIndex(r'hadithId', [hadithId]);
-  }
-
-  bool deleteByHadithIdSync(int hadithId) {
-    return deleteByIndexSync(r'hadithId', [hadithId]);
-  }
-
-  Future<List<HadithCollection?>> getAllByHadithId(List<int> hadithIdValues) {
-    final values = hadithIdValues.map((e) => [e]).toList();
-    return getAllByIndex(r'hadithId', values);
-  }
-
-  List<HadithCollection?> getAllByHadithIdSync(List<int> hadithIdValues) {
-    final values = hadithIdValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'hadithId', values);
-  }
-
-  Future<int> deleteAllByHadithId(List<int> hadithIdValues) {
-    final values = hadithIdValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'hadithId', values);
-  }
-
-  int deleteAllByHadithIdSync(List<int> hadithIdValues) {
-    final values = hadithIdValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'hadithId', values);
-  }
-
-  Future<Id> putByHadithId(HadithCollection object) {
-    return putByIndex(r'hadithId', object);
-  }
-
-  Id putByHadithIdSync(HadithCollection object, {bool saveLinks = true}) {
-    return putByIndexSync(r'hadithId', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByHadithId(List<HadithCollection> objects) {
-    return putAllByIndex(r'hadithId', objects);
-  }
-
-  List<Id> putAllByHadithIdSync(List<HadithCollection> objects,
-      {bool saveLinks = true}) {
-    return putAllByIndexSync(r'hadithId', objects, saveLinks: saveLinks);
-  }
 }
 
 extension HadithCollectionQueryWhereSort
@@ -27360,9 +27305,9 @@ extension GetTafsirCollectionCollection on Isar {
   IsarCollection<TafsirCollection> get tafsirCollections => this.collection();
 }
 
-final TafsirCollectionSchema = CollectionSchema(
+const TafsirCollectionSchema = CollectionSchema(
   name: r'TafsirCollection',
-  id: int.parse('5104404639102638749'),
+  id: 5104404639102638749,
   properties: {
     r'ayahNumber': PropertySchema(
       id: 0,
@@ -27402,7 +27347,7 @@ final TafsirCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'surahNumber_ayahNumber': IndexSchema(
-      id: int.parse('5327427526691098780'),
+      id: 5327427526691098780,
       name: r'surahNumber_ayahNumber',
       unique: false,
       replace: false,
@@ -27420,7 +27365,7 @@ final TafsirCollectionSchema = CollectionSchema(
       ],
     ),
     r'slug': IndexSchema(
-      id: int.parse('6169444064746062836'),
+      id: 6169444064746062836,
       name: r'slug',
       unique: false,
       replace: false,
@@ -28685,9 +28630,9 @@ extension GetReciterCollectionCollection on Isar {
   IsarCollection<ReciterCollection> get reciterCollections => this.collection();
 }
 
-final ReciterCollectionSchema = CollectionSchema(
+const ReciterCollectionSchema = CollectionSchema(
   name: r'ReciterCollection',
-  id: -int.parse('7542606624115583787'),
+  id: -7542606624115583787,
   properties: {
     r'bioKu': PropertySchema(
       id: 0,
@@ -28752,7 +28697,7 @@ final ReciterCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'reciterId': IndexSchema(
-      id: -int.parse('5029838260836744949'),
+      id: -5029838260836744949,
       name: r'reciterId',
       unique: true,
       replace: false,
@@ -28765,7 +28710,7 @@ final ReciterCollectionSchema = CollectionSchema(
       ],
     ),
     r'slug': IndexSchema(
-      id: int.parse('6169444064746062836'),
+      id: 6169444064746062836,
       name: r'slug',
       unique: false,
       replace: false,
@@ -30993,9 +30938,9 @@ extension GetFavoriteCollectionCollection on Isar {
       this.collection();
 }
 
-final FavoriteCollectionSchema = CollectionSchema(
+const FavoriteCollectionSchema = CollectionSchema(
   name: r'FavoriteCollection',
-  id: int.parse('1010039148232529629'),
+  id: 1010039148232529629,
   properties: {
     r'ayahNumber': PropertySchema(
       id: 0,
@@ -31050,7 +30995,7 @@ final FavoriteCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'favoriteId': IndexSchema(
-      id: -int.parse('1075630253902077187'),
+      id: -1075630253902077187,
       name: r'favoriteId',
       unique: true,
       replace: false,
@@ -32587,9 +32532,9 @@ extension GetSearchIndexCollectionCollection on Isar {
       this.collection();
 }
 
-final SearchIndexCollectionSchema = CollectionSchema(
+const SearchIndexCollectionSchema = CollectionSchema(
   name: r'SearchIndexCollection',
-  id: int.parse('8289857676566151445'),
+  id: 8289857676566151445,
   properties: {
     r'ayahNumber': PropertySchema(
       id: 0,
@@ -32654,7 +32599,7 @@ final SearchIndexCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'key': IndexSchema(
-      id: -int.parse('4906094122524121629'),
+      id: -4906094122524121629,
       name: r'key',
       unique: true,
       replace: false,
@@ -32667,7 +32612,7 @@ final SearchIndexCollectionSchema = CollectionSchema(
       ],
     ),
     r'content': IndexSchema(
-      id: int.parse('6193209363630369380'),
+      id: 6193209363630369380,
       name: r'content',
       unique: false,
       replace: false,
@@ -34956,9 +34901,9 @@ extension GetAdhkarCollectionCollection on Isar {
   IsarCollection<AdhkarCollection> get adhkarCollections => this.collection();
 }
 
-final AdhkarCollectionSchema = CollectionSchema(
+const AdhkarCollectionSchema = CollectionSchema(
   name: r'AdhkarCollection',
-  id: int.parse('8999943908477079564'),
+  id: 8999943908477079564,
   properties: {
     r'adhkarId': PropertySchema(
       id: 0,
@@ -35043,7 +34988,7 @@ final AdhkarCollectionSchema = CollectionSchema(
   idName: r'id',
   indexes: {
     r'adhkarId': IndexSchema(
-      id: -int.parse('620949284918997807'),
+      id: -620949284918997807,
       name: r'adhkarId',
       unique: true,
       replace: false,
@@ -37830,9 +37775,9 @@ extension AdhkarCollectionQueryProperty
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-final TajweedSegmentSchema = Schema(
+const TajweedSegmentSchema = Schema(
   name: r'TajweedSegment',
-  id: int.parse('7987763730788479476'),
+  id: 7987763730788479476,
   properties: {
     r'colorId': PropertySchema(
       id: 0,

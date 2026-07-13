@@ -614,16 +614,21 @@ class _RulesListState extends State<_RulesList> {
     );
   }
 
-  Color? _parseColor(String? hex) {
-    if (hex == null || hex.isEmpty) return null;
-    try {
-      final buf = StringBuffer();
-      if (hex.length == 6 || hex.length == 7) buf.write('ff');
-      buf.write(hex.replaceFirst('#', ''));
-      return Color(int.parse(buf.toString(), radix: 16));
-    } catch (_) {
-      return null;
+  Color? _parseColor(String? hexString) {
+    if (hexString == null || hexString.isEmpty) return null;
+    final match = RegExp(r'#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})').firstMatch(hexString);
+    if (match != null) {
+      final cleaned = match.group(1)!.toLowerCase();
+      if (cleaned == '000000' || cleaned == 'ffffff') return null;
+      try {
+        if (cleaned.length == 6) {
+          return Color(int.parse('ff$cleaned', radix: 16));
+        } else if (cleaned.length == 8) {
+          return Color(int.parse(cleaned, radix: 16));
+        }
+      } catch (_) {}
     }
+    return null;
   }
 }
 

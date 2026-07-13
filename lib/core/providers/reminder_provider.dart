@@ -2,11 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/timezone.dart' as tz;
 import '../models/reminder_model.dart';
 import '../repositories/reminder_repository.dart';
-import '../services/reminder_engine.dart';
 import '../services/notification_coordinator.dart';
-import '../../features/auth/auth_provider.dart';
 import 'app_providers.dart';
-import 'achievement_provider.dart';
 
 // ── Repository Provider ──────────────────────────────────────────────────────
 final reminderRepositoryProvider = Provider<ReminderRepository>((ref) {
@@ -49,16 +46,12 @@ class ReminderState {
 
 // ── State Notifier ────────────────────────────────────────────────────────────
 class ReminderNotifier extends StateNotifier<ReminderState> {
-  final ReminderRepository _repository;
-  final Ref _ref;
-
-  ReminderNotifier(this._repository, this._ref) : super(const ReminderState());
+  ReminderNotifier() : super(const ReminderState());
 
   /// Load all reminder configurations
   Future<void> loadReminders() async {
     state = state.copyWith(isLoading: true, clearError: true);
-    final authState = _ref.read(authProvider);
-    final isGuest = authState.status != AuthStatus.authenticated;
+    final isGuest = true;
 
     if (isGuest) {
       final local = await NotificationCoordinator.loadReminderSettings();
@@ -143,16 +136,6 @@ class ReminderNotifier extends StateNotifier<ReminderState> {
       state = state.copyWith(reminders: list, isLoading: false);
       return;
     }
-
-    final result = await _repository.getReminders();
-    result.when(
-      success: (reminders) {
-        state = state.copyWith(reminders: reminders, isLoading: false);
-      },
-      error: (msg, _, __) {
-        state = state.copyWith(isLoading: false, errorMessage: msg);
-      },
-    );
   }
 
   /// Toggle enabled state of a single reminder type locally.
@@ -194,8 +177,6 @@ class ReminderNotifier extends StateNotifier<ReminderState> {
   /// Save preferences in bulk and trigger local reschedule.
   Future<bool> savePreferences() async {
     state = state.copyWith(isSaving: true, clearError: true);
-    final authState = _ref.read(authProvider);
-    final isGuest = authState.status != AuthStatus.authenticated;
 
     ReminderModel? getReminder(String type) {
       for (final r in state.reminders) {
@@ -279,59 +260,11 @@ class ReminderNotifier extends StateNotifier<ReminderState> {
       await coordinator.cancelTasbihReminder();
     }
 
-    if (!isGuest) {
-      final localTimezone = tz.local.name;
-      final updatedList = state.reminders.map((r) {
-        return r.copyWith(timezone: localTimezone);
-      }).toList();
-
-      final result = await _repository.saveReminders(updatedList);
-      return result.when(
-        success: (_) async {
-          state = state.copyWith(reminders: updatedList, isSaving: false);
-          await syncAndReschedule();
-          return true;
-        },
-        error: (msg, _, __) {
-          state = state.copyWith(isSaving: false, errorMessage: msg);
-          return false;
-        },
-      );
-    } else {
-      state = state.copyWith(isSaving: false);
-      return true;
-    }
+    state = state.copyWith(isSaving: false);
+    return true;
   }
 
-  /// Sync schedules from backend (using live user metrics) and reschedule local alarms.
-  Future<void> syncAndReschedule() async {
-    final authState = _ref.read(authProvider);
-    if (authState.status != AuthStatus.authenticated) return;
 
-    final tasbihState = _ref.read(tasbihProvider);
-    
-    bool nearAchievement = false;
-    try {
-      final achsState = _ref.read(achievementProvider);
-      nearAchievement = achsState.achievements.any((ach) => !ach.isCompleted && ach.progressFraction >= 0.8);
-    } catch (_) {}
-
-    final result = await _repository.syncReminders(
-      todayProgress: tasbihState.dailyGoalProgress,
-      dailyGoal: tasbihState.dailyGoalValue,
-      streak: tasbihState.currentStreak,
-      nearAchievement: nearAchievement,
-    );
-
-    result.when(
-      success: (schedule) async {
-        await ReminderEngine().scheduleReminders(schedule);
-      },
-      error: (msg, _, __) {
-        state = state.copyWith(errorMessage: 'Local reschedule failed: $msg');
-      },
-    );
-  }
 
   /// Enable or disable all reminders at once (Master Toggle)
   Future<void> setMasterEnabled(bool enabled) async {
@@ -344,6 +277,5 @@ class ReminderNotifier extends StateNotifier<ReminderState> {
 
 // ── Riverpod Provider ─────────────────────────────────────────────────────────
 final reminderProvider = StateNotifierProvider<ReminderNotifier, ReminderState>((ref) {
-  final repo = ref.watch(reminderRepositoryProvider);
-  return ReminderNotifier(repo, ref);
+  return ReminderNotifier();
 });

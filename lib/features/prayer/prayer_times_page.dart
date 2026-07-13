@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/prayer_times_provider.dart';
-import '../../core/providers/auth_provider.dart';
+
 
 class PrayerTimesPage extends ConsumerStatefulWidget {
   final bool showBackButton;
@@ -55,8 +55,6 @@ class _PrayerTimesPageState extends ConsumerState<PrayerTimesPage> {
     final settings = ref.watch(prayerTimesSettingsProvider);
     final todayTimes = ref.watch(prayerTimesForDateProvider(DateTime.now()));
     final nextPrayerInfo = ref.watch(nextPrayerProvider);
-    final authState = ref.watch(authProvider);
-    final isAuthenticated = authState.status == AuthStatus.authenticated;
 
     return Scaffold(
       backgroundColor: cs.bg,
@@ -198,59 +196,8 @@ class _PrayerTimesPageState extends ConsumerState<PrayerTimesPage> {
               ],
 
               // 2. City Selector Card
-              isAuthenticated
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                      decoration: BoxDecoration(
-                        color: cs.card.withValues(alpha: 0.8),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: cs.cardBorder),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.lock_outline_rounded, size: 16, color: cs.textSecondary.withValues(alpha: 0.6)),
-                              const SizedBox(width: 8),
-                              const Text(
-                                "دیاریکراوە بەپێی پرۆفایلەکەت",
-                                style: TextStyle(
-                                  fontFamily: 'Cairo',
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                settings.selectedCity.nameKu,
-                                style: TextStyle(
-                                  fontFamily: 'Cairo',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: cs.textPrimary,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Text(
-                                l.prayerSelectCity,
-                                style: TextStyle(
-                                  fontFamily: 'Cairo',
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: cs.textSecondary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    )
-                  : Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                       decoration: BoxDecoration(
                         color: cs.card,
                         borderRadius: BorderRadius.circular(16),

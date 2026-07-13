@@ -17,7 +17,7 @@ import 'package:flutter/rendering.dart';
 import 'package:isar/isar.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/providers/bookmarks_provider.dart';
-import '../../core/providers/notes_provider.dart';
+
 import '../../core/utils/responsive.dart';
 import '../../core/utils/quran_utils.dart';
 import 'quran_providers.dart';
@@ -336,10 +336,8 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     final cs = AppColorScheme.of(context);
     final bookmarks = ref.read(bookmarksProvider);
     final favorites = ref.read(favoritesProvider);
-    final notes = ref.read(notesProvider);
     final isBookmarked = bookmarks.any((b) => b.surahId == widget.surah.id && b.ayahNumber == ayah.ayahNumber);
     final isFavorited = favorites.any((f) => f.favoriteId == 'ayah_${widget.surah.id}_${ayah.ayahNumber}');
-    final hasNote = notes.any((n) => n.surahNumber == widget.surah.id && n.ayahNumber == ayah.ayahNumber);
 
     showModalBottomSheet(
       context: context,
@@ -488,16 +486,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                         });
                       },
                     ),
-                    _buildActionButton(
-                      context,
-                      icon: hasNote ? Icons.edit_note_rounded : Icons.note_add_rounded,
-                      label: 'تێبینی/ڕامان',
-                      color: hasNote ? Colors.purple : cs.textSecondary,
-                      onTap: () {
-                        Navigator.pop(ctx);
-                        _showNoteDialog(context, ayah, ref);
-                      },
-                    ),
+
                   ],
                 ),
               ],
@@ -508,129 +497,7 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
     );
   }
 
-  void _showNoteDialog(BuildContext context, AyahModel ayah, WidgetRef ref) {
-    final cs = AppColorScheme.of(context);
-    final existingNote = ref.read(notesProvider.notifier).getNote(widget.surah.id, ayah.ayahNumber);
-    final textController = TextEditingController(text: existingNote?.content ?? '');
 
-    showDialog(
-      context: context,
-      builder: (ctx) {
-        return AlertDialog(
-          backgroundColor: cs.card,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: const Text(
-            'نووسینی تێبینی/ڕامان',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'ئایەتی ${ayah.ayahNumber} لە سورەتی ${Localizations.localeOf(context).languageCode == 'ku' ? widget.surah.nameKu : widget.surah.nameEn}',
-                textDirection: TextDirection.rtl,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 12,
-                  color: cs.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: textController,
-                maxLines: 4,
-                textDirection: TextDirection.rtl,
-                autofocus: true,
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 14,
-                  color: cs.textPrimary,
-                ),
-                decoration: InputDecoration(
-                  hintText: 'تێبینی یان تێڕامانی خۆت لێرە بنووسە...',
-                  hintStyle: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 12,
-                    color: cs.textSecondary.withValues(alpha: 0.5),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: cs.cardBorder),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: cs.primary),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(
-                'پاشگەزبوونەوە',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  color: cs.textSecondary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            if (existingNote != null)
-              TextButton(
-                onPressed: () {
-                  ref.read(notesProvider.notifier).deleteNote(widget.surah.id, ayah.ayahNumber);
-                  Navigator.pop(ctx);
-                },
-                child: const Text(
-                  'سڕینەوە',
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ElevatedButton(
-              onPressed: () {
-                final content = textController.text.trim();
-                if (content.isNotEmpty) {
-                  ref.read(notesProvider.notifier).saveNote(
-                        surahNumber: widget.surah.id,
-                        ayahNumber: ayah.ayahNumber,
-                        content: content,
-                      );
-                } else if (existingNote != null) {
-                  ref.read(notesProvider.notifier).deleteNote(widget.surah.id, ayah.ayahNumber);
-                }
-                Navigator.pop(ctx);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: cs.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: const Text(
-                'پاشەکەوت',
-                style: TextStyle(
-                  fontFamily: 'Cairo',
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   Widget _buildActionButton(
     BuildContext context, {
@@ -1074,7 +941,6 @@ class _BismillahBanner extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cs = AppColorScheme.of(context);
-    final readerSettings = ref.watch(readerSettingsProvider);
     // Use AmiriQuran for Quran text (Arabic), loaded lazily
     const quranFont = 'AmiriQuran';
 
@@ -1136,12 +1002,7 @@ class _AyahRow extends ConsumerWidget {
       orElse: () => null,
     );
 
-    final notes = ref.watch(notesProvider);
-    final note = notes.cast<LocalNote?>().firstWhere(
-      (n) => n?.surahNumber == surah.id && n?.ayahNumber == ayah.ayahNumber,
-      orElse: () => null,
-    );
-    final hasNote = note != null && note.content.isNotEmpty;
+
 
     return InkWell(
       onTap: onTap,
@@ -1230,10 +1091,7 @@ class _AyahRow extends ConsumerWidget {
                       if (isFavorited) const SizedBox(width: 4),
                       const Icon(Icons.bookmark_rounded, size: 16, color: AppColors.accentGoldDeep),
                     ],
-                    if (hasNote) ...[
-                      if (isFavorited || isBookmarked) const SizedBox(width: 4),
-                      const Icon(Icons.edit_note_rounded, size: 18, color: Colors.purple),
-                    ],
+
                   ],
                 ),
               ],
@@ -1287,48 +1145,7 @@ class _AyahRow extends ConsumerWidget {
                 ),
               ),
             ],
-            if (hasNote) ...[
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.purple.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.purple.withValues(alpha: 0.15)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Row(
-                      children: [
-                        Icon(Icons.edit_note_rounded, color: Colors.purple, size: 16),
-                        SizedBox(width: 6),
-                        Text(
-                          'تێبینی/ڕامانی تۆ',
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.purple,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      note.content,
-                      textDirection: TextDirection.rtl,
-                      style: TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: fontSize - 2,
-                        height: 1.5,
-                        color: cs.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+
           ],
         ),
       ),
@@ -1481,6 +1298,32 @@ class _TajweedText extends ConsumerStatefulWidget {
 class _TajweedTextState extends ConsumerState<_TajweedText> {
   final _key = GlobalKey();
 
+  Map<int, Color> _buildRuleColorsMap() {
+    final rules = ref.watch(tajweedRuleMapProvider);
+    final map = <int, Color>{};
+    for (final rule in rules.values) {
+      if (rule.colorCode != null && rule.colorCode!.isNotEmpty) {
+        final match = RegExp(r'#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})').firstMatch(rule.colorCode!);
+        if (match != null) {
+          final hex = match.group(1)!.toLowerCase();
+          if (hex == '000000' || hex == 'ffffff') continue;
+          try {
+            if (hex.length == 6) {
+              map[rule.id] = Color(int.parse('ff$hex', radix: 16));
+            } else if (hex.length == 8) {
+              map[rule.id] = Color(int.parse(hex, radix: 16));
+            }
+          } catch (_) {}
+        }
+      }
+    }
+    debugPrint('Tajweed Rule Colors Loaded: ${map.length} rules');
+    for (final entry in map.entries) {
+      debugPrint('Rule ${entry.key} -> ${entry.value}');
+    }
+    return map;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -1495,7 +1338,7 @@ class _TajweedTextState extends ConsumerState<_TajweedText> {
             segments: widget.segments,
             defaultColor: widget.defaultColor,
             inactiveRules: widget.inactiveRules,
-            ruleColors: const {},
+            ruleColors: _buildRuleColorsMap(),
             fontFamily: 'QPCV4Tajweed',
             fontSize: widget.fontSize,
           ),

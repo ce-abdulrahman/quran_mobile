@@ -533,20 +533,21 @@ class IsarService {
         await _seedTajweedRulesFromLocalAsset();
         await markStepDone('tajweed_rules');
       } else {
-        // Migration: Re-seed tajweed rules if categories changed (v2 update)
-        if (prefs.getBool('tajweed_rules_v2_migrated') != true) {
-          update('نوێکردنەوەی کاتەگۆریی تەجوید...');
+        // Migration: Re-seed tajweed rules if categories changed (v4 update for colors)
+        if (prefs.getBool('tajweed_rules_v4_migrated') != true) {
+          update('بەڕۆژکردنەوەی یاساکانی تەجوید...');
           await _seedTajweedRulesFromLocalAsset();
-          await prefs.setBool('tajweed_rules_v2_migrated', true);
+          await prefs.setBool('tajweed_rules_v4_migrated', true);
         }
         completedSteps++;
       }
 
       // 7. Surahs
-      if (!isStepDone('surahs')) {
+      final firstSurah = await isar.surahCollections.where().numberEqualTo(1).findFirst();
+      if (!isStepDone('surahs') || (firstSurah != null && firstSurah.totalAyahs == 0)) {
         update('بارکردنی ناوی سوورەتەکان...');
         final surahsCount = await isar.surahCollections.count();
-        if (surahsCount == 0) {
+        if (surahsCount == 0 || (firstSurah != null && firstSurah.totalAyahs == 0)) {
           final rawData = await _loadPackageData('quran', 'assets/data/surahs.json');
           final data = rawData.where((x) => x is Map && x.containsKey('number')).toList();
           final items = data.map((x) {
@@ -556,13 +557,18 @@ class IsarService {
               nameAr: (json['name_ar'] ?? json['nameAr'] ?? '') as String,
               nameEn: (json['name_en'] ?? json['nameEn'] ?? '') as String,
               nameKu: (json['name_ku'] ?? json['nameKu'] ?? '') as String,
-              totalAyahs: (json['ayah_count'] ?? json['totalAyahs'] ?? 0) as int,
+              totalAyahs: (json['total_ayahs'] ?? json['ayah_count'] ?? json['totalAyahs'] ?? 0) as int,
               revelationType: (json['revelation_type'] ?? json['revelationType'] ?? 'Meccan') as String,
               pageStart: json['page_start'] as int?,
               pageEnd: json['page_end'] as int?,
             );
           }).toList();
-          await isar.writeTxn(() => isar.surahCollections.putAll(items));
+          await isar.writeTxn(() async {
+            if (firstSurah != null && firstSurah.totalAyahs == 0) {
+              await isar.surahCollections.clear();
+            }
+            await isar.surahCollections.putAll(items);
+          });
         }
         await markStepDone('surahs');
       } else {
@@ -797,6 +803,22 @@ class IsarService {
           await isar.searchIndexCollections.clear();
         });
         await prefs.setBool('hadiths_v3_migrated', true);
+        await prefs.setBool('is_db_initialized', false);
+        return true;
+      }
+
+      // Migration for newly updated Tajweed rules & segment colors from the admin panel (v4)
+      if (prefs.getBool('tajweed_rules_v4_migrated') != true) {
+        await prefs.setBool('seed_step_tajweed_rules', false);
+        await prefs.setBool('seed_step_quran_ayahs', false);
+        await prefs.setBool('seed_step_search_index', false);
+        await prefs.setInt('seed_last_completed_surah', 0);
+        await isar.writeTxn(() async {
+          await isar.tajweedRuleCollections.clear();
+          await isar.ayahCollections.clear();
+          await isar.searchIndexCollections.clear();
+        });
+        await prefs.setBool('tajweed_rules_v4_migrated', true);
         await prefs.setBool('is_db_initialized', false);
         return true;
       }

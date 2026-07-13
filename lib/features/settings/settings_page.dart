@@ -553,7 +553,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         textDirection: TextDirection.rtl,
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontFamily: readerSettings.quranFontFamily,
+                          fontFamily: 'AmiriQuran',
                           fontSize: readerSettings.fontSize,
                           color: cs.textPrimary,
                           height: 2,
@@ -565,156 +565,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
                 const SizedBox(height: 16),
 
-                // ── Font Family card ──────────────────────────────
-                _SectionLabel(label: l.settingsFontFamily, cs: cs),
-                const SizedBox(height: 10),
-                _SettingsCard(
-                  cs: cs,
-                  children: [
-                    // UI Font Family
-                    _SettingRow(
-                      icon: Icons.font_download_rounded,
-                      label: l.settingsFontUi,
-                      subLabel: l.settingsFontUiSub,
-                      cs: cs,
-                      trailing: _FontDropdown(
-                        cs: cs,
-                        current: readerSettings.uiFontFamily,
-                        options: const [
-                          ('Cairo', 'Cairo'),
-                          ('NotoNaskhArabic', 'Noto Naskh'),
-                          ('Scheherazade', 'Scheherazade'),
-                        ],
-                        onChanged: (f) => ref
-                            .read(readerSettingsProvider.notifier)
-                            .setUiFontFamily(f),
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    // Quran Font Family — locked when Tajweed is active
-                    if (readerSettings.showTajweed) ...[
-                      Container(
-                        margin: const EdgeInsets.symmetric(vertical: 8),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.amber.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.amber.withValues(alpha: 0.4)),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.lock_rounded, color: Colors.amber, size: 18),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                'فۆنتی قورئان قفڵکراوە — نیشاندانی تەجوید چالاکە و فۆنتی تایبەتی QPCV4Tajweed دەبێت بەکاربهێنرێت بۆ ئەوەی پیتەکان لێک جیا نەبن.',
-                                textDirection: TextDirection.rtl,
-                                style: TextStyle(
-                                  fontFamily: 'Cairo',
-                                  fontSize: 11,
-                                  color: Colors.amber[800],
-                                  height: 1.5,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Font info (read-only when tajweed enabled)
-                      _SettingRow(
-                        icon: Icons.menu_book_rounded,
-                        label: l.settingsFontQuran,
-                        subLabel: 'فۆنت خۆکار دەرچوو: ${readerSettings.quranFontFamily}',
-                        cs: cs,
-                        trailing: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: cs.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            FontFamilies.getDisplayName(readerSettings.quranFontFamily, context),
-                            style: TextStyle(
-                              fontFamily: 'Cairo',
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: cs.primary,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ] else ...[
-                      // Font selection for Quran text
-                      _SettingRow(
-                        icon: Icons.menu_book_rounded,
-                        label: l.settingsFontQuran,
-                        subLabel: l.settingsFontQuranSub,
-                        cs: cs,
-                        trailing: _FontDropdown(
-                          cs: cs,
-                          current: readerSettings.quranFontFamily,
-                          options: FontFamilies.arabicFonts
-                              .map((f) => (f, FontFamilies.getDisplayName(f, context)))
-                              .toList(),
-                          onChanged: (f) => ref
-                              .read(readerSettingsProvider.notifier)
-                              .setQuranFontFamily(f),
-                        ),
-                      ),
-                    ],
-                    const Divider(height: 1),
-                    // Font Target
-                    _SettingRow(
-                      icon: Icons.tune_rounded,
-                      label: l.settingsFontTarget,
-                      subLabel: l.settingsFontTargetSub,
-                      cs: cs,
-                      trailing: _FontTargetSelector(
-                        cs: cs,
-                        current: readerSettings.fontTarget,
-                        onChanged: (t) => ref
-                            .read(readerSettingsProvider.notifier)
-                            .setFontTarget(t),
-                      ),
-                    ),
-                    // Live preview
-                    Container(
-                      margin: const EdgeInsets.only(top: 4, bottom: 8),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: cs.bg,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: readerSettings.quranFontFamily,
-                              fontSize: readerSettings.fontSize,
-                              color: cs.textPrimary,
-                              height: 1.8,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            l.settingsFontUiSample,
-                            textDirection: TextDirection.rtl,
-                            style: TextStyle(
-                              fontFamily: readerSettings.uiFontFamily,
-                              fontSize: 13,
-                              color: cs.textSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ).animate().fadeIn(duration: 300.ms, delay: 110.ms),
 
-                const SizedBox(height: 16),
 
                 // Translations card
                 _SectionLabel(label: l.settingsTranslations, cs: cs),
@@ -955,16 +806,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
                 const SizedBox(height: 16),
 
-                // ── Calculation Method card ────────────────────────
-                _SectionLabel(label: l.settingsCalculationMethod, cs: cs),
+                // ── Adhan Sound card ────────────────────────
+                _SectionLabel(label: l.settingsAdhanSound, cs: cs),
                 const SizedBox(height: 10),
                 _SettingsCard(
                   cs: cs,
                   children: [
                     _SettingRow(
-                      icon: Icons.settings_suggest_rounded,
-                      label: l.settingsCalculationMethod,
-                      subLabel: l.settingsCalculationMethodSub,
+                      icon: Icons.music_note_rounded,
+                      label: l.settingsAdhanSound,
+                      subLabel: l.settingsAdhanSoundSub,
                       cs: cs,
                       trailing: IconButton(
                         icon: Icon(
@@ -1448,167 +1299,4 @@ class _LanguageOption extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Font Dropdown
-// ─────────────────────────────────────────────────────────────────────────────
 
-class _FontDropdown extends StatelessWidget {
-  const _FontDropdown({
-    required this.cs,
-    required this.current,
-    required this.options,
-    required this.onChanged,
-  });
-
-  final AppColorScheme cs;
-  final String current;
-final List<(String, String)> options;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          builder: (ctx) {
-            return Container(
-              decoration: BoxDecoration(
-                color: cs.card,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(24),
-                ),
-              ),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 36,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: cs.divider,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ...options.map(
-                    (opt) => ListTile(
-                      title: Text(
-                        opt.$2,
-                        style: TextStyle(
-                          fontFamily: opt.$1,
-                          fontSize: 15,
-                          color: cs.textPrimary,
-                        ),
-                      ),
-                      subtitle: Text(
-                        opt.$1,
-                        style: TextStyle(
-                          fontFamily: 'Cairo',
-                          fontSize: 11,
-                          color: cs.textSecondary,
-                        ),
-                      ),
-                      trailing: current == opt.$1
-                          ? Icon(Icons.check_circle_rounded,
-                              color: cs.primary)
-                          : null,
-                      onTap: () {
-                        onChanged(opt.$1);
-                        Navigator.pop(ctx);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: cs.primary.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: cs.primary.withValues(alpha: 0.2),
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              options.firstWhere((o) => o.$1 == current,
-                      orElse: () => options.first)
-                  .$2,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: cs.primary,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Icon(Icons.expand_more_rounded, size: 14, color: cs.primary),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Font Target Selector
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _FontTargetSelector extends StatelessWidget {
-  const _FontTargetSelector({
-    required this.cs,
-    required this.current,
-    required this.onChanged,
-  });
-
-  final AppColorScheme cs;
-  final String current;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l10n;
-    final targets = [
-      ('ui', 'UI'),
-      ('reader', l.settingsFontTargetReader),
-      ('both', l.settingsFontTargetBoth),
-    ];
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: targets.map((t) {
-        final active = t.$1 == current;
-        return GestureDetector(
-          onTap: () => onChanged(t.$1),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            margin: const EdgeInsets.only(left: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            decoration: BoxDecoration(
-              color: active ? cs.primary : cs.primary.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              t.$2,
-              style: TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: active ? Colors.white : cs.primary,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-}
