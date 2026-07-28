@@ -10,6 +10,7 @@ import 'dart:io';
 import '../providers/prayer_times_provider.dart';
 import 'notification_coordinator.dart';
 
+
 class PrayerNotificationService {
   static final PrayerNotificationService _instance = PrayerNotificationService._internal();
   factory PrayerNotificationService() => _instance;
@@ -20,6 +21,33 @@ class PrayerNotificationService {
   static const _channelId = NotificationChannels.prayerCh;
   static const _channelName = 'ئاگادارکردنەوەی بانگدان';
   static const _channelDesc = 'لێدانی دەنگی بانگ لە کاتی نوێژەکاندا';
+
+  /// Register the dynamic sound channel for a given adhan sound.
+  /// Android channels are immutable — sound can only be set at channel creation.
+  /// We pre-register channels for every sound variant so the correct azan plays.
+  Future<void> _ensureSoundChannel(String channelId, String channelName, String channelDesc, bool playSound, String adhanSound) async {
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return;
+
+    final AndroidNotificationSound? sound = playSound && adhanSound.isNotEmpty
+        ? RawResourceAndroidNotificationSound(adhanSound)
+        : null;
+
+    final channel = AndroidNotificationChannel(
+      channelId,
+      channelName,
+      description: channelDesc,
+      importance: Importance.max,
+      playSound: playSound,
+      sound: sound,
+      enableVibration: true,
+      enableLights: true,
+      ledColor: const Color(0xFFCD9D27),
+    );
+
+    await androidPlugin.createNotificationChannel(channel);
+  }
 
   Future<void> schedulePrayerNotifications({
     required KurdishCity city,
@@ -41,6 +69,12 @@ class PrayerNotificationService {
       debugPrint('Azan notifications are globally disabled.');
       return;
     }
+
+    // Pre-register the dynamic sound channel before scheduling.
+    // Android channels are immutable: sound must be set at channel creation.
+    final bool willPlaySound = adhanSound != 'none';
+    final String channelId = '${_channelId}_${willPlaySound ? adhanSound : 'silent'}';
+    await _ensureSoundChannel(channelId, _channelName, _channelDesc, willPlaySound, adhanSound);
 
     final now = tz.TZDateTime.now(tz.local);
     final List<String> prayerKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
@@ -136,16 +170,16 @@ class PrayerNotificationService {
 
         final kuName = prayerNamesKu[key] ?? key;
 
-        final bool playSound = adhanSound != 'none';
+        final bool playSound = willPlaySound;
         final androidSound = playSound && adhanSound.isNotEmpty
             ? RawResourceAndroidNotificationSound(adhanSound)
             : null;
         final iOSSound = playSound && adhanSound.isNotEmpty
-            ? '$adhanSound.wav'
+            ? '$adhanSound.mp3'
             : null;
 
-        // Android channels are immutable. We must use a different channel ID for different sounds or silent.
-        final String dynamicChannelId = '${_channelId}_${playSound ? adhanSound : 'silent'}';
+        // Use the pre-registered channel (already created above).
+        final String dynamicChannelId = channelId;
 
         try {
           final notificationDetails = NotificationDetails(

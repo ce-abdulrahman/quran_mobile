@@ -549,7 +549,11 @@ class IsarService {
         final surahsCount = await isar.surahCollections.count();
         if (surahsCount == 0 || (firstSurah != null && firstSurah.totalAyahs == 0)) {
           final rawData = await _loadPackageData('quran', 'assets/data/surahs.json');
-          final data = rawData.where((x) => x is Map && x.containsKey('number')).toList();
+          final data = rawData.where((x) {
+            if (x is! Map) return false;
+            if (x.containsKey('type') && x['type'] != 'surah') return false;
+            return x.containsKey('number');
+          }).toList();
           final items = data.map((x) {
             final json = x as Map<String, dynamic>;
             return SurahCollection(
@@ -564,9 +568,7 @@ class IsarService {
             );
           }).toList();
           await isar.writeTxn(() async {
-            if (firstSurah != null && firstSurah.totalAyahs == 0) {
-              await isar.surahCollections.clear();
-            }
+            await isar.surahCollections.clear();
             await isar.surahCollections.putAll(items);
           });
         }

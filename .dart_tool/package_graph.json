@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "quran_mobile",
-      "version": "1.0.6+7",
+      "version": "1.0.7+8",
       "dependencies": [
         "adhan",
         "archive",

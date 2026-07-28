@@ -5,10 +5,27 @@ class VersionService {
   static const String _lastSeenVersionKey = 'last_seen_version';
 
   /// Current app version - update this with every release.
-  static const String currentVersion = '1.0.6';
+  static const String currentVersion = '1.0.7';
 
   /// Changelog entries per version. Add new version entries at the top.
   static const Map<String, List<ChangelogEntry>> changelog = {
+    '1.0.7': [
+      ChangelogEntry(
+        icon: '🔊',
+        titleKu: 'چارەسەری دەنگی بانگ',
+        descKu: 'کێشەی بێ دەنگ بوونی بانگ لە کاتی نوێژەکاندا چارەسەر کرا — ئێستا دەنگی بانگ بە شێوەی دروست لێ دەدرێت',
+      ),
+      ChangelogEntry(
+        icon: '🤲',
+        titleKu: 'چارەسەری بیرخستنەوەی تەسبیح',
+        descKu: 'کێشەی ناکارکردنی ئاگادارکردنەوەی تەسبیح چارەسەر کرا',
+      ),
+      ChangelogEntry(
+        icon: '📖',
+        titleKu: 'دۆزینەوەی سورە ئاسانتر کرا',
+        descKu: 'زیادکردنی بەستەری تایبەت بۆ کردنەوەی لیستی هەموو سورەکان و گەڕانی خێرا لەناو پەیجی مووسحەف',
+      ),
+    ],
     '1.0.6': [
       ChangelogEntry(
         icon: '🎨',

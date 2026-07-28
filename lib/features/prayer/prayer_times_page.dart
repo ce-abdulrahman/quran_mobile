@@ -15,35 +15,11 @@ class PrayerTimesPage extends ConsumerStatefulWidget {
 }
 
 class _PrayerTimesPageState extends ConsumerState<PrayerTimesPage> {
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    // Start periodic timer to tick the countdown every second
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
   String _formatTime(DateTime time) {
     final hour = time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
     final minute = time.minute.toString().padLeft(2, '0');
     final period = time.hour >= 12 ? 'PM' : 'AM';
     return '$hour:$minute $period';
-  }
-
-  String _formatDuration(Duration duration) {
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes.remainder(60);
-    final seconds = duration.inSeconds.remainder(60);
-    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -179,8 +155,8 @@ class _PrayerTimesPageState extends ConsumerState<PrayerTimesPage> {
                         ),
                       ),
                       const SizedBox(height: 6),
-                      Text(
-                        _formatDuration(nextPrayerInfo.remaining),
+                      _CountdownTimerText(
+                        targetTime: nextPrayerInfo.time,
                         style: const TextStyle(
                           fontFamily: 'Cairo',
                           fontSize: 28,
@@ -463,6 +439,81 @@ class _PrayerTimesPageState extends ConsumerState<PrayerTimesPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _CountdownTimerText extends StatefulWidget {
+  final DateTime targetTime;
+  final TextStyle style;
+
+  const _CountdownTimerText({
+    required this.targetTime,
+    required this.style,
+  });
+
+  @override
+  State<_CountdownTimerText> createState() => _CountdownTimerTextState();
+}
+
+class _CountdownTimerTextState extends State<_CountdownTimerText> {
+  late Timer _timer;
+  late ValueNotifier<Duration> _remainingNotifier;
+
+  @override
+  void initState() {
+    super.initState();
+    final initialRemaining = widget.targetTime.difference(DateTime.now());
+    _remainingNotifier = ValueNotifier(initialRemaining);
+    _startTimer();
+  }
+
+  @override
+  void didUpdateWidget(covariant _CountdownTimerText oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.targetTime != widget.targetTime) {
+      _timer.cancel();
+      _remainingNotifier.value = widget.targetTime.difference(DateTime.now());
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      final diff = widget.targetTime.difference(DateTime.now());
+      if (diff.isNegative || diff.inSeconds <= 0) {
+        _remainingNotifier.value = Duration.zero;
+        _timer.cancel();
+      } else {
+        _remainingNotifier.value = diff;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _remainingNotifier.dispose();
+    super.dispose();
+  }
+
+  String _formatDuration(Duration duration) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+    return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Duration>(
+      valueListenable: _remainingNotifier,
+      builder: (context, remaining, child) {
+        return Text(
+          _formatDuration(remaining),
+          style: widget.style,
+        );
+      },
     );
   }
 }

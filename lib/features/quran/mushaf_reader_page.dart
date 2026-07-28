@@ -563,6 +563,195 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
     );
   }
 
+  void _showSurahSelectorBottomSheet(BuildContext context) {
+    final cs = AppColorScheme.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      isScrollControlled: true,
+      builder: (ctx) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.75,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (context, scrollController) {
+            return Consumer(
+              builder: (context, ref, _) {
+                final surahsAsync = ref.watch(surahListProvider);
+                String searchQuery = '';
+                
+                return StatefulBuilder(
+                  builder: (context, setSheetState) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: cs.card,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(28),
+                          topRight: Radius.circular(28),
+                        ),
+                        border: Border.all(color: cs.cardBorder),
+                      ),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Center(
+                            child: Container(
+                              width: 44,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: cs.textSecondary.withValues(alpha: 0.25),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'دۆزینەوەی سورەت',
+                            style: TextStyle(
+                              fontFamily: 'Cairo',
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: cs.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          
+                          // Search Bar
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Container(
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: cs.bg.withValues(alpha: 0.5),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: cs.cardBorder),
+                              ),
+                              child: TextField(
+                                onChanged: (v) {
+                                  setSheetState(() {
+                                    searchQuery = v;
+                                  });
+                                },
+                                textDirection: TextDirection.rtl,
+                                style: TextStyle(fontFamily: 'Cairo', fontSize: 14, color: cs.textPrimary),
+                                decoration: InputDecoration(
+                                  hintText: 'ناوی سورەت یان ژمارە بنووسە...',
+                                  hintStyle: TextStyle(fontFamily: 'Cairo', fontSize: 12, color: cs.textSecondary),
+                                  prefixIcon: Icon(Icons.search_rounded, color: cs.primary, size: 20),
+                                  border: InputBorder.none,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          
+                          Expanded(
+                            child: surahsAsync.when(
+                              data: (surahs) {
+                                final query = searchQuery.trim().toLowerCase();
+                                final filtered = surahs.where((s) {
+                                  return s.nameEn.toLowerCase().contains(query) ||
+                                      s.nameAr.contains(query) ||
+                                      s.nameKu.contains(query) ||
+                                      s.number.toString() == query;
+                                }).toList();
+
+                                if (filtered.isEmpty) {
+                                  return Center(
+                                    child: Text(
+                                      'هیچ سورەتێک نەدۆزرایەوە',
+                                      style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
+                                    ),
+                                  );
+                                }
+
+                                return ListView.separated(
+                                  controller: scrollController,
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                  physics: const BouncingScrollPhysics(),
+                                  itemCount: filtered.length,
+                                  separatorBuilder: (_, __) => Divider(color: cs.cardBorder, height: 1),
+                                  itemBuilder: (context, idx) {
+                                    final surah = filtered[idx];
+                                    return ListTile(
+                                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                                      leading: Container(
+                                        width: 32,
+                                        height: 32,
+                                        decoration: BoxDecoration(
+                                          color: cs.primary.withValues(alpha: 0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            '${surah.number}',
+                                            style: TextStyle(
+                                              fontFamily: 'Cairo',
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: cs.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      title: Text(
+                                        surah.nameKu.isNotEmpty ? surah.nameKu : surah.nameEn,
+                                        style: TextStyle(
+                                          fontFamily: 'Cairo',
+                                          fontWeight: FontWeight.bold,
+                                          color: cs.textPrimary,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        'لاپەڕەی ${surah.pageStart} — ${surah.totalAyahs} ئایەت',
+                                        style: TextStyle(
+                                          fontFamily: 'Cairo',
+                                          fontSize: 11,
+                                          color: cs.textSecondary,
+                                        ),
+                                      ),
+                                      trailing: Text(
+                                        surah.nameAr,
+                                        style: TextStyle(
+                                          fontFamily: 'UthmanicHafs',
+                                          fontSize: 20,
+                                          color: cs.textPrimary,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                        _jumpToPage(surah.pageStart ?? 1);
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                              loading: () => const Center(child: CircularProgressIndicator()),
+                              error: (e, _) => Center(
+                                child: Text(
+                                  'کێشەیەک ڕوویدا لە بارکردنی سورەتەکان',
+                                  style: TextStyle(fontFamily: 'Cairo', color: cs.textSecondary),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildFloatingBottomToolbar(
     AppColorScheme cs,
     Color cardBg,
@@ -599,17 +788,38 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
                 icon: Icon(Icons.arrow_back_ios_rounded, color: textPrimary),
                 onPressed: _currentPage < 604 ? () => _jumpToPage(_currentPage + 1) : null,
               ),
+              const SizedBox(width: 8),
               Expanded(
-                child: Slider(
-                  value: _currentPage.toDouble(),
-                  min: 1,
-                  max: 604,
-                  divisions: 603,
-                  activeColor: cs.primary,
-                  inactiveColor: cs.primary.withValues(alpha: 0.15),
-                  onChanged: (v) => _jumpToPage(v.round()),
+                child: InkWell(
+                  onTap: () => _showSurahSelectorBottomSheet(context),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: cs.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: cs.primary.withValues(alpha: 0.15)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.search_rounded, color: cs.primary, size: 20),
+                        const SizedBox(width: 10),
+                        const Text(
+                          'دۆزینەوەی سورەت...',
+                          style: TextStyle(
+                            fontFamily: 'Cairo',
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
+              const SizedBox(width: 8),
               IconButton(
                 icon: Icon(Icons.arrow_forward_ios_rounded, color: textPrimary),
                 onPressed: _currentPage > 1 ? () => _jumpToPage(_currentPage - 1) : null,

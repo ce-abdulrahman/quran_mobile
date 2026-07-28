@@ -184,9 +184,6 @@ class NotificationCoordinator {
     required int hour,
     required int minute,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!(prefs.getBool(NotificationChannels.memorizationEnabledKey) ?? false)) return;
-
     await cancelMemorizationReminder();
 
     final now = tz.TZDateTime.now(tz.local);
@@ -225,9 +222,6 @@ class NotificationCoordinator {
     required int hour,
     required int minute,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!(prefs.getBool(NotificationChannels.reviewEnabledKey) ?? false)) return;
-
     await cancelReviewReminder();
 
     final now = tz.TZDateTime.now(tz.local);
@@ -266,9 +260,6 @@ class NotificationCoordinator {
     required int hour,
     required int minute,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!(prefs.getBool(NotificationChannels.wirdEnabledKey) ?? false)) return;
-
     await cancelWirdReminder();
 
     final now = tz.TZDateTime.now(tz.local);
@@ -307,9 +298,6 @@ class NotificationCoordinator {
     required int hour,
     required int minute,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
-    if (!(prefs.getBool(NotificationChannels.tasbihEnabledKey) ?? false)) return;
-
     await cancelTasbihReminder();
 
     final now = tz.TZDateTime.now(tz.local);
@@ -333,7 +321,7 @@ class NotificationCoordinator {
           icon: '@mipmap/ic_launcher',
           color: const Color(0xFF1AB66D),
         ),
-        iOS: const DarwinNotificationDetails(presentAlert: true, presentSound: false),
+        iOS: const DarwinNotificationDetails(presentAlert: true, presentSound: true),
       ),
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:

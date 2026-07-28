@@ -23,7 +23,7 @@ void main() async {
   await IsarService.init();
   final sharedPrefs = await SharedPreferences.getInstance();
   final packageInfo = await PackageInfo.fromPlatform();
-  final appVersion = '${packageInfo.version}+${packageInfo.buildNumber}';
+  final appVersion = packageInfo.version; // e.g. "1.0.6" — build number hidden from UI
   await AudioQualityManager().init(sharedPrefs); 
 
   // Initialize Hive for high-performance, low-memory caching
