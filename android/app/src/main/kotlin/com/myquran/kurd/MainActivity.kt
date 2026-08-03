@@ -1,7 +1,7 @@
 package com.myquran.kurd
 
 import android.os.Bundle
-import io.flutter.embedding.android.FlutterActivity
+import com.ryanheise.audioservice.AudioServiceActivity
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.InputStreamReader
@@ -11,7 +11,7 @@ import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.nio.charset.StandardCharsets
 
-class MainActivity : FlutterActivity() {
+class MainActivity : AudioServiceActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // Clean up large cache keys from SharedPreferences XML to prevent OutOfMemoryError on startup
         try {

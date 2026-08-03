@@ -23,19 +23,23 @@ class HadithRepository {
       final Map<int, HadithCollection> categoryMeta = {};
 
       for (final h in collections) {
-        groups.putIfAbsent(h.categoryId, () => []).add(HadithItem(
-          id: h.hadithId,
-          categoryId: h.categoryId,
-          arabicText: h.arabicText,
-          translationKu: h.translationKu,
-          translationEn: h.translationEn,
-          narrator: h.narrator,
-          source: h.source,
-          explanationKu: h.explanationKu,
-          explanationEn: h.explanationEn,
-          order: h.order,
-          isActive: h.isActive,
-        ));
+        final list = groups.putIfAbsent(h.categoryId, () => []);
+        // Prevent duplicates based on hadithId
+        if (!list.any((item) => item.id == h.hadithId)) {
+          list.add(HadithItem(
+            id: h.hadithId,
+            categoryId: h.categoryId,
+            arabicText: h.arabicText,
+            translationKu: h.translationKu,
+            translationEn: h.translationEn,
+            narrator: h.narrator,
+            source: h.source,
+            explanationKu: h.explanationKu,
+            explanationEn: h.explanationEn,
+            order: h.order,
+            isActive: h.isActive,
+          ));
+        }
         categoryMeta[h.categoryId] = h;
       }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/providers/prayer_times_provider.dart';
 
@@ -140,9 +141,15 @@ class PrayerMethodSettingsPage extends ConsumerWidget {
   }
 }
 
-class _AdhanSoundSelector extends ConsumerWidget {
+
+class _AdhanSoundSelector extends StatefulWidget {
   const _AdhanSoundSelector();
 
+  @override
+  State<_AdhanSoundSelector> createState() => _AdhanSoundSelectorState();
+}
+
+class _AdhanSoundSelectorState extends State<_AdhanSoundSelector> {
   // Available adhan sounds (filename without extension)
   static const List<AdhanSoundOption> soundOptions = [
     AdhanSoundOption(
@@ -182,6 +189,51 @@ class _AdhanSoundSelector extends ConsumerWidget {
     ),
   ];
 
+  late final AudioPlayer _audioPlayer;
+  String? _currentlyPlayingId;
+
+  @override
+  void initState() {
+    super.initState();
+    _audioPlayer = AudioPlayer();
+    _audioPlayer.onPlayerStateChanged.listen((state) {
+      if (state == PlayerState.completed || state == PlayerState.stopped) {
+        if (mounted) {
+          setState(() {
+            _currentlyPlayingId = null;
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> _playPreview(AdhanSoundOption option) async {
+    if (option.id == 'none') return;
+    
+    if (_currentlyPlayingId == option.id) {
+      await _audioPlayer.stop();
+      setState(() {
+        _currentlyPlayingId = null;
+      });
+      return;
+    }
+
+    try {
+      await _audioPlayer.stop();
+      // On Android, raw resource is played. In assets/sounds we have the mp3 fallbacks.
+      await _audioPlayer.play(AssetSource('sounds/${option.assetName}.mp3'));
+      setState(() {
+        _currentlyPlayingId = option.id;
+      });
+    } catch (_) {}
+  }
+
   String _getAdhanSoundTitle(BuildContext context) {
     final isKurdish = Localizations.localeOf(context).languageCode == 'ku';
     final isArabic = Localizations.localeOf(context).languageCode == 'ar';
@@ -199,99 +251,115 @@ class _AdhanSoundSelector extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cs = AppColorScheme.of(context);
-    final settingsState = ref.watch(prayerTimesSettingsProvider);
-    final currentSound = settingsState.adhanSound;
+  Widget build(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final cs = AppColorScheme.of(context);
+        final settingsState = ref.watch(prayerTimesSettingsProvider);
+        final currentSound = settingsState.adhanSound;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
-          child: Text(
-            _getAdhanSoundTitle(context),
-            style: TextStyle(
-              fontFamily: 'Cairo',
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: cs.textSecondary,
-            ),
-          ),
-        ),
-        Column(
-          children: soundOptions.map((option) {
-            final isSelected = currentSound == option.id;
-            return AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-              decoration: BoxDecoration(
-                color: isSelected ? cs.primary.withValues(alpha: 0.08) : cs.card,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isSelected ? cs.primary : cs.cardBorder,
-                  width: isSelected ? 1.5 : 1.0,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+              child: Text(
+                _getAdhanSoundTitle(context),
+                style: TextStyle(
+                  fontFamily: 'Cairo',
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: cs.textSecondary,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.02),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
               ),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-                onTap: () {
-                  ref.read(prayerTimesSettingsProvider.notifier).changeAdhanSound(option.id);
-                },
-                title: Text(
-                  _getSoundTitle(option, context),
-                  style: TextStyle(
-                    fontFamily: 'Cairo',
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? cs.primary : cs.textPrimary,
-                  ),
-                ),
-                subtitle: option.id == 'none'
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 6),
-                        child: Text(
-                          _getNoSoundSubtitle(context),
-                          style: TextStyle(
-                            fontFamily: 'Cairo',
-                            fontSize: 12,
-                            height: 1.4,
-                            color: cs.textSecondary,
-                          ),
-                        ),
-                      )
-                    : null,
-                trailing: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 22,
-                  height: 22,
+            ),
+            Column(
+              children: soundOptions.map((option) {
+                final isSelected = currentSound == option.id;
+                final isPlaying = _currentlyPlayingId == option.id;
+
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isSelected ? cs.primary : Colors.transparent,
+                    color: isSelected ? cs.primary.withValues(alpha: 0.08) : cs.card,
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isSelected ? cs.primary : cs.textSecondary.withValues(alpha: 0.4),
-                      width: 2,
+                      color: isSelected ? cs.primary : cs.cardBorder,
+                      width: isSelected ? 1.5 : 1.0,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.02),
+                        blurRadius: 8,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                    onTap: () {
+                      ref.read(prayerTimesSettingsProvider.notifier).changeAdhanSound(option.id);
+                    },
+                    leading: option.id != 'none'
+                        ? IconButton(
+                            icon: Icon(
+                              isPlaying ? Icons.stop_circle_rounded : Icons.play_circle_fill_rounded,
+                              color: cs.primary,
+                              size: 28,
+                            ),
+                            onPressed: () => _playPreview(option),
+                          )
+                        : null,
+                    title: Text(
+                      _getSoundTitle(option, context),
+                      style: TextStyle(
+                        fontFamily: 'Cairo',
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: isSelected ? cs.primary : cs.textPrimary,
+                      ),
+                    ),
+                    subtitle: option.id == 'none'
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(
+                              _getNoSoundSubtitle(context),
+                              style: TextStyle(
+                                fontFamily: 'Cairo',
+                                fontSize: 12,
+                                height: 1.4,
+                                color: cs.textSecondary,
+                              ),
+                            ),
+                          )
+                        : null,
+                    trailing: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isSelected ? cs.primary : Colors.transparent,
+                        border: Border.all(
+                          color: isSelected ? cs.primary : cs.textSecondary.withValues(alpha: 0.4),
+                          width: 2,
+                        ),
+                      ),
+                      child: isSelected
+                          ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
+                          : null,
                     ),
                   ),
-                  child: isSelected
-                      ? const Icon(Icons.check_rounded, size: 14, color: Colors.white)
-                      : null,
-                ),
-              ),
-            ).animate().fadeIn(
-                  duration: 300.ms,
-                  delay: (soundOptions.indexOf(option) * 50).ms,
-                );
-          }).toList(),
-        ),
-      ],
+                ).animate().fadeIn(
+                      duration: 300.ms,
+                      delay: (soundOptions.indexOf(option) * 50).ms,
+                    );
+              }).toList(),
+            ),
+          ],
+        );
+      },
     );
   }
 

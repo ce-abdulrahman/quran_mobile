@@ -210,7 +210,7 @@ class PrayerNotificationService {
             'کاتی نوێژ بۆ شاری ${city.nameKu} هاتووە. (حی علی الصلاة)',
             scheduledTime,
             notificationDetails,
-            androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+            androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
             uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
           );
         } catch (e) {

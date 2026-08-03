@@ -243,7 +243,11 @@ class HadithCardState extends State<HadithCard> {
                     // Favorite (Star) button
                     Consumer(
                       builder: (context, ref, child) {
-                        final isFav = ref.watch(favoritesProvider.notifier).isFavorited('hadith', widget.hadith.id);
+                        // Watch favorites list directly so Riverpod triggers rebuild instantly
+                        final favorites = ref.watch(favoritesProvider);
+                        final idStr = 'hadith_${widget.hadith.id}';
+                        final isFav = favorites.any((f) => f.favoriteId == idStr);
+                        
                         return IconButton(
                           icon: Icon(
                             isFav ? Icons.star_rounded : Icons.star_border_rounded,

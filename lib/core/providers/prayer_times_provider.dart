@@ -2,6 +2,9 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:adhan/adhan.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart';
+import 'dart:io';
 import 'app_providers.dart';
 import '../services/prayer_notification_service.dart';
 
@@ -186,13 +189,17 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     } catch (_) {}
   }
 
-  void reschedule() {
-    PrayerNotificationService().schedulePrayerNotifications(
-      city: state.selectedCity,
-      toggles: state.prayerToggles,
-      isAzanEnabled: state.isAzanEnabled,
-      adhanSound: state.adhanSound,
-    );
+  Future<void> reschedule() async {
+    try {
+      await PrayerNotificationService().schedulePrayerNotifications(
+        city: state.selectedCity,
+        toggles: state.prayerToggles,
+        isAzanEnabled: state.isAzanEnabled,
+        adhanSound: state.adhanSound,
+      );
+    } catch (e) {
+      debugPrint('reschedule error: $e');
+    }
   }
 
   void _loadSettings() {
@@ -325,7 +332,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
           versionHash: newHash,
         );
         
-        reschedule();
+        await reschedule();
       }
     } catch (e) {
       // Offline fallback
@@ -333,17 +340,29 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
   }
 
   Future<void> changeCity(KurdishCity city) async {
-
     state = state.copyWith(selectedCity: city);
     await _prefs.setString(_cityKey, jsonEncode(city.toJson()));
-    reschedule();
+    await reschedule();
     _syncCityOnTrigger(city);
   }
 
   Future<void> toggleAzan(bool enabled) async {
+    // Request notification permission before enabling azan
+    if (enabled && !kIsWeb && !Platform.environment.containsKey('FLUTTER_TEST')) {
+      final plugin = FlutterLocalNotificationsPlugin();
+      final androidPlugin = plugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      if (androidPlugin != null) {
+        final granted = await androidPlugin.requestNotificationsPermission();
+        if (granted == false) {
+          debugPrint('Notification permission denied — azan not enabled.');
+          return; // Do not enable if permission denied
+        }
+      }
+    }
     state = state.copyWith(isAzanEnabled: enabled);
     await _prefs.setBool(_azanEnabledKey, enabled);
-    reschedule();
+    await reschedule();
   }
 
   Future<void> togglePrayerNotification(String prayerName, bool enabled) async {
@@ -351,13 +370,13 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
     updatedToggles[prayerName] = enabled;
     state = state.copyWith(prayerToggles: updatedToggles);
     await _prefs.setString(_togglesKey, jsonEncode(updatedToggles));
-    reschedule();
+    await reschedule();
   }
 
   Future<void> changeAdhanSound(String soundName) async {
     state = state.copyWith(adhanSound: soundName);
     await _prefs.setString(_adhanSoundKey, soundName);
-    reschedule();
+    await reschedule();
   }
 
   Future<void> changeCalculationMethod(String key) async {

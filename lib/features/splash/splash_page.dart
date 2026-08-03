@@ -10,6 +10,7 @@ import '../../core/local_db/isar_service.dart';
 import '../prayer/providers/prayer_times_provider.dart';
 import '../prayer/providers/prayer_widget_provider.dart';
 import 'changelog_dialog.dart';
+import 'onboarding_dialog.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
@@ -58,13 +59,29 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     final prefs = ref.read(sharedPreferencesProvider);
     final isInitialized = prefs.getBool('is_db_initialized') ?? false;
 
-    // Check if we need to force seeding (e.g. empty tables due to app updates)
-    final needsSeeding = !isInitialized || await IsarService.instance.checkNeedSeeding();
-
-    if (!needsSeeding) {
-      await Future.delayed(const Duration(milliseconds: 2000));
+    // Fast-path: if already initialized, skip all Isar queries and go straight to the app.
+    // Migration flags inside checkNeedSeeding() already reset is_db_initialized=false
+    // when an update requires re-seeding, so this is safe.
+    if (isInitialized) {
       if (!mounted) return;
       await ChangelogDialog.showIfNeeded(context);
+      if (!mounted) return;
+      await OnboardingDialog.showIfNeeded(context, ref);
+      if (!mounted) return;
+      Navigator.of(context).pushReplacementNamed('/shell');
+      return;
+    }
+
+    // First install or forced re-seed: run the full check
+    final needsSeeding = await IsarService.instance.checkNeedSeeding();
+
+    if (!needsSeeding) {
+      // Mark as initialized so future launches take the fast path
+      await prefs.setBool('is_db_initialized', true);
+      if (!mounted) return;
+      await ChangelogDialog.showIfNeeded(context);
+      if (!mounted) return;
+      await OnboardingDialog.showIfNeeded(context, ref);
       if (!mounted) return;
       Navigator.of(context).pushReplacementNamed('/shell');
     } else {
@@ -97,6 +114,8 @@ class _SplashPageState extends ConsumerState<SplashPage> {
         
         if (!mounted) return;
         await ChangelogDialog.showIfNeeded(context);
+        if (!mounted) return;
+        await OnboardingDialog.showIfNeeded(context, ref);
         if (!mounted) return;
         Navigator.of(context).pushReplacementNamed('/shell');
       } catch (e) {
@@ -170,6 +189,21 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    // ── Bismillah at top ──────────────────────────────
+                    Text(
+                      'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+                      textAlign: TextAlign.center,
+                      textDirection: TextDirection.rtl,
+                      style: TextStyle(
+                        fontFamily: 'UthmanicHafs',
+                        fontSize: 17,
+                        color: Colors.white.withValues(alpha: 0.75),
+                        height: 2,
+                      ),
+                    ).animate().fadeIn(duration: 600.ms, delay: 200.ms),
+
+                    const SizedBox(height: 32),
+
                     // Logo circle
                     Container(
                       width: 110,
@@ -261,7 +295,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
 
                     const SizedBox(height: 48),
 
-                    // Seeding progress or loading dots
+                    // Seeding progress — only shown during first install / update
                     if (_isSeeding) ...[
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 48),
@@ -303,31 +337,9 @@ class _SplashPageState extends ConsumerState<SplashPage> {
                           ],
                         ),
                       ),
-                    ] else ...[
-                      _LoadingDots()
-                          .animate()
-                          .fadeIn(duration: 400.ms, delay: 900.ms),
                     ],
                   ],
                 ),
-              ),
-
-              // ── Bottom bismillah ─────────────────────────────────────
-              Positioned(
-                bottom: 32,
-                left: 0,
-                right: 0,
-                child: Text(
-                  'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-                  textAlign: TextAlign.center,
-                  textDirection: TextDirection.rtl,
-                  style: TextStyle(
-                    fontFamily: 'UthmanicHafs',
-                    fontSize: 16,
-                    color: Colors.white.withValues(alpha: 0.55),
-                    height: 2,
-                  ),
-                ).animate().fadeIn(duration: 600.ms, delay: 1200.ms),
               ),
             ],
           ),

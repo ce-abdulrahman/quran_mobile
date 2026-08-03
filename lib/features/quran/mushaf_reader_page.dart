@@ -377,87 +377,90 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
                 });
                 _interactionLock.releaseLock();
               },
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: isDualPage ? 303 : 604,
-                reverse: true, // Right-to-Left page turns
-                onPageChanged: _onPageChanged,
-                physics: _zoomScale > 1.0 ? const NeverScrollableScrollPhysics() : const BouncingScrollPhysics(),
-                itemBuilder: (context, index) {
-                  if (isDualPage) {
-                    final int leftPageNum = index * 2;
-                    final int rightPageNum = index * 2 + 1;
+              child: Directionality(
+                textDirection: TextDirection.rtl,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: isDualPage ? 303 : 604,
+                  reverse: false, // Swipe right-to-left to go forward (page 1 -> 2)
+                  onPageChanged: _onPageChanged,
+                  physics: _zoomScale > 1.0 ? const NeverScrollableScrollPhysics() : const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    if (isDualPage) {
+                      final int leftPageNum = index * 2;
+                      final int rightPageNum = index * 2 + 1;
 
-                    return GestureDetector(
-                      onDoubleTap: _handleDoubleTapZoom,
-                      child: InteractiveViewer(
-                        transformationController: _zoomEngine.controller,
-                        minScale: 1.0,
-                        maxScale: 3.0,
-                        clipBehavior: Clip.none,
-                        onInteractionStart: (_) {
-                          _interactionLock.acquireLock();
-                        },
-                        onInteractionEnd: (_) {
-                          _interactionLock.releaseLock();
-                        },
-                        onInteractionUpdate: (details) {
-                          _zoomEngine.updatePosition(Offset.zero);
-                        },
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: leftPageNum > 0
-                                  ? MediaQuery(
-                                      data: MediaQuery.of(context).copyWith(
-                                        textScaler: TextScaler.noScaling,
-                                      ),
-                                      child: _buildMushafPage(leftPageNum, cs, pageCard, pageText, pageTextSecondary, pageBorder, settings),
-                                    )
-                                  : Container(color: pageBg),
-                            ),
-                            VerticalDivider(width: 1, color: pageBorder.withValues(alpha: 0.3)),
-                            Expanded(
-                              child: MediaQuery(
-                                data: MediaQuery.of(context).copyWith(
-                                  textScaler: TextScaler.noScaling,
-                                ),
-                                child: _buildMushafPage(rightPageNum, cs, pageCard, pageText, pageTextSecondary, pageBorder, settings),
+                      return GestureDetector(
+                        onDoubleTap: _handleDoubleTapZoom,
+                        child: InteractiveViewer(
+                          transformationController: _zoomEngine.controller,
+                          minScale: 1.0,
+                          maxScale: 3.0,
+                          clipBehavior: Clip.none,
+                          onInteractionStart: (_) {
+                            _interactionLock.acquireLock();
+                          },
+                          onInteractionEnd: (_) {
+                            _interactionLock.releaseLock();
+                          },
+                          onInteractionUpdate: (details) {
+                            _zoomEngine.updatePosition(Offset.zero);
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: leftPageNum > 0
+                                    ? MediaQuery(
+                                        data: MediaQuery.of(context).copyWith(
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                        child: _buildMushafPage(leftPageNum, cs, pageCard, pageText, pageTextSecondary, pageBorder, settings),
+                                      )
+                                    : Container(color: pageBg),
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  } else {
-                    final pageNum = index + 1;
-                    return GestureDetector(
-                      onDoubleTap: _handleDoubleTapZoom,
-                      child: InteractiveViewer(
-                        transformationController: _zoomEngine.controller,
-                        minScale: 1.0,
-                        maxScale: 3.0,
-                        clipBehavior: Clip.none,
-                        onInteractionStart: (_) {
-                          _interactionLock.acquireLock();
-                        },
-                        onInteractionEnd: (_) {
-                          _interactionLock.releaseLock();
-                        },
-                        onInteractionUpdate: (details) {
-                          _zoomEngine.updatePosition(Offset.zero);
-                        },
-                        child: MediaQuery(
-                          data: MediaQuery.of(context).copyWith(
-                            textScaler: TextScaler.noScaling,
+                              VerticalDivider(width: 1, color: pageBorder.withValues(alpha: 0.3)),
+                              Expanded(
+                                child: MediaQuery(
+                                  data: MediaQuery.of(context).copyWith(
+                                    textScaler: TextScaler.noScaling,
+                                  ),
+                                  child: _buildMushafPage(rightPageNum, cs, pageCard, pageText, pageTextSecondary, pageBorder, settings),
+                                ),
+                              ),
+                            ],
                           ),
-                          child: _buildMushafPage(pageNum, cs, pageCard, pageText, pageTextSecondary, pageBorder, settings),
                         ),
-                      ),
-                    );
-                  }
-                },
+                      );
+                    } else {
+                      final pageNum = index + 1;
+                      return GestureDetector(
+                        onDoubleTap: _handleDoubleTapZoom,
+                        child: InteractiveViewer(
+                          transformationController: _zoomEngine.controller,
+                          minScale: 1.0,
+                          maxScale: 3.0,
+                          clipBehavior: Clip.none,
+                          onInteractionStart: (_) {
+                            _interactionLock.acquireLock();
+                          },
+                          onInteractionEnd: (_) {
+                            _interactionLock.releaseLock();
+                          },
+                          onInteractionUpdate: (details) {
+                            _zoomEngine.updatePosition(Offset.zero);
+                          },
+                          child: MediaQuery(
+                            data: MediaQuery.of(context).copyWith(
+                              textScaler: TextScaler.noScaling,
+                            ),
+                            child: _buildMushafPage(pageNum, cs, pageCard, pageText, pageTextSecondary, pageBorder, settings),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
             ),
           ),
@@ -786,7 +789,8 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
             children: [
               IconButton(
                 icon: Icon(Icons.arrow_back_ios_rounded, color: textPrimary),
-                onPressed: _currentPage < 604 ? () => _jumpToPage(_currentPage + 1) : null,
+                // Swipe forward (goes to next page: _currentPage + 1) is now on the right side of screen (left swiping arrow)
+                onPressed: _currentPage > 1 ? () => _jumpToPage(_currentPage - 1) : null,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -822,7 +826,8 @@ class _MushafReaderPageState extends ConsumerState<MushafReaderPage> with Widget
               const SizedBox(width: 8),
               IconButton(
                 icon: Icon(Icons.arrow_forward_ios_rounded, color: textPrimary),
-                onPressed: _currentPage > 1 ? () => _jumpToPage(_currentPage - 1) : null,
+                // Swipe backward (goes to prev page: _currentPage - 1) is now on the left side of screen (right swiping arrow)
+                onPressed: _currentPage < 604 ? () => _jumpToPage(_currentPage + 1) : null,
               ),
             ],
           ),

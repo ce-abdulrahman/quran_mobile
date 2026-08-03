@@ -73,36 +73,6 @@ class ReminderNotifier extends StateNotifier<ReminderState> {
           timezone: tz.local.name,
         ),
         ReminderModel(
-          type: 'MEMORIZATION',
-          key: 'memo_notif',
-          icon: '📖',
-          title: 'کاتی لەبەرکردن',
-          body: 'بیرخستنەوەی ڕۆژانە بۆ لەبەرکردنی ئایەتەکان',
-          priority: 5,
-          sortOrder: 2,
-          version: 1,
-          enabled: local['memorization_enabled'] as bool? ?? false,
-          scheduledTime: formatTime(local['memorization_hour'] as int? ?? 8, local['memorization_minute'] as int? ?? 0),
-          frequency: 'daily',
-          customDays: [],
-          timezone: tz.local.name,
-        ),
-        ReminderModel(
-          type: 'REVIEW',
-          key: 'review_notif',
-          icon: '🧠',
-          title: 'پێداچوونەوەی لەبەرکراوەکان',
-          body: 'ئایەتی لەبەرکراوی ئەمڕۆت پێداچوونەوە بکە',
-          priority: 5,
-          sortOrder: 3,
-          version: 1,
-          enabled: local['review_enabled'] as bool? ?? false,
-          scheduledTime: formatTime(local['review_hour'] as int? ?? 18, local['review_minute'] as int? ?? 0),
-          frequency: 'daily',
-          customDays: [],
-          timezone: tz.local.name,
-        ),
-        ReminderModel(
           type: 'WIRD',
           key: 'wird_notif',
           icon: '📿',
@@ -224,23 +194,9 @@ class ReminderNotifier extends StateNotifier<ReminderState> {
     // Local rescheduling
     final coordinator = NotificationCoordinator();
     
-    if (getEnabled('MEMORIZATION') == true) {
-      await coordinator.scheduleMemorizationReminder(
-        hour: getHour('MEMORIZATION') ?? 8,
-        minute: getMinute('MEMORIZATION') ?? 0,
-      );
-    } else {
-      await coordinator.cancelMemorizationReminder();
-    }
-
-    if (getEnabled('REVIEW') == true) {
-      await coordinator.scheduleReviewReminder(
-        hour: getHour('REVIEW') ?? 18,
-        minute: getMinute('REVIEW') ?? 0,
-      );
-    } else {
-      await coordinator.cancelReviewReminder();
-    }
+    // Memorization and Review reminders are disabled / removed from the UI.
+    await coordinator.cancelMemorizationReminder();
+    await coordinator.cancelReviewReminder();
 
     if (getEnabled('WIRD') == true) {
       await coordinator.scheduleWirdReminder(

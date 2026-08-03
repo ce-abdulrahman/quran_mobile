@@ -6,8 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
-import '../../core/services/notification_service.dart';
-import 'reminders_page.dart';
 import 'prayer_method_settings_page.dart';
 import '../../core/providers/backup_provider.dart';
 import '../../core/local_db/content_package.dart';
@@ -28,73 +26,14 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
-  // ── Daily Notification state ─────────────────────────────────────
-  bool _notifEnabled = false;
-  int _notifHour = 8;
-  int _notifMinute = 0;
-
   int _audioStorageBytes = 0;
+
+  bool get _showDataManagement => false;
 
   @override
   void initState() {
     super.initState();
     _loadAudioStorage();
-    // Load notification settings from storage
-    NotificationService.loadSettings().then((s) {
-      if (mounted) {
-        setState(() {
-          _notifEnabled = (s['enabled'] as bool?) ?? false;
-          _notifHour = (s['hour'] as int?) ?? 8;
-          _notifMinute = (s['minute'] as int?) ?? 0;
-        });
-      }
-    });
-  }
-
-  Future<void> _toggleNotifications(bool enabled) async {
-    if (enabled) {
-      final granted = await NotificationService().requestPermissions();
-      if (!granted) return;
-      await NotificationService().scheduleDailyNotifications(
-        hour: _notifHour,
-        minute: _notifMinute,
-      );
-    } else {
-      await NotificationService().cancelAllNotifications();
-    }
-    await NotificationService.saveSettings(
-      enabled: enabled,
-      hour: _notifHour,
-      minute: _notifMinute,
-    );
-    if (mounted) setState(() => _notifEnabled = enabled);
-  }
-
-  Future<void> _pickNotificationTime() async {
-    final l = context.l10n;
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay(hour: _notifHour, minute: _notifMinute),
-      helpText: l.settingsHelpText,
-      builder: (context, child) =>
-          Directionality(textDirection: TextDirection.rtl, child: child!),
-    );
-    if (picked == null) return;
-    setState(() {
-      _notifHour = picked.hour;
-      _notifMinute = picked.minute;
-    });
-    await NotificationService.saveSettings(
-      enabled: _notifEnabled,
-      hour: _notifHour,
-      minute: _notifMinute,
-    );
-    if (_notifEnabled) {
-      await NotificationService().scheduleDailyNotifications(
-        hour: _notifHour,
-        minute: _notifMinute,
-      );
-    }
   }
 
   Future<void> _loadAudioStorage() async {
@@ -706,105 +645,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
                 const SizedBox(height: 16),
 
-                // ── Notifications section ─────────────────────────
-                _SectionLabel(label: l.settingsDailyNotification, cs: cs),
-                const SizedBox(height: 10),
-                _SettingsCard(
-                  cs: cs,
-                  children: [
-                    // Toggle
-                    _SettingRow(
-                      icon: Icons.notifications_active_rounded,
-                      label: l.settingsDailyNotification,
-                      subLabel: l.settingsDailyNotificationSub,
-                      cs: cs,
-                      trailing: Switch(
-                        value: _notifEnabled,
-                        activeThumbColor: cs.primary,
-                        onChanged: _toggleNotifications,
-                      ),
-                    ),
-                    // Time picker row (only visible when enabled)
-                    AnimatedCrossFade(
-                      duration: const Duration(milliseconds: 250),
-                      crossFadeState: _notifEnabled
-                          ? CrossFadeState.showFirst
-                          : CrossFadeState.showSecond,
-                      firstChild: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Divider(height: 1),
-                          _SettingRow(
-                            icon: Icons.schedule_rounded,
-                            label: l.settingsNotificationTime,
-                            cs: cs,
-                            trailing: GestureDetector(
-                              onTap: _pickNotificationTime,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 14,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: cs.primary.withValues(alpha: 0.12),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: cs.primary.withValues(alpha: 0.3),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.access_time_rounded,
-                                      size: 14,
-                                      color: cs.primary,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      '${_notifHour.toString().padLeft(2, '0')}:${_notifMinute.toString().padLeft(2, '0')}',
-                                      style: TextStyle(
-                                        fontFamily: 'Cairo',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w700,
-                                        color: cs.primary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      secondChild: const SizedBox.shrink(),
-                    ),
-                    const Divider(height: 1),
-                    _SettingRow(
-                      icon: Icons.alarm_on_rounded,
-                      label: l.settingsSmartReminder,
-                      subLabel: l.settingsSmartReminderSub,
-                      cs: cs,
-                      trailing: IconButton(
-                        icon: Icon(
-                          Icons.arrow_forward_ios_rounded,
-                          size: 16,
-                          color: cs.primary,
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const RemindersPage(),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ).animate().fadeIn(duration: 300.ms, delay: 175.ms),
 
-                const SizedBox(height: 16),
 
                 // ── Adhan Sound card ────────────────────────
                 _SectionLabel(label: l.settingsAdhanSound, cs: cs),
@@ -839,88 +680,90 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
                 const SizedBox(height: 16),
 
-                // ── Data Management section ─────────────────────────
-                _SectionLabel(
-                  label: l.settingsDataManagement,
-                  cs: cs,
-                ),
-                const SizedBox(height: 10),
-                _SettingsCard(
-                  cs: cs,
-                  children: [
-                    // Export local data
-                    _SettingRow(
-                      icon: Icons.upload_file_rounded,
-                      label: l.settingsExportData,
-                      subLabel: l.settingsExportDataSub,
-                      cs: cs,
-                      trailing: IconButton(
-                        icon: Icon(Icons.share_rounded, color: cs.primary),
-                        onPressed: () => _showExportPasswordDialog(context),
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    // Import local data
-                    _SettingRow(
-                      icon: Icons.file_download_rounded,
-                      label: l.settingsImportData,
-                      subLabel: l.settingsImportDataSub,
-                      cs: cs,
-                      trailing: IconButton(
-                        icon: Icon(Icons.file_open_rounded, color: cs.primary),
-                        onPressed: () => _pickAndImportData(context),
-                      ),
-                    ),
-                    const Divider(height: 1),
-                    // Download offline content
-                    _SettingRow(
-                      icon: Icons.download_for_offline_rounded,
-                      label: l.settingsDownloadAll,
-                      subLabel: l.settingsDownloadAllSub,
-                      cs: cs,
-                      trailing: _buildOfflineContentDownloader(context),
-                    ),
-                    const Divider(height: 1),
-                    // Audio & Package Downloads Unified Manager
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                const DownloadManagerPage(),
-                          ),
-                        ).then((_) => _loadAudioStorage());
-                      },
-                      child: _SettingRow(
-                        icon: Icons.download_for_offline_rounded,
-                        label: l.settingsDownloadManager,
-                        subLabel: l.settingsDownloadManagerSub,
+                if (_showDataManagement) ...[
+                  // ── Data Management section ─────────────────────────
+                  _SectionLabel(
+                    label: l.settingsDataManagement,
+                    cs: cs,
+                  ),
+                  const SizedBox(height: 10),
+                  _SettingsCard(
+                    cs: cs,
+                    children: [
+                      // Export local data
+                      _SettingRow(
+                        icon: Icons.upload_file_rounded,
+                        label: l.settingsExportData,
+                        subLabel: l.settingsExportDataSub,
                         cs: cs,
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '${(_audioStorageBytes / (1024 * 1024)).toStringAsFixed(1)} MB',
-                              style: TextStyle(
-                                fontFamily: 'Cairo',
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold,
-                                color: cs.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_forward_ios_rounded,
-                              size: 16,
-                              color: cs.primary,
-                            ),
-                          ],
+                        trailing: IconButton(
+                          icon: Icon(Icons.share_rounded, color: cs.primary),
+                          onPressed: () => _showExportPasswordDialog(context),
                         ),
                       ),
-                    ),
-                  ],
-                ).animate().fadeIn(duration: 300.ms, delay: 190.ms),
+                      const Divider(height: 1),
+                      // Import local data
+                      _SettingRow(
+                        icon: Icons.file_download_rounded,
+                        label: l.settingsImportData,
+                        subLabel: l.settingsImportDataSub,
+                        cs: cs,
+                        trailing: IconButton(
+                          icon: Icon(Icons.file_open_rounded, color: cs.primary),
+                          onPressed: () => _pickAndImportData(context),
+                        ),
+                      ),
+                      const Divider(height: 1),
+                      // Download offline content
+                      _SettingRow(
+                        icon: Icons.download_for_offline_rounded,
+                        label: l.settingsDownloadAll,
+                        subLabel: l.settingsDownloadAllSub,
+                        cs: cs,
+                        trailing: _buildOfflineContentDownloader(context),
+                      ),
+                      const Divider(height: 1),
+                      // Audio & Package Downloads Unified Manager
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const DownloadManagerPage(),
+                            ),
+                          ).then((_) => _loadAudioStorage());
+                        },
+                        child: _SettingRow(
+                          icon: Icons.download_for_offline_rounded,
+                          label: l.settingsDownloadManager,
+                          subLabel: l.settingsDownloadManagerSub,
+                          cs: cs,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                '${(_audioStorageBytes / (1024 * 1024)).toStringAsFixed(1)} MB',
+                                style: TextStyle(
+                                  fontFamily: 'Cairo',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: cs.textSecondary,
+                                ),
+                              ),
+                              const SizedBox(width: 4),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: 16,
+                                color: cs.primary,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ).animate().fadeIn(duration: 300.ms, delay: 190.ms),
+                ],
 
                 const SizedBox(height: 32),
 
@@ -1005,6 +848,7 @@ class _ThemeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final modes = [
+      (ThemeMode.system, Icons.phone_android_rounded, 'سیستەم'), // System theme option
       (ThemeMode.light, Icons.light_mode_rounded, l.settingsLight),
       (ThemeMode.dark, Icons.dark_mode_rounded, l.settingsDark),
     ];

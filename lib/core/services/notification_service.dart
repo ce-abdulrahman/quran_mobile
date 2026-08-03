@@ -230,7 +230,7 @@ class NotificationService {
   static Future<Map<String, dynamic>> loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     return {
-      'enabled': prefs.getBool(_notifEnabledKey) ?? false,
+      'enabled': prefs.getBool(_notifEnabledKey) ?? true, // Set default to true for new installs
       'hour': prefs.getInt(_notifHourKey) ?? 8,
       'minute': prefs.getInt(_notifMinuteKey) ?? 0,
     };

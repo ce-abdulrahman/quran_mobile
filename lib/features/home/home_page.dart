@@ -1029,6 +1029,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final p = Responsive.pagePadding(context);
 
+    // ── Watch locale so the page rebuilds immediately on language change ──
+    ref.watch(appLocaleProvider);
+
     // Listen to the provider to push updates to the widget dynamically when resolved
     ref.listen<AsyncValue<AyahModel>>(dailyVerseProvider, (previous, next) {
       next.whenData((ayah) {
@@ -1347,36 +1350,79 @@ class _AppBarRow extends ConsumerWidget {
             ),
           ),
 
-          // ── Logo badge — right ──
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.25),
-                width: 1,
+          // ── Language Button — right ──
+          GestureDetector(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  final currentLocale = ref.watch(appLocaleProvider).languageCode;
+                  return AlertDialog(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    title: Text(
+                      l.settingsLanguage,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontFamily: 'Cairo', fontWeight: FontWeight.bold),
+                    ),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          title: const Text('کوردی (Kurdî)', style: TextStyle(fontFamily: 'Cairo')),
+                          trailing: currentLocale == 'ku' ? const Icon(Icons.check_circle, color: Color(0xFF1AB66D)) : null,
+                          onTap: () async {
+                            await ref.read(appLocaleProvider.notifier).setLocale('ku');
+                            if (context.mounted) Navigator.pop(context);
+                          },
+                        ),
+                        ListTile(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          title: const Text('العربية', style: TextStyle(fontFamily: 'Cairo')),
+                          trailing: currentLocale == 'ar' ? const Icon(Icons.check_circle, color: Color(0xFF1AB66D)) : null,
+                          onTap: () async {
+                            await ref.read(appLocaleProvider.notifier).setLocale('ar');
+                            if (context.mounted) Navigator.pop(context);
+                          },
+                        ),
+                        ListTile(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          title: const Text('English', style: TextStyle(fontFamily: 'Cairo')),
+                          trailing: currentLocale == 'en' ? const Icon(Icons.check_circle, color: Color(0xFF1AB66D)) : null,
+                          onTap: () async {
+                            await ref.read(appLocaleProvider.notifier).setLocale('en');
+                            if (context.mounted) Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+            child: Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.25),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            padding: const EdgeInsets.all(7),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.asset(
-                'assets/images/logo.png',
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => const Icon(
-                  Icons.auto_stories_rounded,
-                  color: Colors.white,
-                  size: 22,
-                ),
+              padding: const EdgeInsets.all(7),
+              child: const Icon(
+                Icons.translate_rounded,
+                color: Colors.white,
+                size: 22,
               ),
             ),
           ),
