@@ -5,6 +5,7 @@ import 'core/l10n/app_localizations.dart';
 import 'core/providers/app_providers.dart';
 import 'core/providers/feature_flag_provider.dart';
 import 'core/services/notification_service.dart';
+import 'core/services/prayer_timetable.dart';
 import 'core/services/notification_coordinator.dart';
 import 'core/services/reminder_engine.dart';
 import 'core/repositories/reminder_repository.dart';
@@ -30,6 +31,11 @@ void main() async {
   await Hive.initFlutter();
   final cacheBox = await Hive.openBox('app_cache_box');
   final prayerTimesBox = await Hive.openBox('prayer_times_box');
+
+  // Load the official prayer timetable before the first frame so the prayer
+  // times screen and the home widget read it synchronously rather than briefly
+  // showing calculated times that are ~19 minutes off.
+  await PrayerTimetable.instance.ensureLoaded();
 
   // Initialize local notifications
   await NotificationService.initialize();

@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:adhan/adhan.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:io';
 import 'app_providers.dart';
+import '../services/daily_prayer_times.dart';
+import '../services/prayer_calculation.dart';
 import '../services/prayer_notification_service.dart';
 
 import '../../features/prayer/providers/prayer_times_provider.dart';
@@ -196,6 +197,7 @@ class PrayerTimesNotifier extends StateNotifier<PrayerTimesState> {
         toggles: state.prayerToggles,
         isAzanEnabled: state.isAzanEnabled,
         adhanSound: state.adhanSound,
+        calculationMethod: state.calculationMethod,
       );
     } catch (e) {
       debugPrint('reschedule error: $e');
@@ -401,58 +403,19 @@ final prayerTimesSettingsProvider =
 
 // Calculate prayer times for a given day
 final prayerTimesForDateProvider =
-    Provider.family<PrayerTimes, DateTime>((ref, date) {
+    Provider.family<DailyPrayerTimes, DateTime>((ref, date) {
   final settings = ref.watch(prayerTimesSettingsProvider);
   final city = settings.selectedCity;
   
-  final coordinates = Coordinates(city.latitude, city.longitude);
-  
-  CalculationParameters params;
-  switch (settings.calculationMethod) {
-    case 'egyptian':
-      params = CalculationMethod.egyptian.getParameters();
-      break;
-    case 'karachi':
-      params = CalculationMethod.karachi.getParameters();
-      break;
-    case 'umm_al_qura':
-      params = CalculationMethod.umm_al_qura.getParameters();
-      break;
-    case 'gulf':
-      params = CalculationMethod.dubai.getParameters();
-      break;
-    case 'moonsighting_committee':
-      params = CalculationMethod.moon_sighting_committee.getParameters();
-      break;
-    case 'isna':
-    case 'north_america':
-      params = CalculationMethod.north_america.getParameters();
-      break;
-    case 'kurdistan':
-      params = CalculationMethod.muslim_world_league.getParameters();
-      break;
-    case 'turkey':
-      params = CalculationMethod.turkey.getParameters();
-      break;
-    case 'singapore':
-      params = CalculationMethod.singapore.getParameters();
-      break;
-    case 'tehran':
-      params = CalculationMethod.tehran.getParameters();
-      break;
-    case 'shia':
-      params = CalculationMethod.other.getParameters();
-      break;
-    case 'muslim_world_league':
-    default:
-      params = CalculationMethod.muslim_world_league.getParameters();
-      break;
-  }
-  
-  params.madhab = Madhab.shafi;
-
-  final dateComponents = DateComponents(date.year, date.month, date.day);
-  return PrayerTimes(coordinates, dateComponents, params);
+  // Shared with the azan scheduler and the home-screen widget so all three
+  // cannot drift apart. Prefers the official timetable. See [PrayerCalculation].
+  return PrayerCalculation.resolve(
+    cityNameEn: city.nameEn,
+    latitude: city.latitude,
+    longitude: city.longitude,
+    date: date,
+    methodKey: settings.calculationMethod,
+  );
 });
 
 // Real-time calculation helper to determine next prayer and remaining duration

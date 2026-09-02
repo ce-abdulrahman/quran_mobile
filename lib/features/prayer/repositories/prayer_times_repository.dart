@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:isar/isar.dart';
-import 'package:adhan/adhan.dart' as adhan;
 import '../../../core/network/api_client.dart';
+import '../../../core/services/prayer_calculation.dart';
+import '../../../core/services/prayer_timetable.dart';
 import '../../../core/local_db/isar_service.dart';
 import '../../../core/local_db/isar_collections.dart';
 import '../../../core/providers/prayer_times_provider.dart';
@@ -23,9 +23,38 @@ class PrayerTimesRepository {
     return '${lat.toStringAsFixed(2)}_${lng.toStringAsFixed(2)}';
   }
 
-  String _cacheKey(double lat, double lng, String date) {
+  /// The method is part of the key: entries produced by calculation depend on
+  /// it, so without this a user switching method would keep being served times
+  /// computed with the old one.
+  String _cacheKey(double lat, double lng, String date, String? methodKey) {
     final hash = _generateLocationHash(lat, lng);
-    return 'loc_${hash}_$date';
+    return 'loc_${hash}_${date}_${methodKey ?? PrayerCalculation.defaultMethodKey}';
+  }
+
+  static String _formatTime(DateTime? dt) {
+    if (dt == null) return '--:--';
+    final local = dt.toLocal();
+    return '${local.hour.toString().padLeft(2, '0')}:'
+        '${local.minute.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _cache({
+    required String key,
+    required double lat,
+    required double lng,
+    required String date,
+    required PrayerTimeEntry entry,
+  }) async {
+    await _isar.writeTxn(() async {
+      await _isar.prayerTimesCollections.put(PrayerTimesCollection(
+        cacheKey: key,
+        latitude: lat,
+        longitude: lng,
+        locationHash: _generateLocationHash(lat, lng),
+        date: date,
+        prayerTimesJson: jsonEncode(entry.toJson()),
+      ));
+    });
   }
 
   // ─── Public API ──────────────────────────────────────────────────────────
@@ -33,9 +62,12 @@ class PrayerTimesRepository {
   /// Get prayer times for a specific [date] (formatted "YYYY-MM-DD").
   /// Coordinates are derived from the cityId.
   /// Looks up coordinates + locationHash + date cache in Isar.
+  ///
+  /// [methodKey] is only consulted when the official timetable has no entry.
   Future<PrayerTimeEntry?> getForDate({
     required int cityId,
     required String date, // "YYYY-MM-DD"
+    String? methodKey,
   }) async {
     // 1. Get coordinates and name for city from 21 registered cities list
     final city = kurdishCities.firstWhere(
@@ -46,7 +78,7 @@ class PrayerTimesRepository {
     final lat = city.latitude;
     final lng = city.longitude;
 
-    final key = _cacheKey(lat, lng, date);
+    final key = _cacheKey(lat, lng, date, methodKey);
 
     // 2. Check Isar cache
     final cached = await _isar.prayerTimesCollections.filter().cacheKeyEqualTo(key).findFirst();
@@ -57,98 +89,59 @@ class PrayerTimesRepository {
       } catch (_) {}
     }
 
-    // 3. Try parsing from local CSV timetable asset
+    // 3. Official timetable, via the shared parsed index. This used to reload
+    // and linearly scan the whole 381KB CSV on every miss — and fetchYear calls
+    // this 365 times, so a single year warm-up reparsed the file 365 times.
     try {
       final parsedDate = DateTime.parse(date);
-      final day = parsedDate.day;
-      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      final month = months[parsedDate.month - 1];
-      final csvDateStr = '$day-$month';
+      await PrayerTimetable.instance.ensureLoaded();
+      final official = PrayerTimetable.instance.lookup(
+        cityNameEn: cityName,
+        date: parsedDate,
+      );
 
-      final csvData = await rootBundle.loadString('assets/data/prayer_times.csv');
-      final lines = const LineSplitter().convert(csvData);
+      if (official != null) {
+        final entry = PrayerTimeEntry(
+          date: date,
+          fajr: _formatTime(official.fajr),
+          sunrise: _formatTime(official.sunrise),
+          dhuhr: _formatTime(official.dhuhr),
+          asr: _formatTime(official.asr),
+          maghrib: _formatTime(official.maghrib),
+          isha: _formatTime(official.isha),
+          source: 'csv',
+        );
 
-      for (final line in lines) {
-        final parts = line.split(',');
-        if (parts.length >= 8) {
-          final cName = parts[0].trim();
-          final cDate = parts[1].trim();
-          if (cName.toLowerCase() == cityName.toLowerCase() && cDate.toLowerCase() == csvDateStr.toLowerCase()) {
-            final entry = PrayerTimeEntry(
-              date: date,
-              fajr: parts[2].trim(),
-              sunrise: parts[3].trim(),
-              dhuhr: parts[4].trim(),
-              asr: parts[5].trim(),
-              maghrib: parts[6].trim(),
-              isha: parts[7].trim(),
-              source: 'csv',
-            );
-
-            // Cache in Isar
-            await _isar.writeTxn(() async {
-              await _isar.prayerTimesCollections.put(PrayerTimesCollection(
-                cacheKey: key,
-                latitude: lat,
-                longitude: lng,
-                locationHash: _generateLocationHash(lat, lng),
-                date: date,
-                prayerTimesJson: jsonEncode(entry.toJson()),
-              ));
-            });
-
-            return entry;
-          }
-        }
+        await _cache(key: key, lat: lat, lng: lng, date: date, entry: entry);
+        return entry;
       }
     } catch (_) {}
 
-    // 4. Fallback: Dynamic Adhan calculation (Kurdistan Region / Ministry of Awqaf)
+    // 4. Fallback: calculation, through the same shared path the rest of the
+    // app uses so the widget cannot show different times to the prayer screen.
+    // This previously hardcoded Muslim World League and ignored the user's
+    // chosen method.
     try {
       final parsedDate = DateTime.parse(date);
-      final coordinates = adhan.Coordinates(lat, lng);
-      final params = adhan.CalculationMethod.muslim_world_league.getParameters();
-      params.fajrAngle = 18.0;
-      params.ishaAngle = 17.0;
-      params.madhab = adhan.Madhab.shafi;
-
-      final prayerTimes = adhan.PrayerTimes(
-        coordinates,
-        adhan.DateComponents(parsedDate.year, parsedDate.month, parsedDate.day),
-        params,
+      final prayerTimes = PrayerCalculation.forDate(
+        latitude: lat,
+        longitude: lng,
+        date: parsedDate,
+        methodKey: methodKey,
       );
-
-      String formatTime(DateTime? dt) {
-        if (dt == null) return '--:--';
-        final local = dt.toLocal();
-        final hour = local.hour.toString().padLeft(2, '0');
-        final minute = local.minute.toString().padLeft(2, '0');
-        return '$hour:$minute';
-      }
 
       final entry = PrayerTimeEntry(
         date: date,
-        fajr: formatTime(prayerTimes.fajr),
-        sunrise: formatTime(prayerTimes.sunrise),
-        dhuhr: formatTime(prayerTimes.dhuhr),
-        asr: formatTime(prayerTimes.asr),
-        maghrib: formatTime(prayerTimes.maghrib),
-        isha: formatTime(prayerTimes.isha),
+        fajr: _formatTime(prayerTimes.fajr),
+        sunrise: _formatTime(prayerTimes.sunrise),
+        dhuhr: _formatTime(prayerTimes.dhuhr),
+        asr: _formatTime(prayerTimes.asr),
+        maghrib: _formatTime(prayerTimes.maghrib),
+        isha: _formatTime(prayerTimes.isha),
         source: 'calculated',
       );
 
-      // Cache in Isar
-      await _isar.writeTxn(() async {
-        await _isar.prayerTimesCollections.put(PrayerTimesCollection(
-          cacheKey: key,
-          latitude: lat,
-          longitude: lng,
-          locationHash: _generateLocationHash(lat, lng),
-          date: date,
-          prayerTimesJson: jsonEncode(entry.toJson()),
-        ));
-      });
-
+      await _cache(key: key, lat: lat, lng: lng, date: date, entry: entry);
       return entry;
     } catch (_) {}
 
@@ -160,6 +153,7 @@ class PrayerTimesRepository {
     required int cityId,
     required int year,
     bool forceRefresh = false,
+    String? methodKey,
   }) async {
     // Return mock response based on CSV parsing if a year is requested
     try {
@@ -176,7 +170,7 @@ class PrayerTimesRepository {
       for (int i = 0; i < daysInYear; i++) {
         final current = startDate.add(Duration(days: i));
         final dateStr = "${current.year}-${current.month.toString().padLeft(2, '0')}-${current.day.toString().padLeft(2, '0')}";
-        final entry = await getForDate(cityId: cityId, date: dateStr);
+        final entry = await getForDate(cityId: cityId, date: dateStr, methodKey: methodKey);
         if (entry != null) {
           yearEntries.add(entry);
         }

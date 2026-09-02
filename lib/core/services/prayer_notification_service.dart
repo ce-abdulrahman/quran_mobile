@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:adhan/adhan.dart';
-import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
-import 'dart:convert';
 import 'dart:io';
 import '../providers/prayer_times_provider.dart';
 import 'notification_coordinator.dart';
+import 'prayer_calculation.dart';
+import 'prayer_timetable.dart';
 
 
 class PrayerNotificationService {
@@ -107,6 +105,10 @@ class PrayerNotificationService {
     required Map<String, bool> toggles,
     required bool isAzanEnabled,
     required String adhanSound, // New parameter for selected adhan sound
+    /// The user's chosen calculation method, so the azan fires at the same
+    /// times the app displays. Required rather than defaulted: silently
+    /// falling back to a default here is what caused the two to diverge.
+    required String calculationMethod,
   }) async {
     if (kIsWeb || Platform.environment.containsKey('FLUTTER_TEST')) {
       debugPrint('Skipping prayer notifications scheduling in web/test environment.');
@@ -122,6 +124,10 @@ class PrayerNotificationService {
       debugPrint('Azan notifications are globally disabled.');
       return;
     }
+
+    // Scheduling must not silently fall back to calculated times just because
+    // the timetable hasn't finished loading — that is a ~19 minute error.
+    await PrayerTimetable.instance.ensureLoaded();
 
     // Pre-register the dynamic sound channel before scheduling.
     // Android channels are immutable: sound must be set at channel creation.
@@ -161,72 +167,28 @@ class PrayerNotificationService {
 
     int notificationId = 10000;
 
-    // Use adhan library calculation params — Kurdistan Region (Ministry of Awqaf)
-    final params = CalculationMethod.muslim_world_league.getParameters();
-    params.fajrAngle = 18.0;
-    params.ishaAngle = 17.0;
-    params.madhab = Madhab.shafi;
-    final coordinates = Coordinates(city.latitude, city.longitude);
-
-    int? cityId = city.id;
-    if (cityId == null) {
-      final match = kurdishCities.firstWhere(
-        (c) => c.nameEn.toLowerCase() == city.nameEn.toLowerCase(),
-        orElse: () => kurdishCities.first,
-      );
-      cityId = match.id;
-    }
-
     for (int day = 0; day < 7; day++) {
       final targetDate = now.add(Duration(days: day));
 
-      Map<String, String>? cachedTimes;
-      if (cityId != null) {
-        try {
-          final box = Hive.box('prayer_times_box');
-          final cacheKey = 'city_${cityId}_year_${targetDate.year}';
-          final cachedJson = box.get(cacheKey) as String?;
-          if (cachedJson != null) {
-            final decoded = jsonDecode(cachedJson) as Map<String, dynamic>;
-            final rawData = decoded['data'] as List<dynamic>? ?? [];
-            final targetDateStr = DateFormat('yyyy-MM-dd').format(targetDate);
-            final entryJson = rawData.firstWhere(
-              (e) => e['date'] == targetDateStr,
-              orElse: () => null,
-            );
-            if (entryJson != null) {
-              cachedTimes = {
-                'Fajr': entryJson['fajr'] as String,
-                'Dhuhr': entryJson['dhuhr'] as String,
-                'Asr': entryJson['asr'] as String,
-                'Maghrib': entryJson['maghrib'] as String,
-                'Isha': entryJson['isha'] as String,
-              };
-            }
-          }
-        } catch (_) {}
-      }
+      // Exactly what the prayer times screen shows — see [PrayerCalculation].
+      // This used to hardcode Muslim World League and ignore both the official
+      // timetable and the user's chosen method, so the azan could fire ~19
+      // minutes before the time displayed in the app.
+      final prayerTimes = PrayerCalculation.resolve(
+        cityNameEn: city.nameEn,
+        latitude: city.latitude,
+        longitude: city.longitude,
+        date: targetDate,
+        methodKey: calculationMethod,
+      );
 
-      final Map<String, DateTime> times = {};
-      if (cachedTimes != null) {
-        DateTime parseHHMM(String hhmm, DateTime date) {
-          final parts = hhmm.split(':');
-          return DateTime(date.year, date.month, date.day, int.parse(parts[0]), int.parse(parts[1]));
-        }
-        times['Fajr'] = parseHHMM(cachedTimes['Fajr']!, targetDate);
-        times['Dhuhr'] = parseHHMM(cachedTimes['Dhuhr']!, targetDate);
-        times['Asr'] = parseHHMM(cachedTimes['Asr']!, targetDate);
-        times['Maghrib'] = parseHHMM(cachedTimes['Maghrib']!, targetDate);
-        times['Isha'] = parseHHMM(cachedTimes['Isha']!, targetDate);
-      } else {
-        final dateComponents = DateComponents(targetDate.year, targetDate.month, targetDate.day);
-        final prayerTimes = PrayerTimes(coordinates, dateComponents, params);
-        times['Fajr'] = prayerTimes.fajr.toLocal();
-        times['Dhuhr'] = prayerTimes.dhuhr.toLocal();
-        times['Asr'] = prayerTimes.asr.toLocal();
-        times['Maghrib'] = prayerTimes.maghrib.toLocal();
-        times['Isha'] = prayerTimes.isha.toLocal();
-      }
+      final Map<String, DateTime> times = {
+        'Fajr': prayerTimes.fajr,
+        'Dhuhr': prayerTimes.dhuhr,
+        'Asr': prayerTimes.asr,
+        'Maghrib': prayerTimes.maghrib,
+        'Isha': prayerTimes.isha,
+      };
 
       for (int i = 0; i < prayerKeys.length; i++) {
         final key = prayerKeys[i];
