@@ -4,6 +4,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/providers/prayer_times_provider.dart';
+import '../../core/services/battery_optimization_service.dart';
+import '../../core/services/prayer_notification_service.dart';
 
 class PrayerMethodSettingsPage extends ConsumerWidget {
   const PrayerMethodSettingsPage({super.key});
@@ -132,7 +134,12 @@ class PrayerMethodSettingsPage extends ConsumerWidget {
             child: SingleChildScrollView(
               physics: BouncingScrollPhysics(),
               padding: EdgeInsets.symmetric(vertical: 8),
-              child: _AdhanSoundSelector(),
+              child: Column(
+                children: [
+                  _BatteryOptimizationNotice(),
+                  _AdhanSoundSelector(),
+                ],
+              ),
             ),
           ),
         ],
@@ -141,6 +148,184 @@ class PrayerMethodSettingsPage extends ConsumerWidget {
   }
 }
 
+
+/// Prompts for the battery-optimization exemption, without which OEM battery
+/// managers silently delay or drop the scheduled azan. Hides itself entirely
+/// once granted (and on platforms where it doesn't apply).
+class _BatteryOptimizationNotice extends ConsumerStatefulWidget {
+  const _BatteryOptimizationNotice();
+
+  @override
+  ConsumerState<_BatteryOptimizationNotice> createState() =>
+      _BatteryOptimizationNoticeState();
+}
+
+class _BatteryOptimizationNoticeState
+    extends ConsumerState<_BatteryOptimizationNotice>
+    with WidgetsBindingObserver {
+  bool _isExempt = true; // Assume fine until proven otherwise — never flash.
+  bool _canScheduleExact = true;
+  bool _isChecking = true;
+
+  bool get _allGood => _isExempt && _canScheduleExact;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _refreshStatus();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Both prompts hand off to a system settings screen, so re-check on return.
+    if (state == AppLifecycleState.resumed) {
+      _refreshStatus();
+    }
+  }
+
+  Future<void> _refreshStatus() async {
+    final exempt = await BatteryOptimizationService().isExempt();
+    final canExact = await PrayerNotificationService().canScheduleExactAlarms();
+    if (!mounted) return;
+    setState(() {
+      _isExempt = exempt;
+      _canScheduleExact = canExact;
+      _isChecking = false;
+    });
+  }
+
+  Future<void> _request() async {
+    if (!_canScheduleExact) {
+      await PrayerNotificationService().requestExactAlarmPermission();
+    }
+    if (!_isExempt) {
+      await BatteryOptimizationService().requestExemption();
+    }
+    await _refreshStatus();
+    // Re-arm the schedule so it upgrades to exact alarms straight away.
+    if (mounted && _canScheduleExact) {
+      await ref.read(prayerTimesSettingsProvider.notifier).reschedule();
+    }
+  }
+
+  String _title(BuildContext context) {
+    switch (Localizations.localeOf(context).languageCode) {
+      case 'ku':
+        return 'دڵنیابە بانگ لە کاتی خۆیدا دێت';
+      case 'ar':
+        return 'تأكد من وصول الأذان في وقته';
+      default:
+        return 'Make sure the azan arrives on time';
+    }
+  }
+
+  String _body(BuildContext context) {
+    switch (Localizations.localeOf(context).languageCode) {
+      case 'ku':
+        return 'ئەم مۆبایلە ڕێگا نادات بانگ بە وردی لە کاتی خۆیدا بێت — '
+            'لەوانەیە چەند خولەکێک دوابکەوێت یان هیچ نەیەت. '
+            'کرتە بکە بۆ دانی مۆڵەتی پێویست.';
+      case 'ar':
+        return 'إعدادات هذا الهاتف تمنع وصول الأذان في وقته بدقة — '
+            'قد يتأخر دقائق أو لا يصل. اضغط لمنح الأذونات المطلوبة.';
+      default:
+        return 'This phone is blocking the azan from arriving exactly on time — '
+            'it may be minutes late, or not arrive at all. '
+            'Tap to grant the required permissions.';
+    }
+  }
+
+  String _action(BuildContext context) {
+    switch (Localizations.localeOf(context).languageCode) {
+      case 'ku':
+        return 'چاککردن';
+      case 'ar':
+        return 'إصلاح';
+      default:
+        return 'Fix';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isChecking || _allGood) return const SizedBox.shrink();
+
+    final cs = AppColorScheme.of(context);
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFCD9D27).withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFCD9D27).withValues(alpha: 0.45)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(Icons.battery_alert_rounded, color: Color(0xFFCD9D27), size: 26),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _title(context),
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: cs.textPrimary,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  _body(context),
+                  style: TextStyle(
+                    fontFamily: 'Cairo',
+                    fontSize: 12,
+                    height: 1.5,
+                    color: cs.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: ElevatedButton(
+                    onPressed: _request,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFCD9D27),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      _action(context),
+                      style: const TextStyle(
+                        fontFamily: 'Cairo',
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 300.ms);
+  }
+}
 
 class _AdhanSoundSelector extends StatefulWidget {
   const _AdhanSoundSelector();

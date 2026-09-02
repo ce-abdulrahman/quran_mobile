@@ -41,12 +41,65 @@ class PrayerNotificationService {
       importance: Importance.max,
       playSound: playSound,
       sound: sound,
+      // Route the azan through the ALARM stream, not the notification stream:
+      // it follows the alarm volume (which people keep audible) and survives
+      // silent/DND profiles that still allow alarms. Like sound, this is fixed
+      // at channel creation time — Android channels are immutable.
+      audioAttributesUsage: AudioAttributesUsage.alarm,
       enableVibration: true,
       enableLights: true,
       ledColor: const Color(0xFFCD9D27),
     );
 
     await androidPlugin.createNotificationChannel(channel);
+  }
+
+  /// Whether Android currently lets the app schedule exact alarms (a special
+  /// app access on Android 12+). Checks only — asking here would throw the user
+  /// into a system settings screen mid-startup, so the prompt lives in the
+  /// prayer settings UI via [requestExactAlarmPermission] instead.
+  Future<bool> canScheduleExactAlarms() async {
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return true;
+
+    try {
+      return await androidPlugin.canScheduleExactNotifications() ?? true;
+    } catch (e) {
+      debugPrint('Exact alarm permission check failed: $e');
+      return false;
+    }
+  }
+
+  /// Opens the system screen where the user grants the exact-alarm access.
+  Future<bool> requestExactAlarmPermission() async {
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return true;
+
+    try {
+      return await androidPlugin.requestExactAlarmsPermission() ?? false;
+    } catch (e) {
+      debugPrint('Exact alarm permission request failed: $e');
+      return false;
+    }
+  }
+
+  /// Removes the pre-`_v2` channels so the app doesn't leave a duplicate
+  /// "ئاگادارکردنەوەی بانگدان" entry behind in the system notification settings.
+  Future<void> _deleteLegacyChannels() async {
+    final androidPlugin = _plugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    if (androidPlugin == null) return;
+
+    const legacyVariants = ['azan', 'azan_makkah', 'azan_medina', 'azan_egypt', 'silent'];
+    for (final variant in legacyVariants) {
+      try {
+        await androidPlugin.deleteNotificationChannel('${_channelId}_$variant');
+      } catch (e) {
+        debugPrint('Could not delete legacy channel ${_channelId}_$variant: $e');
+      }
+    }
   }
 
   Future<void> schedulePrayerNotifications({
@@ -73,8 +126,28 @@ class PrayerNotificationService {
     // Pre-register the dynamic sound channel before scheduling.
     // Android channels are immutable: sound must be set at channel creation.
     final bool willPlaySound = adhanSound != 'none';
-    final String channelId = '${_channelId}_${willPlaySound ? adhanSound : 'silent'}';
+    final String variant = willPlaySound ? adhanSound : 'silent';
+    // The `_v2` marker forces a fresh channel for users upgrading from a build
+    // whose channels were created on the notification audio stream. Without a
+    // new id, Android keeps the old (quieter) channel and the fix is a no-op.
+    final String channelId = '${_channelId}_v2_$variant';
+    await _deleteLegacyChannels();
     await _ensureSoundChannel(channelId, _channelName, _channelDesc, willPlaySound, adhanSound);
+
+    // Prayer times must fire *on time*. Inexact alarms get batched into Doze
+    // maintenance windows and can drift by many minutes — which is exactly when
+    // the phone is idle, i.e. most prayer times. Use exact alarms when the user
+    // has granted the access, and fall back to inexact otherwise so the azan
+    // still arrives (late) rather than failing to schedule at all.
+    final bool canUseExact = await canScheduleExactAlarms();
+    final AndroidScheduleMode scheduleMode = canUseExact
+        ? AndroidScheduleMode.exactAllowWhileIdle
+        : AndroidScheduleMode.inexactAllowWhileIdle;
+    if (!canUseExact) {
+      debugPrint(
+        'Exact alarms not permitted — azan notifications may be delayed by the system.',
+      );
+    }
 
     final now = tz.TZDateTime.now(tz.local);
     final List<String> prayerKeys = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
@@ -191,6 +264,8 @@ class PrayerNotificationService {
               priority: Priority.high,
               playSound: playSound,
               sound: androidSound,
+              audioAttributesUsage: AudioAttributesUsage.alarm,
+              category: AndroidNotificationCategory.alarm,
               icon: '@mipmap/ic_launcher',
               largeIcon: const DrawableResourceAndroidBitmap('@mipmap/ic_launcher'),
               color: const Color(0xFFCD9D27),
@@ -210,7 +285,7 @@ class PrayerNotificationService {
             'کاتی نوێژ بۆ شاری ${city.nameKu} هاتووە. (حی علی الصلاة)',
             scheduledTime,
             notificationDetails,
-            androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+            androidScheduleMode: scheduleMode,
             uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
           );
         } catch (e) {
