@@ -6,6 +6,7 @@ import '../models/tasbih_session_log_model.dart';
 import '../models/tasbih_session_analytics_model.dart';
 import '../repositories/tasbih_session_repository.dart';
 import 'app_providers.dart';
+import 'tasbih_time.dart';
 import '../network/api_result.dart';
 
 class TasbihSessionState {
@@ -152,15 +153,18 @@ class TasbihSessionNotifier extends StateNotifier<TasbihSessionState> {
   }
 
   /// INCREMENT count locally & enqueue for sync (Anti Double-Tap & Queue Sync).
-  void increment() {
+  /// Registers one tap. Returns whether it was actually counted, so the caller
+  /// only plays the click and haptic for taps that moved the counter —
+  /// feedback used to fire before this guard, so a debounced tap still clicked
+  /// while the number stayed put.
+  bool increment() {
     final now = DateTime.now();
-    // 50ms Debouncer Guard
-    if (now.difference(_lastTapTime).inMilliseconds < 50) {
-      return;
+    if (now.difference(_lastTapTime) < tasbihTapCooldown) {
+      return false;
     }
     _lastTapTime = now;
 
-    if (state.activeSession == null) return;
+    if (state.activeSession == null) return false;
 
     final updatedCount = state.currentCount + 1;
     final log = TasbihSessionLogModel(
@@ -174,6 +178,7 @@ class TasbihSessionNotifier extends StateNotifier<TasbihSessionState> {
       currentCount: updatedCount,
       unsyncedIncrements: [...state.unsyncedIncrements, log],
     );
+    return true;
   }
 
   /// PAUSE structured session.

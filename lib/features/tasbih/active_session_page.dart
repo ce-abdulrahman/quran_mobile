@@ -106,11 +106,12 @@ class _ActiveSessionPageState extends ConsumerState<ActiveSessionPage>
     final sessionState = ref.read(tasbihSessionProvider);
     if (sessionState.isPaused) return;
 
+    // Count first: a debounced tap must not click and buzz as though it landed.
+    if (!ref.read(tasbihSessionProvider.notifier).increment()) return;
+
     final themeState = ref.read(tasbihThemeProvider);
     _playThemeSound(themeState.activeTheme, themeState.activePreferences);
     _triggerThemeHaptics(themeState.activeTheme, themeState.activePreferences);
-
-    ref.read(tasbihSessionProvider.notifier).increment();
 
     setState(() {
       _ripplePos = details.localPosition;
@@ -911,7 +912,6 @@ class _FloatingPillWidget extends ConsumerStatefulWidget {
 class _FloatingPillWidgetState extends ConsumerState<_FloatingPillWidget> {
   double _x = 20.0;
   double _y = 100.0;
-  DateTime _lastTap = DateTime.fromMillisecondsSinceEpoch(0);
 
   @override
   Widget build(BuildContext context) {
@@ -938,12 +938,9 @@ class _FloatingPillWidgetState extends ConsumerState<_FloatingPillWidget> {
           });
         },
         onTap: () {
-          final now = DateTime.now();
-          if (now.difference(_lastTap).inMilliseconds < 50) return;
-          _lastTap = now;
-          
-          if (!sessionState.isPaused) {
-            ref.read(tasbihSessionProvider.notifier).increment();
+          if (sessionState.isPaused) return;
+          // The debounce lives in increment() so every counter shares one rule.
+          if (ref.read(tasbihSessionProvider.notifier).increment()) {
             HapticFeedback.lightImpact();
           }
         },

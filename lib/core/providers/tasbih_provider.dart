@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/tasbih_model.dart';
 import 'app_providers.dart';
+import 'tasbih_time.dart';
 import 'achievement_provider.dart';
 
 // State representing the merged list of active tasbihs + custom user tasbihs, and their counts.
@@ -144,10 +145,8 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
     int unsyncedDailyProgress = _prefs.getInt('tasbih_unsynced_progress') ?? 0;
 
     // Daily check system (when app opens)
-    final todayBaghdad = DateTime.now().toUtc().add(const Duration(hours: 3));
-    final todayStr = "${todayBaghdad.year}-${todayBaghdad.month.toString().padLeft(2, '0')}-${todayBaghdad.day.toString().padLeft(2, '0')}";
-    final yesterdayBaghdad = todayBaghdad.subtract(const Duration(days: 1));
-    final yesterdayStr = "${yesterdayBaghdad.year}-${yesterdayBaghdad.month.toString().padLeft(2, '0')}-${yesterdayBaghdad.day.toString().padLeft(2, '0')}";
+    final todayStr = tasbihDayKey();
+    final yesterdayStr = tasbihPreviousDayKey();
 
     bool isWarning = false;
     if (lastActivityDate != null) {
@@ -244,15 +243,34 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
     return 'evt_${timestamp}_${rand1}_$rand2';
   }
 
+  /// Writes the counters that a tap can change, always reading the values back
+  /// off the current [state].
+  Future<void> _persistCounters({bool dayRolledOver = false}) async {
+    final snapshot = state;
+
+    if (dayRolledOver && snapshot.dailyGoalDate != null) {
+      await _prefs.setString('tasbih_daily_goal_date', snapshot.dailyGoalDate!);
+    }
+    await _prefs.setInt('tasbih_daily_progress', snapshot.dailyGoalProgress);
+    await _prefs.setInt(
+        'tasbih_unsynced_progress', snapshot.unsyncedDailyProgress);
+    await _prefs.setBool('tasbih_daily_completed', snapshot.dailyGoalCompleted);
+    await _prefs.setInt('tasbih_current_streak', snapshot.currentStreak);
+    await _prefs.setInt('tasbih_longest_streak', snapshot.longestStreak);
+    if (snapshot.lastActivityDate != null) {
+      await _prefs.setString(
+          'tasbih_last_activity_date', snapshot.lastActivityDate!);
+    }
+    await _prefs.setString(_countsKey, jsonEncode(snapshot.counts));
+  }
+
   Future<bool> incrementCount(String dhikrId) async {
     final current = state.counts[dhikrId] ?? 0;
     final updatedCounts = {...state.counts, dhikrId: current + 1};
     
     // Check/Update streak
-    final todayBaghdad = DateTime.now().toUtc().add(const Duration(hours: 3));
-    final todayStr = "${todayBaghdad.year}-${todayBaghdad.month.toString().padLeft(2, '0')}-${todayBaghdad.day.toString().padLeft(2, '0')}";
-    final yesterdayBaghdad = todayBaghdad.subtract(const Duration(days: 1));
-    final yesterdayStr = "${yesterdayBaghdad.year}-${yesterdayBaghdad.month.toString().padLeft(2, '0')}-${yesterdayBaghdad.day.toString().padLeft(2, '0')}";
+    final todayStr = tasbihDayKey();
+    final yesterdayStr = tasbihPreviousDayKey();
 
     int currentStreak = state.currentStreak;
     int longestStreak = state.longestStreak;
@@ -282,14 +300,10 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
       streakIncreased = true;
     }
 
-    if (streakIncreased) {
-      await _prefs.setInt('tasbih_current_streak', currentStreak);
-      await _prefs.setInt('tasbih_longest_streak', longestStreak);
-      await _prefs.setString('tasbih_last_activity_date', lastActivity);
-      
-      // Attempt to sync online asynchronously
-      _syncStreakOnline(currentStreak, longestStreak, lastActivity);
-    }
+    // Nothing above this point may await: everything from here to the
+    // `state = ...` below has to land in one go. When it awaited midway, a
+    // background goal sync completing in the gap wrote the server's progress
+    // and this tap then overwrote it with the value it had read beforehand.
 
     // Daily goal tracking logic
     int dailyGoalProgress = state.dailyGoalProgress;
@@ -299,19 +313,15 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
     int unsyncedDailyProgress = state.unsyncedDailyProgress;
 
     // Reset check in case day changed while session is active
-    if (dailyGoalDate != todayStr) {
+    final bool dayRolledOver = dailyGoalDate != todayStr;
+    if (dayRolledOver) {
       dailyGoalProgress = 0;
       dailyGoalCompleted = false;
       dailyGoalDate = todayStr;
       unsyncedDailyProgress = 0;
-      
+
       updatedCounts.clear();
       updatedCounts[dhikrId] = 1;
-      
-      await _prefs.setInt('tasbih_daily_progress', 0);
-      await _prefs.setBool('tasbih_daily_completed', false);
-      await _prefs.setString('tasbih_daily_goal_date', todayStr);
-      await _prefs.setInt('tasbih_unsynced_progress', 0);
     }
 
     dailyGoalProgress += 1;
@@ -319,11 +329,7 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
 
     if (dailyGoalProgress >= dailyGoalValue && !dailyGoalCompleted) {
       dailyGoalCompleted = true;
-      await _prefs.setBool('tasbih_daily_completed', true);
     }
-
-    await _prefs.setInt('tasbih_daily_progress', dailyGoalProgress);
-    await _prefs.setInt('tasbih_unsynced_progress', unsyncedDailyProgress);
 
     state = state.copyWith(
       counts: updatedCounts,
@@ -336,8 +342,17 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
       dailyGoalDate: dailyGoalDate,
       unsyncedDailyProgress: unsyncedDailyProgress,
     );
+    // ── end of the atomic section ──────────────────────────────────────────
 
-    await _prefs.setString(_countsKey, jsonEncode(updatedCounts));
+    if (streakIncreased) {
+      // Fire-and-forget; failures are tolerated offline.
+      _syncStreakOnline(currentStreak, longestStreak, lastActivity);
+    }
+
+    // Persist from `state` rather than from the locals above: if two taps
+    // overlap here, whichever write lands last still stores the current value
+    // instead of the one its own tap happened to compute.
+    await _persistCounters(dayRolledOver: dayRolledOver);
 
     // Debounced sync call
     _debounceProgressSync();
@@ -482,8 +497,7 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
 
   /// Set a new daily goal value
   Future<void> setDailyGoal(int newValue) async {
-    final todayBaghdad = DateTime.now().toUtc().add(const Duration(hours: 3));
-    final todayStr = "${todayBaghdad.year}-${todayBaghdad.month.toString().padLeft(2, '0')}-${todayBaghdad.day.toString().padLeft(2, '0')}";
+    final todayStr = tasbihDayKey();
 
     int dailyGoalProgress = state.dailyGoalProgress;
     if (state.dailyGoalDate != todayStr) {

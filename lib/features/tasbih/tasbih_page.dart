@@ -10,6 +10,7 @@ import '../../core/l10n/app_localizations.dart';
 import '../../core/providers/app_providers.dart';
 import '../../core/models/tasbih_model.dart';
 import '../../core/providers/tasbih_session_provider.dart';
+import '../../core/providers/tasbih_time.dart';
 import 'active_session_page.dart';
 import '../../core/providers/tasbih_theme_provider.dart';
 import '../../core/models/tasbih_theme_model.dart';
@@ -91,7 +92,6 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
   }
 
   DateTime? _lastTap;
-  static const _cooldownMs = 300;
 
   bool _showCelebration = false;
   int _celebratedStreak = 0;
@@ -206,8 +206,7 @@ class _TasbihPageState extends ConsumerState<TasbihPage>
 
   void _onTap(TapDownDetails details, TasbihModel activeDhikr) {
     final now = DateTime.now();
-    if (_lastTap != null &&
-        now.difference(_lastTap!).inMilliseconds < _cooldownMs) {
+    if (_lastTap != null && now.difference(_lastTap!) < tasbihTapCooldown) {
       return; // anti-abuse cooldown
     }
     _lastTap = now;
