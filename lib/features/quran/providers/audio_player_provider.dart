@@ -15,6 +15,13 @@ import '../../../core/services/sleep_timer_service.dart';
 import '../../../core/services/audio_quality_manager.dart';
 import '../../../core/services/audio_event_bus.dart';
 
+/// Marks a [AudioPlayerState.copyWith] argument as "not supplied".
+///
+/// Nullable fields need this: with the usual `value ?? this.value` pattern an
+/// explicit `null` is indistinguishable from an omitted argument, so a field
+/// like `errorMessage` can be set but never cleared.
+const Object _unchanged = Object();
+
 class AudioPlayerState {
   final bool isPlaying;
   final bool isLoading;
@@ -52,17 +59,22 @@ class AudioPlayerState {
     this.sleepTimerState = const SleepTimerState(),
   });
 
+  /// Copies the state, overriding only the supplied fields.
+  ///
+  /// [currentAyahNumber], [errorMessage] and [streamUrl] are typed as [Object?]
+  /// so that passing an explicit `null` *clears* them, while omitting them
+  /// keeps the current value. See [_unchanged].
   AudioPlayerState copyWith({
     bool? isPlaying,
     bool? isLoading,
     Duration? position,
     Duration? duration,
-    int? currentAyahNumber,
+    Object? currentAyahNumber = _unchanged,
     int? selectedReciterId,
     double? speed,
     bool? isAutoScrollEnabled,
-    String? errorMessage,
-    String? streamUrl,
+    Object? errorMessage = _unchanged,
+    Object? streamUrl = _unchanged,
     RecitationEngineState? engineState,
     RecitationSettings? settings,
     RecitationSession? session,
@@ -75,12 +87,18 @@ class AudioPlayerState {
       isLoading: isLoading ?? this.isLoading,
       position: position ?? this.position,
       duration: duration ?? this.duration,
-      currentAyahNumber: currentAyahNumber ?? this.currentAyahNumber,
+      currentAyahNumber: identical(currentAyahNumber, _unchanged)
+          ? this.currentAyahNumber
+          : currentAyahNumber as int?,
       selectedReciterId: selectedReciterId ?? this.selectedReciterId,
       speed: speed ?? this.speed,
       isAutoScrollEnabled: isAutoScrollEnabled ?? this.isAutoScrollEnabled,
-      errorMessage: errorMessage ?? this.errorMessage,
-      streamUrl: streamUrl ?? this.streamUrl,
+      errorMessage: identical(errorMessage, _unchanged)
+          ? this.errorMessage
+          : errorMessage as String?,
+      streamUrl: identical(streamUrl, _unchanged)
+          ? this.streamUrl
+          : streamUrl as String?,
       engineState: engineState ?? this.engineState,
       settings: settings ?? this.settings,
       session: session ?? this.session,
@@ -97,11 +115,33 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
   StreamSubscription? _posSub;
   StreamSubscription? _durSub;
   StreamSubscription? _stateSub;
+  StreamSubscription? _estimateSub;
   Map<int, AyahTimingModel> _timings = {};
+
+  /// [_timings] ordered by start time, plus ayah number -> index into it.
+  /// Derived state kept in sync by [_setTimings]; never assign [_timings]
+  /// directly.
+  List<MapEntry<int, AyahTimingModel>> _sortedTimings = [];
+  Map<int, int> _timingIndexByAyah = {};
+
   int? _loadedSurahId;
+
+  void _setTimings(Map<int, AyahTimingModel> timings) {
+    _timings = timings;
+    _sortedTimings = timings.entries.toList()
+      ..sort((a, b) => a.value.startTime.compareTo(b.value.startTime));
+    _timingIndexByAyah = {
+      for (var i = 0; i < _sortedTimings.length; i++) _sortedTimings[i].key: i,
+    };
+  }
 
   Timer? _gapTimer;
   DateTime? _gapEndTime;
+
+  /// How often the session may be written to disk while playback is running.
+  static const Duration _sessionSaveInterval = Duration(seconds: 5);
+  Timer? _sessionSaveTimer;
+  DateTime? _lastSessionSaveAt;
 
   late final AudioSessionHandler _audioSessionHandler;
   late final PlaybackStateBridge _playbackStateBridge;
@@ -193,9 +233,41 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     prefs.setString('recitation_settings', jsonEncode(state.settings.toJson()));
   }
 
+  /// Persists the session immediately. Use for real transitions — pause, stop,
+  /// ayah/surah change, settings change.
   void _saveSession() {
-    final prefs = ref.read(sharedPreferencesProvider);
-    prefs.setString('recitation_session', jsonEncode(state.session.toJson()));
+    _sessionSaveTimer?.cancel();
+    _sessionSaveTimer = null;
+    _lastSessionSaveAt = DateTime.now();
+    try {
+      final prefs = ref.read(sharedPreferencesProvider);
+      prefs.setString('recitation_session', jsonEncode(state.session.toJson()));
+    } catch (e) {
+      debugPrint('Could not persist recitation session: $e');
+    }
+  }
+
+  /// Throttled variant for the position stream, which fires every 200ms.
+  ///
+  /// Saving on every tick meant ~5 JSON encodes and ~5 SharedPreferences writes
+  /// per second (~18k writes per listening hour) purely to record a position
+  /// that is only ever read on restart. Writes at most once per
+  /// [_sessionSaveInterval], and schedules a trailing write so the final
+  /// position still lands when playback goes quiet.
+  void _saveSessionThrottled() {
+    final elapsed = _lastSessionSaveAt == null
+        ? null
+        : DateTime.now().difference(_lastSessionSaveAt!);
+
+    if (elapsed == null || elapsed >= _sessionSaveInterval) {
+      _saveSession();
+      return;
+    }
+
+    _sessionSaveTimer ??= Timer(_sessionSaveInterval - elapsed, () {
+      _sessionSaveTimer = null;
+      if (mounted) _saveSession();
+    });
   }
 
   void _init() {
@@ -225,7 +297,9 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
           position: pos,
           session: updatedSession,
         );
-        _saveSession();
+        // Throttled: this fires 5x per second. _updateCurrentAyah still saves
+        // immediately whenever the ayah actually changes.
+        _saveSessionThrottled();
 
         _updateCurrentAyah(pos);
         _checkRangeLimit(pos);
@@ -329,18 +403,50 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
     _playbackStateBridge.updateMetadata(metadata);
   }
 
-  void _updateCurrentAyah(Duration pos) {
-    if (_timings.isEmpty) return;
+  /// Finds the ayah covering [seconds].
+  ///
+  /// Called 5x per second, so it avoids scanning all timings (286 entries for
+  /// Al-Baqarah): playback advances monotonically, so the answer is almost
+  /// always the current ayah or the one straight after it. Anything else —
+  /// a seek, a repeat jump — falls back to a binary search over the
+  /// start-time-ordered list.
+  int? _findAyahAt(double seconds) {
+    bool covers(AyahTimingModel t) =>
+        seconds >= t.startTime && seconds < t.endTime;
 
-    final seconds = pos.inMilliseconds / 1000.0;
-    int? activeAyah;
-
-    for (final entry in _timings.entries) {
-      if (seconds >= entry.value.startTime && seconds < entry.value.endTime) {
-        activeAyah = entry.key;
-        break;
+    final current = state.session.currentAyahNumber;
+    final index = _timingIndexByAyah[current];
+    if (index != null) {
+      if (covers(_sortedTimings[index].value)) {
+        return current;
+      }
+      final next = index + 1;
+      if (next < _sortedTimings.length && covers(_sortedTimings[next].value)) {
+        return _sortedTimings[next].key;
       }
     }
+
+    var low = 0;
+    var high = _sortedTimings.length - 1;
+    while (low <= high) {
+      final mid = (low + high) ~/ 2;
+      final timing = _sortedTimings[mid].value;
+      if (seconds < timing.startTime) {
+        high = mid - 1;
+      } else if (seconds >= timing.endTime) {
+        low = mid + 1;
+      } else {
+        return _sortedTimings[mid].key;
+      }
+    }
+    // Gaps of silence between ayahs land here; the caller keeps the last ayah.
+    return null;
+  }
+
+  void _updateCurrentAyah(Duration pos) {
+    if (_sortedTimings.isEmpty) return;
+
+    final activeAyah = _findAyahAt(pos.inMilliseconds / 1000.0);
 
     if (activeAyah != null && activeAyah != state.session.currentAyahNumber) {
       final updatedSession = state.session.copyWith(currentAyahNumber: activeAyah);
@@ -613,7 +719,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
       if (!mounted) return;
 
-      _timings = timings;
+      _setTimings(timings);
       _loadedSurahId = surahId;
 
       state = state.copyWith(
@@ -643,18 +749,26 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
       }
     } catch (e) {
       if (!mounted) return;
+      // Drop the stale source too: without this the player keeps the previously
+      // loaded surah, so pressing play would recite the wrong one.
+      _loadedSurahId = null;
       state = state.copyWith(
         isLoading: false,
+        streamUrl: null,
         errorMessage: 'فایلی دەنگی یان کاتەکان بەردەست نییە',
       );
     }
   }
 
   void _estimateTimingsWhenDurationAvailable(int surahId, int ayahCount) {
-    StreamSubscription? tempSub;
-    tempSub = _audioPlayer.onDurationChanged.listen((dur) {
+    // Held in a field rather than a local: if the duration never arrives (a
+    // failed source, or the user switching surah first) the local version was
+    // never cancelled and leaked a listener per load.
+    _estimateSub?.cancel();
+    _estimateSub = _audioPlayer.onDurationChanged.listen((dur) {
       if (dur.inSeconds > 0) {
-        tempSub?.cancel();
+        _estimateSub?.cancel();
+        _estimateSub = null;
         if (_timings.isEmpty && _loadedSurahId == surahId) {
           final totalSeconds = dur.inMilliseconds / 1000.0;
           final segmentDuration = totalSeconds / ayahCount;
@@ -666,7 +780,7 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
               endTime: i * segmentDuration,
             );
           }
-          _timings = estimated;
+          _setTimings(estimated);
           _updateCurrentAyah(state.position);
         }
       }
@@ -959,9 +1073,15 @@ class AudioPlayerNotifier extends StateNotifier<AudioPlayerState> {
 
   @override
   void dispose() {
+    // Flush any position the throttle was still holding, then stop the timer.
+    if (_sessionSaveTimer?.isActive ?? false) {
+      _saveSession();
+    }
+    _sessionSaveTimer?.cancel();
     _posSub?.cancel();
     _durSub?.cancel();
     _stateSub?.cancel();
+    _estimateSub?.cancel();
     _gapTimer?.cancel();
     _audioSessionHandler.dispose();
     _playbackStateBridge.dispose();
