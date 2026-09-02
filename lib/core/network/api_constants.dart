@@ -5,11 +5,17 @@
 class ApiConstants {
   ApiConstants._();
 
-  /// Replace with your actual Laravel server address.
-  /// Examples:
-  ///   LAN dev:    'http://192.168.1.100/api'
-  ///   Production: 'https://api.yourqurandomain.com/api'
-  static const String baseUrl = 'http://192.168.1.2:8000/api/v1';
+  /// Server address, resolved at *build/run* time so release builds are not
+  /// stuck pointing at a developer's LAN machine.
+  ///
+  /// Defaults to the local dev server (unchanged behavior for `flutter run`).
+  /// Override per build with:
+  ///   flutter build apk --dart-define=API_BASE_URL=https://api.yourqurandomain.com/api/v1
+  ///   flutter run     --dart-define=API_BASE_URL=http://192.168.1.100:8000/api/v1
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://192.168.1.2:8000/api/v1',
+  );
 
   // ── Endpoints ──────────────────────────────────────────────────────────────
   static const String surahs          = '/surahs';

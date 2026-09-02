@@ -8,6 +8,19 @@ class ApiClient {
   ApiClient({Dio? dio, String Function()? tokenProvider}) : _dio = dio ?? _createDio(tokenProvider);
 
   static Dio _createDio([String Function()? tokenProvider]) {
+    assert(() {
+      if (ApiConstants.baseUrl.contains('192.168.') ||
+          ApiConstants.baseUrl.contains('10.0.2.2') ||
+          ApiConstants.baseUrl.startsWith('http://')) {
+        debugPrint(
+          '⚠️  ApiConstants.baseUrl looks like a local dev address '
+          '(${ApiConstants.baseUrl}). Set the real server with '
+          '--dart-define=API_BASE_URL=... before shipping a release build.',
+        );
+      }
+      return true;
+    }());
+
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiConstants.baseUrl,
