@@ -6,7 +6,7 @@ import '../models/tasbih_session_log_model.dart';
 import '../models/tasbih_session_analytics_model.dart';
 import '../repositories/tasbih_session_repository.dart';
 import 'app_providers.dart';
-import 'tasbih_time.dart';
+import 'dhikr_time.dart';
 import '../network/api_result.dart';
 
 class TasbihSessionState {
@@ -159,7 +159,7 @@ class TasbihSessionNotifier extends StateNotifier<TasbihSessionState> {
   /// while the number stayed put.
   bool increment() {
     final now = DateTime.now();
-    if (now.difference(_lastTapTime) < tasbihTapCooldown) {
+    if (now.difference(_lastTapTime) < dhikrTapCooldown) {
       return false;
     }
     _lastTapTime = now;

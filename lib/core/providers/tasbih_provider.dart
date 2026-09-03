@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/tasbih_model.dart';
 import 'app_providers.dart';
-import 'tasbih_time.dart';
+import 'dhikr_time.dart';
 import 'achievement_provider.dart';
 
 // State representing the merged list of active tasbihs + custom user tasbihs, and their counts.
@@ -145,8 +145,8 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
     int unsyncedDailyProgress = _prefs.getInt('tasbih_unsynced_progress') ?? 0;
 
     // Daily check system (when app opens)
-    final todayStr = tasbihDayKey();
-    final yesterdayStr = tasbihPreviousDayKey();
+    final todayStr = dhikrDayKey();
+    final yesterdayStr = dhikrPreviousDayKey();
 
     bool isWarning = false;
     if (lastActivityDate != null) {
@@ -269,8 +269,8 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
     final updatedCounts = {...state.counts, dhikrId: current + 1};
     
     // Check/Update streak
-    final todayStr = tasbihDayKey();
-    final yesterdayStr = tasbihPreviousDayKey();
+    final todayStr = dhikrDayKey();
+    final yesterdayStr = dhikrPreviousDayKey();
 
     int currentStreak = state.currentStreak;
     int longestStreak = state.longestStreak;
@@ -497,7 +497,7 @@ class TasbihNotifier extends StateNotifier<TasbihState> {
 
   /// Set a new daily goal value
   Future<void> setDailyGoal(int newValue) async {
-    final todayStr = tasbihDayKey();
+    final todayStr = dhikrDayKey();
 
     int dailyGoalProgress = state.dailyGoalProgress;
     if (state.dailyGoalDate != todayStr) {

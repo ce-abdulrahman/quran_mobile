@@ -10,7 +10,7 @@ library;
 /// Fast dhikr runs at roughly 4-6 taps per second, so this has to stay well
 /// under 200ms or real taps get discarded. It exists only to swallow
 /// double-fires and accidental repeats.
-const Duration tasbihTapCooldown = Duration(milliseconds: 50);
+const Duration dhikrTapCooldown = Duration(milliseconds: 50);
 
 /// The day a tap belongs to, in the user's own timezone.
 ///
@@ -18,7 +18,7 @@ const Duration tasbihTapCooldown = Duration(milliseconds: 50);
 /// day then rolled over at the wrong local hour — 22:00 in Germany, 16:00 in
 /// the US — so evening dhikr counted towards the next day and streaks broke
 /// while the user was still awake.
-String tasbihDayKey([DateTime? at]) {
+String dhikrDayKey([DateTime? at]) {
   final date = at ?? DateTime.now();
   final month = date.month.toString().padLeft(2, '0');
   final day = date.day.toString().padLeft(2, '0');
@@ -26,5 +26,5 @@ String tasbihDayKey([DateTime? at]) {
 }
 
 /// The day key for the day before [at].
-String tasbihPreviousDayKey([DateTime? at]) =>
-    tasbihDayKey((at ?? DateTime.now()).subtract(const Duration(days: 1)));
+String dhikrPreviousDayKey([DateTime? at]) =>
+    dhikrDayKey((at ?? DateTime.now()).subtract(const Duration(days: 1)));

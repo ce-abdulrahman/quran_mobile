@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/providers/dhikr_time.dart';
 
 class AdhkarSessionPage extends ConsumerStatefulWidget {
   final String categoryKey;
@@ -27,7 +28,6 @@ class _AdhkarSessionPageState extends ConsumerState<AdhkarSessionPage>
   int _activeIndex = 0;
   int _count = 0;
   DateTime? _lastTap;
-  static const _cooldownMs = 250;
 
   // Ring animation
   late final AnimationController _ringCtrl;
@@ -41,6 +41,7 @@ class _AdhkarSessionPageState extends ConsumerState<AdhkarSessionPage>
   @override
   void initState() {
     super.initState();
+    _restoreProgress();
     _ringCtrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 6),
@@ -59,8 +60,7 @@ class _AdhkarSessionPageState extends ConsumerState<AdhkarSessionPage>
     if (_count >= activeItem.targetCount) return;
 
     final now = DateTime.now();
-    if (_lastTap != null &&
-        now.difference(_lastTap!).inMilliseconds < _cooldownMs) {
+    if (_lastTap != null && now.difference(_lastTap!) < dhikrTapCooldown) {
       return;
     }
     _lastTap = now;
@@ -70,6 +70,7 @@ class _AdhkarSessionPageState extends ConsumerState<AdhkarSessionPage>
       _ripplePos = details.localPosition;
       _rippleVisible = true;
     });
+    _saveProgress();
 
     HapticFeedback.lightImpact();
 
@@ -95,6 +96,7 @@ class _AdhkarSessionPageState extends ConsumerState<AdhkarSessionPage>
         _count = 0;
         _rippleVisible = false;
       });
+      _saveProgress();
     } else {
       // Completed the whole session!
       ref.read(adhkarProvider.notifier).completeCategory(widget.categoryKey);
@@ -109,7 +111,31 @@ class _AdhkarSessionPageState extends ConsumerState<AdhkarSessionPage>
         _count = 0;
         _rippleVisible = false;
       });
+      _saveProgress();
     }
+  }
+
+  /// Picks up where the user left off, as long as it was today. Guards the
+  /// index against a shorter list: the bundled adhkar can change between app
+  /// versions, and a stale index would otherwise throw on the first build.
+  void _restoreProgress() {
+    final saved =
+        ref.read(adhkarProvider.notifier).progressFor(widget.categoryKey);
+    if (saved.isEmpty) return;
+
+    final index = saved.itemIndex.clamp(0, widget.items.length - 1);
+    final target = widget.items[index].targetCount;
+
+    _activeIndex = index;
+    _count = saved.count.clamp(0, target);
+  }
+
+  void _saveProgress() {
+    ref.read(adhkarProvider.notifier).saveProgress(
+          widget.categoryKey,
+          itemIndex: _activeIndex,
+          count: _count,
+        );
   }
 
   void _showCompletionDialog(AppColorScheme cs) {
