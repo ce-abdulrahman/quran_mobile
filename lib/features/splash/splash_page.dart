@@ -58,11 +58,17 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   Future<void> _checkDatabaseSeeding() async {
     final prefs = ref.read(sharedPreferencesProvider);
     final isInitialized = prefs.getBool('is_db_initialized') ?? false;
+    final searchIndexRepaired =
+        prefs.getBool(IsarService.searchIndexRepairKey) ?? false;
 
-    // Fast-path: if already initialized, skip all Isar queries and go straight to the app.
-    // Migration flags inside checkNeedSeeding() already reset is_db_initialized=false
-    // when an update requires re-seeding, so this is safe.
-    if (isInitialized) {
+    // Fast-path: if already initialized, skip all Isar queries and go straight
+    // to the app.
+    //
+    // Note that this path skips checkNeedSeeding() entirely, so the migration
+    // flags inside it are unreachable once a database has been initialised. A
+    // repair that has to reach existing installs needs its own flag checked
+    // here, the way the search index rebuild is.
+    if (isInitialized && searchIndexRepaired) {
       if (!mounted) return;
       await ChangelogDialog.showIfNeeded(context);
       if (!mounted) return;

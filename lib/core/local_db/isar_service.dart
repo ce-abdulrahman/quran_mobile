@@ -14,6 +14,14 @@ class IsarService {
   static IsarService? _instance;
   late final Isar isar;
 
+  /// Set once the search index has been rebuilt with per-package scoping.
+  ///
+  /// The splash screen reads this before taking its fast path. It has to:
+  /// [checkNeedSeeding] is only ever called when `is_db_initialized` is false,
+  /// so a repair gated inside it alone never reaches an install that already
+  /// finished seeding — which is every install that needs this one.
+  static const String searchIndexRepairKey = 'search_index_v2_repaired';
+
   IsarService._(this.isar);
 
   static IsarService get instance {
@@ -751,6 +759,9 @@ class IsarService {
 
       // 11. Mark all as complete
       await prefs.setBool('is_db_initialized', true);
+      // The index this run just built is scoped per package, so nothing about
+      // it needs repairing on the next launch.
+      await prefs.setBool(searchIndexRepairKey, true);
       update('تەواوبوو');
       
       // Save default manifests representing our preloaded DB state
@@ -789,13 +800,34 @@ class IsarService {
     await updateTajweedSegmentsForSurahs1And2();
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Repair for installs seeded while rebuildIndex cleared the whole search
+      // collection: their index holds only whichever package was indexed last,
+      // so search finds almost nothing. Only an already-initialised database
+      // can be in that state; a fresh one is seeded correctly by this build and
+      // takes the ordinary path below.
+      //
+      // Rebuilding the index is the entire repair, hence the early return: the
+      // migrations further down have been unreachable on initialised installs
+      // for as long as the splash fast path has existed, and waking them here
+      // would re-seed hadiths and every ayah as a side effect of fixing search.
+      if (prefs.getBool('is_db_initialized') == true &&
+          prefs.getBool(searchIndexRepairKey) != true) {
+        await prefs.setBool('seed_step_search_index', false);
+        await prefs.setBool('is_db_initialized', false);
+        await isar.writeTxn(() async {
+          await isar.searchIndexCollections.clear();
+        });
+        return true;
+      }
+
       final namesCount = await isar.namesOfAllahCollections.count();
       final seerahCount = await isar.seerahCollections.count();
       final sahabaCount = await isar.sahabaCollections.count();
       final recitersCount = await isar.reciterCollections.count();
       final hadithsCount = await isar.hadithCollections.count();
 
-      final prefs = await SharedPreferences.getInstance();
       // Migration for fixed Hadiths (unique hadithId) — runs once on first launch after update
       if (prefs.getBool('hadiths_v3_migrated') != true) {
         await prefs.setBool('seed_step_hadiths', false);
@@ -856,7 +888,6 @@ class IsarService {
           surahsCount == 0 ||
           adhkarsCount == 0 ||
           ayahsCount < 6000) { // Should be 6236, allow some margin
-        final prefs = await SharedPreferences.getInstance();
         if (namesCount == 0) await prefs.setBool('seed_step_names_of_allah', false);
         if (seerahCount == 0) await prefs.setBool('seed_step_seerah', false);
         if (sahabaCount == 0) await prefs.setBool('seed_step_sahaba', false);

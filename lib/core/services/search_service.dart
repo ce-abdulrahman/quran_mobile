@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:isar/isar.dart';
 import '../local_db/isar_service.dart';
 import '../local_db/isar_collections.dart';
@@ -5,19 +6,29 @@ import '../local_db/content_package.dart';
 
 class SearchService {
   static final SearchService instance = SearchService._();
-  SearchService._();
+  SearchService._() : _isarOverride = null;
 
-  Isar get _isar => IsarService.instance.isar;
+  /// Runs the same indexing against a caller-supplied database.
+  @visibleForTesting
+  SearchService.withIsar(Isar isar) : _isarOverride = isar;
+
+  final Isar? _isarOverride;
+
+  Isar get _isar => _isarOverride ?? IsarService.instance.isar;
 
   /// Rebuilds the search index for a specific package type.
   Future<void> rebuildIndex(ContentPackage package) async {
     final String typeStr = _getTypeStr(package);
     if (typeStr.isEmpty) return;
 
-    // Clear ALL search index entries first to ensure clean slate
-    // This prevents unique key violations if app restarts mid-seeding
+    // Drop this package's own entries and nothing else. Clearing the whole
+    // collection here meant each rebuild threw away every package indexed
+    // before it, as well as the user's notes.
     await _isar.writeTxn(() async {
-      await _isar.searchIndexCollections.clear();
+      await _isar.searchIndexCollections
+          .filter()
+          .typeEqualTo(typeStr)
+          .deleteAll();
     });
 
     final List<SearchIndexCollection> newEntries = [];
@@ -236,7 +247,9 @@ class SearchService {
 
   /// Rebuilds indexes for all packages.
   Future<void> rebuildAll() async {
-    // Clear all search index entries first for clean slate
+    // The one caller that legitimately wipes everything: a full rebuild also
+    // has to drop entries for content that is no longer installed, which the
+    // per-package rebuilds below never see.
     await _isar.writeTxn(() async {
       await _isar.searchIndexCollections.clear();
     });

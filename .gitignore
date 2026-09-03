@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Isar test databases. The tests open with `directory: ''`, which puts them in
+# the project root, and the lock file outlives close(deleteFromDisk: true).
+*.isar
+*.isar-lck
