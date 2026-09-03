@@ -24,6 +24,7 @@ import 'quran_providers.dart';
 import 'widgets/audio_player_panel.dart';
 import 'providers/audio_player_provider.dart';
 import 'widgets/share_card_sheet.dart';
+import 'widgets/tafsir_sheet.dart';
 import 'mushaf_reader_page.dart';
 import 'widgets/quran_settings_sheet.dart';
 import '../../core/widgets/feature_not_available_dialog.dart';
@@ -457,6 +458,22 @@ class _QuranReaderPageState extends ConsumerState<QuranReaderPage> {
                         showShareCardSheet(
                           context,
                           ShareAyahData.fromAyahModel(ayah, widget.surah.nameEn),
+                        );
+                      },
+                    ),
+                    _buildActionButton(
+                      context,
+                      icon: Icons.menu_book_rounded,
+                      label: 'تەفسیر',
+                      color: cs.primary,
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        TafsirSheet.show(
+                          context,
+                          surahNumber: widget.surah.number,
+                          ayahNumber: ayah.ayahNumber,
+                          surahName: widget.surah.nameKu,
+                          arabicText: ayah.textUthmani,
                         );
                       },
                     ),
